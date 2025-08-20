@@ -1,0 +1,172 @@
+import firebase_admin
+import os
+from django.utils import timezone
+from firebase_admin import credentials
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+AUTH_USER_MODEL = 'accounts.UserModel'
+USERNAME_FIELD = 'email'
+
+SECRET_KEY = os.environ['SECRET_KEY']
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+ALLOWED_HOSTS = os.environ['DJANGO_ALLOWED_HOSTS'].split()
+CSRF_TRUSTED_ORIGINS = os.environ['DJANGO_CSRF_TRUSTED_ORIGINS'].split()
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+INSTALLED_APPS = [
+    "daphne",
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',
+    'protected_media.apps.ProtectedMediaConfig',
+    'corsheaders',
+    'django_q',
+    'rest_framework.authtoken',
+    'accounts',
+    'job_portal',
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+ROOT_URLCONF = 'backend.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.context_processors.debug',
+                'django.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+ASGI_APPLICATION = "backend.asgi.application"
+
+AUTH_TOKEN_VALIDITY = timezone.timedelta(days=1)
+
+REST_FRAMEWORK = {
+    'NON_FIELD_ERRORS_KEY': 'errors',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'accounts.api.permissions.IsAuthenticatedWithBlocked',
+    ],
+    'EXCEPTION_HANDLER': 'backend.global_function.custom_exception_handler',
+}
+
+DATABASES = {
+    "default": {
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": os.environ['POSTGRES_DB'],
+        "USER": os.environ['POSTGRES_USER'],
+        "PASSWORD": os.environ['POSTGRES_PASSWORD'],
+        "HOST": os.environ['POSTGRES_HOST'],
+        "PORT": os.environ['POSTGRES_PORT'],
+    }
+}
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+LANGUAGE_CODE = 'ru'
+TIME_ZONE = 'Asia/Almaty'
+USE_I18N = True
+USE_TZ = True
+
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = (BASE_DIR / 'static/',)
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "mediafiles"
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+Q_CLUSTER = {
+    'name': 'backend',
+    'workers': 3,
+    'recycle': 500,
+    'timeout': 60,
+    'compress': True,
+    'save_limit': 250,
+    'queue_limit': 500,
+    'cpu_affinity': 1,
+    'label': 'Django Q2',
+    'orm': 'default',
+    'ack_failures': True,
+    'max_attempts': 1,
+    'attempt_count': 1
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(os.environ['REDIS_HOST'], os.environ['REDIS_PORT'])],
+        },
+    },
+}
+
+USE_NGINX = os.environ.get('USE_NGINX', 'False').lower() == 'true'
+
+if USE_NGINX:
+    PROTECTED_MEDIA_ROOT = "/home/app/protected/"
+    PROTECTED_MEDIA_SERVER = "nginx"
+else:
+    PROTECTED_MEDIA_ROOT = f"{BASE_DIR}/protected/"
+    PROTECTED_MEDIA_SERVER = "django"
+
+PROTECTED_MEDIA_URL = "/protected"
+PROTECTED_MEDIA_LOCATION_PREFIX = "/internal"
+PROTECTED_MEDIA_AS_DOWNLOADS = False
+
+VIMEO_ACCESS_TOKEN = os.environ['VIMEO_ACCESS_TOKEN']
+
+FIREBASE_CREDENTIALS_PATH = os.environ['FIREBASE_CREDENTIALS_PATH']
+if os.path.exists(FIREBASE_CREDENTIALS_PATH):
+    cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
+    firebase_admin.initialize_app(cred)
+
+# Job Portal and Accounts apps
+# LMS apps removed - replaced with job_portal and accounts
+
+LOGGING = {}

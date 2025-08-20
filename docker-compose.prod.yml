@@ -1,0 +1,71 @@
+services:
+  db:
+    container_name: kg-job-portal-my-db-prod
+    image: postgres:15
+    networks:
+      - kg-job-portal-my-back-prod
+    volumes:
+      - kg-job-portal-my-database:/var/lib/postgresql/data/
+    env_file:
+      - .env.prod
+    restart: unless-stopped
+
+  redis:
+    container_name: kg-job-portal-my-redis-prod
+    image: redis
+    networks:
+      - kg-job-portal-my-back-prod
+    env_file:
+      - .env.prod
+    restart: unless-stopped
+
+  backend:
+    container_name: kg-job-portal-my-backend-prod
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    command: daphne -b 0.0.0.0 -p 8000 backend.asgi:application
+    networks:
+      - kg-job-portal-my-back-prod
+    volumes:
+      - kg-job-portal-my-static-volume:/home/app/staticfiles
+      - kg-job-portal-my-media-volume:/home/app/protected
+      - ./config/firebase:/home/app/config/firebase:ro
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.prod
+    environment:
+      - DJANGO_ENV=prod
+      - FIREBASE_CREDENTIALS_PATH=config/firebase/service_account.json
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  nginx:
+    container_name: kg-job-portal-my-nginx-prod
+    build: ./nginx
+    networks:
+      - kg-job-portal-my-front-prod
+      - kg-job-portal-my-back-prod
+    volumes:
+      - kg-job-portal-my-static-volume:/home/app/staticfiles
+      - kg-job-portal-my-media-volume:/home/app/protected
+    ports:
+      - '80:80'
+      - '443:443'
+    env_file:
+      - .env.prod
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  kg-job-portal-my-database:
+  kg-job-portal-my-static-volume:
+  kg-job-portal-my-media-volume:
+
+networks:
+  kg-job-portal-my-front-prod:
+  kg-job-portal-my-back-prod:
