@@ -127,24 +127,6 @@ class AbstractPublicListApiView(PublicViewMixin, StandardizedViewMixin, generics
     filterset_class = None
 
 
-class AbstractSoftDeleteViewSet(AbstractBaseApiViewSet):
-    """Viewset for models with soft delete functionality."""
-    
-    def get_queryset(self):
-        """Filter out soft-deleted objects by default."""
-        queryset = super().get_queryset()
-        if hasattr(queryset.model, 'objects'):
-            # Use the custom manager if available
-            return queryset.model.objects.all()
-        return queryset.filter(is_deleted=False)
-
-    def destroy(self, request, *args, **kwargs):
-        """Override destroy to implement soft delete."""
-        instance = self.get_object()
-        instance.delete()  # This will call the soft delete method
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 class AbstractAuditViewSet(AbstractBaseApiViewSet):
     """Viewset for models that need audit trail functionality."""
     

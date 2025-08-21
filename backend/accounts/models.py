@@ -6,7 +6,53 @@ from protected_media.models import ProtectedImageField
 from rest_framework.authtoken.models import Token
 
 from backend.global_function import PathAndRename
-from backend.utils.abstract_models import AbstractSoftDeleteModel
+from backend.utils.abstract_models import AbstractSoftDeleteModel, SoftDeleteManager
+
+
+class UserManager(SoftDeleteManager, BaseUserManager):
+    """
+    Custom user manager that extends SoftDeleteManager and BaseUserManager.
+    Provides soft delete functionality while maintaining Django's user creation methods.
+    """
+    
+    def create_user(self, email, password=None, **extra_fields):
+        """Create and save a regular user with soft delete support."""
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        """Create and save a superuser with soft delete support."""
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(email, password, **extra_fields)
+    
+    def get_by_natural_key(self, username):
+        """Get user by natural key (username) excluding deleted users."""
+        return self.get(username=username)
+    
+    def filter_by_user_type(self, user_type):
+        """Filter users by user type, excluding deleted users."""
+        return self.filter(user_type=user_type)
+    
+    def get_blocked_users(self):
+        """Get blocked users, excluding deleted users."""
+        return self.filter(blocked=True)
+    
+    def get_active_users(self):
+        """Get active users (not blocked, not deleted)."""
+        return self.filter(blocked=False)
 
 
 class UserTypes:
@@ -24,6 +70,9 @@ class UserTypes:
 
 
 class UserModel(AbstractUser, AbstractSoftDeleteModel):
+    # Use the custom manager
+    objects = UserManager()
+    
     user_type = models.CharField(max_length=20, choices=UserTypes.choices(), default=UserTypes.free, )
     blocked = models.BooleanField(default=False)
     firebase_user_id = models.CharField(max_length=200, null=True, blank=True)
@@ -52,6 +101,35 @@ class UserModel(AbstractUser, AbstractSoftDeleteModel):
 
     def __str__(self):
         return f'{self.pk} Profile of {self.email}'
+
+    def delete(self, using=None, keep_parents=False):
+        """Override delete to implement soft delete with additional cleanup."""
+        # Soft delete the user
+        super().delete(using, keep_parents)
+        
+        # Additional cleanup for soft-deleted users
+        self._cleanup_deleted_user()
+    
+    def _cleanup_deleted_user(self):
+        """Clean up user data when soft-deleted."""
+        # Clear sensitive data
+        self.fcm_token = None
+        self.firebase_user_id = None
+        
+        # Clear social connections
+        self.friends.clear()
+        self.friendship_requests.clear()
+        
+        # Save the cleanup
+        self.save(update_fields=['fcm_token', 'firebase_user_id'])
+    
+    def restore(self, strict=True):
+        """Restore a soft-deleted user."""
+        super().restore(strict)
+        
+        # Reactivate the user account
+        self.is_active = True
+        self.save(update_fields=['is_active'])
 
     def add_points(self, points: int, description: str):
         if points < 0:
