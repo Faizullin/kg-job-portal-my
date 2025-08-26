@@ -6,7 +6,7 @@ on:
             - master
 
 env:
-    SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+    # No SSH_AUTH_SOCK needed for direct key authentication
 
 jobs:
     test:
@@ -180,26 +180,20 @@ jobs:
                 LOG_FILE=/app/logs/django.log
                 EOF
 
-            - name: Setup SSH passphrase
-              run: |
-                ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-                echo 'echo ${{ secrets.VPS_SSH_PASSPHRASE }}' > ~/.ssh_askpass && chmod +x ~/.ssh_askpass
-                echo "${{ secrets.VPS_SSH_KEY }}" | tr -d '\r' | DISPLAY=None SSH_ASKPASS=~/.ssh_askpass ssh-add - >/dev/null
             - name: Deploy to VPS
-              uses: appleboy/ssh-action@v1.0.3
+              uses: appleboy/ssh-action@master
               with:
                 host: ${{ secrets.VPS_HOST }}
                 username: ${{ secrets.VPS_USERNAME }}
                 key: ${{ secrets.VPS_SSH_KEY }}
-                passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
                 script: |
                     # Navigate to project directory
-                    cd /opt/kg-job-portal
+                    cd /home/ubuntu
                     
                     # Pull latest changes
                     git pull origin master
                     
-                     # Copy the generated .env.prod file
+                    # Copy the generated .env.prod file
                      cat > .env.prod << 'EOF'
                      # Django Configuration
                      DJANGO_ENV=prod
