@@ -7,16 +7,19 @@ from .models import ChatRoom, ChatMessage, ChatParticipant, ChatTemplate, ChatNo
 @admin.register(ChatRoom)
 class ChatRoomAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'name', 'room_type', 'order', 'participants_count', 'messages_count',
-        'last_message_time', 'created_at'
+        'id', 'title', 'chat_type', 'order', 'participants_count', 'messages_count',
+        'last_message_at', 'created_at'
     ]
-    list_filter = ['room_type', 'created_at']
-    search_fields = ['name', 'order__title']
+    list_filter = ['chat_type', 'created_at']
+    search_fields = ['title', 'order__title']
     ordering = ['-created_at']
     
     fieldsets = (
         ('Room Information', {
-            'fields': ('name', 'room_type', 'order')
+            'fields': ('title', 'chat_type', 'order')
+        }),
+        ('Status', {
+            'fields': ('is_active', 'last_message_at')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
@@ -25,21 +28,16 @@ class ChatRoomAdmin(admin.ModelAdmin):
     )
     
     def participants_count(self, obj):
-        return obj.participants.filter(is_active=True).count()
+        return obj.participants.count()
     participants_count.short_description = 'Participants'
     
     def messages_count(self, obj):
         return obj.messages.count()
     messages_count.short_description = 'Messages'
     
-    def last_message_time(self, obj):
-        last_msg = obj.messages.order_by('-created_at').first()
-        return last_msg.created_at if last_msg else '-'
-    last_message_time.short_description = 'Last Message'
-    
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('order').annotate(
-            participants_count=Count('participants', filter=Q(participants__is_active=True)),
+            participants_count=Count('participants'),
             messages_count=Count('messages')
         )
 
@@ -93,30 +91,25 @@ class ChatMessageAdmin(admin.ModelAdmin):
 @admin.register(ChatParticipant)
 class ChatParticipantAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'chat_room', 'user', 'role', 'is_active', 'joined_at',
-        'last_read_at', 'days_since_last_read'
+        'id', 'chat_room', 'user', 'is_online', 'last_seen', 'unread_count',
+        'notifications_enabled', 'created_at'
     ]
-    list_filter = ['role', 'is_active', 'joined_at']
-    search_fields = ['user__first_name', 'user__last_name', 'chat_room__name']
-    ordering = ['-joined_at']
-    list_editable = ['is_active']
+    list_filter = ['is_online', 'notifications_enabled', 'created_at']
+    search_fields = ['user__first_name', 'user__last_name', 'chat_room__title']
+    ordering = ['-created_at']
+    list_editable = ['is_online', 'notifications_enabled']
     
     fieldsets = (
         ('Participant Information', {
-            'fields': ('chat_room', 'user', 'role')
+            'fields': ('chat_room', 'user')
         }),
         ('Status', {
-            'fields': ('is_active', 'joined_at', 'last_read_at')
+            'fields': ('is_online', 'last_seen', 'unread_count')
+        }),
+        ('Notifications', {
+            'fields': ('notifications_enabled', 'mute_until')
         }),
     )
-    
-    def days_since_last_read(self, obj):
-        if obj.last_read_at:
-            from django.utils import timezone
-            delta = timezone.now() - obj.last_read_at
-            return delta.days
-        return '-'
-    days_since_last_read.short_description = 'Days Since Last Read'
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('user', 'chat_room')
@@ -179,24 +172,24 @@ class ChatNotificationAdmin(admin.ModelAdmin):
 @admin.register(ChatReport)
 class ChatReportAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'reporter', 'chat_room', 'report_type', 'status', 'created_at'
+        'id', 'reported_by', 'reported_message', 'reason', 'status', 'created_at'
     ]
-    list_filter = ['report_type', 'status', 'created_at']
-    search_fields = ['reporter__first_name', 'chat_room__name', 'description']
+    list_filter = ['reason', 'status', 'created_at']
+    search_fields = ['reported_by__first_name', 'reported_message__content', 'description']
     ordering = ['-created_at']
     list_editable = ['status']
     
     fieldsets = (
         ('Report Information', {
-            'fields': ('reporter', 'chat_room', 'report_type', 'description')
+            'fields': ('reported_message', 'reported_by', 'reason', 'description', 'evidence')
         }),
         ('Status', {
             'fields': ('status', 'admin_notes')
         }),
         ('Resolution', {
-            'fields': ('resolved_by', 'resolved_at', 'resolution')
+            'fields': ('resolved_by', 'resolved_at', 'action_taken')
         }),
     )
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('reporter', 'chat_room', 'resolved_by')
+        return super().get_queryset(request).select_related('reported_by', 'reported_message', 'resolved_by')

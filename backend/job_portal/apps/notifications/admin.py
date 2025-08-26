@@ -7,23 +7,27 @@ from .models import NotificationTemplate, UserNotification, NotificationDelivery
 @admin.register(UserNotification)
 class UserNotificationAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'user_profile', 'title_preview', 'notification_type', 'priority',
+        'id', 'user', 'subject_preview', 'status', 'priority',
         'is_read', 'created_at', 'read_at'
     ]
-    list_filter = ['notification_type', 'priority', 'is_read', 'created_at']
-    search_fields = ['title', 'message', 'user_profile__user__first_name', 'user_profile__user__last_name']
+    list_filter = ['status', 'priority', 'is_read', 'created_at']
+    search_fields = ['subject', 'message', 'user__first_name', 'user__last_name']
     ordering = ['-created_at']
     list_editable = ['is_read']
     
     fieldsets = (
         ('Notification Information', {
-            'fields': ('user_profile', 'title', 'message', 'notification_type', 'priority')
+            'fields': ('user', 'template', 'subject', 'message', 'short_message', 'priority')
         }),
         ('Content & Data', {
-            'fields': ('data', 'action_url')
+            'fields': ('context_data', 'related_object_type', 'related_object_id')
         }),
         ('Status', {
-            'fields': ('is_read', 'read_at')
+            'fields': ('status', 'is_read', 'read_at')
+        }),
+        ('Delivery Tracking', {
+            'fields': ('sent_at', 'delivered_at', 'failed_at'),
+            'classes': ('collapse',)
         }),
         ('Timestamps', {
             'fields': ('created_at',),
@@ -31,14 +35,14 @@ class UserNotificationAdmin(admin.ModelAdmin):
         }),
     )
     
-    def title_preview(self, obj):
-        if obj.title:
-            return obj.title[:50] + '...' if len(obj.title) > 50 else obj.title
+    def subject_preview(self, obj):
+        if obj.subject:
+            return obj.subject[:50] + '...' if len(obj.subject) > 50 else obj.subject
         return '-'
-    title_preview.short_description = 'Title'
+    subject_preview.short_description = 'Subject'
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('user_profile__user')
+        return super().get_queryset(request).select_related('user', 'template')
 
 
 @admin.register(NotificationTemplate)
@@ -81,28 +85,34 @@ class NotificationTemplateAdmin(admin.ModelAdmin):
 @admin.register(NotificationPreference)
 class NotificationPreferenceAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'user_profile', 'notification_type', 'email_enabled', 'push_enabled',
-        'sms_enabled', 'frequency', 'is_active'
+        'id', 'user', 'email_notifications', 'push_notifications',
+        'sms_notifications', 'digest_frequency', 'timezone'
     ]
-    list_filter = ['notification_type', 'email_enabled', 'push_enabled', 'sms_enabled', 'frequency', 'is_active']
-    search_fields = ['user_profile__user__first_name', 'user_profile__user__last_name']
-    ordering = ['user_profile__user__first_name', 'notification_type']
-    list_editable = ['email_enabled', 'push_enabled', 'sms_enabled', 'is_active']
+    list_filter = ['email_notifications', 'push_notifications', 'sms_notifications', 'digest_frequency']
+    search_fields = ['user__first_name', 'user__last_name']
+    ordering = ['user__first_name']
+    list_editable = ['email_notifications', 'push_notifications', 'sms_notifications']
     
     fieldsets = (
-        ('User & Type', {
-            'fields': ('user_profile', 'notification_type')
+        ('User Information', {
+            'fields': ('user',)
         }),
-        ('Delivery Methods', {
-            'fields': ('email_enabled', 'push_enabled', 'sms_enabled')
+        ('General Preferences', {
+            'fields': ('email_notifications', 'push_notifications', 'sms_notifications', 'in_app_notifications')
         }),
-        ('Settings', {
-            'fields': ('frequency', 'is_active')
+        ('Specific Notifications', {
+            'fields': ('order_updates', 'bid_notifications', 'payment_notifications', 'chat_notifications', 'promotional_notifications', 'system_notifications')
+        }),
+        ('Timing Preferences', {
+            'fields': ('quiet_hours_start', 'quiet_hours_end', 'timezone')
+        }),
+        ('Frequency', {
+            'fields': ('digest_frequency',)
         }),
     )
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('user_profile__user')
+        return super().get_queryset(request).select_related('user')
 
 
 @admin.register(NotificationLog)

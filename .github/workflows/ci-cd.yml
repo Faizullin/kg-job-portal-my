@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
     push:
         branches:
-            - main
+            - master
             - dev
 
 env:
@@ -126,7 +126,7 @@ jobs:
                     echo "CONTAINER_NAME=kg-job-portal-dev" >> $GITHUB_ENV
                     echo "IMAGE_TAG=dev" >> $GITHUB_ENV
                     echo "COMPOSE_FILE=docker-compose.dev.yml" >> $GITHUB_ENV
-                elif [ "${{ github.ref_name }}" == "main" ]; then
+                elif [ "${{ github.ref_name }}" == "master" ]; then
                     echo "DJANGO_SETTINGS_MODULE=${{ secrets.PROD_DJANGO_SETTINGS_MODULE }}" >> $GITHUB_ENV
                     echo "PORT=8000" >> $GITHUB_ENV
                     echo "CONTAINER_NAME=kg-job-portal" >> $GITHUB_ENV

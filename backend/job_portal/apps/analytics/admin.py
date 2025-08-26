@@ -7,19 +7,22 @@ from .models import UserActivity, OrderAnalytics, ServiceCategoryAnalytics, User
 @admin.register(UserActivity)
 class UserActivityAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'user', 'activity_type', 'description_preview', 'ip_address',
+        'id', 'user', 'activity_type', 'context_data_preview', 'ip_address',
         'created_at'
     ]
     list_filter = ['activity_type', 'created_at']
-    search_fields = ['description', 'user__first_name', 'user__last_name', 'ip_address']
+    search_fields = ['context_data', 'user__first_name', 'user__last_name', 'ip_address']
     ordering = ['-created_at']
     
     fieldsets = (
         ('Activity Information', {
-            'fields': ('user', 'activity_type', 'description')
+            'fields': ('user', 'activity_type', 'context_data')
         }),
         ('Metadata', {
-            'fields': ('metadata', 'ip_address', 'user_agent')
+            'fields': ('ip_address', 'user_agent', 'session_id', 'related_object_type', 'related_object_id')
+        }),
+        ('Performance', {
+            'fields': ('response_time',)
         }),
         ('Timestamps', {
             'fields': ('created_at',),
@@ -27,11 +30,11 @@ class UserActivityAdmin(admin.ModelAdmin):
         }),
     )
     
-    def description_preview(self, obj):
-        if obj.description:
-            return obj.description[:100] + '...' if len(obj.description) > 100 else obj.description
+    def context_data_preview(self, obj):
+        if obj.context_data:
+            return str(obj.context_data)[:100] + '...' if len(str(obj.context_data)) > 100 else str(obj.context_data)
         return '-'
-    description_preview.short_description = 'Description'
+    context_data_preview.short_description = 'Context Data'
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('user')
@@ -40,47 +43,53 @@ class UserActivityAdmin(admin.ModelAdmin):
 @admin.register(ServiceCategoryAnalytics)
 class ServiceCategoryAnalyticsAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'service_category', 'period_start', 'period_end', 'total_orders',
-        'total_revenue', 'average_rating', 'completion_rate', 'customer_satisfaction'
+        'id', 'category', 'date', 'order_count', 'total_revenue',
+        'average_order_value', 'bid_count', 'completion_rate'
     ]
-    list_filter = ['service_category', 'period_start', 'period_end']
-    search_fields = ['service_category__name']
-    ordering = ['-period_start']
+    list_filter = ['category', 'date']
+    search_fields = ['category__name']
+    ordering = ['-date']
     
     fieldsets = (
         ('Service Information', {
-            'fields': ('service_category', 'period_start', 'period_end')
+            'fields': ('category', 'date')
         }),
         ('Metrics', {
-            'fields': ('total_orders', 'total_revenue', 'average_rating')
+            'fields': ('order_count', 'total_revenue', 'average_order_value')
         }),
         ('Performance', {
-            'fields': ('completion_rate', 'customer_satisfaction')
+            'fields': ('bid_count', 'completion_rate')
         }),
     )
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('service_category')
+        return super().get_queryset(request).select_related('category')
 
 
 @admin.register(OrderAnalytics)
 class OrderAnalyticsAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'period_start', 'period_end', 'total_orders', 'completed_orders',
-        'cancelled_orders', 'status', 'average_order_value', 'total_revenue'
+        'id', 'date', 'total_orders', 'completed_orders',
+        'cancelled_orders', 'average_order_value', 'total_revenue'
     ]
-    list_filter = ['status', 'period_start', 'period_end']
-    ordering = ['-period_start']
+    list_filter = ['date']
+    ordering = ['-date']
     
     fieldsets = (
         ('Period Information', {
-            'fields': ('period_start', 'period_end', 'status')
+            'fields': ('date',)
         }),
         ('Order Metrics', {
-            'fields': ('total_orders', 'completed_orders', 'cancelled_orders')
+            'fields': ('total_orders', 'new_orders', 'completed_orders', 'cancelled_orders')
         }),
         ('Financial Metrics', {
-            'fields': ('average_order_value', 'total_revenue')
+            'fields': ('average_order_value', 'total_revenue', 'total_fees')
+        }),
+        ('Service Metrics', {
+            'fields': ('total_bids', 'average_bids_per_order')
+        }),
+        ('User Metrics', {
+            'fields': ('active_clients', 'active_providers', 'new_users')
         }),
     )
     
@@ -91,21 +100,21 @@ class OrderAnalyticsAdmin(admin.ModelAdmin):
 @admin.register(UserRetentionAnalytics)
 class UserRetentionAnalyticsAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'period_start', 'period_end', 'total_users', 'new_users',
-        'returning_users', 'churn_rate'
+        'id', 'date', 'user_type', 'cohort_size', 'day_1_retention',
+        'day_7_retention', 'day_30_retention'
     ]
-    list_filter = ['period_start', 'period_end']
-    ordering = ['-period_start']
+    list_filter = ['date', 'user_type']
+    ordering = ['-date']
     
     fieldsets = (
         ('Period Information', {
-            'fields': ('period_start', 'period_end')
+            'fields': ('date', 'user_type')
         }),
-        ('User Metrics', {
-            'fields': ('total_users', 'new_users', 'returning_users')
+        ('Cohort Metrics', {
+            'fields': ('cohort_size', 'day_1_retention', 'day_7_retention', 'day_30_retention')
         }),
-        ('Churn Rate', {
-            'fields': ('churn_rate',)
+        ('Engagement Metrics', {
+            'fields': ('average_sessions_per_user', 'average_session_duration')
         }),
     )
     
@@ -116,21 +125,24 @@ class UserRetentionAnalyticsAdmin(admin.ModelAdmin):
 @admin.register(SearchAnalytics)
 class SearchAnalyticsAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'period_start', 'period_end', 'total_searches', 'unique_searches',
-        'average_search_depth', 'conversion_rate'
+        'id', 'date', 'total_searches', 'unique_searchers',
+        'searches_with_results', 'search_to_order_conversion_rate'
     ]
-    list_filter = ['period_start', 'period_end']
-    ordering = ['-period_start']
+    list_filter = ['date']
+    ordering = ['-date']
     
     fieldsets = (
         ('Period Information', {
-            'fields': ('period_start', 'period_end')
+            'fields': ('date',)
         }),
         ('Search Metrics', {
-            'fields': ('total_searches', 'unique_searches')
+            'fields': ('total_searches', 'unique_searchers', 'searches_with_results', 'searches_without_results')
         }),
-        ('Conversion Rate', {
-            'fields': ('average_search_depth', 'conversion_rate')
+        ('Popular Terms', {
+            'fields': ('top_search_terms', 'top_categories_searched')
+        }),
+        ('Conversion Metrics', {
+            'fields': ('searches_leading_to_orders', 'search_to_order_conversion_rate')
         }),
     )
     
@@ -141,21 +153,27 @@ class SearchAnalyticsAdmin(admin.ModelAdmin):
 @admin.register(PerformanceMetrics)
 class PerformanceMetricsAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'period_start', 'period_end', 'total_requests', 'successful_requests',
-        'failed_requests', 'average_response_time', 'error_rate'
+        'id', 'date', 'time_period', 'average_response_time', 'error_rate',
+        'active_users', 'cpu_usage', 'memory_usage'
     ]
-    list_filter = ['period_start', 'period_end']
-    ordering = ['-period_start']
+    list_filter = ['date', 'time_period']
+    ordering = ['-date']
     
     fieldsets = (
         ('Period Information', {
-            'fields': ('period_start', 'period_end')
+            'fields': ('date', 'time_period')
         }),
         ('Performance Metrics', {
-            'fields': ('total_requests', 'successful_requests', 'failed_requests')
+            'fields': ('average_response_time', 'max_response_time', 'min_response_time')
         }),
-        ('Error Rate', {
-            'fields': ('average_response_time', 'error_rate')
+        ('Error Metrics', {
+            'fields': ('total_errors', 'error_rate')
+        }),
+        ('System Metrics', {
+            'fields': ('active_users', 'concurrent_users', 'database_queries')
+        }),
+        ('Infrastructure', {
+            'fields': ('cpu_usage', 'memory_usage', 'disk_usage')
         }),
     )
     
@@ -166,30 +184,29 @@ class PerformanceMetricsAdmin(admin.ModelAdmin):
 @admin.register(BusinessMetrics)
 class BusinessMetricsAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'period_start', 'period_end', 'gross_revenue', 'net_revenue',
-        'commission_revenue', 'tax_amount', 'refund_amount', 'profit_margin_display'
+        'id', 'date', 'gross_merchandise_volume', 'net_revenue',
+        'profit_margin', 'order_fulfillment_rate', 'customer_satisfaction_score'
     ]
-    list_filter = ['period_start', 'period_end']
-    ordering = ['-period_start']
+    list_filter = ['date', 'competitive_position']
+    ordering = ['-date']
     
     fieldsets = (
         ('Period Information', {
-            'fields': ('period_start', 'period_end')
+            'fields': ('date',)
         }),
-        ('Revenue Breakdown', {
-            'fields': ('gross_revenue', 'commission_revenue', 'tax_amount')
+        ('Financial KPIs', {
+            'fields': ('gross_merchandise_volume', 'net_revenue', 'profit_margin')
         }),
-        ('Net Revenue', {
-            'fields': ('net_revenue', 'refund_amount')
+        ('Operational KPIs', {
+            'fields': ('order_fulfillment_rate', 'average_order_processing_time', 'customer_satisfaction_score')
+        }),
+        ('Growth Metrics', {
+            'fields': ('month_over_month_growth', 'year_over_year_growth')
+        }),
+        ('Market Metrics', {
+            'fields': ('market_share', 'competitive_position')
         }),
     )
-    
-    def profit_margin_display(self, obj):
-        if obj.gross_revenue and obj.gross_revenue > 0:
-            margin = ((obj.net_revenue / obj.gross_revenue) * 100)
-            return f"{margin:.1f}%"
-        return '-'
-    profit_margin_display.short_description = 'Profit Margin'
     
     def get_queryset(self, request):
         return super().get_queryset(request)
