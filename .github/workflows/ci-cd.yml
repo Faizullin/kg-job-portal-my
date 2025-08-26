@@ -200,10 +200,10 @@ jobs:
                     sudo docker-compose -f ${{ env.COMPOSE_FILE }} down
                     
                     # Pull latest images
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} pull
+                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} --env-file .env.prod  pull
                     
                     # Start services
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} up -d
+                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} --env-file .env.prod  up -d
                     
                     # Wait for services to be healthy
                     sleep 30
@@ -211,7 +211,7 @@ jobs:
                     # Check service health
                     if sudo docker-compose -f ${{ env.COMPOSE_FILE }} ps | grep -q "unhealthy"; then
                         echo "Services are unhealthy, rolling back..."
-                        sudo docker-compose -f ${{ env.COMPOSE_FILE }} down
+                        sudo docker-compose -f ${{ env.COMPOSE_FILE }} --env-file .env.prod down
                         exit 1
                     fi
                     
