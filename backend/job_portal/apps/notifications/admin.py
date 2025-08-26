@@ -118,25 +118,34 @@ class NotificationPreferenceAdmin(admin.ModelAdmin):
 @admin.register(NotificationLog)
 class NotificationLogAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'notification', 'user', 'status', 'delivery_method',
-        'sent_at', 'delivered_at', 'error_message_preview'
+        'id', 'notification', 'action', 'details_preview', 'error_message_preview',
+        'processing_time', 'created_at'
     ]
-    list_filter = ['status', 'delivery_method', 'sent_at', 'delivered_at']
-    search_fields = ['notification__title', 'user__first_name', 'error_message']
+    list_filter = ['action', 'created_at']
+    search_fields = ['notification__subject', 'error_message']
     ordering = ['-created_at']
     
     fieldsets = (
         ('Log Information', {
-            'fields': ('notification', 'user', 'status', 'delivery_method')
+            'fields': ('notification', 'delivery', 'action')
+        }),
+        ('Details', {
+            'fields': ('details', 'error_message')
+        }),
+        ('Performance', {
+            'fields': ('processing_time',)
         }),
         ('Timestamps', {
-            'fields': ('sent_at', 'delivered_at')
-        }),
-        ('Error Details', {
-            'fields': ('error_message',),
+            'fields': ('created_at',),
             'classes': ('collapse',)
         }),
     )
+    
+    def details_preview(self, obj):
+        if obj.details:
+            return str(obj.details)[:100] + '...' if len(str(obj.details)) > 100 else str(obj.details)
+        return '-'
+    details_preview.short_description = 'Details'
     
     def error_message_preview(self, obj):
         if obj.error_message:
@@ -145,4 +154,4 @@ class NotificationLogAdmin(admin.ModelAdmin):
     error_message_preview.short_description = 'Error Message'
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('notification', 'user')
+        return super().get_queryset(request).select_related('notification', 'delivery')
