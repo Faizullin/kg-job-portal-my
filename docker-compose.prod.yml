@@ -35,7 +35,7 @@ services:
 
   # Django Backend
   backend:
-    image: ${REGISTRY:-ghcr.io}/${IMAGE_NAME:-kg-job-portal-my}:latest
+    image: ${REGISTRY_USER}/kg-job-portal-my:latest
     container_name: kg_job_portal_backend
     restart: unless-stopped
     env_file:
@@ -57,7 +57,7 @@ services:
 
   # Nginx Reverse Proxy
   nginx:
-    image: ${REGISTRY:-ghcr.io}/${IMAGE_NAME:-kg-job-portal-my}-nginx:latest
+    image: ${REGISTRY_USER}/kg-job-portal-my-nginx:latest
     container_name: kg_job_portal_nginx
     restart: unless-stopped
     ports:

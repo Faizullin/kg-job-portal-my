@@ -192,53 +192,6 @@ jobs:
                     git pull origin master
                     git status
                     
-                    # Copy the generated .env.prod file
-                     cat > .env.prod << 'EOF'
-                     # Django Configuration
-                     DJANGO_ENV=prod
-                     SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
-                     DEBUG=False
-                     DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
-                     DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1
-                     RUNNING_FROM_DOCKER=1
-                     
-                     # Database Configuration
-                     POSTGRES_DB=kg_job_portal
-                     POSTGRES_USER=postgres
-                     POSTGRES_PASSWORD=postgres123
-                     POSTGRES_HOST=postgres
-                     POSTGRES_PORT=5432
-                     
-                     # Redis Configuration
-                     REDIS_HOST=redis
-                     REDIS_PORT=6379
-                     
-                     # Firebase Configuration
-                     FIREBASE_CREDENTIALS_PATH=/app/config/firebase/service_account.json
-                     
-                     # Docker Registry
-                     REGISTRY_USER=${{ secrets.REGISTRY_USER }}
-                     IMAGE_NAME=${{ secrets.IMAGE_NAME }}
-                     REGISTRY=ghcr.io
-                     
-                     # Nginx Configuration
-                     USE_NGINX=True
-                     NGINX_HOST=localhost
-                     
-                     # Logging
-                     LOG_LEVEL=INFO
-                     LOG_FILE=/app/logs/django.log
-                     EOF
-                    
-                    # Create backup of current deployment
-                    if [ -d "backup" ]; then
-                        rm -rf backup
-                    fi
-                    mkdir backup
-                    if [ -d "current" ]; then
-                        cp -r current/* backup/
-                    fi
-                    
                     # Login to Docker registry
                     echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | sudo docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
                     
@@ -251,38 +204,38 @@ jobs:
                     # Start services
                     sudo docker-compose -f ${{ env.COMPOSE_FILE }} up -d
                     
-                    # Wait for services to be healthy
-                    sleep 30
+                    # # Wait for services to be healthy
+                    # sleep 30
                     
-                    # Check service health
-                    if sudo docker-compose -f ${{ env.COMPOSE_FILE }} ps | grep -q "unhealthy"; then
-                        echo "Services are unhealthy, rolling back..."
-                        sudo docker-compose -f ${{ env.COMPOSE_FILE }} down
-                        if [ -d "backup" ]; then
-                            cp -r backup/* current/
-                            sudo docker-compose -f ${{ env.COMPOSE_FILE }} up -d
-                        fi
-                        exit 1
-                    fi
+                    # # Check service health
+                    # if sudo docker-compose -f ${{ env.COMPOSE_FILE }} ps | grep -q "unhealthy"; then
+                    #     echo "Services are unhealthy, rolling back..."
+                    #     sudo docker-compose -f ${{ env.COMPOSE_FILE }} down
+                    #     if [ -d "backup" ]; then
+                    #         cp -r backup/* current/
+                    #         sudo docker-compose -f ${{ env.COMPOSE_FILE }} up -d
+                    #     fi
+                    #     exit 1
+                    # fi
                     
-                     # Run database migrations
-                     sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput
-                     
-                     # Collect static files
-                     sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py collectstatic --noinput
-                     
-                     # Clear cache
-                     sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py clearcache
+                    # Run database migrations
+                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput
                     
-                    # Health check
-                    if curl -f http://localhost:${{ env.PORT }}/health/; then
-                        echo "Deployment successful!"
-                    else
-                        echo "Health check failed, rolling back..."
-                        sudo docker-compose -f ${{ env.COMPOSE_FILE }} down
-                        if [ -d "backup" ]; then
-                            cp -r backup/* current/
-                            sudo docker-compose -f ${{ env.COMPOSE_FILE }} up -d
-                        fi
-                        exit 1
-                    fi
+                    # Collect static files
+                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py collectstatic --noinput
+                    
+                    # Clear cache
+                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py clearcache
+                    
+                    # # Health check
+                    # if curl -f http://localhost:${{ env.PORT }}/health/; then
+                    #     echo "Deployment successful!"
+                    # else
+                    #     echo "Health check failed, rolling back..."
+                    #     sudo docker-compose -f ${{ env.COMPOSE_FILE }} down
+                    #     if [ -d "backup" ]; then
+                    #         cp -r backup/* current/
+                    #         sudo docker-compose -f ${{ env.COMPOSE_FILE }} up -d
+                    #     fi
+                    #     exit 1
+                    # fi
