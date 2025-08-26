@@ -13,6 +13,7 @@ class ChatRoomAdmin(admin.ModelAdmin):
     list_filter = ['chat_type', 'created_at']
     search_fields = ['title', 'order__title']
     ordering = ['-created_at']
+    raw_id_fields = ['order']
     
     fieldsets = (
         ('Room Information', {
@@ -52,6 +53,7 @@ class ChatMessageAdmin(admin.ModelAdmin):
     search_fields = ['content', 'sender__first_name', 'chat_room__name']
     ordering = ['-created_at']
     list_editable = ['is_read']
+    raw_id_fields = ['chat_room', 'sender', 'reply_to']
     
     fieldsets = (
         ('Message Information', {
@@ -98,6 +100,7 @@ class ChatParticipantAdmin(admin.ModelAdmin):
     search_fields = ['user__first_name', 'user__last_name', 'chat_room__title']
     ordering = ['-created_at']
     list_editable = ['is_online', 'notifications_enabled']
+    raw_id_fields = ['chat_room', 'user']
     
     fieldsets = (
         ('Participant Information', {

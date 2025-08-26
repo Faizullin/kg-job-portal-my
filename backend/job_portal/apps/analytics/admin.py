@@ -13,6 +13,7 @@ class UserActivityAdmin(admin.ModelAdmin):
     list_filter = ['activity_type', 'created_at']
     search_fields = ['context_data', 'user__first_name', 'user__last_name', 'ip_address']
     ordering = ['-created_at']
+    raw_id_fields = ['user']
     
     fieldsets = (
         ('Activity Information', {
@@ -49,6 +50,7 @@ class ServiceCategoryAnalyticsAdmin(admin.ModelAdmin):
     list_filter = ['category', 'date']
     search_fields = ['category__name']
     ordering = ['-date']
+    raw_id_fields = ['category']
     
     fieldsets = (
         ('Service Information', {

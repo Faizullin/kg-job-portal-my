@@ -17,6 +17,7 @@ class PaymentAdmin(admin.ModelAdmin):
     search_fields = ['payment_id', 'transaction_id', 'invoice__invoice_number']
     ordering = ['-created_at']
     list_editable = ['status']
+    raw_id_fields = ['invoice', 'payment_method']
     
     fieldsets = (
         ('Payment Information', {
@@ -62,6 +63,7 @@ class PaymentMethodAdmin(admin.ModelAdmin):
     search_fields = ['user__first_name', 'user__last_name', 'card_last4']
     ordering = ['-is_default', '-created_at']
     list_editable = ['is_default', 'is_active']
+    raw_id_fields = ['user']
     
     fieldsets = (
         ('User Information', {
@@ -205,6 +207,7 @@ class InvoiceAdmin(admin.ModelAdmin):
     search_fields = ['invoice_number', 'order__title']
     ordering = ['-created_at']
     list_editable = ['status']
+    raw_id_fields = ['order']
     
     fieldsets = (
         ('Invoice Information', {

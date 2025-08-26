@@ -74,6 +74,7 @@ class ServiceSubcategoryAdmin(admin.ModelAdmin):
     search_fields = ['name', 'description']
     ordering = ['category', 'sort_order', 'name']
     list_editable = ['is_active', 'featured', 'sort_order', 'base_price']
+    raw_id_fields = ['category']
     
     fieldsets = (
         ('Basic Information', {

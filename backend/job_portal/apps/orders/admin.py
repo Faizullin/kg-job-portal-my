@@ -14,6 +14,7 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ['title', 'description', 'location', 'client__user_profile__user__first_name']
     ordering = ['-created_at']
     list_editable = ['status']
+    raw_id_fields = ['client', 'service_subcategory']
     
     fieldsets = (
         ('Order Information', {
@@ -62,6 +63,7 @@ class OrderAddonAdmin(admin.ModelAdmin):
     search_fields = ['order__title', 'addon__name']
     ordering = ['-created_at']
     list_editable = ['quantity', 'price']
+    raw_id_fields = ['order', 'addon']
     
     fieldsets = (
         ('Addon Information', {
@@ -86,6 +88,7 @@ class OrderPhotoAdmin(admin.ModelAdmin):
     search_fields = ['order__title', 'caption']
     ordering = ['-is_primary', '-created_at']
     list_editable = ['is_primary']
+    raw_id_fields = ['order']
     
     fieldsets = (
         ('Photo Information', {
@@ -113,6 +116,7 @@ class OrderDisputeAdmin(admin.ModelAdmin):
     search_fields = ['order__title', 'description', 'admin_notes']
     ordering = ['-created_at']
     list_editable = ['status']
+    raw_id_fields = ['order', 'raised_by', 'resolved_by']
     
     fieldsets = (
         ('Dispute Information', {
@@ -152,6 +156,7 @@ class BidAdmin(admin.ModelAdmin):
     search_fields = ['order__title', 'provider__user_profile__user__first_name', 'description']
     ordering = ['-created_at']
     list_editable = ['status']
+    raw_id_fields = ['order', 'provider']
     
     fieldsets = (
         ('Bid Information', {
@@ -177,6 +182,7 @@ class OrderAssignmentAdmin(admin.ModelAdmin):
     list_filter = ['assigned_at', 'start_date', 'created_at']
     search_fields = ['order__title', 'provider__user_profile__user__first_name']
     ordering = ['-assigned_at']
+    raw_id_fields = ['order', 'provider', 'accepted_bid']
     
     fieldsets = (
         ('Assignment Information', {

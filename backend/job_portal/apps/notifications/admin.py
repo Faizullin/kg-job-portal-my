@@ -14,6 +14,7 @@ class UserNotificationAdmin(admin.ModelAdmin):
     search_fields = ['subject', 'message', 'user__first_name', 'user__last_name']
     ordering = ['-created_at']
     list_editable = ['is_read']
+    raw_id_fields = ['user', 'template']
     
     fieldsets = (
         ('Notification Information', {
@@ -92,6 +93,7 @@ class NotificationPreferenceAdmin(admin.ModelAdmin):
     search_fields = ['user__first_name', 'user__last_name']
     ordering = ['user__first_name']
     list_editable = ['email_notifications', 'push_notifications', 'sms_notifications']
+    raw_id_fields = ['user']
     
     fieldsets = (
         ('User Information', {

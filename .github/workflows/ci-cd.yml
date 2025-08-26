@@ -65,6 +65,12 @@ jobs:
                 echo "DEBUG=True" >> $GITHUB_ENV
                 echo "DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1" >> $GITHUB_ENV
                 echo "DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1" >> $GITHUB_ENV
+                echo "FIREBASE_CREDENTIALS_PATH=/tmp/firebase-test.json" >> $GITHUB_ENV
+                echo "USE_NGINX=false" >> $GITHUB_ENV
+            
+            - name: Create Real Firebase Credentials
+              run: |
+                echo '${{ secrets.FIREBASE_CREDENTIALS_JSON }}' > /tmp/firebase-test.json
             - name: Wait for database
               run: |
                 while ! pg_isready -h localhost -p 5432 -U postgres; do

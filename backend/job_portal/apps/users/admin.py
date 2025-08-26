@@ -10,6 +10,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     search_fields = ['user__first_name', 'user__last_name', 'user__email', 'phone_number', 'address']
     ordering = ['-created_at']
     list_editable = ['is_verified']
+    raw_id_fields = ['user', 'preferred_language']
     
     fieldsets = (
         ('User Information', {
@@ -51,6 +52,7 @@ class ServiceProviderProfileAdmin(admin.ModelAdmin):
     search_fields = ['user_profile__user__first_name', 'user_profile__user__last_name', 'business_name']
     ordering = ['-average_rating', '-total_reviews']
     list_editable = ['is_verified_provider', 'is_available']
+    raw_id_fields = ['user_profile']
     
     fieldsets = (
         ('Basic Information', {
@@ -77,6 +79,7 @@ class ClientProfileAdmin(admin.ModelAdmin):
     list_filter = ['created_at']
     search_fields = ['user_profile__user__first_name', 'user_profile__user__last_name']
     ordering = ['-total_orders', '-created_at']
+    raw_id_fields = ['user_profile', 'favorite_providers']
     
     fieldsets = (
         ('Client Information', {
@@ -104,6 +107,7 @@ class ServiceProviderServiceAdmin(admin.ModelAdmin):
     search_fields = ['provider__user_profile__user__first_name', 'subcategory__name']
     ordering = ['-created_at']
     list_editable = ['is_available', 'base_price']
+    raw_id_fields = ['provider', 'subcategory', 'available_addons']
     
     fieldsets = (
         ('Service Information', {
@@ -128,6 +132,7 @@ class UserVerificationAdmin(admin.ModelAdmin):
     search_fields = ['user_profile__user__first_name', 'user_profile__user__last_name', 'verification_type']
     ordering = ['-created_at']
     list_editable = ['verification_status']
+    raw_id_fields = ['user_profile', 'verified_by']
     
     fieldsets = (
         ('Verification Information', {
