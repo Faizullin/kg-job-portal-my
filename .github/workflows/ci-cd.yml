@@ -126,6 +126,45 @@ jobs:
                 echo "CONTAINER_NAME=kg-job-portal" >> $GITHUB_ENV
                 echo "IMAGE_TAG=latest" >> $GITHUB_ENV
                 echo "COMPOSE_FILE=docker-compose.prod.yml" >> $GITHUB_ENV
+            
+            - name: Create Production Environment File
+              run: |
+                cat > .env.prod << EOF
+                # Django Configuration
+                DJANGO_ENV=prod
+                SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+                DEBUG=False
+                DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}
+                DJANGO_CSRF_TRUSTED_ORIGINS=${{ secrets.DJANGO_CSRF_TRUSTED_ORIGINS }}
+                RUNNING_FROM_DOCKER=1
+                
+                # Database Configuration
+                POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+                POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+                POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+                POSTGRES_HOST=postgres
+                POSTGRES_PORT=5432
+                
+                # Redis Configuration
+                REDIS_HOST=redis
+                REDIS_PORT=6379
+                
+                # Firebase Configuration
+                FIREBASE_CREDENTIALS_PATH=${{ secrets.FIREBASE_CREDENTIALS_PATH }}
+                
+                # Docker Registry
+                REGISTRY_USER=${{ secrets.REGISTRY_USER }}
+                IMAGE_NAME=${{ secrets.IMAGE_NAME }}
+                REGISTRY=${{ secrets.REGISTRY }}
+                
+                # Nginx Configuration
+                USE_NGINX=True
+                NGINX_HOST=${{ secrets.NGINX_HOST }}
+                
+                # Logging
+                LOG_LEVEL=INFO
+                LOG_FILE=/app/logs/django.log
+                EOF
 
             - name: Setup SSH passphrase
               run: |
@@ -145,6 +184,44 @@ jobs:
                     
                     # Pull latest changes
                     git pull origin master
+                    
+                    # Copy the generated .env.prod file
+                    cat > .env.prod << 'EOF'
+                    # Django Configuration
+                    DJANGO_ENV=prod
+                    SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+                    DEBUG=False
+                    DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}
+                    DJANGO_CSRF_TRUSTED_ORIGINS=${{ secrets.DJANGO_CSRF_TRUSTED_ORIGINS }}
+                    RUNNING_FROM_DOCKER=1
+                    
+                    # Database Configuration
+                    POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+                    POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+                    POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+                    POSTGRES_HOST=postgres
+                    POSTGRES_PORT=5432
+                    
+                    # Redis Configuration
+                    REDIS_HOST=redis
+                    REDIS_PORT=6379
+                    
+                    # Firebase Configuration
+                    FIREBASE_CREDENTIALS_PATH=${{ secrets.FIREBASE_CREDENTIALS_PATH }}
+                    
+                    # Docker Registry
+                    REGISTRY_USER=${{ secrets.REGISTRY_USER }}
+                    IMAGE_NAME=${{ secrets.IMAGE_NAME }}
+                    REGISTRY=${{ secrets.REGISTRY }}
+                    
+                    # Nginx Configuration
+                    USE_NGINX=True
+                    NGINX_HOST=${{ secrets.NGINX_HOST }}
+                    
+                    # Logging
+                    LOG_LEVEL=INFO
+                    LOG_FILE=/app/logs/django.log
+                    EOF
                     
                     # Create backup of current deployment
                     if [ -d "backup" ]; then
