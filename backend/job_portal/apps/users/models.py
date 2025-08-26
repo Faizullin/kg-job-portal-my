@@ -17,7 +17,7 @@ class UserProfile(AbstractSoftDeleteModel, AbstractTimestampedModel):
     # Profile information
     bio = models.TextField(_("Bio"), blank=True)
     date_of_birth = models.DateField(_("Date of Birth"), null=True, blank=True)
-    gender = models.CharField(_("Gender"), max_length=10, choices=[
+    gender = models.CharField(_("Gender"), max_length=20, choices=[
         ('male', _('Male')),
         ('female', _('Female')),
         ('other', _('Other')),

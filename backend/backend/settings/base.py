@@ -26,13 +26,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'protected_media.apps.ProtectedMediaConfig',
     'corsheaders',
     'django_q',
     'rest_framework.authtoken',
     'django_filters',
     'accounts',
-    'job_portal',
     'job_portal.apps.core',
     'job_portal.apps.users',
     'job_portal.apps.orders',
@@ -62,8 +60,8 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.context_processors.debug',
-                'django.context_processors.request',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -171,19 +169,6 @@ CHANNEL_LAYERS = {
 }
 
 USE_NGINX = os.environ.get('USE_NGINX', 'False').lower() == 'true'
-
-if USE_NGINX:
-    PROTECTED_MEDIA_ROOT = "/home/app/protected/"
-    PROTECTED_MEDIA_SERVER = "nginx"
-else:
-    PROTECTED_MEDIA_ROOT = f"{BASE_DIR}/protected/"
-    PROTECTED_MEDIA_SERVER = "django"
-
-PROTECTED_MEDIA_URL = "/protected"
-PROTECTED_MEDIA_LOCATION_PREFIX = "/internal"
-PROTECTED_MEDIA_AS_DOWNLOADS = False
-
-VIMEO_ACCESS_TOKEN = os.environ['VIMEO_ACCESS_TOKEN']
 
 FIREBASE_CREDENTIALS_PATH = os.environ['FIREBASE_CREDENTIALS_PATH']
 if os.path.exists(FIREBASE_CREDENTIALS_PATH):

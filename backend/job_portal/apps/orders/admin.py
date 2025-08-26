@@ -20,7 +20,7 @@ class OrderAdmin(admin.ModelAdmin):
             'fields': ('title', 'description', 'status', 'service_subcategory')
         }),
         ('Client & Service', {
-            'fields': ('client', 'service_subcategory')
+            'fields': ('client',)
         }),
         ('Schedule & Location', {
             'fields': ('service_date', 'service_time', 'urgency', 'location', 'city', 'state', 'country', 'postal_code')

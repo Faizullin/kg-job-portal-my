@@ -1,0 +1,41 @@
+[
+    {
+        "model": "notifications.notificationtemplate",
+        "pk": 1,
+        "fields": {
+            "name": "Welcome Email",
+            "notification_type": "email",
+            "subject": "Welcome to Job Portal!",
+            "message": "Welcome {{user_name}}! Thank you for joining our platform.",
+            "short_message": "Welcome to Job Portal!",
+            "variables": ["user_name"],
+            "is_active": true
+        }
+    },
+    {
+        "model": "notifications.notificationtemplate",
+        "pk": 2,
+        "fields": {
+            "name": "Order Confirmation",
+            "notification_type": "email",
+            "subject": "Order Confirmed - {{order_title}}",
+            "message": "Your order '{{order_title}}' has been confirmed. Order ID: {{order_id}}",
+            "short_message": "Order confirmed: {{order_title}}",
+            "variables": ["order_title", "order_id"],
+            "is_active": true
+        }
+    },
+    {
+        "model": "notifications.notificationtemplate",
+        "pk": 3,
+        "fields": {
+            "name": "New Bid Notification",
+            "notification_type": "push",
+            "subject": "New Bid Received",
+            "message": "You have received a new bid for your order '{{order_title}}'",
+            "short_message": "New bid received",
+            "variables": ["order_title"],
+            "is_active": true
+        }
+    }
+]

@@ -10,26 +10,30 @@ from .models import Payment, PaymentMethod, Invoice, PaymentProvider, StripeWebh
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'order', 'user', 'amount', 'currency', 'status', 'payment_type',
-        'gateway_fee', 'net_amount', 'created_at'
+        'id', 'invoice', 'payment_method', 'amount', 'currency', 'status',
+        'transaction_id', 'created_at'
     ]
-    list_filter = ['status', 'payment_type', 'currency', 'created_at']
-    search_fields = ['order__title', 'user__first_name', 'transaction_id']
+    list_filter = ['status', 'currency', 'created_at']
+    search_fields = ['payment_id', 'transaction_id', 'invoice__invoice_number']
     ordering = ['-created_at']
     list_editable = ['status']
     
     fieldsets = (
         ('Payment Information', {
-            'fields': ('order', 'user', 'amount', 'currency', 'status', 'payment_type')
+            'fields': ('invoice', 'payment_method', 'amount', 'currency', 'status')
         }),
-        ('Payment Method', {
-            'fields': ('payment_method',)
+        ('Transaction Details', {
+            'fields': ('payment_id', 'transaction_id', 'processor_response')
         }),
-        ('Financial Details', {
-            'fields': ('gateway_fee', 'net_amount')
+        ('Timestamps', {
+            'fields': ('processed_at', 'failed_at')
         }),
         ('Refund Information', {
             'fields': ('refund_amount', 'refund_reason', 'refunded_at'),
+            'classes': ('collapse',)
+        }),
+        ('Error Handling', {
+            'fields': ('error_message', 'retry_count'),
             'classes': ('collapse',)
         }),
     )
@@ -195,7 +199,7 @@ class StripeWebhookEventAdmin(admin.ModelAdmin):
 class InvoiceAdmin(admin.ModelAdmin):
     list_display = [
         'id', 'order', 'invoice_number', 'status', 'subtotal', 'tax_amount',
-        'commission_amount', 'total_amount_display', 'due_date', 'paid_date'
+        'discount_amount', 'total_amount_display', 'due_date', 'paid_date'
     ]
     list_filter = ['status', 'due_date', 'created_at']
     search_fields = ['invoice_number', 'order__title']
@@ -207,7 +211,7 @@ class InvoiceAdmin(admin.ModelAdmin):
             'fields': ('order', 'invoice_number', 'status')
         }),
         ('Financial Details', {
-            'fields': ('subtotal', 'tax_amount', 'commission_amount')
+            'fields': ('subtotal', 'tax_amount', 'discount_amount', 'total_amount')
         }),
         ('Dates', {
             'fields': ('due_date', 'paid_date')
@@ -215,8 +219,7 @@ class InvoiceAdmin(admin.ModelAdmin):
     )
     
     def total_amount_display(self, obj):
-        total = obj.subtotal + obj.tax_amount + obj.commission_amount
-        return f"${total:.2f}"
+        return f"${obj.total_amount:.2f}"
     total_amount_display.short_description = 'Total Amount'
     
     def get_queryset(self, request):

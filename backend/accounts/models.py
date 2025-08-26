@@ -2,7 +2,6 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
-from protected_media.models import ProtectedImageField
 from rest_framework.authtoken.models import Token
 
 # PathAndRename import removed - using simple string path instead
@@ -82,7 +81,7 @@ class UserModel(AbstractUser, AbstractSoftDeleteModel):
     name = models.CharField(max_length=255, verbose_name='Имя')
     email = models.EmailField(max_length=255, unique=True, verbose_name='Email')
     description = models.TextField(verbose_name='Описание')
-    photo = ProtectedImageField(upload_to='user_photos/', blank=True, null=True, verbose_name='Фото')
+    photo = models.ImageField(upload_to='user_photos/', blank=True, null=True, verbose_name='Фото')
     photo_url = models.URLField(blank=True, null=True, verbose_name='Ссылка на фото (Firebase)')
 
     # user social data

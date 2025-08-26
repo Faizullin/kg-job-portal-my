@@ -69,7 +69,7 @@ class ServiceCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(ServiceSubcategory)
 class ServiceSubcategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'is_active', 'featured', 'complexity_level', 'base_price', 'duration_display']
+    list_display = ['name', 'category', 'is_active', 'featured', 'sort_order', 'complexity_level', 'base_price', 'duration_display']
     list_filter = ['is_active', 'featured', 'complexity_level', 'category']
     search_fields = ['name', 'description']
     ordering = ['category', 'sort_order', 'name']
