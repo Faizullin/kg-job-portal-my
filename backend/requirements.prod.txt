@@ -79,3 +79,9 @@ stripe
 
 # Production packages
 gunicorn
+
+# Development packages
+django-debug-toolbar
+drf-standardized-errors
+pyyaml 
+inflection
