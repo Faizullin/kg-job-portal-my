@@ -6,11 +6,8 @@ services:
     image: postgres:15-alpine
     container_name: kg_job_portal_postgres
     restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    env_file:
+      - .env.prod
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backups:/backups
@@ -24,12 +21,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-        reservations:
-          memory: 512M
 
   # Redis Cache
   redis:
@@ -48,33 +39,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-        reservations:
-          memory: 256M
 
   # Django Backend
   backend:
     image: ${REGISTRY:-ghcr.io}/${IMAGE_NAME:-kg-job-portal-my}:latest
     container_name: kg_job_portal_backend
     restart: unless-stopped
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - SECRET_KEY=${SECRET_KEY}
-      - DEBUG=False
-      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - DJANGO_CSRF_TRUSTED_ORIGINS=${DJANGO_CSRF_TRUSTED_ORIGINS}
-      - VIMEO_ACCESS_TOKEN=${VIMEO_ACCESS_TOKEN}
-      - FIREBASE_CREDENTIALS_PATH=${FIREBASE_CREDENTIALS_PATH}
-      - USE_NGINX=True
+    env_file:
+      - .env.prod
     volumes:
       - media_files:/app/mediafiles
       - static_files:/app/staticfiles
@@ -93,14 +65,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-          cpus: '2.0'
-        reservations:
-          memory: 1G
-          cpus: '1.0'
     command: >
       sh -c "
         python manage.py migrate --noinput &&
@@ -108,90 +72,6 @@ services:
         python manage.py clearcache &&
         gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --workers 4 --worker-class gevent --worker-connections 1000 --max-requests 1000 --max-requests-jitter 100 --timeout 30 --keep-alive 2 --preload
       "
-
-  # Celery Worker
-  celery_worker:
-    image: ${REGISTRY:-ghcr.io}/${IMAGE_NAME:-kg-job-portal-my}:latest
-    container_name: kg_job_portal_celery_worker
-    restart: unless-stopped
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - SECRET_KEY=${SECRET_KEY}
-      - DEBUG=False
-      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - DJANGO_CSRF_TRUSTED_ORIGINS=${DJANGO_CSRF_TRUSTED_ORIGINS}
-      - VIMEO_ACCESS_TOKEN=${VIMEO_ACCESS_TOKEN}
-      - FIREBASE_CREDENTIALS_PATH=${FIREBASE_CREDENTIALS_PATH}
-      - USE_NGINX=True
-    volumes:
-      - media_files:/app/mediafiles
-      - static_files:/app/staticfiles
-      - protected_files:/app/protected
-      - logs:/app/logs
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - kg_network
-    command: celery -A backend worker --loglevel=info --concurrency=4 --max-tasks-per-child=1000
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '1.0'
-        reservations:
-          memory: 512M
-          cpus: '0.5'
-
-  # Celery Beat (Scheduler)
-  celery_beat:
-    image: ${REGISTRY:-ghcr.io}/${IMAGE_NAME:-kg-job-portal-my}:latest
-    container_name: kg_job_portal_celery_beat
-    restart: unless-stopped
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - SECRET_KEY=${SECRET_KEY}
-      - DEBUG=False
-      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - DJANGO_CSRF_TRUSTED_ORIGINS=${DJANGO_CSRF_TRUSTED_ORIGINS}
-      - VIMEO_ACCESS_TOKEN=${VIMEO_ACCESS_TOKEN}
-      - FIREBASE_CREDENTIALS_PATH=${FIREBASE_CREDENTIALS_PATH}
-      - USE_NGINX=True
-    volumes:
-      - media_files:/app/mediafiles
-      - static_files:/app/staticfiles
-      - protected_files:/app/protected
-      - logs:/app/logs
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - kg_network
-    command: celery -A backend beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-          cpus: '0.5'
-        reservations:
-          memory: 128M
-          cpus: '0.25'
 
   # Nginx Reverse Proxy
   nginx:
@@ -218,83 +98,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-          cpus: '0.5'
-        reservations:
-          memory: 128M
-          cpus: '0.25'
-
-  # Monitoring Stack
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: kg_job_portal_prometheus
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:9090:9090"
-    volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--storage.tsdb.retention.time=200h'
-      - '--web.enable-lifecycle'
-    networks:
-      - kg_network
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: kg_job_portal_grafana
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
-      - GF_USERS_ALLOW_SIGN_UP=false
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
-      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
-    networks:
-      - kg_network
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
-
-  # Backup Service
-  backup:
-    image: postgres:15-alpine
-    container_name: kg_job_portal_backup
-    restart: "no"
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-    volumes:
-      - ./backups:/backups
-    networks:
-      - kg_network
-    command: >
-      sh -c "
-        pg_dump -h postgres -U ${POSTGRES_USER} -d ${POSTGRES_DB} > /backups/backup_$(date +%Y%m%d_%H%M%S).sql &&
-        find /backups -name 'backup_*.sql' -mtime +7 -delete
-      "
-    profiles:
-      - backup
 
 volumes:
   postgres_data:
@@ -339,18 +142,6 @@ volumes:
       type: none
       o: bind
       device: /opt/kg-job-portal/data/nginx/logs
-  prometheus_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/kg-job-portal/data/prometheus
-  grafana_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/kg-job-portal/data/grafana
 
 networks:
   kg_network:

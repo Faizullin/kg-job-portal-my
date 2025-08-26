@@ -74,13 +74,11 @@ uritemplate==4.1.1
 urllib3==2.2.1
 yarl==1.9.4
 zope.interface==6.2.0
+django-filter
+stripe
 
 # Development packages
 django-debug-toolbar
-django-filter
 drf-standardized-errors
 pyyaml 
 inflection
-
-# Payment processing
-stripe

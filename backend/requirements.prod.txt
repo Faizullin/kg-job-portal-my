@@ -74,9 +74,8 @@ uritemplate==4.1.1
 urllib3==2.2.1
 yarl==1.9.4
 zope.interface==6.2.0
+django-filter
+stripe
 
 # Production packages
 gunicorn
-
-# Payment processing
-stripe
