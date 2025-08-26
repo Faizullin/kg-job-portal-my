@@ -102,7 +102,21 @@ jobs:
             - name: Build Django Docker Image
               run: |
                   cd backend
-                  docker build -t ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -f Dockerfile.prod .
+                  docker build \
+                    --build-arg SECRET_KEY="${{ secrets.DJANGO_SECRET_KEY }}" \
+                    --build-arg DJANGO_ENV="prod" \
+                    --build-arg DEBUG="False" \
+                    --build-arg RUNNING_FROM_DOCKER="1" \
+                    --build-arg POSTGRES_HOST="postgres" \
+                    --build-arg POSTGRES_PORT="5432" \
+                    --build-arg REDIS_HOST="redis" \
+                    --build-arg REDIS_PORT="6379" \
+                    --build-arg FIREBASE_CREDENTIALS_PATH="/app/config/firebase/service_account.json" \
+                    --build-arg USE_NGINX="True" \
+                    --build-arg LOG_LEVEL="INFO" \
+                    --build-arg LOG_FILE="/app/logs/django.log" \
+                    -t ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
+                    -f Dockerfile.prod .
                   docker push ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
             - name: Build Nginx Docker Image
               run: |
@@ -134,14 +148,14 @@ jobs:
                 DJANGO_ENV=prod
                 SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
                 DEBUG=False
-                DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}
-                DJANGO_CSRF_TRUSTED_ORIGINS=${{ secrets.DJANGO_CSRF_TRUSTED_ORIGINS }}
+                DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+                DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1
                 RUNNING_FROM_DOCKER=1
                 
                 # Database Configuration
-                POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-                POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-                POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+                POSTGRES_DB=kg_job_portal
+                POSTGRES_USER=postgres
+                POSTGRES_PASSWORD=postgres123
                 POSTGRES_HOST=postgres
                 POSTGRES_PORT=5432
                 
@@ -150,16 +164,16 @@ jobs:
                 REDIS_PORT=6379
                 
                 # Firebase Configuration
-                FIREBASE_CREDENTIALS_PATH=${{ secrets.FIREBASE_CREDENTIALS_PATH }}
+                FIREBASE_CREDENTIALS_PATH=/app/config/firebase/service_account.json
                 
                 # Docker Registry
                 REGISTRY_USER=${{ secrets.REGISTRY_USER }}
                 IMAGE_NAME=${{ secrets.IMAGE_NAME }}
-                REGISTRY=${{ secrets.REGISTRY }}
+                REGISTRY=ghcr.io
                 
                 # Nginx Configuration
                 USE_NGINX=True
-                NGINX_HOST=${{ secrets.NGINX_HOST }}
+                NGINX_HOST=localhost
                 
                 # Logging
                 LOG_LEVEL=INFO
@@ -185,43 +199,43 @@ jobs:
                     # Pull latest changes
                     git pull origin master
                     
-                    # Copy the generated .env.prod file
-                    cat > .env.prod << 'EOF'
-                    # Django Configuration
-                    DJANGO_ENV=prod
-                    SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
-                    DEBUG=False
-                    DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}
-                    DJANGO_CSRF_TRUSTED_ORIGINS=${{ secrets.DJANGO_CSRF_TRUSTED_ORIGINS }}
-                    RUNNING_FROM_DOCKER=1
-                    
-                    # Database Configuration
-                    POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-                    POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-                    POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-                    POSTGRES_HOST=postgres
-                    POSTGRES_PORT=5432
-                    
-                    # Redis Configuration
-                    REDIS_HOST=redis
-                    REDIS_PORT=6379
-                    
-                    # Firebase Configuration
-                    FIREBASE_CREDENTIALS_PATH=${{ secrets.FIREBASE_CREDENTIALS_PATH }}
-                    
-                    # Docker Registry
-                    REGISTRY_USER=${{ secrets.REGISTRY_USER }}
-                    IMAGE_NAME=${{ secrets.IMAGE_NAME }}
-                    REGISTRY=${{ secrets.REGISTRY }}
-                    
-                    # Nginx Configuration
-                    USE_NGINX=True
-                    NGINX_HOST=${{ secrets.NGINX_HOST }}
-                    
-                    # Logging
-                    LOG_LEVEL=INFO
-                    LOG_FILE=/app/logs/django.log
-                    EOF
+                     # Copy the generated .env.prod file
+                     cat > .env.prod << 'EOF'
+                     # Django Configuration
+                     DJANGO_ENV=prod
+                     SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+                     DEBUG=False
+                     DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+                     DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1
+                     RUNNING_FROM_DOCKER=1
+                     
+                     # Database Configuration
+                     POSTGRES_DB=kg_job_portal
+                     POSTGRES_USER=postgres
+                     POSTGRES_PASSWORD=postgres123
+                     POSTGRES_HOST=postgres
+                     POSTGRES_PORT=5432
+                     
+                     # Redis Configuration
+                     REDIS_HOST=redis
+                     REDIS_PORT=6379
+                     
+                     # Firebase Configuration
+                     FIREBASE_CREDENTIALS_PATH=/app/config/firebase/service_account.json
+                     
+                     # Docker Registry
+                     REGISTRY_USER=${{ secrets.REGISTRY_USER }}
+                     IMAGE_NAME=${{ secrets.IMAGE_NAME }}
+                     REGISTRY=ghcr.io
+                     
+                     # Nginx Configuration
+                     USE_NGINX=True
+                     NGINX_HOST=localhost
+                     
+                     # Logging
+                     LOG_LEVEL=INFO
+                     LOG_FILE=/app/logs/django.log
+                     EOF
                     
                     # Create backup of current deployment
                     if [ -d "backup" ]; then
@@ -258,7 +272,7 @@ jobs:
                         exit 1
                     fi
                     
-                                         # Run database migrations
+                     # Run database migrations
                      sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput
                      
                      # Collect static files

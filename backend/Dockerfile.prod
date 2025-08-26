@@ -5,15 +5,12 @@ WORKDIR /home/app
 RUN apt-get update && apt-get install -y \
     gcc \
     postgresql-client \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.prod.txt .
 RUN pip install -r requirements.prod.txt
 
 COPY . .
-
-RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 

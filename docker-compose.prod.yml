@@ -10,30 +10,23 @@ services:
       - .env.prod
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backups:/backups
     ports:
       - "127.0.0.1:5432:5432"
-    networks:
-      - kg_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
 
   # Redis Cache
   redis:
     image: redis:7-alpine
     container_name: kg_job_portal_redis
     restart: unless-stopped
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
     ports:
       - "127.0.0.1:6379:6379"
-    networks:
-      - kg_network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
@@ -50,28 +43,17 @@ services:
     volumes:
       - media_files:/app/mediafiles
       - static_files:/app/staticfiles
-      - protected_files:/app/protected
       - logs:/app/logs
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
-    networks:
-      - kg_network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
-    command: >
-      sh -c "
-        python manage.py migrate --noinput &&
-        python manage.py collectstatic --noinput &&
-        python manage.py clearcache &&
-        gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --workers 4 --worker-class gevent --worker-connections 1000 --max-requests 1000 --max-requests-jitter 100 --timeout 30 --keep-alive 2 --preload
-      "
 
   # Nginx Reverse Proxy
   nginx:
@@ -80,72 +62,19 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - static_files:/var/www/staticfiles:ro
       - media_files:/var/www/mediafiles:ro
-      - protected_files:/var/www/protected:ro
       - nginx_logs:/var/log/nginx
-      - ./nginx/ssl:/etc/nginx/ssl:ro
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       backend:
         condition: service_healthy
-    networks:
-      - kg_network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
 volumes:
   postgres_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/kg-job-portal/data/postgres
   redis_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/kg-job-portal/data/redis
   media_files:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/kg-job-portal/data/media
   static_files:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/kg-job-portal/data/static
-  protected_files:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/kg-job-portal/data/protected
   logs:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/kg-job-portal/data/logs
   nginx_logs:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/kg-job-portal/data/nginx/logs
-
-networks:
-  kg_network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
