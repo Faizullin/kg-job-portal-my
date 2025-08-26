@@ -132,51 +132,51 @@ jobs:
             - name: Checkout Repository
               uses: actions/checkout@v4
               
-            - name: Set Up Environment
-              run: |
-                echo "PORT=8000" >> $GITHUB_ENV
-                echo "CONTAINER_NAME=kg-job-portal" >> $GITHUB_ENV
-                echo "IMAGE_TAG=latest" >> $GITHUB_ENV
-                echo "COMPOSE_FILE=docker-compose.prod.yml" >> $GITHUB_ENV
+            # - name: Set Up Environment
+            #   run: |
+            #     echo "PORT=8000" >> $GITHUB_ENV
+            #     echo "CONTAINER_NAME=kg-job-portal" >> $GITHUB_ENV
+            #     echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+            #     echo "COMPOSE_FILE=docker-compose.prod.yml" >> $GITHUB_ENV
             
-            - name: Create Production Environment File
-              run: |
-                cat > .env.prod << EOF
-                # Django Configuration
-                DJANGO_ENV=prod
-                SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
-                DEBUG=False
-                DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
-                DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1
-                RUNNING_FROM_DOCKER=1
+            # - name: Create Production Environment File
+            #   run: |
+            #     cat > .env.prod << EOF
+            #     # Django Configuration
+            #     DJANGO_ENV=prod
+            #     SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+            #     DEBUG=False
+            #     DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+            #     DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1
+            #     RUNNING_FROM_DOCKER=1
                 
-                # Database Configuration
-                POSTGRES_DB=kg_job_portal
-                POSTGRES_USER=postgres
-                POSTGRES_PASSWORD=postgres123
-                POSTGRES_HOST=postgres
-                POSTGRES_PORT=5432
+            #     # Database Configuration
+            #     POSTGRES_DB=kg_job_portal
+            #     POSTGRES_USER=postgres
+            #     POSTGRES_PASSWORD=postgres123
+            #     POSTGRES_HOST=postgres
+            #     POSTGRES_PORT=5432
                 
-                # Redis Configuration
-                REDIS_HOST=redis
-                REDIS_PORT=6379
+            #     # Redis Configuration
+            #     REDIS_HOST=redis
+            #     REDIS_PORT=6379
                 
-                # Firebase Configuration
-                FIREBASE_CREDENTIALS_PATH=/app/config/firebase/service_account.json
+            #     # Firebase Configuration
+            #     FIREBASE_CREDENTIALS_PATH=/app/config/firebase/service_account.json
                 
-                # Docker Registry
-                REGISTRY_USER=${{ secrets.REGISTRY_USER }}
-                IMAGE_NAME=${{ secrets.IMAGE_NAME }}
-                REGISTRY=ghcr.io
+            #     # Docker Registry
+            #     REGISTRY_USER=${{ secrets.REGISTRY_USER }}
+            #     IMAGE_NAME=${{ secrets.IMAGE_NAME }}
+            #     REGISTRY=ghcr.io
                 
-                # Nginx Configuration
-                USE_NGINX=True
-                NGINX_HOST=localhost
+            #     # Nginx Configuration
+            #     USE_NGINX=True
+            #     NGINX_HOST=localhost
                 
-                # Logging
-                LOG_LEVEL=INFO
-                LOG_FILE=/app/logs/django.log
-                EOF
+            #     # Logging
+            #     LOG_LEVEL=INFO
+            #     LOG_FILE=/app/logs/django.log
+            #     EOF
 
             - name: Deploy to VPS
               uses: appleboy/ssh-action@master
