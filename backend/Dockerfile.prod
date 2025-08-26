@@ -13,7 +13,7 @@ RUN pip install -r requirements.prod.txt
 
 COPY . .
 
-RUN python manage.py collectstatic --noinput --settings=backend.settings.prod
+RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 

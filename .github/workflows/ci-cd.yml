@@ -53,6 +53,7 @@ jobs:
                 pip install coverage
             - name: Set Up Environment
               run: |
+                echo "DJANGO_ENV=prod" >> $GITHUB_ENV
                 echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> $GITHUB_ENV
                 echo "POSTGRES_DB=test_db" >> $GITHUB_ENV
                 echo "POSTGRES_USER=postgres" >> $GITHUB_ENV
@@ -79,8 +80,8 @@ jobs:
             - name: Run Test
               run: |
                 cd backend
-                python manage.py migrate --settings=backend.settings.prod
-                coverage run --include='**/models.py,**/views.py,**/serializers.py' --omit='env/*,*/opt/*,job_portal/apps/users/api/views.py,job_portal/apps/users/models.py,utils/crud_base/views.py,utils/serializers.py' manage.py test --settings=backend.settings.prod
+                python manage.py migrate
+                coverage run --include='**/models.py,**/views.py,**/serializers.py' --omit='env/*,*/opt/*,job_portal/apps/users/api/views.py,job_portal/apps/users/models.py,utils/crud_base/views.py,utils/serializers.py' manage.py test
                 coverage report -m --fail-under=70
 
     build:
@@ -121,7 +122,6 @@ jobs:
               run: sudo apt-get install openssh-client
             - name: Set Up Environment
               run: |
-                echo "DJANGO_SETTINGS_MODULE=${{ secrets.PROD_DJANGO_SETTINGS_MODULE }}" >> $GITHUB_ENV
                 echo "PORT=8000" >> $GITHUB_ENV
                 echo "CONTAINER_NAME=kg-job-portal" >> $GITHUB_ENV
                 echo "IMAGE_TAG=latest" >> $GITHUB_ENV
@@ -258,14 +258,14 @@ jobs:
                         exit 1
                     fi
                     
-                    # Run database migrations
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput --settings=backend.settings.prod
-                    
-                    # Collect static files
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py collectstatic --noinput --settings=backend.settings.prod
-                    
-                    # Clear cache
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py clearcache --settings=backend.settings.prod
+                                         # Run database migrations
+                     sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput
+                     
+                     # Collect static files
+                     sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py collectstatic --noinput
+                     
+                     # Clear cache
+                     sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py clearcache
                     
                     # Health check
                     if curl -f http://localhost:${{ env.PORT }}/health/; then
