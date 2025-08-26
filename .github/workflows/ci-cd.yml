@@ -186,10 +186,11 @@ jobs:
                 key: ${{ secrets.VPS_SSH_KEY }}
                 script: |
                     # Navigate to project directory
-                    cd /home/ubuntu
+                    cd /home/ubuntu/kg-job-portal-my
                     
                     # Pull latest changes
                     git pull origin master
+                    git status
                     
                     # Copy the generated .env.prod file
                      cat > .env.prod << 'EOF'
