@@ -77,3 +77,6 @@ zope.interface==6.2.0
 
 # Production packages
 gunicorn
+
+# Payment processing
+stripe

@@ -81,3 +81,6 @@ django-filter
 drf-standardized-errors
 pyyaml 
 inflection
+
+# Payment processing
+stripe

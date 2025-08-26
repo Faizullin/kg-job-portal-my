@@ -36,12 +36,10 @@ class AbstractUserSerializerMixin(serializers.Serializer):
     """Mixin to add user-related fields to serializers."""
     
     created_by = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(),
         required=False,
         read_only=True
-    )
+    ) 
     updated_by = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(),
         required=False,
         read_only=True
     )

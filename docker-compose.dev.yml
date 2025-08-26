@@ -1,7 +1,7 @@
 services:
   db:
     container_name: kg-job-portal-my-db-dev
-    image: postgres:15
+    image: postgres
     networks:
       - kg-job-portal-my-back-dev
     volumes:

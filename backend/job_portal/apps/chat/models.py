@@ -188,3 +188,31 @@ class ChatReport(AbstractTimestampedModel):
     
     def __str__(self):
         return f"Report on message from {self.reported_message.sender.name} - {self.get_reason_display()} [#{self.id}]"
+
+
+class ChatAttachment(AbstractSoftDeleteModel, AbstractTimestampedModel):
+    """Attachments for chat messages."""
+    message = models.ForeignKey(ChatMessage, on_delete=models.CASCADE, related_name='attachments')
+    
+    # File details
+    file_name = models.CharField(_("File Name"), max_length=255)
+    file_type = models.CharField(_("File Type"), max_length=50)
+    file_size = models.PositiveIntegerField(_("File Size (bytes)"))
+    file_url = models.URLField(_("File URL"))
+    
+    # Additional metadata
+    mime_type = models.CharField(_("MIME Type"), max_length=100, blank=True)
+    thumbnail_url = models.URLField(_("Thumbnail URL"), blank=True)
+    description = models.TextField(_("Description"), blank=True)
+    
+    # Security
+    is_public = models.BooleanField(_("Public File"), default=False)
+    access_token = models.CharField(_("Access Token"), max_length=255, blank=True)
+    
+    class Meta:
+        verbose_name = _("Chat Attachment")
+        verbose_name_plural = _("Chat Attachments")
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.file_name} - {self.message.content[:30]}... [#{self.id}]"

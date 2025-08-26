@@ -30,8 +30,16 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_q',
     'rest_framework.authtoken',
+    'django_filters',
     'accounts',
     'job_portal',
+    'job_portal.apps.core',
+    'job_portal.apps.users',
+    'job_portal.apps.orders',
+    'job_portal.apps.payments',
+    'job_portal.apps.chat',
+    'job_portal.apps.notifications',
+    'job_portal.apps.analytics',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +79,7 @@ REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'errors',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -78,8 +87,23 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'accounts.api.permissions.IsAuthenticatedWithBlocked',
     ],
-    'EXCEPTION_HANDLER': 'backend.global_function.custom_exception_handler',
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'utils.pagination.CustomPagination',
+    'PAGE_SIZE': 20,
+    # Exception handler removed - using default DRF exception handler
 }
+
+# Security Settings
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
 DATABASES = {
     "default": {

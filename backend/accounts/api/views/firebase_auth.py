@@ -4,11 +4,13 @@ from firebase_admin._auth_utils import InvalidIdTokenError
 from rest_framework.authtoken.models import Token
 from rest_framework.request import Request
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from django.utils import timezone
 
 from ...models import UserModel, NotificationSettings
 from ..serializers import FireBaseAuthSerializer
-from backend.global_function import error_with_text, success_with_text
+# Utility functions replaced with direct Response objects
 
 
 class FirebaseAuthView(APIView):
@@ -19,23 +21,23 @@ class FirebaseAuthView(APIView):
     def post(self, request: Request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if not serializer.is_valid():
-            return error_with_text(serializer.errors)
+            return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         token = serializer.validated_data['token']
 
         # trying  to decode token, if not valid return error
         try:
             decoded_token = auth.verify_id_token(token)
         except ValueError:
-            return error_with_text('The provided token is not a valid Firebase token')
+            return Response({'error': 'The provided token is not a valid Firebase token'}, status=status.HTTP_400_BAD_REQUEST)
         except InvalidIdTokenError:
-            return error_with_text('The provided token is not a valid Firebase token')
+            return Response({'error': 'The provided token is not a valid Firebase token'}, status=status.HTTP_400_BAD_REQUEST)
 
         # trying to get the user id from the token, if not valid return error
         try:
             firebase_user_id = decoded_token['uid']
         except KeyError:
-            return error_with_text('The user provided with the auth token is not a valid '
-                                   'Firebase user, it has no Firebase UID')
+            return Response({'error': 'The user provided with the auth token is not a valid '
+                                   'Firebase user, it has no Firebase UID'}, status=status.HTTP_400_BAD_REQUEST)
 
         # trying to get the user from the database, if not found create a new user
         try:
@@ -66,15 +68,15 @@ class FirebaseAuthView(APIView):
 
                 except IntegrityError as e:
                     print(e)
-                    return error_with_text('A user with the provided Firebase UID already exists')
+                    return Response({'error': 'A user with the provided Firebase UID already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check if user is blocked
         if user_profile.blocked:
-            return error_with_text('User account is blocked')
+            return Response({'error': 'User account is blocked'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check if user is active
         if not user_profile.is_active:
-            return error_with_text('User account is disabled')
+            return Response({'error': 'User account is disabled'}, status=status.HTTP_400_BAD_REQUEST)
 
         # delete old token and generate a new one
         Token.objects.filter(user=user_profile).delete()
@@ -89,7 +91,7 @@ class FirebaseAuthView(APIView):
             user_agent=request.META.get('HTTP_USER_AGENT', '')
         )
         
-        return success_with_text({
+        return Response({
             'token': token.key,
             'user': {
                 'id': user_profile.id,

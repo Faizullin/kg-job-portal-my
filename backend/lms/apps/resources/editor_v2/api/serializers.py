@@ -20,7 +20,7 @@ from api_lessons.models.lesson_components import (
     PutInOrderComponentElement,
 )
 from api_lessons.serializers.components_serializers import BlueCardComponentSerializer
-from backend.global_function import ModelIntegerField
+# ModelIntegerField import removed - using standard DRF field instead
 from lms.apps.posts.models import Post
 from lms.apps.resources.api.serializers import CategorySerializer, PostAuthorSerializer
 from lms.apps.resources.utils import get_video_link_from_vimeo
@@ -411,7 +411,7 @@ class LessonPageElementSerializer(serializers.ModelSerializer):
         many=False, allow_null=True, required=False
     )
 
-    page = ModelIntegerField(source="page.id", model=LessonPage)
+    page = serializers.IntegerField(source="page.id", read_only=True)
 
     class Meta:
         model = LessonPageElement

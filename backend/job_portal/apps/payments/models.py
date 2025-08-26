@@ -95,28 +95,6 @@ class Invoice(AbstractSoftDeleteModel, AbstractTimestampedModel):
         return f"Invoice #{self.invoice_number} - {self.order.title}... [#{self.id}]"
 
 
-class InvoiceItem(AbstractTimestampedModel):
-    """Individual items on invoices."""
-    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='items')
-    
-    # Item details
-    description = models.CharField(_("Description"), max_length=200)
-    quantity = models.PositiveIntegerField(_("Quantity"), default=1)
-    unit_price = models.DecimalField(_("Unit Price"), max_digits=10, decimal_places=2)
-    total_price = models.DecimalField(_("Total Price"), max_digits=10, decimal_places=2)
-    
-    # Service reference
-    service_addon = models.ForeignKey('core.ServiceAddon', on_delete=models.SET_NULL, null=True, blank=True)
-    
-    class Meta:
-        verbose_name = _("Invoice Item")
-        verbose_name_plural = _("Invoice Items")
-        ordering = ['id']
-    
-    def __str__(self):
-        return f"{self.description} - {self.quantity} x ${self.unit_price}... [#{self.id}]"
-
-
 class Payment(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Payment transactions."""
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='payments')
@@ -149,6 +127,11 @@ class Payment(AbstractSoftDeleteModel, AbstractTimestampedModel):
     error_message = models.TextField(_("Error Message"), blank=True)
     retry_count = models.PositiveIntegerField(_("Retry Count"), default=0)
     
+    # Refund information (simplified)
+    refund_amount = models.DecimalField(_("Refund Amount"), max_digits=10, decimal_places=2, default=0)
+    refund_reason = models.CharField(_("Refund Reason"), max_length=100, blank=True)
+    refunded_at = models.DateTimeField(_("Refunded At"), null=True, blank=True)
+    
     class Meta:
         verbose_name = _("Payment")
         verbose_name_plural = _("Payments")
@@ -158,85 +141,50 @@ class Payment(AbstractSoftDeleteModel, AbstractTimestampedModel):
         return f"Payment {self.payment_id} - ${self.amount}... [#{self.id}]"
 
 
-class Refund(AbstractTimestampedModel):
-    """Refunds for payments."""
-    payment = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name='refunds')
-    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='refunds')
+class StripeWebhookEvent(AbstractTimestampedModel):
+    """Stripe webhook events for tracking and debugging."""
+    stripe_event_id = models.CharField(_("Stripe Event ID"), max_length=255, unique=True)
+    event_type = models.CharField(_("Event Type"), max_length=100)
+    event_data = models.JSONField(_("Event Data"), default=dict)
     
-    # Refund details
-    refund_id = models.CharField(_("Refund ID"), max_length=100, unique=True)
-    amount = models.DecimalField(_("Refund Amount"), max_digits=10, decimal_places=2)
-    reason = models.CharField(_("Refund Reason"), max_length=100)
-    description = models.TextField(_("Description"), blank=True)
-    
-    # Status
-    status = models.CharField(_("Status"), max_length=20, choices=[
-        ('pending', _('Pending')),
-        ('processing', _('Processing')),
-        ('completed', _('Completed')),
-        ('failed', _('Failed')),
-    ], default='pending')
-    
-    # Processing
+    # Processing status
+    processed = models.BooleanField(_("Processed"), default=False)
     processed_at = models.DateTimeField(_("Processed At"), null=True, blank=True)
-    processor_response = models.JSONField(_("Processor Response"), default=dict)
     
-    # Admin handling
-    approved_by = models.ForeignKey(UserModel, on_delete=models.SET_NULL, null=True, blank=True, related_name='refunds_approved')
-    approved_at = models.DateTimeField(_("Approved At"), null=True, blank=True)
+    # Error handling
+    error_message = models.TextField(_("Error Message"), blank=True)
+    retry_count = models.PositiveIntegerField(_("Retry Count"), default=0)
     
     class Meta:
-        verbose_name = _("Refund")
-        verbose_name_plural = _("Refunds")
+        verbose_name = _("Stripe Webhook Event")
+        verbose_name_plural = _("Stripe Webhook Events")
         ordering = ['-created_at']
     
     def __str__(self):
-        return f"Refund {self.refund_id} - ${self.amount}... [#{self.id}]"
+        return f"{self.event_type} - {self.stripe_event_id}... [#{self.id}]"
 
 
-class Subscription(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Subscription plans for service providers."""
-    provider = models.ForeignKey('users.ServiceProviderProfile', on_delete=models.CASCADE, related_name='subscriptions')
+class PaymentProvider(AbstractTimestampedModel):
+    """Payment provider configurations."""
+    name = models.CharField(_("Provider Name"), max_length=50, unique=True)
+    is_active = models.BooleanField(_("Active"), default=True)
     
-    # Plan details
-    plan_name = models.CharField(_("Plan Name"), max_length=100)
-    plan_type = models.CharField(_("Plan Type"), max_length=20, choices=[
-        ('basic', _('Basic')),
-        ('premium', _('Premium')),
-        ('enterprise', _('Enterprise')),
-    ])
+    # Configuration
+    api_key = models.CharField(_("API Key"), max_length=255)
+    secret_key = models.CharField(_("Secret Key"), max_length=255)
+    webhook_secret = models.CharField(_("Webhook Secret"), max_length=255, blank=True)
     
-    # Pricing
-    monthly_price = models.DecimalField(_("Monthly Price"), max_digits=10, decimal_places=2)
-    yearly_price = models.DecimalField(_("Yearly Price"), max_digits=10, decimal_places=2, null=True, blank=True)
+    # Settings
+    test_mode = models.BooleanField(_("Test Mode"), default=True)
+    supported_currencies = models.JSONField(_("Supported Currencies"), default=list)
     
-    # Features
-    features = models.JSONField(_("Features"), default=list)
-    max_orders_per_month = models.PositiveIntegerField(_("Max Orders per Month"), null=True, blank=True)
-    
-    # Status
-    status = models.CharField(_("Status"), max_length=20, choices=[
-        ('active', _('Active')),
-        ('cancelled', _('Cancelled')),
-        ('expired', _('Expired')),
-        ('suspended', _('Suspended')),
-    ], default='active')
-    
-    # Billing cycle
-    billing_cycle = models.CharField(_("Billing Cycle"), max_length=20, choices=[
-        ('monthly', _('Monthly')),
-        ('yearly', _('Yearly')),
-    ], default='monthly')
-    
-    # Dates
-    start_date = models.DateField(_("Start Date"))
-    end_date = models.DateField(_("End Date"), null=True, blank=True)
-    next_billing_date = models.DateField(_("Next Billing Date"), null=True, blank=True)
+    # Metadata
+    config_data = models.JSONField(_("Configuration Data"), default=dict)
     
     class Meta:
-        verbose_name = _("Subscription")
-        verbose_name_plural = _("Subscriptions")
-        ordering = ['-created_at']
+        verbose_name = _("Payment Provider")
+        verbose_name_plural = _("Payment Providers")
+        ordering = ['name']
     
     def __str__(self):
-        return f"{self.provider.user_profile.user.name} - {self.plan_name}... [#{self.id}]"
+        return f"{self.name} ({'Test' if self.test_mode else 'Live'})... [#{self.id}]"

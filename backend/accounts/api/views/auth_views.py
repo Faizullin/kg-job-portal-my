@@ -17,13 +17,9 @@ from rest_framework.response import Response
 from django.utils import timezone
 from rest_framework.authtoken.models import Token
 
-from ..serializers import (
-    LoginSerializer, RegisterSerializer, PasswordResetSerializer,
-    PasswordResetConfirmSerializer, PasswordChangeSerializer, LogoutSerializer,
-    FireBaseAuthSerializer
-)
-from ..models import LoginSession, PasswordResetToken
-from backend.global_function import error_with_text, success_with_text
+from accounts.api.serializers import FireBaseAuthSerializer
+from accounts.models import LoginSession
+# Utility functions replaced with direct Response objects
 
 
 class FirebaseAuthView(generics.GenericAPIView):
@@ -34,13 +30,13 @@ class FirebaseAuthView(generics.GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if not serializer.is_valid():
-            return error_with_text(serializer.errors)
+            return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
         token = serializer.validated_data['token']
         
         # Firebase token verification and user creation/lookup logic
         # This will be implemented in the firebase_auth.py view
-        return error_with_text('Use /auth/firebase/ endpoint for Firebase authentication')
+        return Response({'error': 'Use /auth/firebase/ endpoint for Firebase authentication'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutView(generics.GenericAPIView):
@@ -63,4 +59,4 @@ class LogoutView(generics.GenericAPIView):
                 logout_at=timezone.now()
             )
         
-        return success_with_text('Logged out successfully')
+        return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)

@@ -1,0 +1,362 @@
+[
+  {
+    "model": "core.systemsettings",
+    "pk": 1,
+    "fields": {
+      "key": "site_name",
+      "value": "KG Job Portal",
+      "description": "The name of the website",
+      "is_public": true,
+      "setting_type": "string",
+      "validation_regex": "^[a-zA-Z0-9\\s]+$",
+      "min_value": "3",
+      "max_value": "50",
+      "requires_admin": false,
+      "category": "general",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 2,
+    "fields": {
+      "key": "site_description",
+      "value": "Professional service marketplace connecting clients with verified providers",
+      "description": "Website description for SEO",
+      "is_public": true,
+      "setting_type": "string",
+      "validation_regex": "^[a-zA-Z0-9\\s\\.,!?-]+$",
+      "min_value": "10",
+      "max_value": "200",
+      "requires_admin": false,
+      "category": "general",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 3,
+    "fields": {
+      "key": "default_currency",
+      "value": "USD",
+      "description": "Default currency for the platform",
+      "is_public": true,
+      "setting_type": "string",
+      "validation_regex": "^[A-Z]{3}$",
+      "min_value": "3",
+      "max_value": "3",
+      "requires_admin": true,
+      "category": "payment",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 4,
+    "fields": {
+      "key": "platform_commission_rate",
+      "value": "15.0",
+      "description": "Default platform commission rate (percentage)",
+      "is_public": false,
+      "setting_type": "decimal",
+      "validation_regex": "^\\d+(\\.\\d{1,2})?$",
+      "min_value": "0",
+      "max_value": "50",
+      "requires_admin": true,
+      "category": "payment",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 5,
+    "fields": {
+      "key": "stripe_publishable_key",
+      "value": "pk_test_your_stripe_key_here",
+      "description": "Stripe publishable key for payment processing",
+      "is_public": false,
+      "setting_type": "string",
+      "validation_regex": "^pk_(test|live)_[a-zA-Z0-9]+$",
+      "min_value": "20",
+      "max_value": "200",
+      "requires_admin": true,
+      "category": "payment",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 6,
+    "fields": {
+      "key": "stripe_secret_key",
+      "value": "sk_test_your_stripe_secret_here",
+      "description": "Stripe secret key for payment processing",
+      "is_public": false,
+      "setting_type": "string",
+      "validation_regex": "^sk_(test|live)_[a-zA-Z0-9]+$",
+      "min_value": "20",
+      "max_value": "200",
+      "requires_admin": true,
+      "category": "payment",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 7,
+    "fields": {
+      "key": "firebase_config",
+      "value": "{\"apiKey\": \"your_api_key\", \"authDomain\": \"your_project.firebaseapp.com\", \"projectId\": \"your_project_id\"}",
+      "description": "Firebase configuration for authentication",
+      "is_public": false,
+      "setting_type": "json",
+      "validation_regex": "",
+      "min_value": "",
+      "max_value": "",
+      "requires_admin": true,
+      "category": "authentication",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 8,
+    "fields": {
+      "key": "email_smtp_host",
+      "value": "smtp.gmail.com",
+      "description": "SMTP host for sending emails",
+      "is_public": false,
+      "setting_type": "string",
+      "validation_regex": "^[a-zA-Z0-9.-]+$",
+      "min_value": "5",
+      "max_value": "100",
+      "requires_admin": true,
+      "category": "email",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 9,
+    "fields": {
+      "key": "email_smtp_port",
+      "value": "587",
+      "description": "SMTP port for sending emails",
+      "is_public": false,
+      "setting_type": "integer",
+      "validation_regex": "^\\d+$",
+      "min_value": "1",
+      "max_value": "65535",
+      "requires_admin": true,
+      "category": "email",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 10,
+    "fields": {
+      "key": "max_file_size_mb",
+      "value": "10",
+      "description": "Maximum file upload size in megabytes",
+      "is_public": true,
+      "setting_type": "integer",
+      "validation_regex": "^\\d+$",
+      "min_value": "1",
+      "max_value": "100",
+      "requires_admin": true,
+      "category": "upload",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 11,
+    "fields": {
+      "key": "allowed_file_types",
+      "value": "[\"jpg\", \"jpeg\", \"png\", \"gif\", \"pdf\", \"doc\", \"docx\"]",
+      "description": "Allowed file types for uploads",
+      "is_public": true,
+      "setting_type": "json",
+      "validation_regex": "",
+      "min_value": "",
+      "max_value": "",
+      "requires_admin": true,
+      "category": "upload",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 12,
+    "fields": {
+      "key": "maintenance_mode",
+      "value": "false",
+      "description": "Enable maintenance mode for the website",
+      "is_public": true,
+      "setting_type": "boolean",
+      "validation_regex": "^(true|false)$",
+      "min_value": "",
+      "max_value": "",
+      "requires_admin": true,
+      "category": "system",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 13,
+    "fields": {
+      "key": "maintenance_message",
+      "value": "We are currently performing maintenance. Please check back soon.",
+      "description": "Message to display during maintenance mode",
+      "is_public": true,
+      "setting_type": "string",
+      "validation_regex": "^[a-zA-Z0-9\\s\\.,!?-]+$",
+      "min_value": "10",
+      "max_value": "500",
+      "requires_admin": true,
+      "category": "system",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 14,
+    "fields": {
+      "key": "user_verification_required",
+      "value": "true",
+      "description": "Whether user verification is required for service providers",
+      "is_public": true,
+      "setting_type": "boolean",
+      "validation_regex": "^(true|false)$",
+      "min_value": "",
+      "max_value": "",
+      "requires_admin": true,
+      "category": "user",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 15,
+    "fields": {
+      "key": "auto_approve_providers",
+      "value": "false",
+      "description": "Automatically approve new service providers",
+      "is_public": false,
+      "setting_type": "boolean",
+      "validation_regex": "^(true|false)$",
+      "min_value": "",
+      "max_value": "",
+      "requires_admin": true,
+      "category": "user",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 16,
+    "fields": {
+      "key": "chat_enabled",
+      "value": "true",
+      "description": "Enable chat functionality between users",
+      "is_public": true,
+      "setting_type": "boolean",
+      "validation_regex": "^(true|false)$",
+      "min_value": "",
+      "max_value": "",
+      "requires_admin": true,
+      "category": "features",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 17,
+    "fields": {
+      "key": "notifications_enabled",
+      "value": "true",
+      "description": "Enable push and email notifications",
+      "is_public": true,
+      "setting_type": "boolean",
+      "validation_regex": "^(true|false)$",
+      "min_value": "",
+      "max_value": "",
+      "requires_admin": true,
+      "category": "features",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 18,
+    "fields": {
+      "key": "analytics_enabled",
+      "value": "true",
+      "description": "Enable analytics and tracking",
+      "is_public": false,
+      "setting_type": "boolean",
+      "validation_regex": "^(true|false)$",
+      "min_value": "",
+      "max_value": "",
+      "requires_admin": true,
+      "category": "features",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 19,
+    "fields": {
+      "key": "rate_limiting_enabled",
+      "value": "true",
+      "description": "Enable API rate limiting",
+      "is_public": false,
+      "setting_type": "boolean",
+      "validation_regex": "^(true|false)$",
+      "min_value": "",
+      "max_value": "",
+      "requires_admin": true,
+      "category": "security",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.systemsettings",
+    "pk": 20,
+    "fields": {
+      "key": "max_login_attempts",
+      "value": "5",
+      "description": "Maximum login attempts before account lockout",
+      "is_public": false,
+      "setting_type": "integer",
+      "validation_regex": "^\\d+$",
+      "min_value": "3",
+      "max_value": "20",
+      "requires_admin": true,
+      "category": "security",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]
