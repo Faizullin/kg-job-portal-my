@@ -4,9 +4,7 @@ on:
     push:
         branches:
             - master
-
-env:
-    # No SSH_AUTH_SOCK needed for direct key authentication
+ # No SSH_AUTH_SOCK needed for direct key authentication
 
 jobs:
     test:
