@@ -50,7 +50,7 @@ jobs:
               run: |
                 cd backend
                 python -m pip install --upgrade pip
-                pip install -r requirements.dev.txt
+                pip install -r requirements.prod.txt
                 pip install coverage
             - name: Set Up Environment
               run: |
@@ -80,8 +80,8 @@ jobs:
             - name: Run Test
               run: |
                 cd backend
-                python manage.py migrate --settings=backend.settings.dev
-                coverage run --include='**/models.py,**/views.py,**/serializers.py' --omit='env/*,*/opt/*,job_portal/apps/users/api/views.py,job_portal/apps/users/models.py,utils/crud_base/views.py,utils/serializers.py' manage.py test --settings=backend.settings.dev
+                python manage.py migrate --settings=backend.settings.prod
+                coverage run --include='**/models.py,**/views.py,**/serializers.py' --omit='env/*,*/opt/*,job_portal/apps/users/api/views.py,job_portal/apps/users/models.py,utils/crud_base/views.py,utils/serializers.py' manage.py test --settings=backend.settings.prod
                 coverage report -m --fail-under=70
 
     build:
@@ -94,12 +94,7 @@ jobs:
             - name: check directory
               run: ls -al
             - name: Set Up Environment
-              run: |
-                if [ "${{ github.ref_name }}" == "dev" ]; then
-                    echo "IMAGE_TAG=dev" >> $GITHUB_ENV
-                elif [ "${{ github.ref_name }}" == "master" ]; then
-                    echo "IMAGE_TAG=latest" >> $GITHUB_ENV
-                fi
+              run: echo "IMAGE_TAG=latest" >> $GITHUB_ENV
             - name: Docker login
               run: echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
             - name: Set Docker BuildKit
@@ -188,13 +183,13 @@ jobs:
                     fi
                     
                     # Run database migrations
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput
+                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput --settings=backend.settings.prod
                     
                     # Collect static files
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py collectstatic --noinput
+                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py collectstatic --noinput --settings=backend.settings.prod
                     
                     # Clear cache
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py clearcache
+                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py clearcache --settings=backend.settings.prod
                     
                     # Health check
                     if curl -f http://localhost:${{ env.PORT }}/health/; then
