@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Union
 from django.conf import settings
-from django.core.cache import cache
+from utils.cache_utils import get_cache, set_cache, delete_cache, clear_cache_pattern
 from django.core.paginator import Paginator
 from django.db.models import Q, QuerySet
 from django.http import HttpRequest
@@ -30,112 +30,6 @@ def generate_unique_id(length: int = 8) -> str:
 def generate_uuid() -> str:
     """Generate a UUID string."""
     return str(uuid.uuid4())
-
-
-def hash_string(text: str, algorithm: str = 'sha256') -> str:
-    """
-    Hash a string using the specified algorithm.
-    
-    Args:
-        text (str): Text to hash
-        algorithm (str): Hashing algorithm to use
-        
-    Returns:
-        str: Hashed string
-    """
-    hash_obj = hashlib.new(algorithm)
-    hash_obj.update(text.encode('utf-8'))
-    return hash_obj.hexdigest()
-
-
-def safe_json_loads(data: str, default: Any = None) -> Any:
-    """
-    Safely load JSON data with error handling.
-    
-    Args:
-        data (str): JSON string to parse
-        default: Default value if parsing fails
-        
-    Returns:
-        Parsed JSON data or default value
-    """
-    try:
-        return json.loads(data)
-    except (json.JSONDecodeError, TypeError):
-        return default
-
-
-def safe_json_dumps(data: Any, default: str = '{}') -> str:
-    """
-    Safely dump data to JSON string with error handling.
-    
-    Args:
-        data: Data to serialize
-        default (str): Default string if serialization fails
-        
-    Returns:
-        JSON string or default value
-    """
-    try:
-        return json.dumps(data, default=str)
-    except (TypeError, ValueError):
-        return default
-
-
-def paginate_queryset(queryset: QuerySet, page: int = 1, page_size: int = 20) -> Dict[str, Any]:
-    """
-    Paginate a queryset and return pagination info.
-    
-    Args:
-        queryset: Django queryset to paginate
-        page (int): Page number (1-based)
-        page_size (int): Number of items per page
-        
-    Returns:
-        Dict with pagination info and results
-    """
-    paginator = Paginator(queryset, page_size)
-    
-    try:
-        page_obj = paginator.page(page)
-    except:
-        page_obj = paginator.page(1)
-    
-    return {
-        'results': page_obj.object_list,
-        'pagination': {
-            'page': page_obj.number,
-            'page_size': page_size,
-            'total_pages': paginator.num_pages,
-            'total_count': paginator.count,
-            'has_next': page_obj.has_next(),
-            'has_previous': page_obj.has_previous(),
-            'next_page': page_obj.next_page_number() if page_obj.has_next() else None,
-            'previous_page': page_obj.previous_page_number() if page_obj.has_previous() else None,
-        }
-    }
-
-
-def search_queryset(queryset: QuerySet, search_term: str, search_fields: List[str]) -> QuerySet:
-    """
-    Search a queryset using multiple fields.
-    
-    Args:
-        queryset: Django queryset to search
-        search_term (str): Search term
-        search_fields (List[str]): List of field names to search in
-        
-    Returns:
-        Filtered queryset
-    """
-    if not search_term:
-        return queryset
-    
-    q_objects = Q()
-    for field in search_fields:
-        q_objects |= Q(**{f"{field}__icontains": search_term})
-    
-    return queryset.filter(q_objects)
 
 
 def get_client_ip(request: HttpRequest) -> str:

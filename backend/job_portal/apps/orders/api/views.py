@@ -3,9 +3,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q, Sum, Count
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
-from utils.crud_base.views import AbstractBaseListApiView, AbstractBaseApiView
 from utils.permissions import AbstractIsAuthenticatedOrReadOnly, AbstractHasSpecificPermission
+from utils.pagination import StandardResultsSetPagination
 from ..models import Order, OrderAddon, OrderPhoto, Bid, OrderAssignment, OrderDispute
 from .serializers import (
     OrderSerializer, OrderAddonSerializer, OrderPhotoSerializer,
@@ -15,13 +17,15 @@ from .serializers import (
 )
 
 
-class OrderApiView(AbstractBaseListApiView):
+class OrderApiView(generics.ListAPIView):
     serializer_class = OrderSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status', 'service_subcategory', 'urgency']
     search_fields = ['title', 'description', 'location', 'city', 'state']
     ordering_fields = ['created_at', 'service_date', 'budget_min', 'budget_max']
     ordering = ['-created_at']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         user = self.request.user
@@ -73,13 +77,15 @@ class OrderCreateApiView(generics.CreateAPIView):
         serializer.save(client=client_profile)
 
 
-class OrderAddonApiView(AbstractBaseListApiView):
+class OrderAddonApiView(generics.ListAPIView):
     serializer_class = OrderAddonSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['order']
     search_fields = ['addon__name']
     ordering_fields = ['quantity', 'price', 'created_at']
     ordering = ['-created_at']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         user = self.request.user
@@ -89,12 +95,14 @@ class OrderAddonApiView(AbstractBaseListApiView):
         ).select_related('order', 'addon')
 
 
-class OrderPhotoApiView(AbstractBaseListApiView):
+class OrderPhotoApiView(generics.ListAPIView):
     serializer_class = OrderPhotoSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['order', 'is_primary']
     ordering_fields = ['is_primary', 'created_at']
     ordering = ['-is_primary', '-created_at']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         user = self.request.user
@@ -104,12 +112,14 @@ class OrderPhotoApiView(AbstractBaseListApiView):
         ).select_related('order')
 
 
-class BidApiView(AbstractBaseListApiView):
+class BidApiView(generics.ListAPIView):
     serializer_class = BidSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['status', 'order', 'is_negotiable']
     ordering_fields = ['amount', 'created_at']
     ordering = ['amount', '-created_at']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         user = self.request.user
@@ -134,13 +144,15 @@ class BidCreateApiView(generics.CreateAPIView):
         serializer.save(order=order, provider=provider_profile)
 
 
-class OrderDisputeApiView(AbstractBaseListApiView):
+class OrderDisputeApiView(generics.ListAPIView):
     serializer_class = OrderDisputeSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['dispute_type', 'status', 'order']
     search_fields = ['description', 'admin_notes']
     ordering_fields = ['dispute_type', 'status', 'created_at']
     ordering = ['-created_at']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         user = self.request.user

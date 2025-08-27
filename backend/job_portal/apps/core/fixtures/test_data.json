@@ -1,0 +1,346 @@
+[
+  {
+    "model": "core.language",
+    "pk": 1,
+    "fields": {
+      "code": "en",
+      "name": "English",
+      "native_name": "English",
+      "is_active": true,
+      "is_default": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.language",
+    "pk": 2,
+    "fields": {
+      "code": "ru",
+      "name": "Russian",
+      "native_name": "Русский",
+      "is_active": true,
+      "is_default": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicecategory",
+    "pk": 1,
+    "fields": {
+      "name": "IT & Programming",
+      "description": "Information technology and programming services",
+      "slug": "it-programming",
+      "icon": "code",
+      "is_active": true,
+      "featured": true,
+      "sort_order": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicecategory",
+    "pk": 2,
+    "fields": {
+      "name": "Design & Creative",
+      "description": "Design and creative services",
+      "slug": "design-creative",
+      "icon": "palette",
+      "is_active": true,
+      "featured": true,
+      "sort_order": 2,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicesubcategory",
+    "pk": 1,
+    "fields": {
+      "name": "Web Development",
+      "description": "Custom web development services",
+      "category": 1,
+      "is_active": true,
+      "featured": true,
+      "sort_order": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicesubcategory",
+    "pk": 2,
+    "fields": {
+      "name": "Mobile App Development",
+      "description": "Mobile application development",
+      "category": 1,
+      "is_active": true,
+      "featured": true,
+      "sort_order": 2,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicesubcategory",
+    "pk": 3,
+    "fields": {
+      "name": "Logo Design",
+      "description": "Professional logo design services",
+      "category": 2,
+      "is_active": true,
+      "featured": true,
+      "sort_order": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicearea",
+    "pk": 1,
+    "fields": {
+      "name": "Almaty",
+      "city": "Almaty",
+      "state": "Almaty",
+      "country": "Kazakhstan",
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicearea",
+    "pk": 2,
+    "fields": {
+      "name": "Nur-Sultan",
+      "city": "Nur-Sultan",
+      "state": "Akmola",
+      "country": "Kazakhstan",
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.usermodel",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$testhash123$testpasshash",
+      "last_login": "2024-01-01T00:00:00Z",
+      "is_superuser": false,
+      "username": "testclient",
+      "first_name": "Test",
+      "last_name": "Client",
+      "email": "testclient@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-01-01T00:00:00Z",
+      "phone_number": "+77001234567",
+      "is_verified": true,
+      "is_blocked": false
+    }
+  },
+  {
+    "model": "accounts.usermodel",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$testhash456$testpasshash",
+      "last_login": "2024-01-01T00:00:00Z",
+      "is_superuser": false,
+      "username": "testprovider",
+      "first_name": "Test",
+      "last_name": "Provider",
+      "email": "testprovider@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-01-01T00:00:00Z",
+      "phone_number": "+77001234568",
+      "is_verified": true,
+      "is_blocked": false
+    }
+  },
+  {
+    "model": "accounts.usermodel",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$testhash789$testpasshash",
+      "last_login": "2024-01-01T00:00:00Z",
+      "is_superuser": false,
+      "username": "testadmin",
+      "first_name": "Test",
+      "last_name": "Admin",
+      "email": "testadmin@example.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2024-01-01T00:00:00Z",
+      "phone_number": "+77001234569",
+      "is_verified": true,
+      "is_blocked": false
+    }
+  },
+  {
+    "model": "job_portal.users.userprofile",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "avatar": "",
+      "bio": "Test client profile",
+      "city": "Almaty",
+      "country": "Kazakhstan",
+      "timezone": "Asia/Almaty",
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "job_portal.users.userprofile",
+    "pk": 2,
+    "fields": {
+      "user": 2,
+      "avatar": "",
+      "bio": "Test provider profile",
+      "city": "Almaty",
+      "country": "Kazakhstan",
+      "timezone": "Asia/Almaty",
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "job_portal.users.serviceproviderprofile",
+    "pk": 1,
+    "fields": {
+      "user_profile": 2,
+      "business_name": "Test IT Solutions",
+      "business_description": "Professional IT services provider",
+      "is_available": true,
+      "average_rating": 4.5,
+      "total_reviews": 10,
+      "hourly_rate": 25.00,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "job_portal.orders.order",
+    "pk": 1,
+    "fields": {
+      "client": 1,
+      "title": "Web Development Project",
+      "description": "Need a modern website for my business",
+      "service_subcategory": 1,
+      "budget_min": 1000.00,
+      "budget_max": 5000.00,
+      "city": "Almaty",
+      "location": "Almaty, Kazakhstan",
+      "urgency": "normal",
+      "status": "published",
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "job_portal.orders.order",
+    "pk": 2,
+    "fields": {
+      "client": 1,
+      "title": "Mobile App Development",
+      "description": "Looking for iOS app developer",
+      "service_subcategory": 2,
+      "budget_min": 2000.00,
+      "budget_max": 8000.00,
+      "city": "Almaty",
+      "location": "Almaty, Kazakhstan",
+      "urgency": "high",
+      "status": "bidding",
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "job_portal.orders.order",
+    "pk": 3,
+    "fields": {
+      "client": 1,
+      "title": "Logo Design Needed",
+      "description": "Professional logo for startup company",
+      "service_subcategory": 3,
+      "budget_min": 200.00,
+      "budget_max": 500.00,
+      "city": "Nur-Sultan",
+      "location": "Nur-Sultan, Kazakhstan",
+      "urgency": "low",
+      "status": "published",
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "job_portal.chat.chatroom",
+    "pk": 1,
+    "fields": {
+      "name": "Web Development Project Chat",
+      "room_type": "order",
+      "order": 1,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "job_portal.chat.chatparticipant",
+    "pk": 1,
+    "fields": {
+      "chat_room": 1,
+      "user": 1,
+      "role": "admin",
+      "is_active": true,
+      "joined_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "job_portal.chat.chatparticipant",
+    "pk": 2,
+    "fields": {
+      "chat_room": 1,
+      "user": 2,
+      "role": "member",
+      "is_active": true,
+      "joined_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "job_portal.chat.chatmessage",
+    "pk": 1,
+    "fields": {
+      "chat_room": 1,
+      "sender": 1,
+      "content": "Hello! I'm interested in your web development project.",
+      "message_type": "text",
+      "is_read": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "job_portal.chat.chatmessage",
+    "pk": 2,
+    "fields": {
+      "chat_room": 1,
+      "sender": 2,
+      "content": "Hi! I'd be happy to help with your project. Can you tell me more about your requirements?",
+      "message_type": "text",
+      "is_read": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]
+

@@ -160,16 +160,29 @@ All API endpoints use **v1** versioning with the pattern: `/api/v1/{app}/{resour
 
 ---
 
-## 🔍 **Search & Discovery**
+## ⭐ **Reviews & Ratings**
 
-### Search Endpoints (Integrated across apps)
+### Reviews App (`backend/job_portal/apps/reviews/urls.py`)
 
 | Endpoint | Method | View | Description | Authentication |
 |----------|--------|------|-------------|----------------|
-| `/api/v1/search/services/` | GET | `ServiceSearchApiView` | Search for services | None |
-| `/api/v1/search/providers/` | GET | `ProviderSearchApiView` | Search for service providers | None |
-| `/api/v1/search/orders/` | GET | `OrderSearchApiView` | Search for orders | Required |
-| `/api/v1/search/global/` | GET | `GlobalSearchApiView` | Global search across all content | None |
+| `/api/v1/reviews/` | GET/POST | `ReviewApiView` | List and create reviews | Required |
+| `/api/v1/reviews/<int:pk>/` | GET/PUT/DELETE | `ReviewDetailApiView` | Manage specific review | Required |
+| `/api/v1/reviews/provider/<int:provider_id>/` | GET | `ProviderReviewsApiView` | Get reviews for provider | Required |
+| `/api/v1/reviews/order/<int:order_id>/` | GET | `OrderReviewsApiView` | Get reviews for order | Required |
+| `/api/v1/reviews/analytics/` | GET | `ReviewAnalyticsApiView` | Simple review analytics | Required |
+
+---
+
+## 🔍 **Search & Discovery**
+
+### Search App (`backend/job_portal/apps/search/urls.py`)
+
+| Endpoint | Method | View | Description | Authentication |
+|----------|--------|------|-------------|----------------|
+| `/api/v1/search/global/` | GET | `GlobalSearchApiView` | Global search across all content | Required |
+| `/api/v1/search/orders/` | GET | `OrderSearchApiView` | Search for orders (job vacancies) | Required |
+| `/api/v1/search/providers/` | GET | `ProviderSearchApiView` | Search for service providers | Required |
 
 ---
 

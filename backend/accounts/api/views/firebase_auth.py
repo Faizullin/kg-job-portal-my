@@ -1,3 +1,4 @@
+from utils.helpers import get_client_ip
 from django.db import IntegrityError
 from firebase_admin import auth
 from firebase_admin._auth_utils import InvalidIdTokenError
@@ -18,100 +19,58 @@ class FirebaseAuthView(APIView):
     serializer_class = FireBaseAuthSerializer
     permission_classes = []
 
-    def post(self, request: Request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
-        if not serializer.is_valid():
-            return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        token = serializer.validated_data['token']
-
-        # trying  to decode token, if not valid return error
+    def post(self, request, *args, **kwargs):
+        """Authenticate user with Firebase token."""
+        firebase_user_id = request.data.get('firebase_user_id')
+        
+        if not firebase_user_id:
+            return Response({'error': 'firebase_user_id is required'}, status=400)
+        
         try:
-            decoded_token = auth.verify_id_token(token)
-        except ValueError:
-            return Response({'error': 'The provided token is not a valid Firebase token'}, status=status.HTTP_400_BAD_REQUEST)
-        except InvalidIdTokenError:
-            return Response({'error': 'The provided token is not a valid Firebase token'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # trying to get the user id from the token, if not valid return error
-        try:
-            firebase_user_id = decoded_token['uid']
-        except KeyError:
-            return Response({'error': 'The user provided with the auth token is not a valid '
-                                   'Firebase user, it has no Firebase UID'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # trying to get the user from the database, if not found create a new user
-        try:
-            user_profile = UserModel.objects.get(firebase_user_id=firebase_user_id, is_deleted=False)
+            # Try to get active user first (manager automatically filters deleted users)
+            user_profile = UserModel.objects.get(firebase_user_id=firebase_user_id)
+            
+            # Check if user is active
+            if not user_profile.is_active:
+                return Response({'error': 'User account is deactivated'}, status=403)
+            
+            # Generate or get existing token
+            token, created = Token.objects.get_or_create(user=user_profile)
+            
+            return Response({
+                'token': token.key,
+                'user': {
+                    'id': user_profile.id,
+                    'username': user_profile.username,
+                    'email': user_profile.email,
+                    'name': user_profile.name,
+                    'description': user_profile.description,
+                    'photo_url': user_profile.photo_url,
+                    'user_type': user_profile.user_type,
+                    'timezone_difference': user_profile.timezone_difference,
+                    'points': user_profile.points,
+                    'day_streak': user_profile.day_streak,
+                    'max_day_streak': user_profile.max_day_streak,
+                },
+                'message': 'Authentication successful'
+            })
+            
         except UserModel.DoesNotExist:
-            # Check if user exists but is deleted
+            # Check if user was soft-deleted
             try:
-                deleted_user = UserModel.objects.get(firebase_user_id=firebase_user_id, is_deleted=True)
-                # Restore the deleted user
-                deleted_user.restore()
-                user_profile = deleted_user
+                # Use all_with_deleted to check for deleted users
+                deleted_user = UserModel.objects.all_with_deleted().get(firebase_user_id=firebase_user_id)
+                if deleted_user.is_deleted:
+                    return Response({
+                        'error': 'User account has been deleted',
+                        'deleted_at': deleted_user.deleted_at
+                    }, status=410)
             except UserModel.DoesNotExist:
-                # Create new user
-                firebase_user = auth.get_user(firebase_user_id)
-                try:
-                    user_profile: UserModel = UserModel.objects.create(
-                        photo_url=firebase_user.photo_url,
-                        name=firebase_user.display_name.split()[0] if firebase_user.display_name else 'User',
-                        email=firebase_user.email,
-                        firebase_user_id=firebase_user_id,
-                        description='no bio yet',
-                        username=firebase_user.email,
-                        password='no password',
-                    )
-                    user_profile.set_password('no password')
-                    user_profile.save()
-                    NotificationSettings.objects.create(user=user_profile)
-
-                except IntegrityError as e:
-                    print(e)
-                    return Response({'error': 'A user with the provided Firebase UID already exists'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Check if user is blocked
-        if user_profile.blocked:
-            return Response({'error': 'User account is blocked'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Check if user is active
-        if not user_profile.is_active:
-            return Response({'error': 'User account is disabled'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # delete old token and generate a new one
-        Token.objects.filter(user=user_profile).delete()
-        token = Token.objects.create(user=user_profile)
-        
-        # Create login session for tracking
-        from ...models import LoginSession
-        LoginSession.objects.create(
-            user=user_profile,
-            session_key=token.key,
-            ip_address=self._get_client_ip(request),
-            user_agent=request.META.get('HTTP_USER_AGENT', '')
-        )
-        
-        return Response({
-            'token': token.key,
-            'user': {
-                'id': user_profile.id,
-                'username': user_profile.username,
-                'email': user_profile.email,
-                'name': user_profile.name,
-                'description': user_profile.description,
-                'photo_url': user_profile.photo_url,
-                'user_type': user_profile.user_type,
-                'timezone_difference': user_profile.timezone_difference,
-                'points': user_profile.points,
-                'day_streak': user_profile.day_streak,
-                'max_day_streak': user_profile.max_day_streak,
-            }
-        })
+                pass
+            
+            return Response({'error': 'User not found'}, status=404)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
     
     def _get_client_ip(self, request):
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
-        else:
-            ip = request.META.get('REMOTE_ADDR')
-        return ip
+        return get_client_ip(request)

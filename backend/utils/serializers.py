@@ -233,16 +233,17 @@ class AbstractCacheSerializerMixin:
     
     def to_representation(self, instance):
         """Override to add caching."""
+        from utils.cache_utils import get_cache, set_cache
+        
         cache_key = f"serializer_{instance._meta.model.__name__}_{instance.pk}"
         
         # Try to get from cache
-        from django.core.cache import cache
-        cached_data = cache.get(cache_key)
+        cached_data = get_cache(cache_key)
         if cached_data:
             return cached_data
         
         # Serialize and cache
         data = super().to_representation(instance)
-        cache.set(cache_key, data, 300)  # Cache for 5 minutes
+        set_cache(cache_key, data, 300)  # Cache for 5 minutes
         
         return data

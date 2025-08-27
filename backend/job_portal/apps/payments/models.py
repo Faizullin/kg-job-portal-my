@@ -14,7 +14,6 @@ class PaymentMethod(AbstractSoftDeleteModel, AbstractTimestampedModel):
         ('debit_card', _('Debit Card')),
         ('bank_transfer', _('Bank Transfer')),
         ('digital_wallet', _('Digital Wallet')),
-        ('crypto', _('Cryptocurrency')),
     ])
     
     # Card information (encrypted)
@@ -65,8 +64,7 @@ class Invoice(AbstractSoftDeleteModel, AbstractTimestampedModel):
     
     # Amounts
     subtotal = models.DecimalField(_("Subtotal"), max_digits=10, decimal_places=2)
-    tax_amount = models.DecimalField(_("Tax Amount"), max_digits=10, decimal_places=2, default=0)
-    discount_amount = models.DecimalField(_("Discount Amount"), max_digits=10, decimal_places=2, default=0)
+    platform_fee = models.DecimalField(_("Platform Fee"), max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(_("Total Amount"), max_digits=10, decimal_places=2)
     
     # Status
@@ -84,7 +82,6 @@ class Invoice(AbstractSoftDeleteModel, AbstractTimestampedModel):
     
     # Notes
     notes = models.TextField(_("Notes"), blank=True)
-    terms_conditions = models.TextField(_("Terms & Conditions"), blank=True)
     
     class Meta:
         verbose_name = _("Invoice")
@@ -93,6 +90,11 @@ class Invoice(AbstractSoftDeleteModel, AbstractTimestampedModel):
     
     def __str__(self):
         return f"Invoice #{self.invoice_number} - {self.order.title}... [#{self.id}]"
+    
+    def save(self, *args, **kwargs):
+        """Auto-calculate total amount."""
+        self.total_amount = self.subtotal + self.platform_fee
+        super().save(*args, **kwargs)
 
 
 class Payment(AbstractSoftDeleteModel, AbstractTimestampedModel):
@@ -103,7 +105,7 @@ class Payment(AbstractSoftDeleteModel, AbstractTimestampedModel):
     # Payment details
     payment_id = models.CharField(_("Payment ID"), max_length=100, unique=True)
     amount = models.DecimalField(_("Amount"), max_digits=10, decimal_places=2)
-    currency = models.CharField(_("Currency"), max_length=3, default='USD')
+    currency = models.CharField(_("Currency"), max_digits=3, default='USD')
     
     # Status
     status = models.CharField(_("Status"), max_length=20, choices=[
@@ -115,9 +117,9 @@ class Payment(AbstractSoftDeleteModel, AbstractTimestampedModel):
         ('refunded', _('Refunded')),
     ], default='pending')
     
-    # Transaction details
-    transaction_id = models.CharField(_("Transaction ID"), max_length=100, blank=True)
-    processor_response = models.JSONField(_("Processor Response"), default=dict)
+    # Stripe integration
+    stripe_payment_intent_id = models.CharField(_("Stripe Payment Intent ID"), max_length=255, blank=True)
+    stripe_charge_id = models.CharField(_("Stripe Charge ID"), max_length=255, blank=True)
     
     # Timestamps
     processed_at = models.DateTimeField(_("Processed At"), null=True, blank=True)
@@ -125,9 +127,8 @@ class Payment(AbstractSoftDeleteModel, AbstractTimestampedModel):
     
     # Error handling
     error_message = models.TextField(_("Error Message"), blank=True)
-    retry_count = models.PositiveIntegerField(_("Retry Count"), default=0)
     
-    # Refund information (simplified)
+    # Refund information
     refund_amount = models.DecimalField(_("Refund Amount"), max_digits=10, decimal_places=2, default=0)
     refund_reason = models.CharField(_("Refund Reason"), max_length=100, blank=True)
     refunded_at = models.DateTimeField(_("Refunded At"), null=True, blank=True)
@@ -142,7 +143,7 @@ class Payment(AbstractSoftDeleteModel, AbstractTimestampedModel):
 
 
 class StripeWebhookEvent(AbstractTimestampedModel):
-    """Stripe webhook events for tracking and debugging."""
+    """Stripe webhook events for tracking."""
     stripe_event_id = models.CharField(_("Stripe Event ID"), max_length=255, unique=True)
     event_type = models.CharField(_("Event Type"), max_length=100)
     event_data = models.JSONField(_("Event Data"), default=dict)
@@ -153,7 +154,6 @@ class StripeWebhookEvent(AbstractTimestampedModel):
     
     # Error handling
     error_message = models.TextField(_("Error Message"), blank=True)
-    retry_count = models.PositiveIntegerField(_("Retry Count"), default=0)
     
     class Meta:
         verbose_name = _("Stripe Webhook Event")
@@ -162,29 +162,3 @@ class StripeWebhookEvent(AbstractTimestampedModel):
     
     def __str__(self):
         return f"{self.event_type} - {self.stripe_event_id}... [#{self.id}]"
-
-
-class PaymentProvider(AbstractTimestampedModel):
-    """Payment provider configurations."""
-    name = models.CharField(_("Provider Name"), max_length=50, unique=True)
-    is_active = models.BooleanField(_("Active"), default=True)
-    
-    # Configuration
-    api_key = models.CharField(_("API Key"), max_length=255)
-    secret_key = models.CharField(_("Secret Key"), max_length=255)
-    webhook_secret = models.CharField(_("Webhook Secret"), max_length=255, blank=True)
-    
-    # Settings
-    test_mode = models.BooleanField(_("Test Mode"), default=True)
-    supported_currencies = models.JSONField(_("Supported Currencies"), default=list)
-    
-    # Metadata
-    config_data = models.JSONField(_("Configuration Data"), default=dict)
-    
-    class Meta:
-        verbose_name = _("Payment Provider")
-        verbose_name_plural = _("Payment Providers")
-        ordering = ['name']
-    
-    def __str__(self):
-        return f"{self.name} ({'Test' if self.test_mode else 'Live'})... [#{self.id}]"

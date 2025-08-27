@@ -56,24 +56,30 @@ class CacheResponseMixin:
     
     def get_cache_key(self, request, *args, **kwargs):
         """Generate cache key for the view."""
-        if self.cache_key_prefix:
-            return f"{self.cache_key_prefix}_{request.path}_{request.user.id if request.user.is_authenticated else 'anonymous'}"
-        return f"view_{request.path}_{request.user.id if request.user.is_authenticated else 'anonymous'}"
+        from utils.cache_utils import cache_key_generator
+        
+        key_parts = [self.cache_key_prefix or "view", request.path]
+        if request.user.is_authenticated:
+            key_parts.append(f"user_{request.user.id}")
+        else:
+            key_parts.append("anonymous")
+        
+        return cache_key_generator(*key_parts)
     
     def dispatch(self, request, *args, **kwargs):
-        from django.core.cache import cache
+        from utils.cache_utils import get_cache, set_cache
         
         # Generate cache key
         cache_key = self.get_cache_key(request, *args, **kwargs)
         
         # Try to get from cache
-        cached_response = cache.get(cache_key)
+        cached_response = get_cache(cache_key)
         if cached_response is not None:
             return cached_response
         
         # Execute view and cache result
         response = super().dispatch(request, *args, **kwargs)
-        cache.set(cache_key, response, self.cache_timeout)
+        set_cache(cache_key, response, self.cache_timeout)
         
         return response
 
@@ -85,19 +91,20 @@ class RateLimitMixin:
     window = 3600  # 1 hour
     
     def dispatch(self, request, *args, **kwargs):
-        from django.core.cache import cache
+        from utils.cache_utils import get_cache, set_cache
         from django.http import HttpResponseTooManyRequests
         
         # Generate rate limit key
-        key = f"rate_limit_{request.user.id if request.user.is_authenticated else request.META.get('REMOTE_ADDR')}"
+        user_id = request.user.id if request.user.is_authenticated else request.META.get('REMOTE_ADDR')
+        key = f"rate_limit_{user_id}"
         
         # Check current request count
-        current_requests = cache.get(key, 0)
+        current_requests = get_cache(key, 0)
         if current_requests >= self.max_requests:
             return HttpResponseTooManyRequests("Rate limit exceeded")
         
         # Increment request count
-        cache.set(key, current_requests + 1, self.window)
+        set_cache(key, current_requests + 1, self.window)
         
         return super().dispatch(request, *args, **kwargs)
 

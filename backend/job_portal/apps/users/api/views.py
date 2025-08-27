@@ -3,9 +3,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q, Avg, Count
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
-from utils.crud_base.views import AbstractBaseListApiView, AbstractBaseApiView
 from utils.permissions import AbstractIsAuthenticatedOrReadOnly, AbstractHasSpecificPermission
+from utils.pagination import StandardResultsSetPagination
 from ..models import UserProfile, ServiceProviderProfile, ClientProfile, UserVerification, ServiceProviderService
 from .serializers import (
     UserProfileSerializer, ServiceProviderSerializer, ClientSerializer,
@@ -13,22 +15,25 @@ from .serializers import (
 )
 
 
-class UserProfileApiView(AbstractBaseListApiView):
+class UserProfileApiView(generics.ListAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['user_type', 'is_verified', 'gender']
     search_fields = ['user__first_name', 'user__last_name', 'user__email', 'phone', 'address']
     ordering_fields = ['rating', 'total_reviews', 'created_at']
     ordering = ['-rating', '-total_reviews']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
-        return UserProfile.objects.filter(is_deleted=False).select_related('user', 'service_provider_profile', 'client_profile')
+        # Simple filtering - manager automatically handles is_deleted
+        return UserProfile.objects.all().select_related('user', 'service_provider_profile', 'client_profile')
     
     @action(detail=False, methods=['get'])
     def service_providers(self, request):
         """Get all service providers with filtering."""
+        # Simple filtering - manager automatically handles is_deleted
         providers = ServiceProviderProfile.objects.filter(
-            user_profile__is_deleted=False,
             user_profile__user_type='service_provider'
         ).select_related('user_profile__user')
         
@@ -51,8 +56,8 @@ class UserProfileApiView(AbstractBaseListApiView):
     @action(detail=False, methods=['get'])
     def clients(self, request):
         """Get all clients with filtering."""
+        # Simple filtering - manager automatically handles is_deleted
         clients = ClientProfile.objects.filter(
-            user_profile__is_deleted=False,
             user_profile__user_type='client'
         ).select_related('user_profile__user')
         
@@ -65,7 +70,8 @@ class UserProfileDetailApiView(generics.RetrieveUpdateAPIView):
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     
     def get_object(self):
-        return get_object_or_404(UserProfile, user=self.request.user, is_deleted=False)
+        # Simple filtering - manager automatically handles is_deleted
+        return get_object_or_404(UserProfile, user=self.request.user)
     
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -73,18 +79,19 @@ class UserProfileDetailApiView(generics.RetrieveUpdateAPIView):
         return UserProfileUpdateSerializer
 
 
-class ServiceProviderApiView(AbstractBaseListApiView):
+class ServiceProviderApiView(generics.ListAPIView):
     serializer_class = ServiceProviderSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_verified_provider', 'is_available']
     search_fields = ['business_name', 'user_profile__user__first_name', 'user_profile__user__last_name']
     ordering_fields = ['average_rating', 'years_of_experience', 'total_reviews']
     ordering = ['-average_rating', '-total_reviews']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
-        return ServiceProviderProfile.objects.filter(
-            user_profile__is_deleted=False
-        ).select_related('user_profile__user')
+        # Simple filtering - manager automatically handles is_deleted
+        return ServiceProviderProfile.objects.all().select_related('user_profile__user')
 
 
 class ServiceProviderDetailApiView(generics.RetrieveUpdateAPIView):
@@ -92,10 +99,10 @@ class ServiceProviderDetailApiView(generics.RetrieveUpdateAPIView):
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     
     def get_object(self):
+        # Simple filtering - manager automatically handles is_deleted
         return get_object_or_404(
             ServiceProviderProfile, 
-            user_profile__user=self.request.user, 
-            user_profile__is_deleted=False
+            user_profile__user=self.request.user
         )
     
     def get_serializer_class(self):
@@ -104,17 +111,20 @@ class ServiceProviderDetailApiView(generics.RetrieveUpdateAPIView):
         return ServiceProviderUpdateSerializer
 
 
-class ClientApiView(AbstractBaseListApiView):
+class ClientApiView(generics.ListAPIView):
     serializer_class = ClientSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['created_at']
     search_fields = ['user_profile__user__first_name', 'user_profile__user__last_name']
     ordering_fields = ['total_orders', 'created_at']
     ordering = ['-total_orders', '-created_at']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
+        # Simple filtering - manager automatically handles is_deleted
         return ClientProfile.objects.filter(
-            user_profile__is_deleted=False
+            user_profile__user_type='client'
         ).select_related('user_profile__user')
 
 

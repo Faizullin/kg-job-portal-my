@@ -5,14 +5,8 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from utils.exceptions import StandardizedViewMixin
-
-
-class CustomPagination(pagination.PageNumberPagination):
-    """Custom pagination class with configurable page size."""
-    page_size = 10
-    page_size_query_param = "page_size"
-    max_page_size = 100
+from ..exceptions import StandardizedViewMixin
+from ..pagination import CustomPagination
 
 
 class AuthControlMixin:
@@ -101,39 +95,3 @@ class AbstractReadOnlyViewSet(AuthControlMixin, StandardizedViewMixin, viewsets.
     ordering_fields = ["id", "created_at", "updated_at"]
     ordering = ["-id"]
     filterset_class = None
-
-
-class PublicViewMixin:
-    """Mixin for views that don't require authentication."""
-    authentication_classes = ()
-    permission_classes = [permissions.AllowAny]
-
-
-class AbstractPublicApiView(PublicViewMixin, StandardizedViewMixin, APIView):
-    """Public API view that doesn't require authentication."""
-    pass
-
-
-class AbstractPublicListApiView(PublicViewMixin, StandardizedViewMixin, generics.ListAPIView):
-    """Public list API view that doesn't require authentication."""
-    pagination_class = CustomPagination
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
-    ordering_fields = ["id", "created_at", "updated_at"]
-    ordering = ["-id"]
-    filterset_class = None
-
-
-class AbstractAuditViewSet(AbstractBaseApiViewSet):
-    """Viewset for models that need audit trail functionality."""
-    
-    def perform_create(self, serializer):
-        """Set created_by field when creating objects."""
-        serializer.save(created_by=self.request.user, updated_by=self.request.user)
-
-    def perform_update(self, serializer):
-        """Set updated_by field when updating objects."""
-        serializer.save(updated_by=self.request.user)

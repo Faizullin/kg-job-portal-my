@@ -84,3 +84,4 @@ pyyaml
 inflection
 channels-redis==4.1.0
 redis==5.0.1
+django-redis==5.4.0

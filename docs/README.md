@@ -175,6 +175,33 @@ kg-job-portal-my/
 - **Troubleshooting**: Common issues and solutions documented
 - **AI Context**: Designed to provide complete project understanding for AI assistance
 
+## ⭐ **Reviews & Ratings System**
+
+### **Simple Review System**
+- **Basic Ratings**: Overall rating from 1-5 stars
+- **Review Content**: Title and comment fields
+- **Verification**: Basic review authenticity checking
+- **Provider Analytics**: Simple rating statistics and distribution
+
+### **Trust & Quality**
+- **Provider Ratings**: Average rating and total review count
+- **Order Reviews**: Reviews linked to specific orders
+- **User Feedback**: Direct feedback from service completion
+
+## 🔍 **Search & Discovery System**
+
+### **Simple Search**
+- **Global Search**: Search across all content types (orders, providers, services)
+- **Order Search**: Find available job vacancies with basic filtering
+- **Provider Search**: Discover service providers by location and rating
+- **Basic Filtering**: City, budget, rating, and service category filters
+
+### **Search Features**
+- **Text Search**: Search in titles, descriptions, and locations
+- **Filtering**: Basic filters for location, budget, and ratings
+- **Ordering**: Sort by relevance, date, budget, or rating
+- **Results Limiting**: Maximum 50 results per search
+
 ---
 
 This documentation provides everything needed to understand and work with the KG Job Portal backend application, focusing on the essential aspects: database structure, API architecture, and system functionality. The documentation is optimized for AI context and provides comprehensive information about the project's architecture, features, and implementation details.

@@ -11,4 +11,6 @@ urlpatterns = [
     path('', include('job_portal.apps.chat.urls')),
     path('', include('job_portal.apps.notifications.urls')),
     path('', include('job_portal.apps.analytics.urls')),
+    path('', include('job_portal.apps.reviews.urls')),
+    path('', include('job_portal.apps.search.urls')),
 ]

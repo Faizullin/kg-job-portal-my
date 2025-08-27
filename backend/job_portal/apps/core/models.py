@@ -5,6 +5,7 @@ from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedMo
 
 class Language(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Supported languages for the application."""
+    
     code = models.CharField(_("Language Code"), max_length=5, unique=True)
     name = models.CharField(_("Language Name"), max_length=50)
     native_name = models.CharField(_("Native Name"), max_length=50)
@@ -28,6 +29,8 @@ class Language(AbstractSoftDeleteModel, AbstractTimestampedModel):
 
 class ServiceCategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Main service categories (e.g., Cleaning, Plumbing, etc.)."""
+    # Uses default SoftDeleteManager from AbstractSoftDeleteModel
+    
     name = models.CharField(_("Category Name"), max_length=100)
     description = models.TextField(_("Description"))
     icon = models.CharField(_("Icon"), max_length=50, blank=True)
@@ -72,6 +75,8 @@ class ServiceCategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
 
 class ServiceSubcategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Subcategories within main service categories."""
+    # Uses default SoftDeleteManager from AbstractSoftDeleteModel
+    
     category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE, related_name='subcategories')
     name = models.CharField(_("Subcategory Name"), max_length=100)
     description = models.TextField(_("Description"))

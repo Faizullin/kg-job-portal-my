@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from django.utils import timezone
 from utils.decorators import GroupRequiredMixin, RateLimitMixin, LogActionMixin
 from ..models import StripeWebhookEvent, Payment, PaymentMethod, Invoice
-from .serializers import PaymentSerializer
+from .serializers import PaymentSerializer, StripeWebhookEventSerializer
 
 
 class StripeWebhookView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, View):
@@ -72,16 +72,10 @@ class StripeWebhookView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, View
             return False
         
         try:
-            # Get webhook secret from settings or database
+            # Get webhook secret from settings
             webhook_secret = getattr(settings, 'STRIPE_WEBHOOK_SECRET', '')
             if not webhook_secret:
-                # Try to get from database
-                from ..models import PaymentProvider
-                try:
-                    stripe_provider = PaymentProvider.objects.get(name='stripe', is_active=True)
-                    webhook_secret = stripe_provider.webhook_secret
-                except PaymentProvider.DoesNotExist:
-                    return False
+                return False
             
             # Verify signature
             expected_sig = hmac.new(
@@ -98,7 +92,7 @@ class StripeWebhookView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, View
     def _process_event(self, event):
         """Process Stripe webhook event."""
         try:
-            # Log event
+            # Create webhook event record
             webhook_event = StripeWebhookEvent.objects.create(
                 stripe_event_id=event['id'],
                 event_type=event['type'],
@@ -111,205 +105,195 @@ class StripeWebhookView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, View
             elif event['type'] == 'payment_intent.payment_failed':
                 return self._handle_payment_failed(event['data']['object'])
             elif event['type'] == 'charge.refunded':
-                return self._handle_refund_processed(event['data']['object'])
-            elif event['type'] == 'customer.subscription.created':
-                return self._handle_subscription_created(event['data']['object'])
-            elif event['type'] == 'customer.subscription.updated':
-                return self._handle_subscription_updated(event['data']['object'])
-            elif event['type'] == 'customer.subscription.deleted':
-                return self._handle_subscription_deleted(event['data']['object'])
+                return self._handle_refund(event['data']['object'])
             else:
-                # Log unhandled event type
-                webhook_event.error_message = f"Unhandled event type: {event['type']}"
+                # Mark as processed for other event types
+                webhook_event.processed = True
+                webhook_event.processed_at = timezone.now()
                 webhook_event.save()
-                return True  # Don't fail for unhandled events
-            
+                return True
+                
         except Exception as e:
             # Log error
             if 'webhook_event' in locals():
                 webhook_event.error_message = str(e)
-                webhook_event.retry_count += 1
                 webhook_event.save()
+            print(f"Error processing webhook: {str(e)}")
             return False
     
     def _handle_payment_succeeded(self, payment_intent):
         """Handle successful payment."""
         try:
-            # Find payment by payment_intent_id
-            payment = Payment.objects.filter(
-                payment_id=payment_intent['id']
-            ).first()
+            # Find payment by Stripe payment intent ID
+            payment = Payment.objects.get(
+                stripe_payment_intent_id=payment_intent['id'],
+                is_deleted=False
+            )
             
-            if payment:
-                # Update payment status
-                payment.status = 'completed'
-                payment.processed_at = timezone.now()
-                payment.processor_response = payment_intent
-                payment.save()
-                
-                # Update invoice status
-                invoice = payment.invoice
-                invoice.status = 'paid'
-                invoice.paid_amount = payment.amount
-                invoice.paid_date = timezone.now()
-                invoice.save()
-                
-                # Mark webhook as processed
-                webhook_event = StripeWebhookEvent.objects.get(
-                    stripe_event_id=payment_intent['id']
-                )
-                webhook_event.processed = True
-                webhook_event.processed_at = timezone.now()
-                webhook_event.save()
-                
-                return True
-            else:
-                # Payment not found - log error
-                print(f"Payment not found for payment_intent: {payment_intent['id']}")
-                return False
-                
+            # Update payment status
+            payment.status = 'completed'
+            payment.processed_at = timezone.now()
+            payment.save()
+            
+            # Update invoice
+            invoice = payment.invoice
+            invoice.status = 'paid'
+            invoice.paid_amount = payment.amount
+            invoice.paid_date = timezone.now()
+            invoice.save()
+            
+            # Mark webhook as processed
+            webhook_event = StripeWebhookEvent.objects.get(
+                stripe_event_id=payment_intent['id']
+            )
+            webhook_event.processed = True
+            webhook_event.processed_at = timezone.now()
+            webhook_event.save()
+            
+            return True
+            
+        except Payment.DoesNotExist:
+            print(f"Payment not found for intent: {payment_intent['id']}")
+            return False
         except Exception as e:
-            print(f"Error handling payment succeeded: {str(e)}")
+            print(f"Error handling payment success: {str(e)}")
             return False
     
     def _handle_payment_failed(self, payment_intent):
         """Handle failed payment."""
         try:
-            payment = Payment.objects.filter(
-                payment_id=payment_intent['id']
-            ).first()
+            # Find payment by Stripe payment intent ID
+            payment = Payment.objects.get(
+                stripe_payment_intent_id=payment_intent['id'],
+                is_deleted=False
+            )
             
-            if payment:
-                payment.status = 'failed'
-                payment.failed_at = timezone.now()
-                payment.error_message = payment_intent.get('last_payment_error', {}).get('message', 'Payment failed')
-                payment.processor_response = payment_intent
-                payment.save()
-                
-                # Mark webhook as processed
-                webhook_event = StripeWebhookEvent.objects.get(
-                    stripe_event_id=payment_intent['id']
-                )
-                webhook_event.processed = True
-                webhook_event.processed_at = timezone.now()
-                webhook_event.save()
-                
-                return True
-            else:
-                return False
-                
+            # Update payment status
+            payment.status = 'failed'
+            payment.failed_at = timezone.now()
+            payment.error_message = payment_intent.get('last_payment_error', {}).get('message', 'Payment failed')
+            payment.save()
+            
+            # Mark webhook as processed
+            webhook_event = StripeWebhookEvent.objects.get(
+                stripe_event_id=payment_intent['id']
+            )
+            webhook_event.processed = True
+            webhook_event.processed_at = timezone.now()
+            webhook_event.save()
+            
+            return True
+            
+        except Payment.DoesNotExist:
+            print(f"Payment not found for intent: {payment_intent['id']}")
+            return False
         except Exception as e:
-            print(f"Error handling payment failed: {str(e)}")
+            print(f"Error handling payment failure: {str(e)}")
             return False
     
-    def _handle_refund_processed(self, charge):
-        """Handle refund processed."""
+    def _handle_refund(self, charge):
+        """Handle refund."""
         try:
-            # Find payment by charge ID
-            payment = Payment.objects.filter(
-                transaction_id=charge['id']
-            ).first()
+            # Find payment by Stripe charge ID
+            payment = Payment.objects.get(
+                stripe_charge_id=charge['id'],
+                is_deleted=False
+            )
             
-            if payment:
-                payment.status = 'refunded'
-                payment.refund_amount = charge['amount_refunded'] / 100  # Convert from cents
-                payment.refunded_at = timezone.now()
-                payment.processor_response = charge
-                payment.save()
-                
-                return True
-            else:
-                return False
-                
+            # Update payment status
+            payment.status = 'refunded'
+            payment.refund_amount = charge['amount_refunded'] / 100  # Convert from cents
+            payment.refunded_at = timezone.now()
+            payment.save()
+            
+            # Mark webhook as processed
+            webhook_event = StripeWebhookEvent.objects.get(
+                stripe_event_id=charge['id']
+            )
+            webhook_event.processed = True
+            webhook_event.processed_at = timezone.now()
+            webhook_event.save()
+            
+            return True
+            
+        except Payment.DoesNotExist:
+            print(f"Payment not found for charge: {charge['id']}")
+            return False
         except Exception as e:
             print(f"Error handling refund: {str(e)}")
             return False
+
+
+# Simplified webhook handler for DRF
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@csrf_exempt
+def stripe_webhook(request):
+    """Simple Stripe webhook handler."""
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
     
-    def _handle_subscription_created(self, subscription):
-        """Handle subscription created."""
-        # For now, just log it
-        return True
-    
-    def _handle_subscription_updated(self, subscription):
-        """Handle subscription updated."""
-        # For now, just log it
-        return True
-    
-    def _handle_subscription_deleted(self, subscription):
-        """Handle subscription deleted."""
-        # For now, just log it
-        return True
+    try:
+        # Verify webhook signature
+        webhook_secret = getattr(settings, 'STRIPE_WEBHOOK_SECRET', '')
+        if not webhook_secret:
+            return Response({'error': 'Webhook secret not configured'}, status=400)
+        
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, webhook_secret
+        )
+        
+        # Create webhook event record
+        webhook_event = StripeWebhookEvent.objects.create(
+            stripe_event_id=event['id'],
+            event_type=event['type'],
+            event_data=event['data']
+        )
+        
+        # Mark as processed (basic handling)
+        webhook_event.processed = True
+        webhook_event.processed_at = timezone.now()
+        webhook_event.save()
+        
+        return Response({'status': 'success'})
+        
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def webhook_events(request):
+    """List webhook events."""
+    events = StripeWebhookEvent.objects.all().order_by('-created_at')[:50]
+    serializer = StripeWebhookEventSerializer(events, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def stripe_webhook(request):
-    """Alternative webhook endpoint using DRF."""
-    # Note: This bypasses the permission mixins for external webhook calls
-    # but still applies rate limiting and security headers
-    return StripeWebhookView.as_view()(request)
-
-
-@api_view(['GET'])
-def webhook_events(request):
-    """Get webhook events for debugging."""
-    from ..models import StripeWebhookEvent
-    from utils.permissions import has_group
-    
-    # Check permissions manually for function-based view
-    if not has_group(request.user, 'Payment Managers'):
-        from django.core.exceptions import PermissionDenied
-        raise PermissionDenied("You don't have permission to access this resource.")
-
-    events = StripeWebhookEvent.objects.all().order_by('-created_at')[:50]
-
-    data = []
-    for event in events:
-        data.append({
-            'id': event.id,
-            'stripe_event_id': event.stripe_event_id,
-            'event_type': event.event_type,
-            'processed': event.processed,
-            'processed_at': event.processed_at,
-            'error_message': event.error_message,
-            'retry_count': event.retry_count,
-            'created_at': event.created_at
-        })
-
-    return Response(data)
-
-
-@api_view(['POST'])
 def retry_webhook(request, event_id):
-    """Retry processing a failed webhook event."""
-    from utils.permissions import has_group
-    
-    # Check permissions manually for function-based view
-    if not has_group(request.user, 'Payment Managers'):
-        from django.core.exceptions import PermissionDenied
-        raise PermissionDenied("You don't have permission to access this resource.")
-    
+    """Retry processing a webhook event."""
     try:
         event = StripeWebhookEvent.objects.get(id=event_id)
-
-        # Reset error state
+        event.processed = False
         event.error_message = ''
-        event.retry_count += 1
         event.save()
-
-        # Reprocess event
-        success = StripeWebhookView()._process_event({
+        
+        # Process the event again
+        webhook_view = StripeWebhookView()
+        success = webhook_view._process_event({
             'id': event.stripe_event_id,
             'type': event.event_type,
             'data': event.event_data
         })
-
+        
         if success:
-            return Response({'message': 'Webhook reprocessed successfully'})
+            return Response({'status': 'success'})
         else:
-            return Response({'error': 'Failed to reprocess webhook'}, status=500)
-
+            return Response({'status': 'failed'}, status=500)
+            
     except StripeWebhookEvent.DoesNotExist:
-        return Response({'error': 'Webhook event not found'}, status=404)
+        return Response({'error': 'Event not found'}, status=404)
     except Exception as e:
         return Response({'error': str(e)}, status=500)

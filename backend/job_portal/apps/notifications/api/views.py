@@ -4,9 +4,11 @@ from rest_framework.response import Response
 from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
-from utils.crud_base.views import AbstractBaseListApiView, AbstractBaseApiView
 from utils.permissions import AbstractIsAuthenticatedOrReadOnly, AbstractHasSpecificPermission
+from utils.pagination import StandardResultsSetPagination
 from ..models import UserNotification, NotificationTemplate, NotificationPreference, NotificationLog
 from .serializers import (
     NotificationSerializer, NotificationTemplateSerializer, NotificationSettingSerializer,
@@ -16,13 +18,15 @@ from .serializers import (
 )
 
 
-class NotificationApiView(AbstractBaseListApiView):
+class NotificationApiView(generics.ListAPIView):
     serializer_class = NotificationSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['notification_type', 'priority', 'is_read']
     search_fields = ['title', 'message']
     ordering_fields = ['priority', 'created_at', 'read_at']
     ordering = ['-created_at']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         user = self.request.user
@@ -105,12 +109,14 @@ class NotificationCreateApiView(generics.CreateAPIView):
     permission_classes = [AbstractHasSpecificPermission(['notifications.add_notification'])]
 
 
-class NotificationSettingApiView(AbstractBaseListApiView):
+class NotificationSettingApiView(generics.ListAPIView):
     serializer_class = NotificationSettingSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['email_notifications', 'push_notifications']
     ordering_fields = ['created_at']
     ordering = ['created_at']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         return NotificationPreference.objects.filter(
@@ -141,13 +147,15 @@ class NotificationSettingCreateApiView(generics.CreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class NotificationTemplateApiView(AbstractBaseListApiView):
+class NotificationTemplateApiView(generics.ListAPIView):
     serializer_class = NotificationTemplateSerializer
     permission_classes = [AbstractHasSpecificPermission(['notifications.view_notificationtemplate'])]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['notification_type', 'is_active']
     search_fields = ['name', 'subject', 'content']
     ordering_fields = ['name', 'notification_type', 'created_at']
     ordering = ['name']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         return NotificationTemplate.objects.filter(is_deleted=False)
@@ -171,12 +179,14 @@ class NotificationTemplateCreateApiView(generics.CreateAPIView):
     permission_classes = [AbstractHasSpecificPermission(['notifications.add_notificationtemplate'])]
 
 
-class NotificationLogApiView(AbstractBaseListApiView):
+class NotificationLogApiView(generics.ListAPIView):
     serializer_class = NotificationLogSerializer
     permission_classes = [AbstractHasSpecificPermission(['notifications.view_notificationlog'])]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status', 'delivery_method', 'user']
     ordering_fields = ['sent_at', 'delivered_at', 'created_at']
     ordering = ['-created_at']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         return NotificationLog.objects.filter(is_deleted=False).select_related('notification', 'user')

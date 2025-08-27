@@ -4,8 +4,9 @@ from django.utils.translation import gettext_lazy as _
 
 class SoftDeleteManager(models.Manager):
     """
-    Custom manager that automatically filters out soft-deleted objects.
-    Provides methods to work with both active and deleted objects.
+    Enhanced soft delete manager that automatically filters out soft-deleted objects.
+    Provides comprehensive methods to work with both active and deleted objects.
+    Eliminates the need for manual is_deleted=False filtering in views.
     """
     
     def get_queryset(self):

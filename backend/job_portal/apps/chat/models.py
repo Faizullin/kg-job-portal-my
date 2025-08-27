@@ -32,6 +32,8 @@ class ChatRoom(AbstractSoftDeleteModel, AbstractTimestampedModel):
 
 class ChatMessage(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Individual chat messages."""
+    # Uses default SoftDeleteManager from AbstractSoftDeleteModel
+    
     chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='sent_messages')
     

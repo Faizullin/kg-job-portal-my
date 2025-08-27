@@ -1,12 +1,12 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator, MaxValueValidator
 from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedModel
 from accounts.models import UserModel
 
 
 class UserProfile(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Extended user profile for job portal functionality."""
+
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='job_portal_profile')
     user_type = models.CharField(_("User Type"), max_length=20, choices=[
         ('client', _('Client')),
@@ -50,6 +50,8 @@ class UserProfile(AbstractSoftDeleteModel, AbstractTimestampedModel):
 
 class ServiceProviderProfile(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Extended profile for service providers."""
+    # Uses default SoftDeleteManager from AbstractSoftDeleteModel
+    
     user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='service_provider_profile')
     
     # Business information

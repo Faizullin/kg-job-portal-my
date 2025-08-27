@@ -5,9 +5,11 @@ from django.db.models import Q, Sum, Count, Avg
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from datetime import timedelta
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
-from utils.crud_base.views import AbstractBaseListApiView, AbstractBaseApiView
 from utils.permissions import AbstractIsAuthenticatedOrReadOnly, AbstractHasSpecificPermission
+from utils.pagination import StandardResultsSetPagination
 from ..models import UserActivity, OrderAnalytics, ServiceCategoryAnalytics, PerformanceMetrics, BusinessMetrics
 from .serializers import (
     UserActivitySerializer, OrderAnalyticsSerializer, ServiceCategoryAnalyticsSerializer,
@@ -17,24 +19,28 @@ from .serializers import (
 )
 
 
-class UserActivityApiView(AbstractBaseListApiView):
+class UserActivityApiView(generics.ListAPIView):
     serializer_class = UserActivitySerializer
     permission_classes = [AbstractHasSpecificPermission(['analytics.view_useractivity'])]
-    filterset_fields = ['activity_type', 'user']
-    search_fields = ['context_data', 'user__first_name']
-    ordering_fields = ['activity_type', 'created_at']
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['activity_type', 'user', 'ip_address']
+    search_fields = ['description', 'user__username']
+    ordering_fields = ['created_at', 'activity_type']
     ordering = ['-created_at']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
-        return UserActivity.objects.filter(is_deleted=False).select_related('user')
+        # Manager automatically filters out deleted objects
+        return UserActivity.objects.all().select_related('user')
     
     @action(detail=False, methods=['get'])
     def recent_activities(self, request):
         """Get recent user activities (last 24 hours)."""
         yesterday = timezone.now() - timedelta(days=1)
         
+        # Manager automatically filters out deleted objects
         activities = UserActivity.objects.filter(
-            created_at__gte=yesterday, is_deleted=False
+            created_at__gte=yesterday
         ).select_related('user')[:100]
         
         serializer = UserActivitySerializer(activities, many=True)
@@ -47,8 +53,9 @@ class UserActivityApiView(AbstractBaseListApiView):
         if not user_id:
             return Response({'error': 'user_id is required'}, status=400)
         
+        # Manager automatically filters out deleted objects
         activities = UserActivity.objects.filter(
-            user_id=user_id, is_deleted=False
+            user_id=user_id
         ).select_related('user')
         
         # Group by activity type
@@ -78,22 +85,24 @@ class UserActivityCreateApiView(generics.CreateAPIView):
         )
 
 
-class ServiceCategoryAnalyticsApiView(AbstractBaseListApiView):
+class ServiceCategoryAnalyticsApiView(generics.ListAPIView):
     serializer_class = ServiceCategoryAnalyticsSerializer
     permission_classes = [AbstractHasSpecificPermission(['analytics.view_servicecategoryanalytics'])]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['category', 'date']
     ordering_fields = ['date', 'total_revenue', 'order_count']
     ordering = ['-date']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
-        return ServiceCategoryAnalytics.objects.filter(is_deleted=False).select_related('category')
+        # Manager automatically filters out deleted objects
+        return ServiceCategoryAnalytics.objects.all().select_related('category')
     
     @action(detail=False, methods=['get'])
     def top_performing_categories(self, request):
         """Get top performing service categories by revenue."""
-        categories = ServiceCategoryAnalytics.objects.filter(
-            is_deleted=False
-        ).select_related('category').order_by('-total_revenue')[:10]
+        # Manager automatically filters out deleted objects
+        categories = ServiceCategoryAnalytics.objects.all().select_related('category').order_by('-total_revenue')[:10]
         
         serializer = ServiceCategoryAnalyticsSerializer(categories, many=True)
         return Response(serializer.data)
@@ -107,10 +116,10 @@ class ServiceCategoryAnalyticsApiView(AbstractBaseListApiView):
         if not start_date or not end_date:
             return Response({'error': 'start_date and end_date are required'}, status=400)
         
+        # Manager automatically filters out deleted objects
         metrics = ServiceCategoryAnalytics.objects.filter(
             date__gte=start_date,
-            date__lte=end_date,
-            is_deleted=False
+            date__lte=end_date
         ).select_related('category')
         
         serializer = ServiceCategoryAnalyticsSerializer(metrics, many=True)
@@ -122,12 +131,14 @@ class ServiceCategoryAnalyticsCreateApiView(generics.CreateAPIView):
     permission_classes = [AbstractHasSpecificPermission(['analytics.add_servicecategoryanalytics'])]
 
 
-class OrderAnalyticsApiView(AbstractBaseListApiView):
+class OrderAnalyticsApiView(generics.ListAPIView):
     serializer_class = OrderAnalyticsSerializer
     permission_classes = [AbstractHasSpecificPermission(['analytics.view_orderanalytics'])]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['date']
     ordering_fields = ['date', 'total_revenue', 'total_orders']
     ordering = ['-date']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         return OrderAnalytics.objects.filter(is_deleted=False)
@@ -168,12 +179,14 @@ class OrderAnalyticsCreateApiView(generics.CreateAPIView):
     permission_classes = [AbstractHasSpecificPermission(['analytics.add_orderanalytics'])]
 
 
-class BusinessMetricsApiView(AbstractBaseListApiView):
+class BusinessMetricsApiView(generics.ListAPIView):
     serializer_class = BusinessMetricsSerializer
     permission_classes = [AbstractHasSpecificPermission(['analytics.view_businessmetrics'])]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['date']
     ordering_fields = ['date', 'gross_merchandise_volume', 'net_revenue']
     ordering = ['-date']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         return BusinessMetrics.objects.filter(is_deleted=False)
@@ -212,12 +225,14 @@ class BusinessMetricsCreateApiView(generics.CreateAPIView):
     permission_classes = [AbstractHasSpecificPermission(['analytics.add_businessmetrics'])]
 
 
-class PerformanceMetricsApiView(AbstractBaseListApiView):
+class PerformanceMetricsApiView(generics.ListAPIView):
     serializer_class = PerformanceMetricsSerializer
     permission_classes = [AbstractHasSpecificPermission(['analytics.view_performancemetrics'])]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['date', 'time_period']
     ordering_fields = ['date', 'average_response_time', 'error_rate']
     ordering = ['-date']
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         return PerformanceMetrics.objects.filter(is_deleted=False)
