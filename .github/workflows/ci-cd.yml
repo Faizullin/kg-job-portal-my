@@ -138,90 +138,31 @@ jobs:
                 echo "CONTAINER_NAME=kg-job-portal" >> $GITHUB_ENV
                 echo "IMAGE_TAG=latest" >> $GITHUB_ENV
                 echo "COMPOSE_FILE=docker-compose.prod.yml" >> $GITHUB_ENV
-            
-
 
             - name: Deploy to VPS
               uses: appleboy/ssh-action@master
               with:
-                host: ${{ secrets.VPS_HOST }}
-                username: ${{ secrets.VPS_USERNAME }}
-                key: ${{ secrets.VPS_SSH_KEY }}
-                script: |
-                    # Navigate to project directory
-                    cd /home/ubuntu/kg-job-portal-my
-                    
-                    # Pull latest changes
-                    git pull origin master
-                    git status
-                    
-                    # Create .env.prod file on the VPS
-                    cat > .env.prod << 'EOF'
-                    # Django Configuration
-                    DJANGO_ENV=prod
-                    SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
-                    DEBUG=False
-                    DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
-                    DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1
-                    RUNNING_FROM_DOCKER=1
-                    
-                    # Database Configuration
-                    POSTGRES_DB=kg_job_portal
-                    POSTGRES_USER=postgres
-                    POSTGRES_PASSWORD=postgres123
-                    POSTGRES_HOST=postgres
-                    POSTGRES_PORT=5432
-                    
-                    # Redis Configuration
-                    REDIS_HOST=redis
-                    REDIS_PORT=6379
-                    
-                    # Firebase Configuration
-                    FIREBASE_CREDENTIALS_PATH=/app/config/firebase/service_account.json
-                    
-                    # Docker Registry
-                    REGISTRY_USER=${{ secrets.REGISTRY_USER }}
-                    IMAGE_NAME=${{ secrets.IMAGE_NAME }}
-                    REGISTRY=ghcr.io
-                    
-                    # Nginx Configuration
-                    USE_NGINX=True
-                    NGINX_HOST=localhost
-                    
-                    # Logging
-                    LOG_LEVEL=INFO
-                    LOG_FILE=/app/logs/django.log
-                    EOF
-                    
-                    # Login to Docker registry
-                    echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | sudo docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
-                    
-                    # Stop current services
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} down
-                    
-                    # Pull latest images
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} --env-file .env.prod  pull
-                    
-                    # Start services
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} --env-file .env.prod  up -d
-                    
-                    # # Wait for services to be healthy
-                    # sleep 30
-                    # 
-                    # # Check service health
-                    # if sudo docker-compose -f ${{ env.COMPOSE_FILE }} ps | grep -q "unhealthy"; then
-                    #     echo "Services are unhealthy, rolling back..."
-                    #     sudo docker-compose -f ${{ env.COMPOSE_FILE }} --env-file .env.prod down
-                    #     exit 1
-                    # fi
-                    
-                    # Run database migrations
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput
-                    
-                    # Collect static files
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py collectstatic --noinput
-                    
-                    # Clear cache
-                    sudo docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py 
-                    #     exit 1
-                    # fi
+              host: ${{ secrets.VPS_HOST }}
+              username: ${{ secrets.VPS_USERNAME }}
+              key: ${{ secrets.VPS_SSH_KEY }}
+              script: |
+                cd /home/ubuntu/kg-job-portal-my
+                git pull origin master
+                git status
+
+                echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | sudo docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
+
+                sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} down
+                sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} pull
+                sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} up -d
+
+                sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput
+                sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py collectstatic --noinput
+                sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py clearcache
+
+                if curl -f http://localhost:${{ env.PORT }}/health/; then
+                  echo "Deployment successful!"
+                else
+                  echo "Health check failed!"
+                  exit 1
+                fi
