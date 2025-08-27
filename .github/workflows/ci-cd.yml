@@ -51,17 +51,30 @@ jobs:
         id: check-version
         run: |
           VERSION="${{ steps.get-version.outputs.version }}"
-          if git tag -l | grep -q "^$VERSION$"; then
-            if [ "${{ github.event.inputs.force_deploy }}" == "true" ]; then
-              echo "is_new_version=true" >> $GITHUB_OUTPUT
-              echo "⚠️ Version $VERSION already exists, but force deploy is enabled"
+          echo "Checking version: $VERSION"
+          echo "Event type: ${{ github.event_name }}"
+          
+          # For tag pushes, always allow (it's a new tag being created)
+          if [ "${{ github.event_name }}" == "push" ]; then
+            echo "is_new_version=true" >> $GITHUB_OUTPUT
+            echo "✅ New tag push detected for version $VERSION"
+          # For manual workflow dispatch, check if version exists
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            if git tag -l | grep -q "^$VERSION$"; then
+              if [ "${{ github.event.inputs.force_deploy }}" == "true" ]; then
+                echo "is_new_version=true" >> $GITHUB_OUTPUT
+                echo "⚠️ Version $VERSION already exists, but force deploy is enabled"
+              else
+                echo "is_new_version=false" >> $GITHUB_OUTPUT
+                echo "❌ Version $VERSION already exists. Use force deploy or create new version."
+              fi
             else
-              echo "is_new_version=false" >> $GITHUB_OUTPUT
-              echo "❌ Version $VERSION already exists. Use force deploy or create new version."
+              echo "is_new_version=true" >> $GITHUB_OUTPUT
+              echo "✅ New version $VERSION detected"
             fi
           else
             echo "is_new_version=true" >> $GITHUB_OUTPUT
-            echo "✅ New version $VERSION detected"
+            echo "✅ Defaulting to new version for event: ${{ github.event_name }}"
           fi
       
       - name: Validate Version Format
