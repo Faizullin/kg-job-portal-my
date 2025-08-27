@@ -12,8 +12,8 @@ USERNAME_FIELD = 'email'
 print("os.environ", os.environ)
 SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
-ALLOWED_HOSTS = os.environ['DJANGO_ALLOWED_HOSTS'].split()
-CSRF_TRUSTED_ORIGINS = os.environ['DJANGO_CSRF_TRUSTED_ORIGINS'].split()
+ALLOWED_HOSTS = os.environ['DJANGO_ALLOWED_HOSTS'].split(",")
+CSRF_TRUSTED_ORIGINS = os.environ['DJANGO_CSRF_TRUSTED_ORIGINS'].split(",")
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
