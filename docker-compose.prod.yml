@@ -5,6 +5,8 @@ services:
   db:
     container_name: kg-job-portal-my-db-prod
     image: postgres
+    networks:
+      - kg-job-portal-my-back-prod
     env_file:
       - .env.prod
     volumes:
@@ -16,6 +18,8 @@ services:
   redis:
     container_name: kg-job-portal-my-redis-prod
     image: redis
+    networks:
+      - kg-job-portal-my-back-prod
     env_file:
       - .env.prod
     volumes:
@@ -29,15 +33,16 @@ services:
     image: ${REGISTRY_USER}/kg-job-portal-my:latest
     # command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
     command: python3 manage.py runserver 0.0.0.0:8000
+    networks:
+      - kg-job-portal-my-back-prod
     env_file:
       - .env.prod
     environment:
       - DJANGO_ENV=prod
-      - FIREBASE_CREDENTIALS_PATH=/app/config/firebase/service_account.json
+      - FIREBASE_CREDENTIALS_PATH=config/firebase/service_account.json
     ports:
       - "8000:8000"
     volumes:
-      - ./backend/:/home/app/
       - kg-job-portal-my-static-volume:/home/app/staticfiles
       - kg-job-portal-my-media-volume:/home/app/protected
       - ./config/firebase:/home/app/config/firebase:ro
@@ -50,6 +55,8 @@ services:
   #   image: ${REGISTRY_USER}/kg-job-portal-my-nginx:latest
   #   container_name: kg_job_portal_nginx
   #   restart: unless-stopped
+  #   networks:
+  #     - kg-job-portal-my-back-prod
   #   ports:
   #     - "80:80"
   #   volumes:
@@ -66,3 +73,6 @@ volumes:
   kg-job-portal-my-static-volume:
   kg-job-portal-my-media-volume:
   kg-job-portal-my-redis:
+
+networks:
+  kg-job-portal-my-back-prod:

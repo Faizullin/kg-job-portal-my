@@ -6,85 +6,85 @@ on:
       - master
 
 jobs:
-  # test:
-  #   name: Run Production Tests
-  #   runs-on: ubuntu-latest
-  #   services:
-  #     postgres:
-  #       image: postgres
-  #       env:
-  #         POSTGRES_PASSWORD: postgres
-  #         POSTGRES_DB: test_db
-  #       options: >-
-  #         --health-cmd pg_isready
-  #         --health-interval 10s
-  #         --health-timeout 5s
-  #         --health-retries 5
-  #       ports:
-  #         - 5432:5432
+  test:
+    name: Run Production Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
-  #     redis:
-  #       image: redis:7-alpine
-  #       options: >-
-  #         --health-cmd "redis-cli ping"
-  #         --health-interval 10s
-  #         --health-timeout 5s
-  #         --health-retries 5
-  #       ports:
-  #         - 6379:6379
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
 
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v4
-  #     - name: check directory
-  #       run: ls -al
-  #     - name: Setup Python
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: "3.11"
-  #     - name: Install Requirements
-  #       run: |
-  #         cd backend
-  #         python -m pip install --upgrade pip
-  #         pip install -r requirements.prod.txt
-  #         pip install coverage
-  #     - name: Set Up Environment
-  #       run: |
-  #         echo "DJANGO_ENV=prod" >> $GITHUB_ENV
-  #         echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> $GITHUB_ENV
-  #         echo "POSTGRES_DB=test_db" >> $GITHUB_ENV
-  #         echo "POSTGRES_USER=postgres" >> $GITHUB_ENV
-  #         echo "POSTGRES_PASSWORD=postgres" >> $GITHUB_ENV
-  #         echo "POSTGRES_HOST=localhost" >> $GITHUB_ENV
-  #         echo "POSTGRES_PORT=5432" >> $GITHUB_ENV
-  #         echo "REDIS_HOST=localhost" >> $GITHUB_ENV
-  #         echo "REDIS_PORT=6379" >> $GITHUB_ENV
-  #         echo "DEBUG=True" >> $GITHUB_ENV
-  #         echo "DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1" >> $GITHUB_ENV
-  #         echo "DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1" >> $GITHUB_ENV
-  #         echo "FIREBASE_CREDENTIALS_PATH=/tmp/firebase-test.json" >> $GITHUB_ENV
-  #         echo "USE_NGINX=false" >> $GITHUB_ENV
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: check directory
+        run: ls -al
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Requirements
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.prod.txt
+          pip install coverage
+      - name: Set Up Environment
+        run: |
+          echo "DJANGO_ENV=prod" >> $GITHUB_ENV
+          echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> $GITHUB_ENV
+          echo "POSTGRES_DB=test_db" >> $GITHUB_ENV
+          echo "POSTGRES_USER=postgres" >> $GITHUB_ENV
+          echo "POSTGRES_PASSWORD=postgres" >> $GITHUB_ENV
+          echo "POSTGRES_HOST=localhost" >> $GITHUB_ENV
+          echo "POSTGRES_PORT=5432" >> $GITHUB_ENV
+          echo "REDIS_HOST=localhost" >> $GITHUB_ENV
+          echo "REDIS_PORT=6379" >> $GITHUB_ENV
+          echo "DEBUG=True" >> $GITHUB_ENV
+          echo "DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1" >> $GITHUB_ENV
+          echo "DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1" >> $GITHUB_ENV
+          echo "FIREBASE_CREDENTIALS_PATH=/tmp/firebase-test.json" >> $GITHUB_ENV
+          echo "USE_NGINX=false" >> $GITHUB_ENV
 
-  #     - name: Create Real Firebase Credentials
-  #       run: |
-  #         echo '${{ secrets.FIREBASE_CREDENTIALS_JSON }}' > /tmp/firebase-test.json
-  #     - name: Wait for database
-  #       run: |
-  #         while ! pg_isready -h localhost -p 5432 -U postgres; do
-  #           echo "Waiting for PostgreSQL..."
-  #           sleep 2
-  #         done
-  #     - name: Run Test
-  #       run: |
-  #         cd backend
-  #         python manage.py migrate
-  #         coverage run --include='**/models.py,**/views.py,**/serializers.py' --omit='env/*,*/opt/*,job_portal/apps/users/api/views.py,job_portal/apps/users/models.py,utils/crud_base/views.py,utils/serializers.py' manage.py test
-  #         coverage report -m --fail-under=70
+      - name: Create Real Firebase Credentials
+        run: |
+          echo '${{ secrets.FIREBASE_CREDENTIALS_JSON }}' > /tmp/firebase-test.json
+      - name: Wait for database
+        run: |
+          while ! pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+      - name: Run Test
+        run: |
+          cd backend
+          python manage.py migrate
+          coverage run --include='**/models.py,**/views.py,**/serializers.py' --omit='env/*,*/opt/*,job_portal/apps/users/api/views.py,job_portal/apps/users/models.py,utils/crud_base/views.py,utils/serializers.py' manage.py test
+          coverage report -m --fail-under=70
 
   build:
     name: Build & Publish Production Images
     runs-on: ubuntu-latest
-    # needs: test
+    needs: test
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
