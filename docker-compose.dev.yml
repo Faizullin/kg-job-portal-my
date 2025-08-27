@@ -41,10 +41,11 @@ services:
     environment:
       - DJANGO_ENV=dev
       - FIREBASE_CREDENTIALS_PATH=config/firebase/service_account.json
+    ports:
+      - "8000:8000"
     depends_on:
       - db
       - redis
-    network_mode: "host"
 
 volumes:
   kg-job-portal-my-database:
