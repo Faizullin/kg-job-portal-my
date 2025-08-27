@@ -9,7 +9,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 AUTH_USER_MODEL = 'accounts.UserModel'
 USERNAME_FIELD = 'email'
 
-print("os.environ", os.environ)
 SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 ALLOWED_HOSTS = os.environ['DJANGO_ALLOWED_HOSTS'].split(",")
