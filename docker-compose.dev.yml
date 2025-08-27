@@ -34,8 +34,6 @@ services:
       - kg-job-portal-my-static-volume:/home/app/staticfiles
       - kg-job-portal-my-media-volume:/home/app/protected
       - ./config/firebase:/home/app/config/firebase:ro
-    ports:
-      - "8000:8000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:
@@ -46,6 +44,7 @@ services:
     depends_on:
       - db
       - redis
+    network_mode: "host"
 
 volumes:
   kg-job-portal-my-database:
