@@ -93,56 +93,6 @@ class AbstractHasSpecificPermission(permissions.BasePermission):
         return all(request.user.has_perm(perm) for perm in self.required_permissions)
 
 
-class AbstractIsActiveUser(permissions.BasePermission):
-    """
-    Custom permission to only allow active users.
-    """
-    
-    def has_permission(self, request, view):
-        if not request.user or not request.user.is_authenticated:
-            return False
-        
-        # Check if user is active
-        return request.user.is_active
-
-
-class AbstractIsVerifiedUser(permissions.BasePermission):
-    """
-    Custom permission to only allow verified users.
-    """
-    
-    def has_permission(self, request, view):
-        if not request.user or not request.user.is_authenticated:
-            return False
-        
-        # Check if user is verified (assuming there's a field like is_verified)
-        if hasattr(request.user, 'is_verified'):
-            return request.user.is_verified
-        
-        # If no verification field, allow access
-        return True
-
-
-class AbstractObjectLevelPermissionMixin:
-    """
-    Mixin to add object-level permission checking to views.
-    """
-    
-    def check_object_permissions(self, request, obj):
-        """
-        Check if the request should be permitted for a given object.
-        """
-        for permission in self.get_permissions():
-            if not permission.has_object_permission(request, self, obj):
-                self.permission_denied(request)
-    
-    def get_object_permissions(self):
-        """
-        Get the object-level permission classes.
-        """
-        return [permission() for permission in self.get_permission_classes()]
-
-
 class AbstractPermissionRequiredMixin:
     """
     Mixin to require specific permissions for views.

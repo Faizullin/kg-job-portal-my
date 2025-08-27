@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 
 from utils.crud_base.views import AbstractBaseListApiView, AbstractBaseApiView
 from utils.permissions import AbstractIsAuthenticatedOrReadOnly
+from utils.decorators import PermissionRequiredMixin
+from utils.exceptions import StandardizedViewMixin
 from ..models import ChatRoom, ChatMessage, ChatParticipant, ChatAttachment
 from .serializers import (
     ChatRoomSerializer, MessageSerializer, ChatParticipantSerializer,
@@ -62,7 +64,7 @@ class ChatRoomApiView(AbstractBaseListApiView):
             return Response({'error': 'Chat room not found'}, status=404)
 
 
-class ChatRoomDetailApiView(AbstractBaseApiView):
+class ChatRoomDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = ChatRoomUpdateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     
@@ -76,44 +78,20 @@ class ChatRoomDetailApiView(AbstractBaseApiView):
         if self.request.method == 'GET':
             return ChatRoomSerializer
         return ChatRoomUpdateSerializer
-    
-    def get(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-    
-    def put(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=False)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    
-    def patch(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
 
 
-class ChatRoomCreateApiView(AbstractBaseApiView):
+class ChatRoomCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = ChatRoomCreateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+    def perform_create(self, serializer):
         chat_room = serializer.save()
-        
         # Add creator as participant
         ChatParticipant.objects.create(
             chat_room=chat_room,
             user=self.request.user,
             role='admin'
         )
-        
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class MessageApiView(AbstractBaseListApiView):
@@ -146,7 +124,7 @@ class MessageApiView(AbstractBaseListApiView):
         return Response(serializer.data)
 
 
-class MessageDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+class MessageDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MessageUpdateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     
@@ -164,7 +142,7 @@ class MessageDetailApiView(generics.RetrieveUpdateDestroyAPIView):
         return MessageUpdateSerializer
 
 
-class MessageCreateApiView(generics.CreateAPIView):
+class MessageCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = MessageCreateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     
@@ -188,7 +166,7 @@ class ChatParticipantApiView(AbstractBaseListApiView):
         ).select_related('user', 'chat_room')
 
 
-class ChatParticipantCreateApiView(generics.CreateAPIView):
+class ChatParticipantCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = ChatParticipantCreateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     
@@ -218,7 +196,7 @@ class ChatAttachmentApiView(AbstractBaseListApiView):
         ).select_related('message')
 
 
-class ChatAttachmentCreateApiView(generics.CreateAPIView):
+class ChatAttachmentCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = ChatAttachmentCreateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     
@@ -231,7 +209,7 @@ class ChatAttachmentCreateApiView(generics.CreateAPIView):
         serializer.save()
 
 
-class ChatAttachmentDetailApiView(generics.RetrieveDestroyAPIView):
+class ChatAttachmentDetailApiView(StandardizedViewMixin, generics.RetrieveDestroyAPIView):
     serializer_class = ChatAttachmentSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     
@@ -244,7 +222,7 @@ class ChatAttachmentDetailApiView(generics.RetrieveDestroyAPIView):
         ).select_related('message')
 
 
-class WebSocketInfoApiView(AbstractBaseApiView):
+class WebSocketInfoApiView(StandardizedViewMixin, generics.GenericAPIView):
     """Get WebSocket connection information for the current user."""
     
     def get(self, request, *args, **kwargs):
