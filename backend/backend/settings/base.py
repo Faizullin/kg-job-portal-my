@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
@@ -180,3 +181,26 @@ if os.path.exists(FIREBASE_CREDENTIALS_PATH):
 # LMS apps removed - replaced with job_portal and accounts
 
 LOGGING = {}
+
+# Debug Toolbar Configuration
+if DEBUG:
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+    INSTALLED_APPS += ['debug_toolbar']
+    
+    # Debug Toolbar Settings
+    INTERNAL_IPS = [
+        '127.0.0.1',
+        'localhost',
+        '0.0.0.0',
+    ]
+
+    def show_toolbar(_):
+        return True
+    
+    DEBUG_TOOLBAR_CONFIG = {
+        "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+        'RESULTS_CACHE_SIZE': 100,
+        'SQL_WARNING_THRESHOLD': 2000,
+        'IS_RUNNING_TESTS': False
+    }
+
