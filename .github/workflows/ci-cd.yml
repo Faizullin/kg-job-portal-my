@@ -1,169 +1,167 @@
 name: CI/CD Pipeline
 
 on:
-    push:
-        branches:
-            - master
-
+  push:
+    branches:
+      - master
 
 jobs:
-    test:
-        name: Run Production Tests
-        runs-on: ubuntu-latest
-        services:
-            postgres:
-                image: postgres
-                env:
-                    POSTGRES_PASSWORD: postgres
-                    POSTGRES_DB: test_db
-                options: >-
-                    --health-cmd pg_isready
-                    --health-interval 10s
-                    --health-timeout 5s
-                    --health-retries 5
-                ports:
-                    - 5432:5432
+  test:
+    name: Run Production Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
-            redis:
-                image: redis:7-alpine
-                options: >-
-                    --health-cmd "redis-cli ping"
-                    --health-interval 10s
-                    --health-timeout 5s
-                    --health-retries 5
-                ports:
-                    - 6379:6379
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
 
-        steps: 
-            - name: Checkout Repository
-              uses: actions/checkout@v4
-            - name: check directory
-              run: ls -al
-            - name: Setup Python
-              uses: actions/setup-python@v5
-              with:
-                python-version: '3.11'
-            - name: Install Requirements
-              run: |
-                cd backend
-                python -m pip install --upgrade pip
-                pip install -r requirements.prod.txt
-                pip install coverage
-            - name: Set Up Environment
-              run: |
-                echo "DJANGO_ENV=prod" >> $GITHUB_ENV
-                echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> $GITHUB_ENV
-                echo "POSTGRES_DB=test_db" >> $GITHUB_ENV
-                echo "POSTGRES_USER=postgres" >> $GITHUB_ENV
-                echo "POSTGRES_PASSWORD=postgres" >> $GITHUB_ENV
-                echo "POSTGRES_HOST=localhost" >> $GITHUB_ENV
-                echo "POSTGRES_PORT=5432" >> $GITHUB_ENV
-                echo "REDIS_HOST=localhost" >> $GITHUB_ENV
-                echo "REDIS_PORT=6379" >> $GITHUB_ENV
-                echo "DEBUG=True" >> $GITHUB_ENV
-                echo "DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1" >> $GITHUB_ENV
-                echo "DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1" >> $GITHUB_ENV
-                echo "FIREBASE_CREDENTIALS_PATH=/tmp/firebase-test.json" >> $GITHUB_ENV
-                echo "USE_NGINX=false" >> $GITHUB_ENV
-            
-            - name: Create Real Firebase Credentials
-              run: |
-                echo '${{ secrets.FIREBASE_CREDENTIALS_JSON }}' > /tmp/firebase-test.json
-            - name: Wait for database
-              run: |
-                while ! pg_isready -h localhost -p 5432 -U postgres; do
-                  echo "Waiting for PostgreSQL..."
-                  sleep 2
-                done
-            - name: Run Test
-              run: |
-                cd backend
-                python manage.py migrate
-                coverage run --include='**/models.py,**/views.py,**/serializers.py' --omit='env/*,*/opt/*,job_portal/apps/users/api/views.py,job_portal/apps/users/models.py,utils/crud_base/views.py,utils/serializers.py' manage.py test
-                coverage report -m --fail-under=70
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: check directory
+        run: ls -al
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Requirements
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.prod.txt
+          pip install coverage
+      - name: Set Up Environment
+        run: |
+          echo "DJANGO_ENV=prod" >> $GITHUB_ENV
+          echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> $GITHUB_ENV
+          echo "POSTGRES_DB=test_db" >> $GITHUB_ENV
+          echo "POSTGRES_USER=postgres" >> $GITHUB_ENV
+          echo "POSTGRES_PASSWORD=postgres" >> $GITHUB_ENV
+          echo "POSTGRES_HOST=localhost" >> $GITHUB_ENV
+          echo "POSTGRES_PORT=5432" >> $GITHUB_ENV
+          echo "REDIS_HOST=localhost" >> $GITHUB_ENV
+          echo "REDIS_PORT=6379" >> $GITHUB_ENV
+          echo "DEBUG=True" >> $GITHUB_ENV
+          echo "DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1" >> $GITHUB_ENV
+          echo "DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1" >> $GITHUB_ENV
+          echo "FIREBASE_CREDENTIALS_PATH=/tmp/firebase-test.json" >> $GITHUB_ENV
+          echo "USE_NGINX=false" >> $GITHUB_ENV
 
+      - name: Create Real Firebase Credentials
+        run: |
+          echo '${{ secrets.FIREBASE_CREDENTIALS_JSON }}' > /tmp/firebase-test.json
+      - name: Wait for database
+        run: |
+          while ! pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+      - name: Run Test
+        run: |
+          cd backend
+          python manage.py migrate
+          coverage run --include='**/models.py,**/views.py,**/serializers.py' --omit='env/*,*/opt/*,job_portal/apps/users/api/views.py,job_portal/apps/users/models.py,utils/crud_base/views.py,utils/serializers.py' manage.py test
+          coverage report -m --fail-under=70
 
-    build:
-        name: Build & Publish Production Images
-        runs-on: ubuntu-latest
-        needs: test
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v4
-            - name: check directory
-              run: ls -al
-            - name: Set Up Environment
-              run: echo "IMAGE_TAG=latest" >> $GITHUB_ENV
-            - name: Docker login
-              run: echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
-            - name: Set Docker BuildKit
-              run: export DOCKER_BUILDKIT=1
-            - name: Build Django Docker Image
-              run: |
-                  cd backend
-                  docker build \
-                    --build-arg SECRET_KEY="${{ secrets.DJANGO_SECRET_KEY }}" \
-                    --build-arg DJANGO_ENV="prod" \
-                    --build-arg DEBUG="False" \
-                    --build-arg RUNNING_FROM_DOCKER="1" \
-                    --build-arg POSTGRES_HOST="postgres" \
-                    --build-arg POSTGRES_PORT="5432" \
-                    --build-arg REDIS_HOST="redis" \
-                    --build-arg REDIS_PORT="6379" \
-                    --build-arg FIREBASE_CREDENTIALS_PATH="/app/config/firebase/service_account.json" \
-                    --build-arg USE_NGINX="True" \
-                    --build-arg LOG_LEVEL="INFO" \
-                    --build-arg LOG_FILE="/app/logs/django.log" \
-                    -t ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
-                    -f Dockerfile.prod .
-                  docker push ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-            - name: Build Nginx Docker Image
-              run: |
-                  cd nginx
-                  docker build -t ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}-nginx:${{ env.IMAGE_TAG }} .
-                  docker push ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}-nginx:${{ env.IMAGE_TAG }}
+  build:
+    name: Build & Publish Production Images
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: check directory
+        run: ls -al
+      - name: Set Up Environment
+        run: echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+      - name: Docker login
+        run: echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
+      - name: Set Docker BuildKit
+        run: export DOCKER_BUILDKIT=1
+      - name: Build Django Docker Image
+        run: |
+          cd backend
+          docker build \
+            --build-arg SECRET_KEY="${{ secrets.DJANGO_SECRET_KEY }}" \
+            --build-arg DJANGO_ENV="prod" \
+            --build-arg DEBUG="False" \
+            --build-arg RUNNING_FROM_DOCKER="1" \
+            --build-arg POSTGRES_HOST="postgres" \
+            --build-arg POSTGRES_PORT="5432" \
+            --build-arg REDIS_HOST="redis" \
+            --build-arg REDIS_PORT="6379" \
+            --build-arg FIREBASE_CREDENTIALS_PATH="/app/config/firebase/service_account.json" \
+            --build-arg USE_NGINX="True" \
+            --build-arg LOG_LEVEL="INFO" \
+            --build-arg LOG_FILE="/app/logs/django.log" \
+            -t ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
+            -f Dockerfile.prod .
+          docker push ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+      - name: Build Nginx Docker Image
+        run: |
+          cd nginx
+          docker build -t ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}-nginx:${{ env.IMAGE_TAG }} .
+          docker push ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}-nginx:${{ env.IMAGE_TAG }}
 
-    deploy:
-        name: Deploy to Production VPS
-        runs-on: ubuntu-latest
-        # needs: build
-        if: github.ref == 'refs/heads/master'
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v4
-              
-            - name: Set Up Environment
-              run: |
-                echo "PORT=8000" >> $GITHUB_ENV
-                echo "CONTAINER_NAME=kg-job-portal" >> $GITHUB_ENV
-                echo "IMAGE_TAG=latest" >> $GITHUB_ENV
-                echo "COMPOSE_FILE=docker-compose.prod.yml" >> $GITHUB_ENV
+  deploy:
+    name: Deploy to Production VPS
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-            - name: Deploy to VPS
-              uses: appleboy/ssh-action@master
-              with:
-              host: ${{ secrets.VPS_HOST }}
-              username: ${{ secrets.VPS_USERNAME }}
-              key: ${{ secrets.VPS_SSH_KEY }}
-              script: |
-                cd /home/ubuntu/kg-job-portal-my
-                git pull origin master
-                git status
+      - name: Set Up Environment
+        run: |
+          echo "PORT=8000" >> $GITHUB_ENV
+          echo "CONTAINER_NAME=kg-job-portal" >> $GITHUB_ENV
+          echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+          echo "COMPOSE_FILE=docker-compose.prod.yml" >> $GITHUB_ENV
 
-                echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | sudo docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        script: |
+          cd /home/ubuntu/kg-job-portal-my
+          git pull origin master
+          git status
 
-                sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} down
-                sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} pull
-                sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} up -d
+          echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | sudo docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
 
-                sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput
-                sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py collectstatic --noinput
-                # sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py clearcache
+          sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} down
+          sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} pull
+          sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} up -d
 
-                echo "Deployment successful!"
-                # if curl -f http://localhost:8000/health/; then
-                #   echo "Deployment successful!"
-                # else
-                #   echo "Health check failed!"
-                #   exit 1
-                # fi
+          sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput
+          sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py collectstatic --noinput
+          # sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py clearcache
+
+          echo "Deployment successful!"
+          # if curl -f http://localhost:8000/health/; then
+          #   echo "Deployment successful!"
+          # else
+          #   echo "Health check failed!"
+          #   exit 1
+          # fi
