@@ -4,6 +4,7 @@ from .base import *
 # DEBUG = False
 # CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 LOGGING = {
     'version': 1,
