@@ -140,28 +140,28 @@ jobs:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
         with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USERNAME }}
-        key: ${{ secrets.VPS_SSH_KEY }}
-        script: |
-          cd /home/ubuntu/kg-job-portal-my
-          git pull origin master
-          git status
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/kg-job-portal-my
+            git pull origin master
+            git status
 
-          echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | sudo docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
+            echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | sudo docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
 
-          sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} down
-          sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} pull
-          sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} up -d
+            sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} down
+            sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} pull
+            sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} up -d
 
-          sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput
-          sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py collectstatic --noinput
-          # sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py clearcache
+            sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py migrate --noinput
+            sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py collectstatic --noinput
+            # sudo REGISTRY_USER=${{ secrets.REGISTRY_USER }} docker-compose -f ${{ env.COMPOSE_FILE }} exec -T backend python manage.py clearcache
 
-          echo "Deployment successful!"
-          # if curl -f http://localhost:8000/health/; then
-          #   echo "Deployment successful!"
-          # else
-          #   echo "Health check failed!"
-          #   exit 1
-          # fi
+            echo "Deployment successful!"
+            # if curl -f http://localhost:8000/health/; then
+            #   echo "Deployment successful!"
+            # else
+            #   echo "Health check failed!"
+            #   exit 1
+            # fi
