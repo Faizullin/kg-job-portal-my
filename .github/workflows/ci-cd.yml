@@ -145,8 +145,8 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd /home/ubuntu/kg-job-portal-my
-            git pull origin master
-            git status
+            sudo git pull origin master
+            sudo git status
 
             echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | sudo docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
 
