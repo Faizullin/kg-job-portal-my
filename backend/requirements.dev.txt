@@ -82,3 +82,5 @@ django-debug-toolbar
 drf-standardized-errors
 pyyaml 
 inflection
+channels-redis==4.1.0
+redis==5.0.1

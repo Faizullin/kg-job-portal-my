@@ -3,7 +3,7 @@ from .api.views import (
     ChatRoomApiView, ChatRoomDetailApiView, ChatRoomCreateApiView, MessageApiView,
     MessageDetailApiView, MessageCreateApiView, ChatParticipantApiView,
     ChatParticipantCreateApiView, ChatAttachmentApiView, ChatAttachmentCreateApiView,
-    ChatAttachmentDetailApiView
+    ChatAttachmentDetailApiView, WebSocketInfoApiView
 )
 
 app_name = 'chat'
@@ -27,4 +27,7 @@ urlpatterns = [
     path('api/v1/chat/attachments/', ChatAttachmentApiView.as_view(), name='attachments'),
     path('api/v1/chat/attachments/create/', ChatAttachmentCreateApiView.as_view(), name='attachment-create'),
     path('api/v1/chat/attachments/<int:pk>/', ChatAttachmentDetailApiView.as_view(), name='attachment-detail'),
+    
+    # WebSocket connection information
+    path('api/v1/chat/websocket-info/', WebSocketInfoApiView.as_view(), name='websocket-info'),
 ]
