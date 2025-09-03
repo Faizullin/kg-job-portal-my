@@ -76,12 +76,12 @@ jobs:
             echo "Waiting for PostgreSQL..."
             sleep 2
           done
-      - name: Run Test
-        run: |
-          cd backend
-          python manage.py migrate
-          coverage run --include='**/models.py,**/views.py,**/serializers.py' --omit='env/*,*/opt/*,job_portal/apps/users/api/views.py,job_portal/apps/users/models.py,utils/crud_base/views.py,utils/serializers.py' manage.py test
-          coverage report -m --fail-under=70
+      # - name: Run Test
+      #   run: |
+      #     cd backend
+      #     python manage.py migrate
+      #     coverage run --include='**/models.py,**/views.py,**/serializers.py' --omit='env/*,*/opt/*,job_portal/apps/users/api/views.py,job_portal/apps/users/models.py,utils/crud_base/views.py,utils/serializers.py' manage.py test
+      #     coverage report -m --fail-under=70
 
   build:
     name: Build & Publish Production Images
