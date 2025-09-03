@@ -1,12 +1,16 @@
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.pagination import StandardResultsSetPagination
+from rest_framework import generics
+from rest_framework.filters import OrderingFilter, SearchFilter
+from utils.pagination import CustomPagination
+from rest_framework.permissions import IsAuthenticated
 
 from ...models import UserModel
-from ..serializers import UserProfileSerializer, UserUpdateSerializer, UserListSerializer, UserDetailSerializer
-from ..permissions import AbstractIsAuthenticatedOrReadOnly
+from utils.permissions import AbstractIsAuthenticatedOrReadOnly
+from ..serializers import (
+    UserListSerializer,
+    UserProfileSerializer,
+    UserUpdateSerializer,
+)
 
 
 class UserProfileApiView(generics.RetrieveUpdateAPIView):
@@ -27,7 +31,7 @@ class UserListApiView(generics.ListAPIView):
     search_fields = ['username', 'email', 'name']
     ordering_fields = ['date_joined', 'username', 'name']
     ordering = ['-date_joined']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         # Manager automatically filters out deleted objects
@@ -36,27 +40,4 @@ class UserListApiView(generics.ListAPIView):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return UserListSerializer
-        return UserUpdateSerializer
-
-
-class UserUpdateApiView(generics.UpdateAPIView):
-    """Update user - enhanced version of api_users EditUserSettingsView"""
-    serializer_class = UserUpdateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
-    queryset = UserModel.objects.filter(is_deleted=False)
-
-
-# Individual user detail view
-class UserDetailApiView(generics.RetrieveUpdateAPIView):
-    """Get detailed user information - not in api_users, useful for admin"""
-    serializer_class = UserDetailSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
-    
-    def get_queryset(self):
-        # Manager automatically filters out deleted objects
-        return UserModel.objects.all()
-    
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return UserDetailSerializer
         return UserUpdateSerializer

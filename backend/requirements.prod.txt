@@ -88,3 +88,4 @@ django-debug-toolbar
 drf-standardized-errors
 pyyaml 
 inflection
+drf-spectacular[sidecar]

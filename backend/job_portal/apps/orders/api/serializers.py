@@ -79,7 +79,7 @@ class OrderSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSer
     class Meta:
         model = Order
         fields = [
-            'id', 'client', 'service_subcategory', 'title', 'description', 'status', 'status_display',
+            'id', 'client', 'client_name', 'service_subcategory', 'title', 'description', 'status', 'status_display',
             'location', 'city', 'state', 'country', 'postal_code', 'service_date', 'service_time',
             'urgency', 'budget_min', 'budget_max', 'final_price', 'addons', 'photos', 'bids',
             'attachments', 'special_requirements', 'is_featured', 'created_at', 'updated_at'

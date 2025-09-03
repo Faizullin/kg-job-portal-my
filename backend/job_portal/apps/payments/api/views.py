@@ -6,9 +6,9 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly, AbstractHasSpecificPermission
+from utils.permissions import AbstractIsAuthenticatedOrReadOnly, HasSpecificPermission
 from utils.decorators import GroupRequiredMixin, RateLimitMixin, LogActionMixin
-from utils.pagination import StandardResultsSetPagination
+from utils.pagination import CustomPagination
 from ..models import Payment, PaymentMethod, Invoice, StripeWebhookEvent
 from .serializers import (
     PaymentSerializer, PaymentMethodSerializer,
@@ -26,7 +26,7 @@ class PaymentApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generic
     search_fields = ['invoice__order__title', 'payment_id']
     ordering_fields = ['amount', 'created_at', 'updated_at']
     ordering = ['-created_at']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     # Rate limiting configuration
     max_requests = 500
@@ -103,7 +103,7 @@ class PaymentMethodApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, g
     filterset_fields = ['method_type', 'is_active', 'is_default']
     ordering_fields = ['is_default', 'created_at']
     ordering = ['-is_default', '-created_at']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     # Rate limiting configuration
     max_requests = 500
@@ -148,7 +148,7 @@ class InvoiceApiView(generics.ListAPIView):
     filterset_fields = ['status', 'order']
     ordering_fields = ['total_amount', 'due_date', 'created_at']
     ordering = ['-created_at']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         user = self.request.user
@@ -170,4 +170,4 @@ class InvoiceDetailApiView(generics.RetrieveAPIView):
 
 class InvoiceCreateApiView(generics.CreateAPIView):
     serializer_class = InvoiceCreateSerializer
-    permission_classes = [AbstractHasSpecificPermission(['payments.add_invoice'])]
+    permission_classes = [HasSpecificPermission(['payments.add_invoice'])]

@@ -47,9 +47,8 @@ class ChatService:
     def get_user_chat_rooms(user):
         """Get all chat rooms for a user."""
         return ChatRoom.objects.filter(
-            participants__user=user,
-            participants__is_active=True,
-            is_deleted=False
+            participants=user,
+            is_active=True,
         ).select_related('order')
     
     @staticmethod

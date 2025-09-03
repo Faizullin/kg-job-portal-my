@@ -105,7 +105,7 @@ class Payment(AbstractSoftDeleteModel, AbstractTimestampedModel):
     # Payment details
     payment_id = models.CharField(_("Payment ID"), max_length=100, unique=True)
     amount = models.DecimalField(_("Amount"), max_digits=10, decimal_places=2)
-    currency = models.CharField(_("Currency"), max_digits=3, default='USD')
+    currency = models.CharField(_("Currency"), default='USD')
     
     # Status
     status = models.CharField(_("Status"), max_length=20, choices=[

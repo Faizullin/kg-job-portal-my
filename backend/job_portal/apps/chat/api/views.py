@@ -1,21 +1,26 @@
-from rest_framework import generics, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from django.db.models import Q, Max
-from django.shortcuts import get_object_or_404
+from django.db.models import Max
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter
-
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly
-from utils.decorators import PermissionRequiredMixin
+from rest_framework import generics
+from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.response import Response
 from utils.exceptions import StandardizedViewMixin
-from utils.pagination import StandardResultsSetPagination
-from ..models import ChatRoom, ChatMessage, ChatParticipant, ChatAttachment
+from utils.pagination import CustomPagination
+from utils.permissions import AbstractIsAuthenticatedOrReadOnly
+
+from ..models import ChatAttachment, ChatMessage, ChatParticipant, ChatRoom
 from .serializers import (
-    ChatRoomSerializer, MessageSerializer, ChatParticipantSerializer,
-    ChatAttachmentSerializer, ChatRoomCreateSerializer, MessageCreateSerializer,
-    ChatParticipantCreateSerializer, ChatAttachmentCreateSerializer,
-    MessageUpdateSerializer, ChatRoomUpdateSerializer
+    ChatAttachmentCreateSerializer,
+    ChatAttachmentSerializer,
+    ChatParticipantCreateSerializer,
+    ChatParticipantSerializer,
+    ChatRoomCreateSerializer,
+    ChatRoomSerializer,
+    ChatRoomUpdateSerializer,
+    MessageCreateSerializer,
+    MessageSerializer,
+    MessageUpdateSerializer,
+    WebSocketInfoSerializer,
 )
 
 
@@ -23,73 +28,66 @@ class ChatRoomApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = ChatRoomSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['chat_type', 'is_active']
-    search_fields = ['title', 'order__title']
-    ordering_fields = ['last_message_at', 'created_at']
-    ordering = ['-last_message_at', '-created_at']
-    pagination_class = StandardResultsSetPagination
-    
+    filterset_fields = ["chat_type", "is_active"]
+    search_fields = ["title", "order__title"]
+    ordering_fields = ["last_message_at", "created_at"]
+    ordering = ["-last_message_at", "-created_at"]
+    pagination_class = CustomPagination
+
     def get_queryset(self):
         # Simple filtering - manager automatically handles is_deleted
-        return ChatRoom.objects.filter(
-            participants__user=self.request.user, 
-            participants__is_active=True
-        ).prefetch_related(
-            'participants__user', 'messages'
-        ).annotate(
-            last_message=Max('messages__created_at')
+        return (
+            ChatRoom.objects.filter(
+                participants=self.request.user, is_active=True
+            )
+            .prefetch_related("participants", "messages")
+            .annotate(last_message=Max("messages__created_at"))
         )
-    
-    @action(detail=False, methods=['get'])
+
+    @action(detail=False, methods=["get"])
     def my_rooms(self, request):
         """Get chat rooms where user is a participant."""
         # Simple filtering - manager automatically handles is_deleted
         rooms = ChatRoom.objects.filter(
-            participants__user=request.user, 
-            participants__is_active=True
-        ).prefetch_related(
-            'participants__user', 'messages'
-        )
-        
+            participants=request.user, is_active=True
+        ).prefetch_related("participants", "messages")
+
         serializer = ChatRoomSerializer(rooms, many=True)
         return Response(serializer.data)
-    
-    @action(detail=False, methods=['get'])
+
+    @action(detail=False, methods=["get"])
     def order_chat(self, request):
         """Get chat room for a specific order."""
-        order_id = request.query_params.get('order_id')
+        order_id = request.query_params.get("order_id")
         if not order_id:
-            return Response({'error': 'order_id is required'}, status=400)
-        
+            return Response({"error": "order_id is required"}, status=400)
+
         # Simple filtering - manager automatically handles is_deleted
         room = ChatRoom.objects.filter(
             order_id=order_id,
-            participants__user=request.user,
-            participants__is_active=True
+            participants=request.user,
+            is_active=True,
         ).first()
-        
+
         if room:
             serializer = ChatRoomSerializer(room)
             return Response(serializer.data)
         else:
-            return Response({'error': 'Chat room not found'}, status=404)
+            return Response({"error": "Chat room not found"}, status=404)
 
 
 class ChatRoomDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = ChatRoomUpdateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
-    
+
     def get_queryset(self):
         # Simple filtering - manager automatically handles is_deleted
         return ChatRoom.objects.filter(
-            participants__user=self.request.user, 
-            participants__is_active=True
-        ).prefetch_related(
-            'participants__user', 'messages'
-        )
-    
+            participants=self.request.user, is_active=True
+        ).prefetch_related("participants", "messages")
+
     def get_serializer_class(self):
-        if self.request.method == 'GET':
+        if self.request.method == "GET":
             return ChatRoomSerializer
         return ChatRoomUpdateSerializer
 
@@ -97,14 +95,12 @@ class ChatRoomDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIVie
 class ChatRoomCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = ChatRoomCreateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
-    
+
     def perform_create(self, serializer):
         chat_room = serializer.save()
         # Add creator as participant
         ChatParticipant.objects.create(
-            chat_room=chat_room,
-            user=self.request.user,
-            role='admin'
+            chat_room=chat_room, user=self.request.user, role="admin"
         )
 
 
@@ -112,46 +108,48 @@ class MessageApiView(generics.ListAPIView):
     serializer_class = MessageSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['chat_room', 'message_type', 'is_read']
-    ordering_fields = ['created_at']
-    ordering = ['-created_at']
-    pagination_class = StandardResultsSetPagination
-    
+    filterset_fields = ["chat_room", "message_type", "is_read"]
+    ordering_fields = ["created_at"]
+    ordering = ["-created_at"]
+    pagination_class = CustomPagination
+
     def get_queryset(self):
         # Simple filtering - manager automatically handles is_deleted
         return ChatMessage.objects.filter(
-            chat_room__participants__user=self.request.user,
-            chat_room__participants__is_active=True
-        ).select_related('sender', 'chat_room')
-    
-    @action(detail=False, methods=['get'])
+            chat_room__participants=self.request.user,
+            chat_room__is_active=True,
+        ).select_related("sender", "chat_room")
+
+    @action(detail=False, methods=["get"])
     def unread(self, request):
         """Get unread messages for current user."""
         # Simple filtering - manager automatically handles is_deleted
         messages = ChatMessage.objects.filter(
-            chat_room__participants__user=request.user,
-            chat_room__participants__is_active=True,
-            is_read=False
-        ).select_related('sender', 'chat_room')
-        
+            chat_room__participants=request.user,
+            chat_room__is_active=True,
+            is_read=False,
+        ).select_related("sender", "chat_room")
+
         serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data)
 
 
-class MessageDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateDestroyAPIView):
+class MessageDetailApiView(
+    StandardizedViewMixin, generics.RetrieveUpdateDestroyAPIView
+):
     serializer_class = MessageUpdateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
-    
+
     def get_queryset(self):
         user = self.request.user
         return ChatMessage.objects.filter(
-            chat_room__participants__user=user,
-            chat_room__participants__is_active=True,
-            is_deleted=False
-        ).select_related('sender', 'chat_room')
-    
+            chat_room__participants=user,
+            chat_room__is_active=True,
+            is_deleted=False,
+        ).select_related("sender", "chat_room")
+
     def get_serializer_class(self):
-        if self.request.method == 'GET':
+        if self.request.method == "GET":
             return MessageSerializer
         return MessageUpdateSerializer
 
@@ -159,7 +157,7 @@ class MessageDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateDestroy
 class MessageCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = MessageCreateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
-    
+
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
 
@@ -168,30 +166,34 @@ class ChatParticipantApiView(generics.ListAPIView):
     serializer_class = ChatParticipantSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['chat_room', 'role', 'is_active']
-    ordering_fields = ['joined_at', 'last_read_at']
-    ordering = ['-joined_at']
-    pagination_class = StandardResultsSetPagination
-    
+    filterset_fields = ["chat_room", "role", "is_active"]
+    ordering_fields = ["joined_at", "last_read_at"]
+    ordering = ["-joined_at"]
+    pagination_class = CustomPagination
+
     def get_queryset(self):
         user = self.request.user
         return ChatParticipant.objects.filter(
-            chat_room__participants__user=user,
-            chat_room__participants__is_active=True,
-            is_deleted=False
-        ).select_related('user', 'chat_room')
+            chat_room__participants=user,
+            chat_room__is_active=True,
+            is_deleted=False,
+        ).select_related("user", "chat_room")
 
 
 class ChatParticipantCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = ChatParticipantCreateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
-    
+
     def perform_create(self, serializer):
         # Check if user has permission to add participants to this chat room
-        chat_room = serializer.validated_data['chat_room']
-        if not chat_room.participants.filter(user=self.request.user, role__in=['admin', 'moderator']).exists():
-            raise PermissionError("You don't have permission to add participants to this chat room")
-        
+        chat_room = serializer.validated_data["chat_room"]
+        if not chat_room.participants.filter(
+            user=self.request.user, role__in=["admin", "moderator"]
+        ).exists():
+            raise PermissionError(
+                "You don't have permission to add participants to this chat room"
+            )
+
         serializer.save()
 
 
@@ -199,56 +201,64 @@ class ChatAttachmentApiView(generics.ListAPIView):
     serializer_class = ChatAttachmentSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['message', 'file_type']
-    ordering_fields = ['file_size', 'created_at']
-    ordering = ['-created_at']
-    pagination_class = StandardResultsSetPagination
-    
+    filterset_fields = ["message", "file_type"]
+    ordering_fields = ["file_size", "created_at"]
+    ordering = ["-created_at"]
+    pagination_class = CustomPagination
+
     def get_queryset(self):
         user = self.request.user
         return ChatAttachment.objects.filter(
-            message__chat_room__participants__user=user,
-            message__chat_room__participants__is_active=True,
-            is_deleted=False
-        ).select_related('message')
+            message__chat_room__participants=user,
+            message__chat_room__is_active=True,
+            is_deleted=False,
+        ).select_related("message", "message__chat_room")
 
 
 class ChatAttachmentCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = ChatAttachmentCreateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
-    
+
     def perform_create(self, serializer):
         # Check if user has permission to add attachments to this message
-        message = serializer.validated_data['message']
-        if not message.chat_room.participants.filter(user=self.request.user, is_active=True).exists():
-            raise PermissionError("You don't have permission to add attachments to this message")
-        
+        message = serializer.validated_data["message"]
+        if not message.chat_room.participants.filter(
+            user=self.request.user, is_active=True
+        ).exists():
+            raise PermissionError(
+                "You don't have permission to add attachments to this message"
+            )
+
         serializer.save()
 
 
-class ChatAttachmentDetailApiView(StandardizedViewMixin, generics.RetrieveDestroyAPIView):
+class ChatAttachmentDetailApiView(
+    StandardizedViewMixin, generics.RetrieveDestroyAPIView
+):
     serializer_class = ChatAttachmentSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
-    
+
     def get_queryset(self):
         user = self.request.user
         return ChatAttachment.objects.filter(
-            message__chat_room__participants__user=user,
-            message__chat_room__participants__is_active=True,
-            is_deleted=False
-        ).select_related('message')
+            message__chat_room__participants=user,
+            message__chat_room__is_active=True,
+            is_deleted=False,
+        ).select_related("message")
 
 
 class WebSocketInfoApiView(StandardizedViewMixin, generics.GenericAPIView):
     """Get WebSocket connection information for the current user."""
-    
+
+    serializer_class = WebSocketInfoSerializer
+
     def get(self, request, *args, **kwargs):
-        return Response({
-            'websocket_url': f"ws://{request.get_host()}/ws/chat/",
-            'auth_required': True,
-            'token_param': 'token',
-            'connection_format': f"ws://{request.get_host()}/ws/chat/{{room_id}}/?token={{drf_token}}",
-            'message_types': [
-                'chat_message'
-            ]
-        })
+        response_data = {
+            "websocket_url": f"ws://{request.get_host()}/ws/chat/",
+            "auth_required": True,
+            "token_param": "token",
+            "connection_format": f"ws://{request.get_host()}/ws/chat/{{room_id}}/?token={{drf_token}}",
+            "message_types": ["chat_message"],
+        }
+        serializer = self.get_serializer(response_data)
+        return Response(serializer.data)

@@ -3,7 +3,7 @@ from .api.views import (
     UserActivityApiView, UserActivityCreateApiView, ServiceCategoryAnalyticsApiView,
     ServiceCategoryAnalyticsCreateApiView, OrderAnalyticsApiView, OrderAnalyticsCreateApiView,
     BusinessMetricsApiView, BusinessMetricsCreateApiView, PerformanceMetricsApiView,
-    PerformanceMetricsCreateApiView, DashboardApiView
+    DashboardApiView
 )
 
 app_name = 'analytics'
@@ -30,5 +30,4 @@ urlpatterns = [
     
     # Performance Metrics
     path('api/v1/analytics/performance/', PerformanceMetricsApiView.as_view(), name='performance-metrics'),
-    path('api/v1/analytics/performance/create/', PerformanceMetricsCreateApiView.as_view(), name='performance-metrics-create'),
 ]

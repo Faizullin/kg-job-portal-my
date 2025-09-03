@@ -16,6 +16,4 @@ urlpatterns = [
     # User management endpoints (enhanced versions of api_users)
     path('api/v1/profile/', UserProfileApiView.as_view(), name='user_profile'),
     path('api/v1/users/', UserListApiView.as_view(), name='user_list'),
-    path('api/v1/users/<int:pk>/', UserDetailApiView.as_view(), name='user_detail'),
-    path('api/v1/users/<int:pk>/update/', UserUpdateApiView.as_view(), name='user_update'),
 ]

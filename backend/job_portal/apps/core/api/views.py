@@ -1,11 +1,11 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+# from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from django.db.models import Q
+# from django.db.models import Q
 
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly, AbstractHasSpecificPermission
-from utils.pagination import StandardResultsSetPagination
+from utils.permissions import AbstractIsAuthenticatedOrReadOnly, HasSpecificPermission
+from utils.pagination import CustomPagination
 from ..models import Language, ServiceCategory, ServiceSubcategory, ServiceArea, SystemSettings, AppVersion
 from .serializers import (
     LanguageSerializer, ServiceCategorySerializer, ServiceSubcategorySerializer,
@@ -21,7 +21,7 @@ class LanguageApiView(generics.ListAPIView):
     search_fields = ['code', 'name', 'native_name']
     ordering_fields = ['name', 'code', 'created_at']
     ordering = ['name']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         # Simple filtering - manager automatically handles is_deleted
@@ -36,7 +36,7 @@ class ServiceCategoryApiView(generics.ListAPIView):
     search_fields = ['name', 'description', 'slug']
     ordering_fields = ['name', 'sort_order', 'created_at']
     ordering = ['sort_order', 'name']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         # Simple filtering - manager automatically handles is_deleted
@@ -51,7 +51,7 @@ class ServiceSubcategoryApiView(generics.ListAPIView):
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'sort_order', 'created_at']
     ordering = ['category', 'sort_order']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         # Simple filtering - manager automatically handles is_deleted
@@ -66,7 +66,7 @@ class ServiceAreaApiView(generics.ListAPIView):
     search_fields = ['name', 'city', 'state', 'country']
     ordering_fields = ['name', 'city', 'state', 'country', 'created_at']
     ordering = ['country', 'state', 'city']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         # Simple filtering - manager automatically handles is_deleted
@@ -75,13 +75,13 @@ class ServiceAreaApiView(generics.ListAPIView):
 
 class SystemSettingsApiView(generics.ListAPIView):
     serializer_class = SystemSettingsSerializer
-    permission_classes = [AbstractHasSpecificPermission(['core.view_systemsettings'])]
+    permission_classes = [HasSpecificPermission(['core.add_systemsettings'])]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_public', 'category']
     search_fields = ['key', 'description']
     ordering_fields = ['key', 'category', 'created_at']
     ordering = ['category', 'key']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         if self.request.user.is_staff:
@@ -98,7 +98,7 @@ class AppVersionApiView(generics.ListAPIView):
     search_fields = ['version', 'release_notes']
     ordering_fields = ['version', 'build_number', 'release_date', 'created_at']
     ordering = ['-build_number']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         return AppVersion.objects.all()

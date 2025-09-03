@@ -7,6 +7,4 @@ __all__ = [
     'LogoutView',
     'UserProfileApiView',
     'UserListApiView',
-    'UserUpdateApiView',
-    'UserDetailApiView',
 ]

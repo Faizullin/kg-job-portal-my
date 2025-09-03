@@ -30,24 +30,3 @@ application = ProtocolTypeRouter({
         ),
     ),
 })
-
-# # -----------------------------NECESSARY SCHEDULING----------------------------------------------------------
-# from django_q.tasks import schedule
-# from django_q.models import Schedule
-
-# # Check if the task exists
-# if Schedule.objects.filter(name='check_for_strike').exists():
-#     print("check_for_strike already exists, skipping creation...")
-# else:
-#     from django.utils import timezone
-
-#     schedule(
-#         'api_users.tasks.check_for_strike',
-#         name='check_for_strike',
-#         schedule_type=Schedule.MINUTES,
-#         minutes=60,
-#         repeats=-1,
-#         next_run=timezone.now() + timezone.timedelta(minutes=1),
-#     )
-
-#     print('started admin_farm_check task!')

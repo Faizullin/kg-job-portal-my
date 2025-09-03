@@ -117,3 +117,11 @@ class PerformanceMetricsCreateSerializer(AbstractTimestampedModelSerializer):
             'min_response_time', 'total_errors', 'error_rate', 'active_users',
             'concurrent_users', 'database_queries', 'cpu_usage', 'memory_usage', 'disk_usage'
         ]
+
+
+class DashboardResponseSerializer(serializers.Serializer):
+    """Serializer for dashboard API response."""
+    current_month = serializers.DictField()
+    
+    class Meta:
+        fields = ['current_month']

@@ -1,33 +1,32 @@
-from rest_framework import generics, status
+from rest_framework import generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.db.models import Q, Sum, Count, Avg
-from django.shortcuts import get_object_or_404
+from django.db.models import Sum, Avg
 from django.utils import timezone
 from datetime import timedelta
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly, AbstractHasSpecificPermission
-from utils.pagination import StandardResultsSetPagination
+from utils.permissions import AbstractIsAuthenticatedOrReadOnly, HasSpecificPermission
+from utils.pagination import CustomPagination
 from ..models import UserActivity, OrderAnalytics, ServiceCategoryAnalytics, PerformanceMetrics, BusinessMetrics
 from .serializers import (
     UserActivitySerializer, OrderAnalyticsSerializer, ServiceCategoryAnalyticsSerializer,
     PerformanceMetricsSerializer, BusinessMetricsSerializer, UserActivityCreateSerializer,
     ServiceCategoryAnalyticsCreateSerializer, OrderAnalyticsCreateSerializer, 
-    BusinessMetricsCreateSerializer, PerformanceMetricsCreateSerializer
+    BusinessMetricsCreateSerializer, PerformanceMetricsCreateSerializer, DashboardResponseSerializer
 )
 
 
 class UserActivityApiView(generics.ListAPIView):
     serializer_class = UserActivitySerializer
-    permission_classes = [AbstractHasSpecificPermission(['analytics.view_useractivity'])]
+    permission_classes = [HasSpecificPermission(['analytics.add_useractivity'])]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['activity_type', 'user', 'ip_address']
     search_fields = ['description', 'user__username']
     ordering_fields = ['created_at', 'activity_type']
     ordering = ['-created_at']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         # Manager automatically filters out deleted objects
@@ -87,12 +86,12 @@ class UserActivityCreateApiView(generics.CreateAPIView):
 
 class ServiceCategoryAnalyticsApiView(generics.ListAPIView):
     serializer_class = ServiceCategoryAnalyticsSerializer
-    permission_classes = [AbstractHasSpecificPermission(['analytics.view_servicecategoryanalytics'])]
+    permission_classes = [HasSpecificPermission(['analytics.add_servicecategoryanalytics'])]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['category', 'date']
     ordering_fields = ['date', 'total_revenue', 'order_count']
     ordering = ['-date']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         # Manager automatically filters out deleted objects
@@ -128,20 +127,20 @@ class ServiceCategoryAnalyticsApiView(generics.ListAPIView):
 
 class ServiceCategoryAnalyticsCreateApiView(generics.CreateAPIView):
     serializer_class = ServiceCategoryAnalyticsCreateSerializer
-    permission_classes = [AbstractHasSpecificPermission(['analytics.add_servicecategoryanalytics'])]
+    permission_classes = [HasSpecificPermission(['analytics.add_servicecategoryanalytics'])]
 
 
 class OrderAnalyticsApiView(generics.ListAPIView):
     serializer_class = OrderAnalyticsSerializer
-    permission_classes = [AbstractHasSpecificPermission(['analytics.view_orderanalytics'])]
+    permission_classes = [HasSpecificPermission(['analytics.add_orderanalytics'])]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['date']
     ordering_fields = ['date', 'total_revenue', 'total_orders']
     ordering = ['-date']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
-        return OrderAnalytics.objects.filter(is_deleted=False)
+        return OrderAnalytics.objects.all()
     
     @action(detail=False, methods=['get'])
     def order_trends(self, request):
@@ -150,7 +149,7 @@ class OrderAnalyticsApiView(generics.ListAPIView):
         start_date = timezone.now() - timedelta(days=days)
         
         analytics = OrderAnalytics.objects.filter(
-            date__gte=start_date, is_deleted=False
+            date__gte=start_date,
         ).order_by('date')
         
         serializer = OrderAnalyticsSerializer(analytics, many=True)
@@ -159,7 +158,7 @@ class OrderAnalyticsApiView(generics.ListAPIView):
     @action(detail=False, methods=['get'])
     def order_summary(self, request):
         """Get overall order summary."""
-        total_orders = OrderAnalytics.objects.filter(is_deleted=False).aggregate(
+        total_orders = OrderAnalytics.objects.aggregate(
             total=Sum('total_orders'),
             completed=Sum('completed_orders'),
             cancelled=Sum('cancelled_orders'),
@@ -176,20 +175,20 @@ class OrderAnalyticsApiView(generics.ListAPIView):
 
 class OrderAnalyticsCreateApiView(generics.CreateAPIView):
     serializer_class = OrderAnalyticsCreateSerializer
-    permission_classes = [AbstractHasSpecificPermission(['analytics.add_orderanalytics'])]
+    permission_classes = [HasSpecificPermission(['analytics.add_orderanalytics'])]
 
 
 class BusinessMetricsApiView(generics.ListAPIView):
     serializer_class = BusinessMetricsSerializer
-    permission_classes = [AbstractHasSpecificPermission(['analytics.view_businessmetrics'])]
+    permission_classes = [HasSpecificPermission(['analytics.add_businessmetrics'])]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['date']
     ordering_fields = ['date', 'gross_merchandise_volume', 'net_revenue']
     ordering = ['-date']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
-        return BusinessMetrics.objects.filter(is_deleted=False)
+        return BusinessMetrics.objects.all()
     
     @action(detail=False, methods=['get'])
     def revenue_trends(self, request):
@@ -198,7 +197,7 @@ class BusinessMetricsApiView(generics.ListAPIView):
         start_date = timezone.now() - timedelta(days=days)
         
         metrics = BusinessMetrics.objects.filter(
-            date__gte=start_date, is_deleted=False
+            date__gte=start_date,
         ).order_by('date')
         
         serializer = BusinessMetricsSerializer(metrics, many=True)
@@ -207,7 +206,7 @@ class BusinessMetricsApiView(generics.ListAPIView):
     @action(detail=False, methods=['get'])
     def revenue_summary(self, request):
         """Get overall revenue summary."""
-        summary = BusinessMetrics.objects.filter(is_deleted=False).aggregate(
+        summary = BusinessMetrics.objects.aggregate(
             gross_merchandise_volume=Sum('gross_merchandise_volume'),
             net_revenue=Sum('net_revenue'),
             profit_margin=Avg('profit_margin')
@@ -222,25 +221,25 @@ class BusinessMetricsApiView(generics.ListAPIView):
 
 class BusinessMetricsCreateApiView(generics.CreateAPIView):
     serializer_class = BusinessMetricsCreateSerializer
-    permission_classes = [AbstractHasSpecificPermission(['analytics.add_businessmetrics'])]
+    permission_classes = [HasSpecificPermission(['analytics.add_businessmetrics'])]
 
 
 class PerformanceMetricsApiView(generics.ListAPIView):
     serializer_class = PerformanceMetricsSerializer
-    permission_classes = [AbstractHasSpecificPermission(['analytics.view_performancemetrics'])]
+    permission_classes = [HasSpecificPermission(['analytics.add_performancemetrics'])]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['date', 'time_period']
     ordering_fields = ['date', 'average_response_time', 'error_rate']
     ordering = ['-date']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
-        return PerformanceMetrics.objects.filter(is_deleted=False)
+        return PerformanceMetrics.objects.all()
     
     @action(detail=False, methods=['get'])
     def performance_summary(self, request):
         """Get overall performance summary."""
-        summary = PerformanceMetrics.objects.filter(is_deleted=False).aggregate(
+        summary = PerformanceMetrics.objects.aggregate(
             avg_response_time=Avg('average_response_time'),
             total_errors=Sum('total_errors'),
             avg_error_rate=Avg('error_rate'),
@@ -257,13 +256,9 @@ class PerformanceMetricsApiView(generics.ListAPIView):
         })
 
 
-class PerformanceMetricsCreateApiView(generics.CreateAPIView):
-    serializer_class = PerformanceMetricsCreateSerializer
-    permission_classes = [AbstractHasSpecificPermission(['analytics.add_performancemetrics'])]
-
-
 class DashboardApiView(generics.GenericAPIView):
-    permission_classes = [AbstractHasSpecificPermission(['analytics.view_servicecategoryanalytics'])]
+    serializer_class = DashboardResponseSerializer
+    permission_classes = [HasSpecificPermission(['analytics.add_servicecategoryanalytics'])]
     
     def get(self, request):
         """Get dashboard overview data."""
@@ -273,7 +268,7 @@ class DashboardApiView(generics.GenericAPIView):
         
         # Service category analytics
         category_analytics = ServiceCategoryAnalytics.objects.filter(
-            date__gte=month_start, is_deleted=False
+            date__gte=month_start,
         ).aggregate(
             total_orders=Sum('order_count'),
             total_revenue=Sum('total_revenue'),
@@ -282,7 +277,7 @@ class DashboardApiView(generics.GenericAPIView):
         
         # Order analytics
         order_analytics = OrderAnalytics.objects.filter(
-            date__gte=month_start, is_deleted=False
+            date__gte=month_start,
         ).aggregate(
             total_orders=Sum('total_orders'),
             completed_orders=Sum('completed_orders'),
@@ -291,13 +286,13 @@ class DashboardApiView(generics.GenericAPIView):
         
         # Business metrics
         business_metrics = BusinessMetrics.objects.filter(
-            date__gte=month_start, is_deleted=False
+            date__gte=month_start,
         ).aggregate(
             gross_merchandise_volume=Sum('gross_merchandise_volume'),
             net_revenue=Sum('net_revenue')
         )
         
-        return Response({
+        response_data = {
             'current_month': {
                 'category_analytics': {
                     'total_orders': category_analytics['total_orders'] or 0,
@@ -314,4 +309,7 @@ class DashboardApiView(generics.GenericAPIView):
                     'net_revenue': business_metrics['net_revenue'] or 0
                 }
             }
-        })
+        }
+        
+        serializer = self.get_serializer(response_data)
+        return Response(serializer.data)

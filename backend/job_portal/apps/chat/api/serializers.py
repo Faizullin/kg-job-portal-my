@@ -35,19 +35,17 @@ class ChatAttachmentSerializer(AbstractTimestampedModelSerializer):
         return '-'
 
 
-class ChatParticipantSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin):
-    role_display = serializers.SerializerMethodField()
+class ChatParticipantSerializer(AbstractTimestampedModelSerializer):
     user_name = serializers.SerializerMethodField()
+    chat_room_title = serializers.CharField(source='chat_room.title', read_only=True)
     
     class Meta:
         model = ChatParticipant
         fields = [
-            'id', 'chat_room', 'user', 'user_name', 'role', 'role_display',
-            'joined_at', 'last_read_at', 'is_active'
+            'id', 'chat_room', 'chat_room_title', 'user', 'user_name',
+            'is_online', 'last_seen', 'unread_count', 
+            'notifications_enabled', 'mute_until', 'created_at', 'updated_at'
         ]
-    
-    def get_role_display(self, obj):
-        return self.get_choice_display(obj, 'role')
     
     def get_user_name(self, obj):
         if obj.user:
@@ -80,13 +78,15 @@ class ChatRoomSerializer(AbstractTimestampedModelSerializer, AbstractChoiceField
     participants = ChatParticipantSerializer(many=True, read_only=True)
     last_message = serializers.SerializerMethodField()
     unread_count = serializers.SerializerMethodField()
-    room_type_display = serializers.SerializerMethodField()
+    chat_type_display = serializers.SerializerMethodField()
+    order_title = serializers.CharField(source='order.title', read_only=True)
     
     class Meta:
         model = ChatRoom
         fields = [
-            'id', 'name', 'room_type', 'room_type_display', 'order', 'participants',
-            'last_message', 'unread_count', 'created_at', 'updated_at'
+            'id', 'title', 'chat_type', 'chat_type_display', 'order', 'order_title', 
+            'participants', 'is_active', 'last_message_at', 'last_message', 'unread_count', 
+            'created_at', 'updated_at'
         ]
     
     def get_last_message(self, obj):
@@ -103,8 +103,8 @@ class ChatRoomSerializer(AbstractTimestampedModelSerializer, AbstractChoiceField
         # This would be calculated based on current user
         return 0
     
-    def get_room_type_display(self, obj):
-        return self.get_choice_display(obj, 'room_type')
+    def get_chat_type_display(self, obj):
+        return self.get_choice_display(obj, 'chat_type')
 
 
 class MessageCreateSerializer(AbstractTimestampedModelSerializer):
@@ -116,13 +116,13 @@ class MessageCreateSerializer(AbstractTimestampedModelSerializer):
 class ChatRoomCreateSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = ChatRoom
-        fields = ['name', 'room_type', 'order']
+        fields = ['title', 'chat_type', 'order', 'is_active']
 
 
 class ChatParticipantCreateSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = ChatParticipant
-        fields = ['chat_room', 'user', 'role']
+        fields = ['chat_room', 'user', 'is_online', 'notifications_enabled']
 
 
 class ChatAttachmentCreateSerializer(AbstractTimestampedModelSerializer):
@@ -140,4 +140,16 @@ class MessageUpdateSerializer(AbstractTimestampedModelSerializer):
 class ChatRoomUpdateSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = ChatRoom
-        fields = ['name', 'room_type']
+        fields = ['title', 'chat_type', 'is_active']
+
+
+class WebSocketInfoSerializer(serializers.Serializer):
+    """Serializer for WebSocket connection information."""
+    websocket_url = serializers.CharField(help_text='Base WebSocket URL')
+    auth_required = serializers.BooleanField(help_text='Whether authentication is required')
+    token_param = serializers.CharField(help_text='Token parameter name')
+    connection_format = serializers.CharField(help_text='Connection URL format with placeholders')
+    message_types = serializers.ListField(
+        child=serializers.CharField(),
+        help_text='Available message types'
+    )

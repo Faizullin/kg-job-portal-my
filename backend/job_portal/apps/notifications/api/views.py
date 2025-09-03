@@ -7,8 +7,8 @@ from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly, AbstractHasSpecificPermission
-from utils.pagination import StandardResultsSetPagination
+from utils.permissions import AbstractIsAuthenticatedOrReadOnly, HasSpecificPermission
+from utils.pagination import CustomPagination
 from ..models import UserNotification, NotificationTemplate, NotificationPreference, NotificationLog
 from .serializers import (
     NotificationSerializer, NotificationTemplateSerializer, NotificationSettingSerializer,
@@ -26,7 +26,7 @@ class NotificationApiView(generics.ListAPIView):
     search_fields = ['title', 'message']
     ordering_fields = ['priority', 'created_at', 'read_at']
     ordering = ['-created_at']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         user = self.request.user
@@ -106,7 +106,7 @@ class NotificationDetailApiView(generics.RetrieveUpdateAPIView):
 
 class NotificationCreateApiView(generics.CreateAPIView):
     serializer_class = NotificationCreateSerializer
-    permission_classes = [AbstractHasSpecificPermission(['notifications.add_notification'])]
+    permission_classes = [HasSpecificPermission(['notifications.add_notification'])]
 
 
 class NotificationSettingApiView(generics.ListAPIView):
@@ -116,7 +116,7 @@ class NotificationSettingApiView(generics.ListAPIView):
     filterset_fields = ['email_notifications', 'push_notifications']
     ordering_fields = ['created_at']
     ordering = ['created_at']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         return NotificationPreference.objects.filter(
@@ -149,13 +149,13 @@ class NotificationSettingCreateApiView(generics.CreateAPIView):
 
 class NotificationTemplateApiView(generics.ListAPIView):
     serializer_class = NotificationTemplateSerializer
-    permission_classes = [AbstractHasSpecificPermission(['notifications.view_notificationtemplate'])]
+    permission_classes = [HasSpecificPermission(['notifications.add_notificationtemplate'])]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['notification_type', 'is_active']
     search_fields = ['name', 'subject', 'content']
     ordering_fields = ['name', 'notification_type', 'created_at']
     ordering = ['name']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         return NotificationTemplate.objects.filter(is_deleted=False)
@@ -163,7 +163,7 @@ class NotificationTemplateApiView(generics.ListAPIView):
 
 class NotificationTemplateDetailApiView(generics.RetrieveUpdateAPIView):
     serializer_class = NotificationTemplateUpdateSerializer
-    permission_classes = [AbstractHasSpecificPermission(['notifications.change_notificationtemplate'])]
+    permission_classes = [HasSpecificPermission(['notifications.change_notificationtemplate'])]
     
     def get_queryset(self):
         return NotificationTemplate.objects.filter(is_deleted=False)
@@ -176,17 +176,17 @@ class NotificationTemplateDetailApiView(generics.RetrieveUpdateAPIView):
 
 class NotificationTemplateCreateApiView(generics.CreateAPIView):
     serializer_class = NotificationTemplateCreateSerializer
-    permission_classes = [AbstractHasSpecificPermission(['notifications.add_notificationtemplate'])]
+    permission_classes = [HasSpecificPermission(['notifications.add_notificationtemplate'])]
 
 
 class NotificationLogApiView(generics.ListAPIView):
     serializer_class = NotificationLogSerializer
-    permission_classes = [AbstractHasSpecificPermission(['notifications.view_notificationlog'])]
+    permission_classes = [HasSpecificPermission(['notifications.add_notification'])]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status', 'delivery_method', 'user']
     ordering_fields = ['sent_at', 'delivered_at', 'created_at']
     ordering = ['-created_at']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         return NotificationLog.objects.filter(is_deleted=False).select_related('notification', 'user')

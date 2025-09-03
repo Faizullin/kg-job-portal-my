@@ -45,7 +45,7 @@ services:
     volumes:
       - kg-job-portal-my-static-volume:/home/app/staticfiles
       - kg-job-portal-my-media-volume:/home/app/protected
-      - ./config/firebase:/home/app/config/firebase:ro
+      - ./backend/config/firebase:/home/app/config/firebase:ro
     depends_on:
       - db
       - redis

@@ -6,8 +6,8 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly, AbstractHasSpecificPermission
-from utils.pagination import StandardResultsSetPagination
+from utils.permissions import AbstractIsAuthenticatedOrReadOnly
+from utils.pagination import CustomPagination
 from ..models import UserProfile, ServiceProviderProfile, ClientProfile, UserVerification, ServiceProviderService
 from .serializers import (
     UserProfileSerializer, ServiceProviderSerializer, ClientSerializer,
@@ -23,7 +23,7 @@ class UserProfileApiView(generics.ListAPIView):
     search_fields = ['user__first_name', 'user__last_name', 'user__email', 'phone', 'address']
     ordering_fields = ['rating', 'total_reviews', 'created_at']
     ordering = ['-rating', '-total_reviews']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         # Simple filtering - manager automatically handles is_deleted
@@ -87,7 +87,7 @@ class ServiceProviderApiView(generics.ListAPIView):
     search_fields = ['business_name', 'user_profile__user__first_name', 'user_profile__user__last_name']
     ordering_fields = ['average_rating', 'years_of_experience', 'total_reviews']
     ordering = ['-average_rating', '-total_reviews']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         # Simple filtering - manager automatically handles is_deleted
@@ -119,7 +119,7 @@ class ClientApiView(generics.ListAPIView):
     search_fields = ['user_profile__user__first_name', 'user_profile__user__last_name']
     ordering_fields = ['total_orders', 'created_at']
     ordering = ['-total_orders', '-created_at']
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         # Simple filtering - manager automatically handles is_deleted
