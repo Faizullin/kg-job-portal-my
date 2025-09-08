@@ -68,6 +68,18 @@ class UserTypes:
         ]
 
 
+class UserRoleTypes:
+    JOB_SEEKER = 'job_seeker'
+    SERVICE_PROVIDER = 'service_provider'
+    
+    @classmethod
+    def choices(cls):
+        return [
+            (cls.JOB_SEEKER, 'Ищу работу'),
+            (cls.SERVICE_PROVIDER, 'Предлагаю услуги'),
+        ]
+
+
 class UserModel(AbstractUser, AbstractSoftDeleteModel):
     # Use the custom manager
     objects = UserManager()
@@ -80,9 +92,17 @@ class UserModel(AbstractUser, AbstractSoftDeleteModel):
     # user data
     name = models.CharField(max_length=255, verbose_name='Имя')
     email = models.EmailField(max_length=255, unique=True, verbose_name='Email')
-    description = models.TextField(verbose_name='Описание')
+    phone_number = models.CharField(max_length=20, null=True, blank=True, verbose_name='Номер телефона')
+    description = models.TextField(blank=True, null=True, verbose_name='Описание')
     photo = models.ImageField(upload_to='user_photos/', blank=True, null=True, verbose_name='Фото')
     photo_url = models.URLField(blank=True, null=True, verbose_name='Ссылка на фото (Firebase)')
+    
+    # User role and service provider fields
+    user_role = models.CharField(max_length=20, choices=UserRoleTypes.choices(), null=True, blank=True, verbose_name='Роль пользователя')
+    service_categories = models.JSONField(default=list, blank=True, verbose_name='Категории услуг')
+    rating = models.FloatField(default=0.0, verbose_name='Рейтинг')
+    total_reviews = models.IntegerField(default=0, verbose_name='Всего отзывов')
+    is_available = models.BooleanField(default=True, verbose_name='Доступен для заказов')
 
     # user social data
     friends = models.ManyToManyField("self", blank=True, verbose_name='Друзья', symmetrical=True)
@@ -239,3 +259,5 @@ class LoginSession(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.login_at}"
+
+
