@@ -40,14 +40,15 @@ export function ForgotPasswordForm({
     console.log(data);
 
     toast.promise(sleep(2000), {
-      loading: "Sending email...",
+      loading: "Sending reset email...",
       success: () => {
         setIsLoading(false);
         form.reset();
-        navigate({ to: "/otp" });
-        return `Email sent to ${data.email}`;
+        // Redirect directly to login with success message
+        navigate({ to: "/sign-in" });
+        return `Password reset email sent to ${data.email}. Please check your inbox.`;
       },
-      error: "Error",
+      error: "Failed to send reset email. Please try again.",
     });
   }
 

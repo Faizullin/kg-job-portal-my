@@ -142,9 +142,9 @@ class GlobalSearchApiView(generics.ListAPIView):
             )
         
         search_type = validated_data.get("type", "all")
-
+        
         results = {}
-
+        
         if search_type in ["all", "orders"]:
             results["orders"] = self.search_orders(query, validated_data)
 
@@ -171,7 +171,7 @@ class GlobalSearchApiView(generics.ListAPIView):
             "photos",
             "bids__provider__user_profile__user"
         )
-
+        
         # Text search
         if query:
             orders = orders.filter(
@@ -196,12 +196,12 @@ class GlobalSearchApiView(generics.ListAPIView):
 
         if "urgency" in validated_data and validated_data["urgency"] is not None:
             orders = orders.filter(urgency=validated_data["urgency"])
-
+        
         # Ordering
         ordering = validated_data.get("ordering", "-created_at")
         if ordering in ["budget_min", "budget_max", "created_at", "-created_at"]:
             orders = orders.order_by(ordering)
-
+        
         # Serialize the orders
         order_serializer = OrderSerializer(orders[:50], many=True)
         return {"count": orders.count(), "results": order_serializer.data}
@@ -218,7 +218,7 @@ class GlobalSearchApiView(generics.ListAPIView):
             "services__subcategory__category",
             "services__available_addons"
         )
-
+        
         # Text search
         if query:
             providers = providers.filter(
@@ -234,12 +234,12 @@ class GlobalSearchApiView(generics.ListAPIView):
 
         if "city" in validated_data and validated_data["city"] is not None:
             providers = providers.filter(user_profile__city__iexact=validated_data["city"])
-
+        
         # Ordering
         ordering = validated_data.get("ordering", "-average_rating")
         if ordering in ["average_rating", "-average_rating"]:
             providers = providers.order_by(ordering)
-
+        
         # Serialize the providers
         provider_serializer = ServiceProviderSerializer(providers[:50], many=True)
         return {"count": providers.count(), "results": provider_serializer.data}
@@ -247,7 +247,7 @@ class GlobalSearchApiView(generics.ListAPIView):
     def search_services(self, query, validated_data):
         """Search for services and categories."""
         services = ServiceSubcategory.objects.filter(is_deleted=False)
-
+        
         if query:
             services = services.filter(
                 Q(name__icontains=query)
@@ -258,12 +258,12 @@ class GlobalSearchApiView(generics.ListAPIView):
         # Apply filters using validated data
         if "service_category" in validated_data and validated_data["service_category"] is not None:
             services = services.filter(category_id=validated_data["service_category"])
-
+        
         # Ordering
         ordering = validated_data.get("ordering", "sort_order")
         if ordering in ["name", "sort_order"]:
             services = services.order_by(ordering)
-
+        
         return {"count": services.count(), "results": services[:50]}
 
 
@@ -321,7 +321,7 @@ class ProviderSearchApiView(generics.ListAPIView):
 
     def get_queryset(self):
         return ServiceProviderProfile.objects.filter(
-            user_profile__is_deleted=False, 
+            user_profile__is_deleted=False,
             is_available=True
         ).select_related(
             "user_profile__user",           # For user details in serializer

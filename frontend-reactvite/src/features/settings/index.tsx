@@ -1,5 +1,5 @@
 import { Outlet } from "@tanstack/react-router";
-import { Monitor, Bell, Palette, Wrench, UserCog } from "lucide-react";
+import { Monitor, Bell, Palette, Wrench, UserCog, Briefcase, ShoppingCart, Shield, Users } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ConfigDrawer } from "@/components/config-drawer";
 import { Header } from "@/components/layout/header";
@@ -7,37 +7,112 @@ import { Main } from "@/components/layout/main";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { SidebarNav } from "./components/sidebar-nav";
+import { SidebarNav } from "./_components/sidebar-nav";
+import { useAuthStore } from "@/stores/auth-store";
+import { useMemo } from "react";
 
-const sidebarNavItems = [
+// Base sidebar navigation items
+const getBaseSidebarItems = () => [
   {
     title: "Profile",
     href: "/settings",
     icon: <UserCog size={18} />,
+    visible: true,
   },
   {
     title: "Account",
     href: "/settings/account",
     icon: <Wrench size={18} />,
+    visible: true,
   },
   {
     title: "Appearance",
     href: "/settings/appearance",
     icon: <Palette size={18} />,
+    visible: true,
   },
   {
     title: "Notifications",
     href: "/settings/notifications",
     icon: <Bell size={18} />,
+    visible: true,
   },
   {
     title: "Display",
     href: "/settings/display",
     icon: <Monitor size={18} />,
+    visible: true,
   },
 ];
 
+// Role-based sidebar navigation items
+const getRoleBasedSidebarItems = (user: any) => {
+  const items = [];
+
+  // Extended profile - always visible
+  items.push({
+    title: "Extended Profile",
+    href: "/settings/extended-profile",
+    icon: <Wrench size={18} />,
+    visible: true,
+  });
+
+  // Service Provider profile - only for service providers
+  if (user?.user_role === "service_provider" || user?.user_role === "both") {
+    items.push({
+      title: "Service Provider",
+      href: "/settings/service-provider",
+      icon: <Briefcase size={18} />,
+      visible: true,
+    });
+  }
+
+  // Client profile - only for clients
+  if (user?.user_role === "client" || user?.user_role === "both") {
+    items.push({
+      title: "Client Profile",
+      href: "/settings/client-profile",
+      icon: <ShoppingCart size={18} />,
+      visible: true,
+    });
+  }
+
+  // Admin/Staff sections - only for staff or superusers
+  if (user?.is_staff || user?.is_superuser) {
+    items.push({
+      title: "User Management",
+      href: "/settings/user-management",
+      icon: <Users size={18} />,
+      visible: true,
+    });
+  }
+
+  // Superuser sections - only for superusers
+  if (user?.is_superuser) {
+    items.push({
+      title: "System Settings",
+      href: "/settings/system",
+      icon: <Shield size={18} />,
+      visible: true,
+    });
+  }
+
+  return items;
+};
+
 export function Settings() {
+  const { auth } = useAuthStore();
+
+  // Memoize sidebar items based on user roles and permissions
+  const sidebarNavItems = useMemo(() => {
+    const baseItems = getBaseSidebarItems();
+    const roleBasedItems = getRoleBasedSidebarItems(auth.user);
+    
+    return [
+      ...baseItems,
+      ...roleBasedItems.filter(item => item.visible)
+    ];
+  }, [auth.user]);
   return (
     <>
       {/* ===== Top Heading ===== */}

@@ -1,5 +1,6 @@
-import { ContentSection } from "../components/content-section";
+import { ContentSection } from "../_components/content-section";
 import { ProfileForm } from "./profile-form";
+
 
 export function SettingsProfile() {
   return (

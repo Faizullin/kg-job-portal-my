@@ -3,9 +3,7 @@ from rest_framework import generics
 from rest_framework.filters import OrderingFilter, SearchFilter
 from utils.pagination import CustomPagination
 from rest_framework.permissions import IsAuthenticated
-
 from ...models import UserModel
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly
 from ..serializers import (
     UserListSerializer,
     UserProfileSerializer,
@@ -15,11 +13,15 @@ from ..serializers import (
 
 class UserProfileApiView(generics.RetrieveUpdateAPIView):
     """User profile view - enhanced version of api_users GetUserView"""
-    serializer_class = UserProfileSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     def get_object(self):
         return self.request.user
+    
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return UserProfileSerializer
+        return UserUpdateSerializer
 
 
 class UserListApiView(generics.ListAPIView):

@@ -1,9 +1,13 @@
+import React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { showSubmittedData } from "@/lib/show-submitted-data";
 import { cn } from "@/lib/utils";
+import { AuthClient } from "@/lib/auth/auth-client";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -54,19 +58,92 @@ const accountFormSchema = z.object({
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;
 
-// This can come from your database or API.
-const defaultValues: Partial<AccountFormValues> = {
-  name: "",
+// Query key for user account data
+const ACCOUNT_QUERY_KEY = ["user-account"];
+
+// Fetch user account data
+const fetchUserAccount = async (): Promise<AccountFormValues> => {
+  const backendUser = AuthClient.getCurrentUser();
+  const firebaseUser = AuthClient.getCurrentFirebaseUser();
+  
+  if (!backendUser || !firebaseUser) {
+    throw new Error("User not authenticated");
+  }
+
+  return {
+    name: backendUser.username || firebaseUser.displayName || "",
+    dob: new Date(), // Add date of birth to backend user if needed
+    language: "en", // Add language preference to backend user if needed
+  };
+};
+
+// Update user account mutation
+const updateUserAccount = async (data: AccountFormValues): Promise<void> => {
+  // Simulate API call - replace with actual API call
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  console.log("Account update data:", data);
+  // Here you would make the actual API call to update the account
 };
 
 export function AccountForm() {
+  const queryClient = useQueryClient();
+
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
-    defaultValues,
+    defaultValues: {
+      name: "",
+      dob: new Date(),
+      language: "",
+    },
   });
 
-  function onSubmit(data: AccountFormValues) {
+  // Fetch user account data
+  const { data: accountData, isLoading, error } = useQuery({
+    queryKey: ACCOUNT_QUERY_KEY,
+    queryFn: fetchUserAccount,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+  });
+
+  // Update account mutation
+  const updateAccountMutation = useMutation({
+    mutationFn: updateUserAccount,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+      toast.success("Account updated successfully!");
+    },
+    onError: (error) => {
+      console.error("Error updating account:", error);
+      toast.error("Failed to update account");
+    },
+  });
+
+  // Update form when data is loaded
+  React.useEffect(() => {
+    if (accountData) {
+      form.reset(accountData);
+    }
+  }, [accountData, form]);
+
+  const onSubmit = (data: AccountFormValues) => {
     showSubmittedData(data);
+    updateAccountMutation.mutate(data);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-sm text-muted-foreground">Loading account...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-sm text-destructive">Failed to load account data</div>
+      </div>
+    );
   }
 
   return (
@@ -166,7 +243,9 @@ export function AccountForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Update account</Button>
+        <Button type="submit" disabled={updateAccountMutation.isPending}>
+          {updateAccountMutation.isPending ? "Updating..." : "Update account"}
+        </Button>
       </form>
     </Form>
   );

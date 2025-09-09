@@ -1,4 +1,4 @@
-import { ContentSection } from "../components/content-section";
+import { ContentSection } from "../_components/content-section";
 import { AppearanceForm } from "./appearance-form";
 
 export function SettingsAppearance() {

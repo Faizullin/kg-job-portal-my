@@ -1,22 +1,17 @@
-import { StrictMode } from "react";
-import ReactDOM from "react-dom/client";
+import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { AxiosError } from "axios";
-import {
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 import { toast } from "sonner";
-import { useAuthStore } from "@/stores/auth-store";
-import { handleServerError } from "@/lib/handle-server-error";
 import { DirectionProvider } from "./context/direction-provider";
+import { FirebaseAuthProvider } from "./context/firebase-auth-provider";
 import { FontProvider } from "./context/font-provider";
 import { ThemeProvider } from "./context/theme-provider";
-import { FirebaseAuthProvider } from "./context/firebase-auth-provider";
-// Generated Routes
+import { handleServerError } from "./lib/handle-server-error";
 import { routeTree } from "./routeTree.gen";
-// Styles
+import { useAuthStore } from "./stores/auth-store";
+
 import "./styles/index.css";
 
 const queryClient = new QueryClient({
@@ -75,7 +70,7 @@ const router = createRouter({
   context: { queryClient },
   defaultPreload: "intent",
   defaultPreloadStaleTime: 0,
-  basepath: import.meta.env.VITE_APP_BASE_URL,
+  // basepath: import.meta.env.VITE_APP_BASE_URL,
 });
 
 // Register the router instance for type safety
@@ -85,23 +80,18 @@ declare module "@tanstack/react-router" {
   }
 }
 
-// Render the app
-const rootElement = document.getElementById("root")!;
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <FontProvider>
-            <DirectionProvider>
-              <FirebaseAuthProvider>
-                <RouterProvider router={router} />
-              </FirebaseAuthProvider>
-            </DirectionProvider>
-          </FontProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </StrictMode>,
-  );
-}
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        <FontProvider>
+          <DirectionProvider>
+            <FirebaseAuthProvider >
+              <RouterProvider router={router} />
+            </FirebaseAuthProvider>
+          </DirectionProvider>
+        </FontProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  </StrictMode>
+);

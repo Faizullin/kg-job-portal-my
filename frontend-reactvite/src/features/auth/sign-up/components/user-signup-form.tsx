@@ -2,8 +2,8 @@ import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { Loader2, LogIn } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { Loader2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/auth-store";
 import { AuthClient } from "@/lib/auth/auth-client";
@@ -21,24 +21,36 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/password-input";
 
 const formSchema = z.object({
+  fullName: z
+    .string()
+    .min(1, "Please enter your full name")
+    .min(2, "Full name must be at least 2 characters long"),
   email: z.email({
     error: (iss) => (iss.input === "" ? "Please enter your email" : undefined),
   }),
   password: z
     .string()
     .min(1, "Please enter your password")
-    .min(6, "Password must be at least 6 characters long"),
+    .min(8, "Password must be at least 8 characters long")
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+    ),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
+interface UserSignUpFormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectTo?: string;
 }
 
-export function UserAuthForm({
+export function UserSignUpForm({
   className,
   redirectTo,
   ...props
-}: UserAuthFormProps) {
+}: UserSignUpFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { auth } = useAuthStore();
@@ -46,16 +58,21 @@ export function UserAuthForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      fullName: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  const handleEmailAuth = async (data: z.infer<typeof formSchema>) => {
+  const handleEmailSignUp = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
 
     try {
-      const result = await AuthClient.signInWithEmailPassword(data.email, data.password);
+      const result = await AuthClient.signUpWithEmailPassword(
+        data.email, 
+        data.password
+      );
 
       if (result.success) {
         toast.success(result.message);
@@ -71,7 +88,7 @@ export function UserAuthForm({
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignUp = async () => {
     setIsLoading(true);
 
     try {
@@ -94,10 +111,23 @@ export function UserAuthForm({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(handleEmailAuth)}
+        onSubmit={form.handleSubmit(handleEmailSignUp)}
         className={cn("grid gap-3", className)}
         {...props}
       >
+        <FormField
+          control={form.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Full Name</FormLabel>
+              <FormControl>
+                <Input placeholder="John Doe" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="email"
@@ -115,18 +145,25 @@ export function UserAuthForm({
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem className="relative">
+            <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <PasswordInput placeholder="********" {...field} />
+                <PasswordInput placeholder="Create a strong password" {...field} />
               </FormControl>
               <FormMessage />
-              <Link
-                to="/forgot-password"
-                className="text-muted-foreground absolute end-0 -top-0.5 text-sm font-medium hover:opacity-75"
-              >
-                Forgot password?
-              </Link>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <PasswordInput placeholder="Confirm your password" {...field} />
+              </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -134,19 +171,10 @@ export function UserAuthForm({
           {isLoading || auth.isLoading ? (
             <Loader2 className="animate-spin" />
           ) : (
-            <LogIn />
+            <UserPlus />
           )}
-          Sign in
+          Create Account
         </Button>
-
-        <div className="text-center text-sm">
-          <a
-            href="/sign-up"
-            className="text-muted-foreground hover:text-primary underline underline-offset-4"
-          >
-            Don't have an account? Sign up
-          </a>
-        </div>
 
         <div className="relative my-2">
           <div className="absolute inset-0 flex items-center">
@@ -163,7 +191,7 @@ export function UserAuthForm({
           variant="outline"
           type="button"
           disabled={isLoading || auth.isLoading}
-          onClick={handleGoogleSignIn}
+          onClick={handleGoogleSignUp}
           className="w-full"
         >
           <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">

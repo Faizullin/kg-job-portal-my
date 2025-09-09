@@ -1,28 +1,4 @@
 from rest_framework import serializers
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 from ...models import UserModel
 
 
@@ -37,8 +13,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'username', 'email', 'first_name', 'last_name', 'full_name',
             'date_joined', 'last_login', 'is_active', 'is_staff', 'is_superuser',
-            'groups', 'permissions', 'user_type', 'description', 'photo', 'photo_url',
-            'timezone_difference', 'points', 'day_streak', 'max_day_streak'
+            'groups', 'permissions', 'user_role', 'name', 'phone_number', 'description', 
+            'photo', 'photo_url', 'timezone_difference', 'points', 'day_streak', 'max_day_streak'
         )
         read_only_fields = ('id', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
     
@@ -73,7 +49,18 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     """Serializer for updating user profile - enhanced version of api_users EditUserSettingsView"""
     class Meta:
         model = UserModel
-        fields = ('first_name', 'last_name', 'description', 'timezone_difference')
+        fields = ('name', 'email', 'phone_number', 'description', 'photo_url', 'first_name', 'last_name', 'user_role', 'timezone_difference')
+        read_only_fields = ('email',)  # Email should not be changed via profile update
+    
+    def validate_name(self, value):
+        if not value or len(value.strip()) < 2:
+            raise serializers.ValidationError('Name must be at least 2 characters long.')
+        return value.strip()
+    
+    def validate_phone_number(self, value):
+        if value and len(value.strip()) < 10:
+            raise serializers.ValidationError('Phone number must be at least 10 characters long.')
+        return value.strip() if value else value
     
     def validate_timezone_difference(self, value):
         if value < -12 or value > 14:

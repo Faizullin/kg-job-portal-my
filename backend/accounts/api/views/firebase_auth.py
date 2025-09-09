@@ -32,10 +32,10 @@ class FirebaseAuthView(APIView):
                 firebase_user = auth.get_user(firebase_user_id)
                 
                 # Check if Firebase user's email is verified
-                if not firebase_user.email_verified:
-                    return Response({
-                        'error': 'Email not verified. Please verify your email address in Firebase.'
-                    }, status=403)
+                # if not firebase_user.email_verified:
+                #     return Response({
+                #         'error': 'Email not verified. Please verify your email address in Firebase.'
+                #     }, status=403)
                     
             except InvalidIdTokenError:
                 return Response({'error': 'Invalid Firebase ID token'}, status=400)

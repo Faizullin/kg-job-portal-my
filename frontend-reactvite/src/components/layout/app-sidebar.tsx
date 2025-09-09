@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -6,7 +7,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { useLayout } from "@/context/layout-provider";
-import { useAuthStore } from "@/stores/auth-store";
+import { AuthClient } from "@/lib/auth/auth-client";
 // import { AppTitle } from './app-title'
 import { sidebarData } from "./data/sidebar-data";
 import { NavGroup } from "./nav-group";
@@ -15,28 +16,38 @@ import { TeamSwitcher } from "./team-switcher";
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout();
-  const { auth } = useAuthStore();
 
-  // Get user data from auth store or fallback to default
-  const user = auth.user
-    ? {
-        name: auth.user.email.split("@")[0] || "User",
-        email: auth.user.email,
-        avatar: auth.firebaseUser?.photoURL || "/avatars/default.jpg",
-      }
-    : sidebarData.user;
+  // Memoize user data to prevent unnecessary re-computations
+  const user = useMemo(() => {
+    const backendUser = AuthClient.getCurrentUser();
+    const firebaseUser = AuthClient.getCurrentFirebaseUser();
+    
+    return backendUser
+      ? {
+          name: backendUser.username || backendUser.email.split("@")[0] || "User",
+          email: backendUser.email,
+          avatar: firebaseUser?.photoURL || "/avatars/default.jpg",
+        }
+      : sidebarData.user;
+  }, []); // Empty dependency array since AuthClient methods are stable
+
+  // Memoize nav groups to prevent unnecessary re-renders
+  const navGroups = useMemo(() => sidebarData.navGroups, []);
+  
+  // Memoize teams data to prevent unnecessary re-renders
+  const teams = useMemo(() => sidebarData.teams, []);
 
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>
-        <TeamSwitcher teams={sidebarData.teams} />
+        <TeamSwitcher teams={teams} />
 
         {/* Replace <TeamSwitch /> with the following <AppTitle />
          /* if you want to use the normal app title instead of TeamSwitch dropdown */}
         {/* <AppTitle /> */}
       </SidebarHeader>
       <SidebarContent>
-        {sidebarData.navGroups.map((props) => (
+        {navGroups.map((props) => (
           <NavGroup key={props.title} {...props} />
         ))}
       </SidebarContent>
