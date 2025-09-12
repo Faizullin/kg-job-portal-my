@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    container_name: kg-job-portal-my-db-prod
+    image: postgres
+    networks:
+      - kg-job-portal-my-back-prod
+    env_file:
+      - .env.prod
+    volumes:
+      - kg-job-portal-my-database:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+  # Redis Cache
+  redis:
+    container_name: kg-job-portal-my-redis-prod
+    image: redis
+    networks:
+      - kg-job-portal-my-back-prod
+    env_file:
+      - .env.prod
+    volumes:
+      - kg-job-portal-my-redis:/data
+    ports:
+      - "6379:6379"
+
+  # Django Backend
+  backend:
+    container_name: kg-job-portal-my-backend-prod
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    # command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+    command: python3 manage.py runserver 0.0.0.0:8000
+    networks:
+      - kg-job-portal-my-back-prod
+    env_file:
+      - .env.prod
+    environment:
+      - DJANGO_ENV=prod
+      - FIREBASE_CREDENTIALS_PATH=config/firebase/service_account.json
+    ports:
+      - "8000:8000"
+    volumes:
+      - kg-job-portal-my-static-volume:/home/app/staticfiles
+      - kg-job-portal-my-media-volume:/home/app/protected
+      - ./backend/config/firebase:/home/app/config/firebase:ro
+    depends_on:
+      - db
+      - redis
+
+  # Nginx Reverse Proxy
+  # nginx:
+  #   image: ${REGISTRY_USER}/kg-job-portal-my-nginx:latest
+  #   container_name: kg_job_portal_nginx
+  #   restart: unless-stopped
+  #   networks:
+  #     - kg-job-portal-my-back-prod
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - static_files:/var/www/staticfiles:ro
+  #     - media_files:/var/www/mediafiles:ro
+  #     - nginx_logs:/var/log/nginx
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #   depends_on:
+  #     backend:
+  #       condition: service_healthy
+
+volumes:
+  kg-job-portal-my-database:
+  kg-job-portal-my-static-volume:
+  kg-job-portal-my-media-volume:
+  kg-job-portal-my-redis:
+
+networks:
+  kg-job-portal-my-back-prod:
