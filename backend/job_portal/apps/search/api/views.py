@@ -161,7 +161,7 @@ class GlobalSearchApiView(generics.ListAPIView):
     def search_orders(self, query, validated_data):
         """Search for available orders (job vacancies)."""
         orders = Order.objects.filter(
-            status__in=["published", "bidding"], is_deleted=False
+            status__in=["published", "bidding"],
         ).select_related(
             "service_subcategory",
             "service_subcategory__category",
@@ -246,7 +246,7 @@ class GlobalSearchApiView(generics.ListAPIView):
 
     def search_services(self, query, validated_data):
         """Search for services and categories."""
-        services = ServiceSubcategory.objects.filter(is_deleted=False)
+        services = ServiceSubcategory.objects.all()
         
         if query:
             services = services.filter(
@@ -279,8 +279,7 @@ class OrderSearchApiView(generics.ListAPIView):
 
     def get_queryset(self):
         return Order.objects.filter(
-            status__in=["published", "bidding"], 
-            is_deleted=False
+            status__in=["published", "bidding"],
         ).select_related(
             "service_subcategory",
             "service_subcategory__category",  # For service category details

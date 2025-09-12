@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { apiClient } from "@/lib/auth/backend-service";
+import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { DollarSign, Loader2, MapPin, Save, ShoppingCart } from "lucide-react";
+import { DollarSign, Loader2, MapPin, Save } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -25,11 +25,11 @@ type ClientProfileFormData = z.infer<typeof clientProfileSchema>;
 
 export function ClientProfileForm() {
   const queryClient = useQueryClient();
-  
+
   const { data: profileData, isLoading: isProfileLoading } = useQuery({
-    queryKey: ["user-profile"],
+    queryKey: ["client-profile"],
     queryFn: async () => {
-      const response = await apiClient.get("/profile/");
+      const response = await myApi.v1UsersClientRetrieve();
       return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -40,8 +40,8 @@ export function ClientProfileForm() {
   const { data: serviceCategories } = useQuery({
     queryKey: ["service-categories"],
     queryFn: async () => {
-      const response = await apiClient.get("/core/service-categories/");
-      return response.data;
+      const response = await myApi.v1CoreServiceCategoriesList();
+      return response.data.results as any[];
     },
   });
 
@@ -73,7 +73,7 @@ export function ClientProfileForm() {
 
   const updateClientMutation = useMutation({
     mutationFn: async (data: ClientProfileFormData) => {
-      const response = await apiClient.patch("/users/client/", data);
+      const response = await myApi.v1UsersClientPartialUpdate({ patchedClientUpdate: data });
       return response.data;
     },
     onSuccess: () => {
@@ -118,7 +118,7 @@ export function ClientProfileForm() {
             <MapPin className="h-5 w-5" />
             Preferred Service Areas
           </h3>
-          
+
           <div className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {serviceCategories?.map((category: any) => (
@@ -134,7 +134,7 @@ export function ClientProfileForm() {
                 </Button>
               ))}
             </div>
-            
+
             <div className="flex flex-wrap gap-2">
               {form.watch("preferred_service_areas")?.map((areaId) => {
                 const category = serviceCategories?.find((cat: any) => cat.id.toString() === areaId);
@@ -160,7 +160,7 @@ export function ClientProfileForm() {
             <DollarSign className="h-5 w-5" />
             Budget Preferences
           </h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FormField
               control={form.control}
@@ -169,10 +169,10 @@ export function ClientProfileForm() {
                 <FormItem>
                   <FormLabel>Minimum Budget</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      min="0" 
-                      placeholder="Enter minimum budget" 
+                    <Input
+                      type="number"
+                      min="0"
+                      placeholder="Enter minimum budget"
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                     />
@@ -189,10 +189,10 @@ export function ClientProfileForm() {
                 <FormItem>
                   <FormLabel>Maximum Budget</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      min="0" 
-                      placeholder="Enter maximum budget" 
+                    <Input
+                      type="number"
+                      min="0"
+                      placeholder="Enter maximum budget"
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value) || 1000)}
                     />

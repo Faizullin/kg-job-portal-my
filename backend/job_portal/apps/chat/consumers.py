@@ -95,7 +95,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'type': 'chat_message',
                 'message': content,
                 'sender_id': self.user.id,
-                'sender_name': self.user.name,
+                'sender_name': f"{self.user.first_name} {self.user.last_name}".strip() or self.user.username,
                 'message_id': saved_message.id,
                 'timestamp': saved_message.created_at.isoformat(),
             }
@@ -120,13 +120,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def can_access_room(self):
         """Check if user can access this chat room."""
         try:
-            room = ChatRoom.objects.get(id=self.room_id, is_deleted=False)
-            # Check if user is a participant
-            return ChatParticipant.objects.filter(
-                chat_room=room,
-                user=self.user,
-                is_active=True
-            ).exists()
+            room = ChatRoom.objects.get(id=self.room_id, is_active=True)
+            # Check if user is a participant via ChatParticipant
+            return ChatParticipant.objects.filter(chat_room=room, user=self.user).exists()
         except ChatRoom.DoesNotExist:
             return False
     

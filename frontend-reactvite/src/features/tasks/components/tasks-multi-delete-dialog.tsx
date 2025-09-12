@@ -9,21 +9,25 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { useDialogControl } from "@/hooks/use-dialog-control";
 
 type TaskMultiDeleteDialogProps<TData> = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  table: Table<TData>;
+  control: ReturnType<typeof useDialogControl<Table<TData>>>;
+  onConfirm: (table: Table<TData>) => void;
+  onCancel?: () => void;
 };
 
 const CONFIRM_WORD = "DELETE";
 
 export function TasksMultiDeleteDialog<TData>({
-  open,
-  onOpenChange,
-  table,
+  control,
+  onConfirm,
+  onCancel,
 }: TaskMultiDeleteDialogProps<TData>) {
+  const { isVisible, data: table, hide } = control;
   const [value, setValue] = useState("");
+
+  if (!table) return null;
 
   const selectedRows = table.getFilteredSelectedRowModel().rows;
 
@@ -33,7 +37,7 @@ export function TasksMultiDeleteDialog<TData>({
       return;
     }
 
-    onOpenChange(false);
+    onConfirm(table);
 
     toast.promise(sleep(2000), {
       loading: "Deleting tasks...",
@@ -45,13 +49,21 @@ export function TasksMultiDeleteDialog<TData>({
       },
       error: "Error",
     });
+
+    hide();
+  };
+
+  const handleCancel = () => {
+    setValue("");
+    hide();
+    onCancel?.();
   };
 
   return (
     <ConfirmDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      handleConfirm={handleDelete}
+      control={control}
+      onConfirm={handleDelete}
+      onCancel={handleCancel}
       disabled={value.trim() !== CONFIRM_WORD}
       title={
         <span className="text-destructive">

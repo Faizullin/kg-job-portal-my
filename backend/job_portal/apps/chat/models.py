@@ -6,8 +6,7 @@ from accounts.models import UserModel
 
 class ChatRoom(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Chat room for communication between users."""
-    order = models.ForeignKey('orders.Order', on_delete=models.CASCADE, related_name='chat_rooms')
-    participants = models.ManyToManyField(UserModel, related_name='chat_rooms')
+    order = models.ForeignKey('orders.Order', on_delete=models.CASCADE, related_name='chat_rooms', null=True, blank=True)
     
     # Chat room details
     title = models.CharField(_("Chat Title"), max_length=200, blank=True)
@@ -27,7 +26,7 @@ class ChatRoom(AbstractSoftDeleteModel, AbstractTimestampedModel):
         ordering = ['-last_message_at', '-created_at']
     
     def __str__(self):
-        return f"Chat Room #{self.id} - {self.title or self.order.title} [#{self.id}]"
+        return f"Chat Room #{self.id} - {self.title} [#{self.id}]"
 
 
 class ChatMessage(AbstractSoftDeleteModel, AbstractTimestampedModel):
@@ -64,13 +63,21 @@ class ChatMessage(AbstractSoftDeleteModel, AbstractTimestampedModel):
         ordering = ['created_at']
     
     def __str__(self):
-        return f"{self.sender.name}: {self.content[:50]}... [#{self.id}]"
+        sender_name = f"{self.sender.first_name} {self.sender.last_name}".strip() or self.sender.username
+        return f"{sender_name}: {self.content[:50]}... [#{self.id}]"
 
 
 class ChatParticipant(AbstractTimestampedModel):
     """Track participant status in chat rooms."""
     chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='participant_status')
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='chat_participant_status')
+    
+    # Participant role
+    role = models.CharField(_("Role"), max_length=20, choices=[
+        ('member', _('Member')),
+        ('admin', _('Admin')),
+        ('moderator', _('Moderator')),
+    ], default='member')
     
     # Participant status
     is_online = models.BooleanField(_("Online"), default=False)
@@ -87,7 +94,9 @@ class ChatParticipant(AbstractTimestampedModel):
         unique_together = ['chat_room', 'user']
     
     def __str__(self):
-        return f"{self.user.name} in {self.chat_room.title} [#{self.id}]"
+        user_name = f"{self.user.first_name} {self.user.last_name}".strip() or self.user.username
+        room_title = self.chat_room.title or (self.chat_room.order.title if self.chat_room.order else 'General Chat')
+        return f"{user_name} in {room_title} [#{self.id}]"
 
 
 class ChatTemplate(AbstractSoftDeleteModel, AbstractTimestampedModel):
@@ -150,7 +159,8 @@ class ChatNotification(AbstractTimestampedModel):
         ordering = ['-created_at']
     
     def __str__(self):
-        return f"{self.user.name} - {self.get_notification_type_display()} [#{self.id}]"
+        user_name = f"{self.user.first_name} {self.user.last_name}".strip() or self.user.username
+        return f"{user_name} [#{self.id}]"
 
 
 class ChatReport(AbstractTimestampedModel):
@@ -189,7 +199,8 @@ class ChatReport(AbstractTimestampedModel):
         ordering = ['-created_at']
     
     def __str__(self):
-        return f"Report on message from {self.reported_message.sender.name} - {self.get_reason_display()} [#{self.id}]"
+        sender_name = f"{self.reported_message.sender.first_name} {self.reported_message.sender.last_name}".strip() or self.reported_message.sender.username
+        return f"Report on message from {sender_name} - {self.get_reason_display()} [#{self.id}]"
 
 
 class ChatAttachment(AbstractSoftDeleteModel, AbstractTimestampedModel):

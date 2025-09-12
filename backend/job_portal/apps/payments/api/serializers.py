@@ -34,8 +34,6 @@ class PaymentMethodSerializer(
 class InvoiceSerializer(
     AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin
 ):
-    status_display = serializers.SerializerMethodField()
-
     class Meta:
         model = Invoice
         fields = [
@@ -43,7 +41,6 @@ class InvoiceSerializer(
             "order",
             "invoice_number",
             "status",
-            "status_display",
             "subtotal",
             "platform_fee",
             "total_amount",
@@ -52,15 +49,12 @@ class InvoiceSerializer(
             "created_at",
         ]
 
-    def get_status_display(self, obj):
-        return self.get_choice_display(obj, "status")
 
 
 class PaymentSerializer(
     AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin
 ):
     payment_method = PaymentMethodSerializer(read_only=True)
-    status_display = serializers.SerializerMethodField()
 
     class Meta:
         model = Payment
@@ -70,7 +64,6 @@ class PaymentSerializer(
             "amount",
             "currency",
             "status",
-            "status_display",
             "payment_method",
             "stripe_payment_intent_id",
             "stripe_charge_id",
@@ -79,8 +72,6 @@ class PaymentSerializer(
             "updated_at",
         ]
 
-    def get_status_display(self, obj):
-        return self.get_choice_display(obj, "status")
 
 
 class PaymentCreateSerializer(AbstractTimestampedModelSerializer):

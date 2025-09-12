@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from utils.decorators import GroupRequiredMixin, LogActionMixin, RateLimitMixin
 
 from ..models import Payment, StripeWebhookEvent
@@ -127,7 +128,7 @@ class StripeWebhookView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, View
         try:
             # Find payment by Stripe payment intent ID
             payment = Payment.objects.get(
-                stripe_payment_intent_id=payment_intent["id"], is_deleted=False
+                stripe_payment_intent_id=payment_intent["id"],
             )
 
             # Update payment status
@@ -164,7 +165,7 @@ class StripeWebhookView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, View
         try:
             # Find payment by Stripe payment intent ID
             payment = Payment.objects.get(
-                stripe_payment_intent_id=payment_intent["id"], is_deleted=False
+                stripe_payment_intent_id=payment_intent["id"],
             )
 
             # Update payment status
@@ -197,7 +198,7 @@ class StripeWebhookView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, View
         try:
             # Find payment by Stripe charge ID
             payment = Payment.objects.get(
-                stripe_charge_id=charge["id"], is_deleted=False
+                stripe_charge_id=charge["id"],
             )
 
             # Update payment status
@@ -225,81 +226,124 @@ class StripeWebhookView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, View
 
 
 # Simplified webhook handler for DRF
+class StripeWebhookAPIView(APIView):
+    """API view for Stripe webhook handling."""
+    permission_classes = [AllowAny]
+    serializer_class = WebhookResponseSerializer
+    
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.stripe_webhook(request)
+    
+    def stripe_webhook(self, request):
+        """Simple Stripe webhook handler."""
+        payload = request.body
+        sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
+
+        try:
+            # Verify webhook signature
+            webhook_secret = getattr(settings, "STRIPE_WEBHOOK_SECRET", "")
+            if not webhook_secret:
+                return Response({"error": "Webhook secret not configured"}, status=400)
+
+            event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
+
+            # Create webhook event record
+            webhook_event = StripeWebhookEvent.objects.create(
+                stripe_event_id=event["id"],
+                event_type=event["type"],
+                event_data=event["data"],
+            )
+
+            # Mark as processed (basic handling)
+            webhook_event.processed = True
+            webhook_event.processed_at = timezone.now()
+            webhook_event.save()
+
+            response_data = {"status": "success"}
+            serializer = WebhookResponseSerializer(response_data)
+            return Response(serializer.data)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
+
+
+# Keep the function-based view for backward compatibility
 @api_view(["POST"])
 @permission_classes([AllowAny])
 @csrf_exempt
 def stripe_webhook(request):
-    """Simple Stripe webhook handler."""
-    payload = request.body
-    sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
+    """Simple Stripe webhook handler - function-based version."""
+    view = StripeWebhookAPIView()
+    return view.stripe_webhook(request)
 
-    try:
-        # Verify webhook signature
-        webhook_secret = getattr(settings, "STRIPE_WEBHOOK_SECRET", "")
-        if not webhook_secret:
-            return Response({"error": "Webhook secret not configured"}, status=400)
 
-        event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
-
-        # Create webhook event record
-        webhook_event = StripeWebhookEvent.objects.create(
-            stripe_event_id=event["id"],
-            event_type=event["type"],
-            event_data=event["data"],
-        )
-
-        # Mark as processed (basic handling)
-        webhook_event.processed = True
-        webhook_event.processed_at = timezone.now()
-        webhook_event.save()
-
-        response_data = {"status": "success"}
-        serializer = WebhookResponseSerializer(response_data)
+class WebhookEventsAPIView(APIView):
+    """API view for listing webhook events."""
+    permission_classes = [AllowAny]
+    serializer_class = StripeWebhookEventSerializer
+    
+    def get(self, request, *args, **kwargs):
+        """List webhook events."""
+        events = StripeWebhookEvent.objects.all().order_by("-created_at")[:50]
+        serializer = StripeWebhookEventSerializer(events, many=True)
         return Response(serializer.data)
 
-    except Exception as e:
-        return Response({"error": str(e)}, status=400)
 
-
+# Keep the function-based view for backward compatibility
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def webhook_events(request):
-    """List webhook events."""
-    events = StripeWebhookEvent.objects.all().order_by("-created_at")[:50]
-    serializer = StripeWebhookEventSerializer(events, many=True)
-    return Response(serializer.data)
+    """List webhook events - function-based version."""
+    view = WebhookEventsAPIView()
+    return view.get(request)
 
 
+class RetryWebhookAPIView(APIView):
+    """API view for retrying webhook events."""
+    permission_classes = [AllowAny]
+    serializer_class = WebhookRetryResponseSerializer
+    
+    def post(self, request, event_id, *args, **kwargs):
+        """Retry processing a webhook event."""
+        try:
+            event = StripeWebhookEvent.objects.get(id=event_id)
+            event.processed = False
+            event.error_message = ""
+            event.save()
+
+            # Process the event again
+            webhook_view = StripeWebhookView()
+            success = webhook_view._process_event(
+                {
+                    "id": event.stripe_event_id,
+                    "type": event.event_type,
+                    "data": event.event_data,
+                }
+            )
+
+            if success:
+                response_data = {"status": "success"}
+                serializer = WebhookRetryResponseSerializer(response_data)
+                return Response(serializer.data)
+            else:
+                response_data = {"status": "failed"}
+                serializer = WebhookRetryResponseSerializer(response_data)
+                return Response(serializer.data, status=500)
+
+        except StripeWebhookEvent.DoesNotExist:
+            return Response({"error": "Event not found"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+
+# Keep the function-based view for backward compatibility
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def retry_webhook(request, event_id):
-    """Retry processing a webhook event."""
-    try:
-        event = StripeWebhookEvent.objects.get(id=event_id)
-        event.processed = False
-        event.error_message = ""
-        event.save()
-
-        # Process the event again
-        webhook_view = StripeWebhookView()
-        success = webhook_view._process_event(
-            {
-                "id": event.stripe_event_id,
-                "type": event.event_type,
-                "data": event.event_data,
-            }
-        )
-
-        if success:
-            response_data = {"status": "success"}
-            serializer = WebhookRetryResponseSerializer(response_data)
-            return Response(serializer.data)
-        else:
-            response_data = {"status": "failed"}
-            serializer = WebhookRetryResponseSerializer(response_data)
-            return Response(serializer.data, status=500)
-
-    except StripeWebhookEvent.DoesNotExist:
-        return Response({"error": "Event not found"}, status=404)
-    except Exception as e:
-        return Response({"error": str(e)}, status=500)
+    """Retry processing a webhook event - function-based version."""
+    view = RetryWebhookAPIView()
+    return view.post(request, event_id)

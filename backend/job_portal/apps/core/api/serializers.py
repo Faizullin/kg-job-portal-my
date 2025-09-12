@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 from utils.serializers import (
     AbstractTimestampedModelSerializer, 
     AbstractSoftDeleteModelSerializer,
@@ -21,6 +22,7 @@ class ServiceSubcategorySerializer(AbstractTimestampedModelSerializer, AbstractC
         model = ServiceSubcategory
         fields = ['id', 'name', 'description', 'icon', 'is_active', 'sort_order', 'image', 'featured', 'base_price', 'complexity_level', 'complexity_level_display']
     
+    @extend_schema_field(serializers.CharField())
     def get_complexity_level_display(self, obj):
         return self.get_choice_display(obj, 'complexity_level')
 
@@ -40,6 +42,7 @@ class ServiceAreaSerializer(AbstractTimestampedModelSerializer):
         model = ServiceArea
         fields = ['id', 'name', 'city', 'state', 'country', 'latitude', 'longitude', 'is_active', 'base_price_multiplier', 'travel_fee', 'coordinates']
     
+    @extend_schema_field(serializers.CharField())
     def get_coordinates(self, obj):
         if obj.latitude and obj.longitude:
             return f"{obj.latitude:.4f}, {obj.longitude:.4f}"
@@ -53,6 +56,7 @@ class SystemSettingsSerializer(AbstractTimestampedModelSerializer, AbstractChoic
         model = SystemSettings
         fields = ['id', 'key', 'value', 'description', 'is_public', 'setting_type', 'category', 'setting_type_display']
     
+    @extend_schema_field(serializers.CharField())
     def get_setting_type_display(self, obj):
         return self.get_choice_display(obj, 'setting_type')
 
@@ -64,5 +68,6 @@ class AppVersionSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFie
         model = AppVersion
         fields = ['id', 'version', 'build_number', 'platform', 'is_active', 'is_forced_update', 'release_date', 'download_url', 'platform_display']
     
+    @extend_schema_field(serializers.CharField())
     def get_platform_display(self, obj):
         return self.get_choice_display(obj, 'platform')

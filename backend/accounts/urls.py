@@ -1,6 +1,5 @@
 from django.urls import path
 from .api.views import *
-from .api.views.registration_views import *
 
 # Add app name for namespace
 app_name = "accounts"
@@ -13,9 +12,6 @@ urlpatterns = [
     
     # User logout
     path('api/v1/auth/logout/', LogoutView.as_view(), name='auth_logout'),
-    
-    # User registration
-    path('api/v1/registration/', UserRegistrationView.as_view(), name='user_registration'),
     
     # User management endpoints
     path('api/v1/profile/', UserProfileApiView.as_view(), name='user_profile'),

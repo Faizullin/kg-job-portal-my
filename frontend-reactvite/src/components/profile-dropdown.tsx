@@ -1,6 +1,4 @@
-import { useMemo } from "react";
-import { Link } from "@tanstack/react-router";
-import useDialogState from "@/hooks/use-dialog-state";
+import { SignOutDialog } from "@/components/sign-out-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,30 +11,32 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SignOutDialog } from "@/components/sign-out-dialog";
+import { useDialogControl } from "@/hooks/use-dialog-control";
 import { AuthClient } from "@/lib/auth/auth-client";
+import { Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 
 export function ProfileDropdown() {
-  const [open, setOpen] = useDialogState();
+  const control = useDialogControl();
 
   // Memoize user data to prevent unnecessary re-computations
   const user = useMemo(() => {
     const backendUser = AuthClient.getCurrentUser();
     const firebaseUser = AuthClient.getCurrentFirebaseUser();
-    
+
     return backendUser
       ? {
-          name: backendUser.username || backendUser.email.split("@")[0] || "User",
-          email: backendUser.email,
-          avatar: firebaseUser?.photoURL || "/avatars/default.jpg",
-          initials: (backendUser.username || backendUser.email.split("@")[0] || "U").substring(0, 2).toUpperCase(),
-        }
+        name: backendUser.username || backendUser.email.split("@")[0] || "User",
+        email: backendUser.email,
+        avatar: firebaseUser?.photoURL || "/avatars/default.jpg",
+        initials: (backendUser.username || backendUser.email.split("@")[0] || "U").substring(0, 2).toUpperCase(),
+      }
       : {
-          name: "User",
-          email: "user@example.com",
-          avatar: "/avatars/default.jpg",
-          initials: "U",
-        };
+        name: "User",
+        email: "user@example.com",
+        avatar: "/avatars/default.jpg",
+        initials: "U",
+      };
   }, []); // Empty dependency array since AuthClient methods are stable
 
   return (
@@ -62,19 +62,19 @@ export function ProfileDropdown() {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
-              <Link to="/settings">
+              <Link to="/settings/profile">
                 Profile
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/settings">
+              <Link to="/settings/profile">
                 Billing
                 <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/settings">
+              <Link to="/settings/profile">
                 Settings
                 <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
               </Link>
@@ -82,14 +82,14 @@ export function ProfileDropdown() {
             <DropdownMenuItem>New Team</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          <DropdownMenuItem onClick={() => control.show()}>
             Sign out
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <SignOutDialog open={!!open} onOpenChange={setOpen} />
+      <SignOutDialog control={control} />
     </>
   );
 }

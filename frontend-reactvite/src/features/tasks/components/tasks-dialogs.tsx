@@ -3,9 +3,37 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { TasksImportDialog } from "./tasks-import-dialog";
 import { TasksMutateDrawer } from "./tasks-mutate-drawer";
 import { useTasks } from "./tasks-provider";
+import { useDialogControl } from "@/hooks/use-dialog-control";
 
 export function TasksDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useTasks();
+  const deleteDialog = useDialogControl<any>();
+
+  const handleDeleteConfirm = () => {
+    if (currentRow) {
+      setOpen(null);
+      setTimeout(() => {
+        setCurrentRow(null);
+      }, 500);
+      showSubmittedData(
+        currentRow,
+        "The following task has been deleted:",
+      );
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setOpen("delete");
+    setTimeout(() => {
+      setCurrentRow(null);
+    }, 500);
+  };
+
+  // Show delete dialog when open state is "delete"
+  if (open === "delete" && currentRow) {
+    deleteDialog.show(currentRow);
+  }
+
   return (
     <>
       <TasksMutateDrawer
@@ -36,24 +64,10 @@ export function TasksDialogs() {
 
           <ConfirmDialog
             key="task-delete"
+            control={deleteDialog}
+            onConfirm={handleDeleteConfirm}
+            onCancel={handleDeleteCancel}
             destructive
-            open={open === "delete"}
-            onOpenChange={() => {
-              setOpen("delete");
-              setTimeout(() => {
-                setCurrentRow(null);
-              }, 500);
-            }}
-            handleConfirm={() => {
-              setOpen(null);
-              setTimeout(() => {
-                setCurrentRow(null);
-              }, 500);
-              showSubmittedData(
-                currentRow,
-                "The following task has been deleted:",
-              );
-            }}
             className="max-w-md"
             title={`Delete this task: ${currentRow.id} ?`}
             desc={

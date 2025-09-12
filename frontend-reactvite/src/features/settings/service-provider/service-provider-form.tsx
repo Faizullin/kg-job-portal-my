@@ -4,7 +4,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { apiClient } from "@/lib/auth/backend-service";
+import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Briefcase, Clock, Loader2, MapPin, Save } from "lucide-react";
@@ -30,9 +30,9 @@ export function ServiceProviderForm() {
   const queryClient = useQueryClient();
   
   const { data: profileData, isLoading: isProfileLoading } = useQuery({
-    queryKey: ["user-profile"],
+    queryKey: ["service-provider-profile"],
     queryFn: async () => {
-      const response = await apiClient.get("/profile/");
+      const response = await myApi.v1UsersProviderRetrieve();
       return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -43,8 +43,8 @@ export function ServiceProviderForm() {
   const { data: serviceCategories } = useQuery({
     queryKey: ["service-categories"],
     queryFn: async () => {
-      const response = await apiClient.get("/core/service-categories/");
-      return response.data;
+      const response = await myApi.v1CoreServiceCategoriesList();
+      return response.data.results as any[];
     },
   });
 
@@ -80,7 +80,7 @@ export function ServiceProviderForm() {
 
   const updateProviderMutation = useMutation({
     mutationFn: async (data: ServiceProviderFormData) => {
-      const response = await apiClient.patch("/users/provider/", data);
+      const response = await myApi.v1UsersProviderPartialUpdate({ patchedServiceProviderUpdate: data });
       return response.data;
     },
     onSuccess: () => {

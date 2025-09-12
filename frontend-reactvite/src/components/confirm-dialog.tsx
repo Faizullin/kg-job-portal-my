@@ -9,17 +9,18 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useDialogControl } from "@/hooks/use-dialog-control";
 
 type ConfirmDialogProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  control: ReturnType<typeof useDialogControl<any>>;
   title: React.ReactNode;
   disabled?: boolean;
   desc: React.JSX.Element | string;
   cancelBtnText?: string;
   confirmText?: React.ReactNode;
   destructive?: boolean;
-  handleConfirm: () => void;
+  onConfirm: () => void;
+  onCancel?: () => void;
   isLoading?: boolean;
   className?: string;
   children?: React.ReactNode;
@@ -27,6 +28,7 @@ type ConfirmDialogProps = {
 
 export function ConfirmDialog(props: ConfirmDialogProps) {
   const {
+    control,
     title,
     desc,
     children,
@@ -36,11 +38,24 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
     destructive,
     isLoading,
     disabled = false,
-    handleConfirm,
-    ...actions
+    onConfirm,
+    onCancel,
   } = props;
+
+  const { isVisible, hide } = control;
+
+  const handleCancel = () => {
+    hide();
+    onCancel?.();
+  };
+
+  const handleConfirm = () => {
+    onConfirm();
+    hide();
+  };
+
   return (
-    <AlertDialog {...actions}>
+    <AlertDialog open={isVisible} onOpenChange={handleCancel}>
       <AlertDialogContent className={cn(className && className)}>
         <AlertDialogHeader className="text-start">
           <AlertDialogTitle>{title}</AlertDialogTitle>
@@ -50,7 +65,7 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
         </AlertDialogHeader>
         {children}
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>
+          <AlertDialogCancel disabled={isLoading} onClick={handleCancel}>
             {cancelBtnText ?? "Cancel"}
           </AlertDialogCancel>
           <Button

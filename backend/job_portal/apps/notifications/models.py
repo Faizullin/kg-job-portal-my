@@ -40,7 +40,7 @@ class NotificationTemplate(AbstractSoftDeleteModel, AbstractTimestampedModel):
         ordering = ['notification_type', 'name']
     
     def __str__(self):
-        return f"{self.get_notification_type_display()} - {self.name}... [#{self.id}]"
+        return f"{self.name}... [#{self.id}]"
 
 
 class UserNotification(AbstractSoftDeleteModel, AbstractTimestampedModel):
@@ -173,38 +173,6 @@ class NotificationPreference(AbstractTimestampedModel):
     
     def __str__(self):
         return f"{self.user.name} - Notification Preferences... [#{self.id}]"
-
-
-class NotificationLog(AbstractTimestampedModel):
-    """Log of all notification activities for debugging and analytics."""
-    notification = models.ForeignKey(UserNotification, on_delete=models.CASCADE, related_name='logs')
-    delivery = models.ForeignKey(NotificationDelivery, on_delete=models.CASCADE, related_name='logs', null=True, blank=True)
-    
-    # Log details
-    action = models.CharField(_("Action"), max_length=50, choices=[
-        ('created', _('Created')),
-        ('queued', _('Queued')),
-        ('sent', _('Sent')),
-        ('delivered', _('Delivered')),
-        ('failed', _('Failed')),
-        ('read', _('Read')),
-        ('cancelled', _('Cancelled')),
-    ])
-    
-    # Details
-    details = models.JSONField(_("Details"), default=dict)
-    error_message = models.TextField(_("Error Message"), blank=True)
-    
-    # Performance tracking
-    processing_time = models.FloatField(_("Processing Time (seconds)"), null=True, blank=True)
-    
-    class Meta:
-        verbose_name = _("Notification Log")
-        verbose_name_plural = _("Notification Logs")
-        ordering = ['-created_at']
-    
-    def __str__(self):
-        return f"{self.notification.subject} - {self.get_action_display()}... [#{self.id}]"
 
 
 class NotificationQueue(AbstractTimestampedModel):

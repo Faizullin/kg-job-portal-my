@@ -45,7 +45,6 @@ class Review(AbstractSoftDeleteModel, AbstractTimestampedModel):
         provider = self.provider
         reviews = Review.objects.filter(
             provider=provider,
-            is_deleted=False
         )
         
         if reviews.exists():

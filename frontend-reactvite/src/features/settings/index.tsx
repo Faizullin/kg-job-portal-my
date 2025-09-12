@@ -1,5 +1,5 @@
 import { Outlet } from "@tanstack/react-router";
-import { Monitor, Bell, Palette, Wrench, UserCog, Briefcase, ShoppingCart, Shield, Users } from "lucide-react";
+import { Monitor, Bell, Palette, UserCog, Briefcase, ShoppingCart, Shield, Users, User } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ConfigDrawer } from "@/components/config-drawer";
 import { Header } from "@/components/layout/header";
@@ -15,14 +15,14 @@ import { useMemo } from "react";
 const getBaseSidebarItems = () => [
   {
     title: "Profile",
-    href: "/settings",
+    href: "/settings/profile",
     icon: <UserCog size={18} />,
     visible: true,
   },
   {
-    title: "Account",
-    href: "/settings/account",
-    icon: <Wrench size={18} />,
+    title: "User Profile",
+    href: "/settings/user-profile",
+    icon: <User size={18} />,
     visible: true,
   },
   {
@@ -49,33 +49,19 @@ const getBaseSidebarItems = () => [
 const getRoleBasedSidebarItems = (user: any) => {
   const items = [];
 
-  // Extended profile - always visible
+  // Always show both tabs; pages handle initialization if profile missing
   items.push({
-    title: "Extended Profile",
-    href: "/settings/extended-profile",
-    icon: <Wrench size={18} />,
+    title: "Service Provider",
+    href: "/settings/service-provider",
+    icon: <Briefcase size={18} />,
     visible: true,
   });
-
-  // Service Provider profile - only for service providers
-  if (user?.user_role === "service_provider" || user?.user_role === "both") {
-    items.push({
-      title: "Service Provider",
-      href: "/settings/service-provider",
-      icon: <Briefcase size={18} />,
-      visible: true,
-    });
-  }
-
-  // Client profile - only for clients
-  if (user?.user_role === "client" || user?.user_role === "both") {
-    items.push({
-      title: "Client Profile",
-      href: "/settings/client-profile",
-      icon: <ShoppingCart size={18} />,
-      visible: true,
-    });
-  }
+  items.push({
+    title: "Client Profile",
+    href: "/settings/client-profile",
+    icon: <ShoppingCart size={18} />,
+    visible: true,
+  });
 
   // Admin/Staff sections - only for staff or superusers
   if (user?.is_staff || user?.is_superuser) {

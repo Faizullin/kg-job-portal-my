@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 from utils.serializers import (
     AbstractTimestampedModelSerializer,
     AbstractSoftDeleteModelSerializer,
@@ -18,14 +19,7 @@ class ChatAttachmentSerializer(AbstractTimestampedModelSerializer):
             'file_url', 'thumbnail_url', 'created_at'
         ]
     
-    def get_file_size_display(self, obj):
-        if obj.file_size:
-            size_kb = obj.file_size / 1024
-            if size_kb > 1024:
-                return f"{size_kb/1024:.1f} MB"
-            return f"{size_kb:.0f} KB"
-        return '-'
-    
+    @extend_schema_field(serializers.CharField())
     def get_file_size_display(self, obj):
         if obj.file_size:
             size_kb = obj.file_size / 1024
@@ -42,11 +36,12 @@ class ChatParticipantSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = ChatParticipant
         fields = [
-            'id', 'chat_room', 'chat_room_title', 'user', 'user_name',
+            'id', 'chat_room', 'chat_room_title', 'user', 'user_name', 'role',
             'is_online', 'last_seen', 'unread_count', 
             'notifications_enabled', 'mute_until', 'created_at', 'updated_at'
         ]
     
+    @extend_schema_field(serializers.CharField())
     def get_user_name(self, obj):
         if obj.user:
             return f"{obj.user.first_name} {obj.user.last_name}"
@@ -65,17 +60,19 @@ class MessageSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldS
             'message_type_display', 'attachments', 'is_read', 'read_at', 'created_at'
         ]
     
+    @extend_schema_field(serializers.CharField())
     def get_sender_name(self, obj):
         if obj.sender:
             return f"{obj.sender.first_name} {obj.sender.last_name}"
         return "Unknown User"
     
+    @extend_schema_field(serializers.CharField())
     def get_message_type_display(self, obj):
         return self.get_choice_display(obj, 'message_type')
 
 
 class ChatRoomSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin):
-    participants = ChatParticipantSerializer(many=True, read_only=True)
+    participants = ChatParticipantSerializer(source='participant_status', many=True, read_only=True)
     last_message = serializers.SerializerMethodField()
     unread_count = serializers.SerializerMethodField()
     chat_type_display = serializers.SerializerMethodField()
@@ -89,6 +86,7 @@ class ChatRoomSerializer(AbstractTimestampedModelSerializer, AbstractChoiceField
             'created_at', 'updated_at'
         ]
     
+    @extend_schema_field(serializers.DictField())
     def get_last_message(self, obj):
         last_msg = obj.messages.order_by('-created_at').first()
         if last_msg:
@@ -99,10 +97,15 @@ class ChatRoomSerializer(AbstractTimestampedModelSerializer, AbstractChoiceField
             }
         return None
     
+    @extend_schema_field(serializers.IntegerField())
     def get_unread_count(self, obj):
-        # This would be calculated based on current user
-        return 0
+        request = self.context.get('request')
+        if not request or not hasattr(request, 'user'):
+            return 0
+        # Approximate unread count (global is_read flag, exclude own messages)
+        return obj.messages.filter(is_read=False).exclude(sender=request.user).count()
     
+    @extend_schema_field(serializers.CharField())
     def get_chat_type_display(self, obj):
         return self.get_choice_display(obj, 'chat_type')
 
@@ -112,17 +115,52 @@ class MessageCreateSerializer(AbstractTimestampedModelSerializer):
         model = ChatMessage
         fields = ['chat_room', 'content', 'message_type']
 
+    def create(self, validated_data):
+        # Sender is request.user
+        request = self.context.get('request')
+        if request and hasattr(request, 'user') and request.user and request.user.is_authenticated:
+            return ChatMessage.objects.create(sender=request.user, **validated_data)
+        return ChatMessage.objects.create(**validated_data)
+
 
 class ChatRoomCreateSerializer(AbstractTimestampedModelSerializer):
+    participants = serializers.ListField(
+        child=serializers.IntegerField(), required=False, write_only=True
+    )
+    order = serializers.IntegerField(required=False, allow_null=True)
+    
     class Meta:
         model = ChatRoom
-        fields = ['title', 'chat_type', 'order', 'is_active']
+        fields = ['title', 'chat_type', 'order', 'is_active', 'participants']
+
+    def create(self, validated_data):
+        participants_ids = validated_data.pop('participants', [])
+        # Normalize order: treat 0/None/False as no order
+        if 'order' in validated_data and not validated_data['order']:
+            validated_data['order'] = None
+
+        chat_room = ChatRoom.objects.create(**validated_data)
+
+        # Add creator as admin if request in context
+        request = self.context.get('request')
+        if request and hasattr(request, 'user') and request.user and request.user.is_authenticated:
+            ChatParticipant.objects.get_or_create(
+                chat_room=chat_room, user=request.user, defaults={'role': 'admin'}
+            )
+
+        # Add provided participants as members
+        for user_id in participants_ids or []:
+            ChatParticipant.objects.get_or_create(
+                chat_room=chat_room, user_id=user_id, defaults={'role': 'member'}
+            )
+
+        return chat_room
 
 
 class ChatParticipantCreateSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = ChatParticipant
-        fields = ['chat_room', 'user', 'is_online', 'notifications_enabled']
+        fields = ['chat_room', 'user', 'role', 'is_online', 'notifications_enabled']
 
 
 class ChatAttachmentCreateSerializer(AbstractTimestampedModelSerializer):

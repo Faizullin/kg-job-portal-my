@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    UserModel, NotificationSettings, 
+    UserModel, 
     UserActivityDateModel, UserPointAddHistory, LoginSession
 )
 
@@ -57,7 +57,7 @@ class UserModelAdmin(admin.ModelAdmin):
     def restore_users(self, request, queryset):
         """Restore soft-deleted users"""
         restored_count = 0
-        for user in queryset.filter(is_deleted=True):
+        for user in queryset:
             user.restore()
             restored_count += 1
         
@@ -83,13 +83,6 @@ class UserModelAdmin(admin.ModelAdmin):
         self.message_user(request, message)
     
     hard_delete_users.short_description = "Permanently delete selected users"
-
-
-@admin.register(NotificationSettings)
-class NotificationSettingsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'periodic_lesson_reminder', 'friend_request_notification', 'streak_notification')
-    list_filter = ('periodic_lesson_reminder', 'friend_request_notification', 'streak_notification', 'global_event_notification')
-    search_fields = ('user__username', 'user__email')
 
 
 @admin.register(UserActivityDateModel)

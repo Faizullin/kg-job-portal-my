@@ -3,12 +3,10 @@ import {
   LayoutDashboard,
   Monitor,
   Bug,
-  ListTodo,
   FileX,
   HelpCircle,
   Lock,
   Bell,
-  Package,
   Palette,
   ServerOff,
   Settings,
@@ -16,11 +14,17 @@ import {
   UserCog,
   UserX,
   Users,
-  MessagesSquare,
   ShieldCheck,
-  AudioWaveform,
-  Command,
-  GalleryVerticalEnd,
+  Briefcase,
+  Building2,
+  FileText,
+  Search,
+  CreditCard,
+  Star,
+  BarChart3,
+  User,
+  ShoppingBag,
+  MessageCircle,
 } from "lucide-react";
 import { type SidebarData } from "../types";
 
@@ -32,24 +36,24 @@ export const sidebarData: SidebarData = {
   },
   teams: [
     {
-      name: "Shadcn Admin",
-      logo: Command,
-      plan: "Vite + ShadcnUI",
+      name: "Job Portal",
+      logo: Briefcase,
+      plan: "Professional",
     },
     {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
+      name: "Company Dashboard",
+      logo: Building2,
       plan: "Enterprise",
     },
     {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
+      name: "Analytics Hub",
+      logo: BarChart3,
+      plan: "Premium",
     },
   ],
   navGroups: [
     {
-      title: "General",
+      title: "Job Management",
       items: [
         {
           title: "Dashboard",
@@ -57,25 +61,60 @@ export const sidebarData: SidebarData = {
           icon: LayoutDashboard,
         },
         {
-          title: "Tasks",
+          title: "Search Jobs",
+          url: "/search",
+          icon: Search,
+        },
+        {
+          title: "My Applications",
           url: "/tasks",
-          icon: ListTodo,
+          icon: FileText,
         },
         {
-          title: "Apps",
-          url: "/apps",
-          icon: Package,
+          title: "Orders",
+          url: "/orders",
+          icon: ShoppingBag,
         },
         {
-          title: "Chats",
+          title: "Bids",
+          url: "/bids",
+          icon: Briefcase,
+        },
+      ],
+    },
+    {
+      title: "Company & Services",
+      items: [
+        {
+          title: "Service Providers",
+          url: "/service-providers",
+          icon: Building2,
+        },
+        {
+          title: "Analytics",
+          url: "/analytics",
+          icon: BarChart3,
+        },
+        {
+          title: "Reviews",
+          url: "/reviews",
+          icon: Star,
+        },
+        {
+          title: "Payments",
+          url: "/payments",
+          icon: CreditCard,
+        },
+      ],
+    },
+    {
+      title: "Communication",
+      items: [
+        {
+          title: "Messages",
           url: "/chats",
           badge: "3",
-          icon: MessagesSquare,
-        },
-        {
-          title: "Users",
-          url: "/users",
-          icon: Users,
+          icon: MessageCircle,
         },
       ],
     },
@@ -138,7 +177,7 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: "Other",
+      title: "Profile & Settings",
       items: [
         {
           title: "Settings",
@@ -146,13 +185,18 @@ export const sidebarData: SidebarData = {
           items: [
             {
               title: "Profile",
-              url: "/settings",
+              url: "/settings/profile",
+              icon: User,
+            },
+            {
+              title: "Client Profile",
+              url: "/settings/client-profile",
               icon: UserCog,
             },
             {
-              title: "Account",
-              url: "/settings/account",
-              icon: Wrench,
+              title: "Service Provider",
+              url: "/settings/service-provider",
+              icon: Building2,
             },
             {
               title: "Appearance",

@@ -31,13 +31,12 @@ class OrderPhotoSerializer(AbstractTimestampedModelSerializer):
 
 class BidSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin):
     provider_name = serializers.SerializerMethodField()
-    status_display = serializers.SerializerMethodField()
     
     class Meta:
         model = Bid
         fields = [
             'id', 'order', 'provider', 'provider_name', 'amount', 'description',
-            'estimated_duration', 'status', 'status_display', 'is_negotiable',
+            'estimated_duration', 'status', 'is_negotiable',
             'terms_conditions', 'created_at'
         ]
     
@@ -45,48 +44,36 @@ class BidSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSeria
         if obj.provider and obj.provider.user_profile and obj.provider.user_profile.user:
             return obj.provider.user_profile.user.name
         return "Unknown Provider"
-    
-    def get_status_display(self, obj):
-        return self.get_choice_display(obj, 'status')
-
 
 class OrderDisputeSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin):
     dispute_type_display = serializers.SerializerMethodField()
-    status_display = serializers.SerializerMethodField()
     
     class Meta:
         model = OrderDispute
         fields = [
             'id', 'order', 'raised_by', 'dispute_type', 'dispute_type_display', 'description',
-            'evidence', 'status', 'status_display', 'admin_notes', 'resolved_by',
+            'evidence', 'status', 'admin_notes', 'resolved_by',
             'resolved_at', 'resolution', 'created_at'
         ]
     
     def get_dispute_type_display(self, obj):
         return self.get_choice_display(obj, 'dispute_type')
-    
-    def get_status_display(self, obj):
-        return self.get_choice_display(obj, 'status')
 
 
 class OrderSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin):
     addons = OrderAddonSerializer(many=True, read_only=True)
     photos = OrderPhotoSerializer(many=True, read_only=True)
     bids = BidSerializer(many=True, read_only=True)
-    status_display = serializers.SerializerMethodField()
     client_name = serializers.SerializerMethodField()
     
     class Meta:
         model = Order
         fields = [
-            'id', 'client', 'client_name', 'service_subcategory', 'title', 'description', 'status', 'status_display',
+            'id', 'client', 'client_name', 'service_subcategory', 'title', 'description', 'status',
             'location', 'city', 'state', 'country', 'postal_code', 'service_date', 'service_time',
             'urgency', 'budget_min', 'budget_max', 'final_price', 'addons', 'photos', 'bids',
             'attachments', 'special_requirements', 'is_featured', 'created_at', 'updated_at'
         ]
-    
-    def get_status_display(self, obj):
-        return self.get_choice_display(obj, 'status')
     
     def get_client_name(self, obj):
         if obj.client and obj.client.user_profile and obj.client.user_profile.user:

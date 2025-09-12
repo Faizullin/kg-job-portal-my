@@ -1,22 +1,23 @@
 from rest_framework import generics, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q, Avg, Count
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly
+from utils.permissions import AbstractIsAuthenticatedOrReadOnly, HasClientProfile, HasServiceProviderProfile
 from utils.pagination import CustomPagination
 from ..models import UserProfile, ServiceProviderProfile, ClientProfile, UserVerification, ServiceProviderService
 from .serializers import (
-    UserProfileSerializer, ServiceProviderSerializer, ClientSerializer,
-    UserProfileUpdateSerializer, ServiceProviderUpdateSerializer, ClientUpdateSerializer
+    UserProfileDetailSerializer, ServiceProviderSerializer, ClientSerializer,
+    UserProfileUpdateSerializer, ServiceProviderUpdateSerializer, ClientUpdateSerializer,
 )
 
 
 class UserProfileApiView(generics.ListAPIView):
-    serializer_class = UserProfileSerializer
+    serializer_class = UserProfileDetailSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['user_type', 'is_verified', 'gender']
@@ -75,7 +76,7 @@ class UserProfileDetailApiView(generics.RetrieveUpdateAPIView):
     
     def get_serializer_class(self):
         if self.request.method == 'GET':
-            return UserProfileSerializer
+            return UserProfileDetailSerializer
         return UserProfileUpdateSerializer
 
 
@@ -143,3 +144,63 @@ class ClientDetailApiView(generics.RetrieveUpdateAPIView):
         if self.request.method == 'GET':
             return ClientSerializer
         return ClientUpdateSerializer
+
+
+# Simple Profile Update Views
+class UserProfileUpdateView(APIView):
+    """Update user profile - works for both registration and profile updates"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        """Create or update user profile"""
+        serializer = UserProfileUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            user_profile, created = UserProfile.objects.update_or_create(
+                user=request.user,
+                defaults=serializer.validated_data
+            )
+            return Response({
+                'message': 'Profile updated successfully',
+                'profile': UserProfileUpdateSerializer(user_profile).data
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ClientProfileUpdateView(APIView):
+    """Update client profile - works for both registration and profile updates"""
+    permission_classes = [IsAuthenticated,]
+    
+    def post(self, request):
+        """Create or update client profile"""
+        serializer = ClientUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            user_profile = request.user.job_portal_profile
+            client_profile, created = ClientProfile.objects.update_or_create(
+                user_profile=user_profile,
+                defaults=serializer.validated_data
+            )
+            return Response({
+                'message': 'Client profile updated successfully',
+                'client_profile': ClientUpdateSerializer(client_profile).data
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ServiceProviderProfileUpdateView(APIView):
+    """Update service provider profile - works for both registration and profile updates"""
+    permission_classes = [IsAuthenticated, ]
+    
+    def post(self, request):
+        """Create or update service provider profile"""
+        serializer = ServiceProviderUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            user_profile = request.user.job_portal_profile
+            provider_profile, created = ServiceProviderProfile.objects.update_or_create(
+                user_profile=user_profile,
+                defaults=serializer.validated_data
+            )
+            return Response({
+                'message': 'Service provider profile updated successfully',
+                'provider_profile': ServiceProviderUpdateSerializer(provider_profile).data
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

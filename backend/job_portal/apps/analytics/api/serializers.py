@@ -1,9 +1,8 @@
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 from utils.serializers import (
     AbstractTimestampedModelSerializer,
-    AbstractSoftDeleteModelSerializer,
     AbstractChoiceFieldSerializerMixin,
-    AbstractComputedFieldSerializerMixin
 )
 from ..models import UserActivity, OrderAnalytics, ServiceCategoryAnalytics, PerformanceMetrics, BusinessMetrics
 
@@ -19,6 +18,7 @@ class UserActivitySerializer(AbstractTimestampedModelSerializer, AbstractChoiceF
             'related_object_id', 'response_time', 'created_at'
         ]
     
+    @extend_schema_field(serializers.CharField())
     def get_activity_type_display(self, obj):
         return self.get_choice_display(obj, 'activity_type')
 
@@ -45,6 +45,7 @@ class OrderAnalyticsSerializer(AbstractTimestampedModelSerializer):
             'active_clients', 'active_providers', 'new_users', 'created_at'
         ]
     
+    @extend_schema_field(serializers.DecimalField(max_digits=10, decimal_places=2))
     def get_revenue_per_order(self, obj):
         if obj.total_orders and obj.total_orders > 0:
             return obj.total_revenue / obj.total_orders

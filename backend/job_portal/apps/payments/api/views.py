@@ -38,14 +38,14 @@ class PaymentApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generic
     def get_queryset(self):
         user = self.request.user
         return Payment.objects.filter(
-            payment_method__user=user, is_deleted=False
+            payment_method__user=user, 
         ).select_related('invoice__order', 'payment_method')
     
     @action(detail=False, methods=['get'])
     def pending(self, request):
         """Get pending payments."""
         payments = Payment.objects.filter(
-            payment_method__user=request.user, status='pending', is_deleted=False
+            payment_method__user=request.user, status='pending',
         ).select_related('invoice__order', 'payment_method')
         
         serializer = PaymentSerializer(payments, many=True)
@@ -55,7 +55,7 @@ class PaymentApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generic
     def completed(self, request):
         """Get completed payments."""
         payments = Payment.objects.filter(
-            payment_method__user=request.user, status='completed', is_deleted=False
+            payment_method__user=request.user, status='completed', 
         ).select_related('invoice__order', 'payment_method')
         
         serializer = PaymentSerializer(payments, many=True)
@@ -75,7 +75,7 @@ class PaymentDetailApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, g
     
     def get_queryset(self):
         return Payment.objects.filter(
-            payment_method__user=self.request.user, is_deleted=False
+            payment_method__user=self.request.user, 
         ).select_related('invoice__order', 'payment_method')
     
     def get_serializer_class(self):
@@ -114,7 +114,7 @@ class PaymentMethodApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, g
     
     def get_queryset(self):
         return PaymentMethod.objects.filter(
-            user=self.request.user, is_deleted=False
+            user=self.request.user, 
         )
 
 
@@ -124,7 +124,7 @@ class PaymentMethodDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     
     def get_queryset(self):
         return PaymentMethod.objects.filter(
-            user=self.request.user, is_deleted=False
+            user=self.request.user, 
         )
     
     def get_serializer_class(self):
@@ -153,7 +153,7 @@ class InvoiceApiView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return Invoice.objects.filter(
-            order__client__user_profile__user=user, is_deleted=False
+            order__client__user_profile__user=user, 
         ).select_related('order')
 
 
@@ -164,7 +164,7 @@ class InvoiceDetailApiView(generics.RetrieveAPIView):
     def get_queryset(self):
         user = self.request.user
         return Invoice.objects.filter(
-            order__client__user_profile__user=user, is_deleted=False
+            order__client__user_profile__user=user, 
         ).select_related('order')
 
 

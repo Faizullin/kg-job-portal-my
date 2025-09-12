@@ -22,9 +22,7 @@ class ReviewApiView(generics.ListCreateAPIView):
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        return Review.objects.filter(
-            is_deleted=False
-        ).select_related(
+        return Review.objects.select_related(
             'reviewer', 
             'provider__user_profile__user',
             'order'
@@ -46,9 +44,7 @@ class ReviewDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     
     def get_queryset(self):
-        return Review.objects.filter(
-            is_deleted=False
-        ).select_related(
+        return Review.objects.select_related(
             'reviewer', 
             'provider__user_profile__user',
             'order'
@@ -73,8 +69,7 @@ class ProviderReviewsApiView(generics.ListAPIView):
     def get_queryset(self):
         provider_id = self.kwargs.get('provider_id')
         return Review.objects.filter(
-            provider_id=provider_id,
-            is_deleted=False
+            provider_id=provider_id
         ).select_related(
             'reviewer', 
             'provider__user_profile__user',
@@ -92,7 +87,6 @@ class OrderReviewsApiView(generics.ListAPIView):
         order_id = self.kwargs.get('order_id')
         return Review.objects.filter(
             order_id=order_id,
-            is_deleted=False
         ).select_related(
             'reviewer', 
             'provider__user_profile__user',
@@ -108,8 +102,7 @@ class ReviewAnalyticsApiView(generics.GenericAPIView):
     def get_queryset(self):
         provider_id = self.kwargs.get('provider_id')
         return Review.objects.filter(
-            provider_id=provider_id,
-            is_deleted=False
+            provider_id=provider_id
         ).select_related(
             'reviewer', 
             'provider__user_profile__user',
@@ -122,8 +115,7 @@ class ReviewAnalyticsApiView(generics.GenericAPIView):
         
         # Get basic stats
         reviews = Review.objects.filter(
-            provider_id=provider_id,
-            is_deleted=False
+            provider_id=provider_id
         )
         
         total_reviews = reviews.count()

@@ -9,10 +9,10 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from utils.permissions import AbstractIsAuthenticatedOrReadOnly, HasSpecificPermission
 from utils.pagination import CustomPagination
-from ..models import UserNotification, NotificationTemplate, NotificationPreference, NotificationLog
+from ..models import UserNotification, NotificationTemplate, NotificationPreference
 from .serializers import (
     NotificationSerializer, NotificationTemplateSerializer, NotificationSettingSerializer,
-    NotificationLogSerializer, NotificationCreateSerializer, NotificationUpdateSerializer,
+    NotificationCreateSerializer, NotificationUpdateSerializer,
     NotificationSettingUpdateSerializer, NotificationTemplateCreateSerializer,
     NotificationTemplateUpdateSerializer, NotificationSettingCreateSerializer
 )
@@ -22,8 +22,8 @@ class NotificationApiView(generics.ListAPIView):
     serializer_class = NotificationSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['notification_type', 'priority', 'is_read']
-    search_fields = ['title', 'message']
+    filterset_fields = ['priority', 'is_read']
+    search_fields = ['subject', 'message']
     ordering_fields = ['priority', 'created_at', 'read_at']
     ordering = ['-created_at']
     pagination_class = CustomPagination
@@ -31,14 +31,14 @@ class NotificationApiView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return UserNotification.objects.filter(
-            user=user, is_deleted=False
+            user=user,
         ).select_related('user')
     
     @action(detail=False, methods=['get'])
     def unread(self, request):
         """Get unread notifications for current user."""
         notifications = UserNotification.objects.filter(
-            user=request.user, is_read=False, is_deleted=False
+            user=request.user, is_read=False,
         ).select_related('user')
         
         serializer = NotificationSerializer(notifications, many=True)
@@ -51,7 +51,7 @@ class NotificationApiView(generics.ListAPIView):
         week_ago = timezone.now() - timedelta(days=7)
         
         notifications = UserNotification.objects.filter(
-            user=request.user, created_at__gte=week_ago, is_deleted=False
+            user=request.user, created_at__gte=week_ago,
         ).select_related('user')
         
         serializer = NotificationSerializer(notifications, many=True)
@@ -61,7 +61,7 @@ class NotificationApiView(generics.ListAPIView):
     def mark_all_read(self, request):
         """Mark all notifications as read for current user."""
         UserNotification.objects.filter(
-            user=request.user, is_read=False, is_deleted=False
+            user=request.user, is_read=False,
         ).update(is_read=True, read_at=timezone.now())
         
         return Response({'message': 'All notifications marked as read'})
@@ -70,11 +70,11 @@ class NotificationApiView(generics.ListAPIView):
     def count(self, request):
         """Get notification counts for current user."""
         total = UserNotification.objects.filter(
-            user=request.user, is_deleted=False
+            user=request.user,
         ).count()
         
         unread = UserNotification.objects.filter(
-            user=request.user, is_read=False, is_deleted=False
+            user=request.user, is_read=False,
         ).count()
         
         return Response({
@@ -89,7 +89,7 @@ class NotificationDetailApiView(generics.RetrieveUpdateAPIView):
     
     def get_queryset(self):
         return UserNotification.objects.filter(
-            user=self.request.user, is_deleted=False
+            user=self.request.user,
         ).select_related('user')
     
     def get_serializer_class(self):
@@ -109,29 +109,30 @@ class NotificationCreateApiView(generics.CreateAPIView):
     permission_classes = [HasSpecificPermission(['notifications.add_notification'])]
 
 
-class NotificationSettingApiView(generics.ListAPIView):
-    serializer_class = NotificationSettingSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['email_notifications', 'push_notifications']
-    ordering_fields = ['created_at']
-    ordering = ['created_at']
-    pagination_class = CustomPagination
-    
-    def get_queryset(self):
-        return NotificationPreference.objects.filter(
-            user=self.request.user, is_deleted=False
-        ).select_related('user')
-
-
-class NotificationSettingDetailApiView(generics.RetrieveUpdateAPIView):
+class NotificationSettingApiView(generics.RetrieveUpdateAPIView):
     serializer_class = NotificationSettingUpdateSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     
-    def get_queryset(self):
-        return NotificationPreference.objects.filter(
-            user=self.request.user, is_deleted=False
-        ).select_related('user')
+    def get_object(self):
+        # Get or create notification preferences for the current user
+        obj, created = NotificationPreference.objects.get_or_create(
+            user=self.request.user,
+            defaults={
+                'email_notifications': True,
+                'push_notifications': True,
+                'sms_notifications': False,
+                'in_app_notifications': True,
+                'order_updates': True,
+                'bid_notifications': True,
+                'payment_notifications': True,
+                'chat_notifications': True,
+                'promotional_notifications': False,
+                'system_notifications': True,
+                'timezone': 'UTC',
+                'digest_frequency': 'immediate',
+            }
+        )
+        return obj
     
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -139,12 +140,6 @@ class NotificationSettingDetailApiView(generics.RetrieveUpdateAPIView):
         return NotificationSettingUpdateSerializer
 
 
-class NotificationSettingCreateApiView(generics.CreateAPIView):
-    serializer_class = NotificationSettingCreateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
-    
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
 
 class NotificationTemplateApiView(generics.ListAPIView):
@@ -158,7 +153,7 @@ class NotificationTemplateApiView(generics.ListAPIView):
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        return NotificationTemplate.objects.filter(is_deleted=False)
+        return NotificationTemplate.objects.all()
 
 
 class NotificationTemplateDetailApiView(generics.RetrieveUpdateAPIView):
@@ -166,7 +161,7 @@ class NotificationTemplateDetailApiView(generics.RetrieveUpdateAPIView):
     permission_classes = [HasSpecificPermission(['notifications.change_notificationtemplate'])]
     
     def get_queryset(self):
-        return NotificationTemplate.objects.filter(is_deleted=False)
+        return NotificationTemplate.objects.all()
     
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -177,36 +172,3 @@ class NotificationTemplateDetailApiView(generics.RetrieveUpdateAPIView):
 class NotificationTemplateCreateApiView(generics.CreateAPIView):
     serializer_class = NotificationTemplateCreateSerializer
     permission_classes = [HasSpecificPermission(['notifications.add_notificationtemplate'])]
-
-
-class NotificationLogApiView(generics.ListAPIView):
-    serializer_class = NotificationLogSerializer
-    permission_classes = [HasSpecificPermission(['notifications.add_notification'])]
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['status', 'delivery_method', 'user']
-    ordering_fields = ['sent_at', 'delivered_at', 'created_at']
-    ordering = ['-created_at']
-    pagination_class = CustomPagination
-    
-    def get_queryset(self):
-        return NotificationLog.objects.filter(is_deleted=False).select_related('notification', 'user')
-    
-    @action(detail=False, methods=['get'])
-    def failed(self, request):
-        """Get failed notification deliveries."""
-        failed_logs = NotificationLog.objects.filter(
-            status='failed', is_deleted=False
-        ).select_related('notification', 'user')
-        
-        serializer = NotificationLogSerializer(failed_logs, many=True)
-        return Response(serializer.data)
-    
-    @action(detail=False, methods=['get'])
-    def pending(self, request):
-        """Get pending notification deliveries."""
-        pending_logs = NotificationLog.objects.filter(
-            status='pending', is_deleted=False
-        ).select_related('notification', 'user')
-        
-        serializer = NotificationLogSerializer(pending_logs, many=True)
-        return Response(serializer.data)

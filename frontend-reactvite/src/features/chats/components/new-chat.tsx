@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Check, X } from "lucide-react";
-import { showSubmittedData } from "@/lib/show-submitted-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,16 +17,68 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { type ChatUser } from "../data/chat-types";
+import type { DialogControl } from "@/hooks/use-dialog-control";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import myApi from "@/lib/api/my-api";
+import type { ChatRoom } from "@/lib/api/axios-client/api";
 
 type User = Omit<ChatUser, "messages">;
 
 type NewChatProps = {
-  users: User[];
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  users?: User[];
+  control?: DialogControl;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onCreated?: (room: ChatRoom) => void;
+  orderId?: number; // Optional order to attach to the chat
 };
-export function NewChat({ users, onOpenChange, open }: NewChatProps) {
+
+export function NewChat({ users, onOpenChange, open, control, onCreated, orderId }: NewChatProps) {
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const [search, setSearch] = useState("");
+
+  // Load users from backend if not provided
+  const { data: fetchedUsers = [] } = useQuery({
+    queryKey: ["chat-user-search", search],
+    queryFn: async () => {
+      if (users && users.length > 0) return users;
+      const res = await myApi.v1UsersList({ search, pageSize: 20 });
+      const results = (res.data as any).results || res.data || [];
+      const authData = myApi.getAuthData();
+      const currentUserId = authData?.user?.id ? String(authData.user.id) : null;
+      return results
+        .filter((u: any) => String(u.id) !== currentUserId)
+        .map((u: any) => ({
+          id: String(u.id),
+          profile: u.photo_url || u.photo || "",
+          username: u.username || u.email || String(u.id),
+          fullName: u.name || `${u.first_name || ""} ${u.last_name || ""}`.trim() || u.username,
+          title: "",
+        })) as User[];
+    },
+  });
+
+  const createRoomMutation = useMutation({
+    mutationFn: async () => {
+      const participantIds = selectedUsers.map((u) => Number(u.id)).filter((n) => !Number.isNaN(n));
+      const title = selectedUsers.map((u) => u.fullName).join(", ");
+      const response = await myApi.v1ChatRoomsCreateCreate({
+        chatRoomCreate: {
+          title: title || (orderId ? 'Order Chat' : 'New Chat'),
+          chat_type: orderId ? 'order_chat' : 'general_chat',
+          is_active: true,
+          participants: participantIds,
+          ...(orderId && { order: orderId })
+        }
+      })
+      return response.data;
+    },
+    onSuccess: (room) => {
+      if (onCreated) onCreated(room as any);
+      if (control) control.hide();
+      setSelectedUsers([]);
+    },
+  });
 
   const handleSelectUser = (user: User) => {
     if (!selectedUsers.find((u) => u.id === user.id)) {
@@ -41,17 +92,26 @@ export function NewChat({ users, onOpenChange, open }: NewChatProps) {
     setSelectedUsers(selectedUsers.filter((user) => user.id !== userId));
   };
 
+  const isOpen = control ? control.isVisible : !!open;
+  const handleOpenChange = (next: boolean) => {
+    if (control) {
+      next ? control.show() : control.hide();
+    } else if (onOpenChange) {
+      onOpenChange(next);
+    }
+  };
+
   useEffect(() => {
-    if (!open) {
+    if (!isOpen) {
       setSelectedUsers([]);
     }
-  }, [open]);
+  }, [isOpen]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>New message</DialogTitle>
+          <DialogTitle>{orderId ? 'New order chat' : 'New message'}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-baseline-last gap-2">
@@ -77,11 +137,12 @@ export function NewChat({ users, onOpenChange, open }: NewChatProps) {
             <CommandInput
               placeholder="Search people..."
               className="text-foreground"
+              onValueChange={(v) => setSearch(v)}
             />
             <CommandList>
               <CommandEmpty>No people found.</CommandEmpty>
               <CommandGroup>
-                {users.map((user) => (
+                {(fetchedUsers || []).map((user) => (
                   <CommandItem
                     key={user.id}
                     onSelect={() => handleSelectUser(user)}
@@ -113,10 +174,10 @@ export function NewChat({ users, onOpenChange, open }: NewChatProps) {
           </Command>
           <Button
             variant={"default"}
-            onClick={() => showSubmittedData(selectedUsers)}
-            disabled={selectedUsers.length === 0}
+            onClick={() => createRoomMutation.mutate()}
+            disabled={selectedUsers.length === 0 || createRoomMutation.isPending}
           >
-            Chat
+            {createRoomMutation.isPending ? "Creating..." : "Create chat"}
           </Button>
         </div>
       </DialogContent>

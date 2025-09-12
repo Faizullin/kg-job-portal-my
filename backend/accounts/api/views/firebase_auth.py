@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 
-from ...models import UserModel, NotificationSettings
+from ...models import UserModel
 from ..serializers import FireBaseAuthSerializer, FirebaseAuthResponseSerializer, UserProfileSerializer
 # Utility functions replaced with direct Response objects
 
@@ -136,13 +136,13 @@ class FirebaseAuthView(APIView):
                 max_day_streak=0,
             )
             
-            # Create default notification settings
-            NotificationSettings.objects.create(
+            
+            # Automatically create UserProfile for job portal
+            from job_portal.apps.users.models import UserProfile
+            UserProfile.objects.create(
                 user=user_profile,
-                periodic_lesson_reminder=True,
-                friend_request_notification=True,
-                streak_notification=True,
-                global_event_notification=True,
+                user_type='client',  # Default to client
+                is_verified=False,
             )
             
             return user_profile

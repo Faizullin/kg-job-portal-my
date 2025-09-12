@@ -68,16 +68,6 @@ class UserTypes:
         ]
 
 
-class UserRoleTypes:
-    JOB_SEEKER = 'job_seeker'
-    SERVICE_PROVIDER = 'service_provider'
-    
-    @classmethod
-    def choices(cls):
-        return [
-            (cls.JOB_SEEKER, 'Ищу работу'),
-            (cls.SERVICE_PROVIDER, 'Предлагаю услуги'),
-        ]
 
 
 class UserModel(AbstractUser, AbstractSoftDeleteModel):
@@ -92,13 +82,9 @@ class UserModel(AbstractUser, AbstractSoftDeleteModel):
     # user data
     name = models.CharField(max_length=255, verbose_name='Имя')
     email = models.EmailField(max_length=255, unique=True, verbose_name='Email')
-    phone_number = models.CharField(max_length=20, null=True, blank=True, verbose_name='Номер телефона')
     description = models.TextField(blank=True, null=True, verbose_name='Описание')
     photo = models.ImageField(upload_to='user_photos/', blank=True, null=True, verbose_name='Фото')
     photo_url = models.URLField(blank=True, null=True, verbose_name='Ссылка на фото (Firebase)')
-    
-    # User role field (moved to UserProfile in job_portal apps)
-    user_role = models.CharField(max_length=20, choices=UserRoleTypes.choices(), null=True, blank=True, verbose_name='Роль пользователя')
 
     # user social data
     friends = models.ManyToManyField("self", blank=True, verbose_name='Друзья', symmetrical=True)
@@ -193,22 +179,6 @@ class UserModel(AbstractUser, AbstractSoftDeleteModel):
             self.friendship_requests.remove(from_user)
 
 
-class NotificationSettings(models.Model):
-    user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='notification_settings')
-    periodic_lesson_reminder = models.BooleanField(default=True)
-    friend_request_notification = models.BooleanField(default=True)
-    streak_notification = models.BooleanField(default=True)
-    global_event_notification = models.BooleanField(default=True)
-
-    last_streak_notification = models.DateTimeField(default=timezone.datetime(2021, 1, 1))
-    last_lesson_reminder = models.DateTimeField(default=timezone.datetime(2021, 1, 1))
-
-    class Meta:
-        verbose_name = 'Настройки уведомлений'
-        verbose_name_plural = 'Настройки уведомлений'
-
-    def __str__(self):
-        return f'{self.pk} Настройки уведомлении'
 
 
 class UserActivityDateModel(models.Model):

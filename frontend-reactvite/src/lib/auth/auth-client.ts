@@ -1,7 +1,7 @@
-import { signInWithEmail, signInWithGoogle, signUpWithEmail, logout as firebaseLogout } from "./firebase";
-import { clearAuthData } from "./backend-service";
 import { useAuthStore } from "@/stores/auth-store";
+import myApi from "../api/my-api";
 import { getUserFriendlyErrorMessage } from "./error-handler";
+import { logout as firebaseLogout, signInWithEmail, signInWithGoogle, signUpWithEmail } from "./firebase";
 
 /**
  * AuthClient - Centralized authentication management
@@ -15,10 +15,10 @@ export class AuthClient {
     try {
       // Firebase authentication
       const firebaseUser = await signInWithEmail(email, password);
-      
+
       // Backend authentication
       await this.authenticateWithBackend(firebaseUser.user);
-      
+
       return {
         success: true,
         user: firebaseUser.user,
@@ -39,10 +39,10 @@ export class AuthClient {
     try {
       // Firebase authentication
       const firebaseUser = await signUpWithEmail(email, password);
-      
+
       // Backend authentication
       await this.authenticateWithBackend(firebaseUser.user);
-      
+
       return {
         success: true,
         user: firebaseUser.user,
@@ -63,10 +63,10 @@ export class AuthClient {
     try {
       // Firebase authentication
       const result = await signInWithGoogle();
-      
+
       // Backend authentication
       await this.authenticateWithBackend(result.user);
-      
+
       return {
         success: true,
         user: result.user,
@@ -87,24 +87,24 @@ export class AuthClient {
     try {
       // Firebase logout
       await firebaseLogout();
-      
+
       // Clear backend auth data
-      clearAuthData();
-      
+      myApi.clearAuthData();
+
       // Reset auth store
       const { auth } = useAuthStore.getState();
       auth.reset();
-      
+
       return {
         success: true,
         message: "Signed out successfully",
       };
     } catch (error: any) {
       // Even if Firebase logout fails, clear local state
-      clearAuthData();
+      myApi.clearAuthData();
       const { auth } = useAuthStore.getState();
       auth.reset();
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : "Sign out failed",

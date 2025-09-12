@@ -6,14 +6,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
     """Serializer for user profile information - enhanced version of api_users"""
     groups = serializers.SerializerMethodField()
     permissions = serializers.SerializerMethodField()
-    full_name = serializers.SerializerMethodField()
     
     class Meta:
         model = UserModel
         fields = (
-            'id', 'username', 'email', 'first_name', 'last_name', 'full_name',
+            'id', 'username', 'email', 'first_name', 'last_name',
             'date_joined', 'last_login', 'is_active', 'is_staff', 'is_superuser',
-            'groups', 'permissions', 'user_role', 'name', 'phone_number', 'description', 
+            'groups', 'permissions', 'name', 'description', 
             'photo', 'photo_url', 'timezone_difference', 'points', 'day_streak', 'max_day_streak'
         )
         read_only_fields = ('id', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
@@ -34,22 +33,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
             user_permissions.add(permission.codename)
         
         return list(group_permissions | user_permissions)
-    
-    def get_full_name(self, obj):
-        if obj.first_name and obj.last_name:
-            return f"{obj.first_name} {obj.last_name}"
-        elif obj.first_name:
-            return obj.first_name
-        elif obj.last_name:
-            return obj.last_name
-        return obj.username
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     """Serializer for updating user profile - enhanced version of api_users EditUserSettingsView"""
     class Meta:
         model = UserModel
-        fields = ('name', 'email', 'phone_number', 'description', 'photo_url', 'first_name', 'last_name', 'user_role', 'timezone_difference')
+        fields = ('name', 'email', 'description', 'photo_url', 'first_name', 'last_name', 'timezone_difference')
         read_only_fields = ('email',)  # Email should not be changed via profile update
     
     def validate_name(self, value):
@@ -57,10 +47,6 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Name must be at least 2 characters long.')
         return value.strip()
     
-    def validate_phone_number(self, value):
-        if value and len(value.strip()) < 10:
-            raise serializers.ValidationError('Phone number must be at least 10 characters long.')
-        return value.strip() if value else value
     
     def validate_timezone_difference(self, value):
         if value < -12 or value > 14:
@@ -70,17 +56,11 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
 class UserListSerializer(serializers.ModelSerializer):
     """Serializer for listing users - not in api_users, useful for admin"""
-    full_name = serializers.SerializerMethodField()
     groups = serializers.SerializerMethodField()
     
     class Meta:
         model = UserModel
-        fields = ('id', 'username', 'email', 'full_name', 'is_active', 'date_joined', 'groups')
-    
-    def get_full_name(self, obj):
-        if obj.first_name and obj.last_name:
-            return f"{obj.first_name} {obj.last_name}"
-        return obj.username
+        fields = ('id', 'username', 'email', 'is_active', 'date_joined', "groups", "name", "description", "photo_url", "user_type", "blocked")
     
     def get_groups(self, obj):
         return [group.name for group in obj.groups.all()]

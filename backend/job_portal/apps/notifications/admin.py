@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.db.models import Count, Q
-from .models import NotificationTemplate, UserNotification, NotificationDelivery, NotificationPreference, NotificationLog, NotificationQueue
+from .models import NotificationTemplate, UserNotification, NotificationDelivery, NotificationPreference, NotificationQueue
 
 
 @admin.register(UserNotification)
@@ -115,45 +115,3 @@ class NotificationPreferenceAdmin(admin.ModelAdmin):
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('user')
-
-
-@admin.register(NotificationLog)
-class NotificationLogAdmin(admin.ModelAdmin):
-    list_display = [
-        'id', 'notification', 'action', 'details_preview', 'error_message_preview',
-        'processing_time', 'created_at'
-    ]
-    list_filter = ['action', 'created_at']
-    search_fields = ['notification__subject', 'error_message']
-    ordering = ['-created_at']
-    
-    fieldsets = (
-        ('Log Information', {
-            'fields': ('notification', 'delivery', 'action')
-        }),
-        ('Details', {
-            'fields': ('details', 'error_message')
-        }),
-        ('Performance', {
-            'fields': ('processing_time',)
-        }),
-        ('Timestamps', {
-            'fields': ('created_at',),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    def details_preview(self, obj):
-        if obj.details:
-            return str(obj.details)[:100] + '...' if len(str(obj.details)) > 100 else str(obj.details)
-        return '-'
-    details_preview.short_description = 'Details'
-    
-    def error_message_preview(self, obj):
-        if obj.error_message:
-            return obj.error_message[:100] + '...' if len(obj.error_message) > 100 else obj.error_message
-        return '-'
-    error_message_preview.short_description = 'Error Message'
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('notification', 'delivery')

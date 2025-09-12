@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Fragment } from "react/jsx-runtime";
 import { format } from "date-fns";
 import {
@@ -14,8 +14,9 @@ import {
   Video,
   MessagesSquare,
 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -26,42 +27,218 @@ import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { NewChat } from "./components/new-chat";
-import { type ChatUser, type Convo } from "./data/chat-types";
-// Fake Data
-import { conversations } from "./data/convo.json";
+import { useDialogControl } from "@/hooks/use-dialog-control";
+import myApi from "@/lib/api/my-api";
+import type { ChatRoom, Message } from "@/lib/api/axios-client/api";
 
 export function Chats() {
   const [search, setSearch] = useState("");
-  const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);
-  const [mobileSelectedUser, setMobileSelectedUser] = useState<ChatUser | null>(
-    null,
+  const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
+  const [mobileSelectedRoom, setMobileSelectedRoom] = useState<ChatRoom | null>(null);
+  const newChatControl = useDialogControl();
+  const [messageInput, setMessageInput] = useState("");
+  const messageInputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
+  const [isConnected, setIsConnected] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
+
+  // Fetch chat rooms with React Query
+  const {
+    data: roomsData,
+    isLoading: roomsLoading,
+  } = useQuery({
+    queryKey: ['chatRooms'],
+    queryFn: async () => {
+      const response = await myApi.v1ChatRoomsList({
+        ordering: '-last_message_at,-created_at'
+      });
+      return response.data;
+    },
+  });
+  const rooms: ChatRoom[] = (roomsData as any)?.results || (roomsData as any) || [];
+
+  // Fetch messages for selected room
+  const {
+    data: messagesData,
+    isLoading: messagesLoading,
+  } = useQuery({
+    queryKey: ['chatMessages', selectedRoom?.id],
+    queryFn: async () => {
+      if (!selectedRoom) return [];
+      // Use URL parameters to filter by chat room on backend
+      const url = `/api/v1/chat/messages/?chat_room=${selectedRoom.id}&ordering=created_at`;
+      const response = await myApi.axios.get(url);
+      return response.data;
+    },
+    enabled: !!selectedRoom,
+  });
+  const messages: Message[] = (messagesData as any)?.results || (messagesData as any) || [];
+
+  // Send message mutation
+  const sendMessageMutation = useMutation({
+    mutationFn: async (content: string) => {
+      if (!selectedRoom) throw new Error('No room selected');
+      return myApi.v1ChatMessagesCreateCreate({
+        messageCreate: {
+          chat_room: selectedRoom.id,
+          content,
+          message_type: 'text',
+        }
+      });
+    },
+    onSuccess: () => {
+      // Invalidate and refetch messages
+      queryClient.invalidateQueries({ queryKey: ['chatMessages', selectedRoom?.id] });
+      setMessageInput("");
+      messageInputRef.current?.focus();
+    },
+    onError: (error) => {
+      console.error('Failed to send message:', error);
+    },
+  });
+
+  // Create chat room mutation
+  // Room creation handled inside NewChat component
+
+  // WebSocket connection management
+  const connectWebSocket = useCallback(async (roomId: number) => {
+    try {
+      const authData = myApi.getAuthData();
+      if (!authData?.token) return;
+
+      const wsUrl = `ws://${window.location.host}/ws/chat/${roomId}/?token=${authData.token}`;
+      wsRef.current = new WebSocket(wsUrl);
+
+      wsRef.current.onopen = () => {
+        setIsConnected(true);
+      };
+
+      wsRef.current.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'chat_message' && data.message_id) {
+            const newMessage: Message = {
+              id: data.message_id,
+              chat_room: roomId,
+              sender: data.sender_id || 0,
+              sender_name: data.sender_name || 'Unknown',
+              content: data.message || '',
+              message_type: 'text',
+              message_type_display: 'Text',
+              attachments: [],
+              is_read: false,
+              read_at: null,
+              created_at: data.timestamp || new Date().toISOString(),
+            };
+
+            // Update cache with new message
+            queryClient.setQueryData(['chatMessages', roomId], (oldData: any) => {
+              const oldMessages: Message[] = oldData?.results || oldData || [];
+              const newMessages = [...oldMessages, newMessage];
+              return oldData?.results ? { ...oldData, results: newMessages } : newMessages;
+            });
+          }
+        } catch (error) {
+          console.error('Failed to parse WebSocket message:', error);
+        }
+      };
+
+      wsRef.current.onclose = () => {
+        setIsConnected(false);
+      };
+
+      wsRef.current.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        setIsConnected(false);
+      };
+
+    } catch (error) {
+      console.error('WebSocket connection error:', error);
+    }
+  }, [queryClient]);
+
+  const disconnectWebSocket = useCallback(() => {
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+    setIsConnected(false);
+  }, []);
+
+  const sendWebSocketMessage = useCallback((message: any) => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify(message));
+      return true;
+    }
+    return false;
+  }, []);
+
+  // Connect/disconnect WebSocket when room changes
+  useEffect(() => {
+    if (selectedRoom) {
+      connectWebSocket(selectedRoom.id);
+    } else {
+      disconnectWebSocket();
+    }
+
+    return () => {
+      disconnectWebSocket();
+    };
+  }, [selectedRoom, connectWebSocket, disconnectWebSocket]);
+
+  // Handle room selection
+  const handleRoomSelect = useCallback((room: ChatRoom) => {
+    setSelectedRoom(room);
+    setMobileSelectedRoom(room);
+  }, []);
+
+  // Send message handler
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!messageInput.trim() || !selectedRoom) return;
+
+    const content = messageInput.trim();
+    
+    // Send via WebSocket for real-time updates
+    if (isConnected) {
+      sendWebSocketMessage({
+        type: 'chat_message',
+        message: content,
+      });
+    }
+  };
+
+  // Filtered rooms based on search
+  const filteredChatList = rooms.filter((room: ChatRoom) =>
+    room.title?.toLowerCase().includes(search.trim().toLowerCase()) ||
+    room.order_title?.toLowerCase().includes(search.trim().toLowerCase())
   );
-  const [createConversationDialogOpened, setCreateConversationDialog] =
-    useState(false);
 
-  // Filtered data based on the search query
-  const filteredChatList = conversations.filter(({ fullName }) =>
-    fullName.toLowerCase().includes(search.trim().toLowerCase()),
-  );
-
-  const currentMessage = selectedUser?.messages.reduce(
-    (acc: Record<string, Convo[]>, obj) => {
-      const key = format(obj.timestamp, "d MMM, yyyy");
-
-      // Create an array for the category if it doesn't exist
+  // Group messages by date (adapting to original format)
+  const currentMessage = messages.reduce(
+    (acc: Record<string, any[]>, message: Message) => {
+      const key = format(new Date(message.created_at), "d MMM, yyyy");
       if (!acc[key]) {
         acc[key] = [];
       }
-
-      // Push the current object to the array
-      acc[key].push(obj);
-
+      
+      const authData = myApi.getAuthData();
+      const isOwnMessage = message.sender === authData?.user?.id;
+      
+      acc[key].push({
+        sender: isOwnMessage ? "You" : (message.sender_name || 'Unknown'),
+        message: message.content,
+        timestamp: message.created_at,
+      });
       return acc;
     },
     {},
   );
 
-  const users = conversations.map((user) => user);
+  // For NewChat component compatibility
+  // Users for NewChat are fetched inside the dialog
+
+  // const isLoading = roomsLoading || messagesLoading || sendMessageMutation.isPending;
 
   return (
     <>
@@ -89,7 +266,7 @@ export function Chats() {
                 <Button
                   size="icon"
                   variant="ghost"
-                  onClick={() => setCreateConversationDialog(true)}
+                  onClick={() => newChatControl.show()}
                   className="rounded-lg"
                 >
                   <Edit size={24} className="stroke-muted-foreground" />
@@ -115,35 +292,39 @@ export function Chats() {
             </div>
 
             <ScrollArea className="-mx-3 h-full overflow-scroll p-3">
-              {filteredChatList.map((chatUsr) => {
-                const { id, profile, username, messages, fullName } = chatUsr;
-                const lastConvo = messages[0];
-                const lastMsg =
-                  lastConvo.sender === "You"
-                    ? `You: ${lastConvo.message}`
-                    : lastConvo.message;
+              {roomsLoading ? (
+                <div className="flex items-center justify-center p-4">
+                  <div className="text-sm text-muted-foreground">Loading chats...</div>
+                </div>
+              ) : filteredChatList.length === 0 ? (
+                <div className="flex items-center justify-center p-4">
+                  <div className="text-sm text-muted-foreground">No chats found</div>
+                </div>
+              ) : filteredChatList.map((room) => {
+                const displayTitle = room.title || room.order_title || `Chat #${room.id}`;
+                const lastMessage = room.last_message;
+                const lastMsg = lastMessage 
+                  ? `${lastMessage.sender}: ${lastMessage.content}`
+                  : "No messages yet";
+                
                 return (
-                  <Fragment key={id}>
+                  <Fragment key={room.id}>
                     <button
                       type="button"
                       className={cn(
                         "group hover:bg-accent hover:text-accent-foreground",
                         `flex w-full rounded-md px-2 py-2 text-start text-sm`,
-                        selectedUser?.id === id && "sm:bg-muted",
+                        selectedRoom?.id === room.id && "sm:bg-muted",
                       )}
-                      onClick={() => {
-                        setSelectedUser(chatUsr);
-                        setMobileSelectedUser(chatUsr);
-                      }}
+                      onClick={() => handleRoomSelect(room)}
                     >
                       <div className="flex gap-2">
                         <Avatar>
-                          <AvatarImage src={profile} alt={username} />
-                          <AvatarFallback>{username}</AvatarFallback>
+                          <AvatarFallback>{displayTitle.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div>
                           <span className="col-start-2 row-span-2 font-medium">
-                            {fullName}
+                            {displayTitle}
                           </span>
                           <span className="text-muted-foreground group-hover:text-accent-foreground/90 col-start-2 row-span-2 row-start-2 line-clamp-2 text-ellipsis">
                             {lastMsg}
@@ -159,11 +340,11 @@ export function Chats() {
           </div>
 
           {/* Right Side */}
-          {selectedUser ? (
+          {selectedRoom ? (
             <div
               className={cn(
                 "bg-background absolute inset-0 start-full z-50 hidden w-full flex-1 flex-col border shadow-xs sm:static sm:z-auto sm:flex sm:rounded-md",
-                mobileSelectedUser && "start-0 flex",
+                mobileSelectedRoom && "start-0 flex",
               )}
             >
               {/* Top Part */}
@@ -174,24 +355,22 @@ export function Chats() {
                     size="icon"
                     variant="ghost"
                     className="-ms-2 h-full sm:hidden"
-                    onClick={() => setMobileSelectedUser(null)}
+                    onClick={() => setMobileSelectedRoom(null)}
                   >
                     <ArrowLeft className="rtl:rotate-180" />
                   </Button>
                   <div className="flex items-center gap-2 lg:gap-4">
                     <Avatar className="size-9 lg:size-11">
-                      <AvatarImage
-                        src={selectedUser.profile}
-                        alt={selectedUser.username}
-                      />
-                      <AvatarFallback>{selectedUser.username}</AvatarFallback>
+                      <AvatarFallback>
+                        {(selectedRoom.title || selectedRoom.order_title || 'C').charAt(0).toUpperCase()}
+                      </AvatarFallback>
                     </Avatar>
                     <div>
                       <span className="col-start-2 row-span-2 text-sm font-medium lg:text-base">
-                        {selectedUser.fullName}
+                        {selectedRoom.title || selectedRoom.order_title || `Chat #${selectedRoom.id}`}
                       </span>
                       <span className="text-muted-foreground col-start-2 row-span-2 row-start-2 line-clamp-1 block max-w-32 text-xs text-nowrap text-ellipsis lg:max-w-none lg:text-sm">
-                        {selectedUser.title}
+                        {selectedRoom.chat_type_display} {isConnected && <span className="text-green-500">●</span>}
                       </span>
                     </div>
                   </div>
@@ -228,7 +407,11 @@ export function Chats() {
                 <div className="flex size-full flex-1">
                   <div className="chat-text-container relative -me-4 flex flex-1 flex-col overflow-y-hidden">
                     <div className="chat-flex flex h-40 w-full grow flex-col-reverse justify-start gap-4 overflow-y-auto py-2 pe-4 pb-4">
-                      {currentMessage &&
+                      {messagesLoading ? (
+                        <div className="flex items-center justify-center p-4">
+                          <div className="text-sm text-muted-foreground">Loading messages...</div>
+                        </div>
+                      ) : currentMessage &&
                         Object.keys(currentMessage).map((key) => (
                           <Fragment key={key}>
                             {currentMessage[key].map((msg, index) => (
@@ -249,7 +432,7 @@ export function Chats() {
                                       "text-primary-foreground/85 text-end",
                                   )}
                                 >
-                                  {format(msg.timestamp, "h:mm a")}
+                                  {format(new Date(msg.timestamp), "h:mm a")}
                                 </span>
                               </div>
                             ))}
@@ -259,7 +442,7 @@ export function Chats() {
                     </div>
                   </div>
                 </div>
-                <form className="flex w-full flex-none gap-2">
+                <form onSubmit={handleSendMessage} className="flex w-full flex-none gap-2">
                   <div className="border-input bg-card focus-within:ring-ring flex flex-1 items-center gap-2 rounded-md border px-2 py-1 focus-within:ring-1 focus-within:outline-hidden lg:gap-4">
                     <div className="space-x-1">
                       <Button
@@ -296,21 +479,26 @@ export function Chats() {
                     <label className="flex-1">
                       <span className="sr-only">Chat Text Box</span>
                       <input
+                        ref={messageInputRef}
                         type="text"
                         placeholder="Type your messages..."
+                        value={messageInput}
+                        onChange={(e) => setMessageInput(e.target.value)}
                         className="h-8 w-full bg-inherit focus-visible:outline-hidden"
                       />
                     </label>
                     <Button
+                      type="submit"
                       variant="ghost"
                       size="icon"
                       className="hidden sm:inline-flex"
+                      disabled={sendMessageMutation.isPending}
                     >
                       <Send size={20} />
                     </Button>
                   </div>
-                  <Button className="h-full sm:hidden">
-                    <Send size={18} /> Send
+                  <Button type="submit" className="h-full sm:hidden" disabled={sendMessageMutation.isPending}>
+                    <Send size={18} /> {sendMessageMutation.isPending ? "Sending..." : "Send"}
                   </Button>
                 </form>
               </div>
@@ -331,7 +519,7 @@ export function Chats() {
                     Send a message to start a chat.
                   </p>
                 </div>
-                <Button onClick={() => setCreateConversationDialog(true)}>
+                <Button onClick={() => newChatControl.show()}>
                   Send message
                 </Button>
               </div>
@@ -339,9 +527,11 @@ export function Chats() {
           )}
         </section>
         <NewChat
-          users={users}
-          onOpenChange={setCreateConversationDialog}
-          open={createConversationDialogOpened}
+          control={newChatControl}
+          onCreated={(room) => {
+            setSelectedRoom(room);
+            setMobileSelectedRoom(room);
+          }}
         />
       </Main>
     </>

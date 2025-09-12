@@ -1,4 +1,4 @@
-import { authenticateWithBackend, getAuthData, clearAuthData, isAuthenticated as checkAuth } from "@/lib/auth/backend-service";
+import myApi from "@/lib/api/my-api";
 import { type User } from "firebase/auth";
 import { create } from "zustand";
 
@@ -44,7 +44,7 @@ export const useAuthStore = create<AuthState>()((set) => {
         set((state) => ({ ...state, auth: { ...state.auth, isLoading } })),
       reset: () =>
         set((state) => {
-          clearAuthData();
+          myApi.clearAuthData();
           return {
             ...state,
             auth: {
@@ -56,7 +56,7 @@ export const useAuthStore = create<AuthState>()((set) => {
           };
         }),
       loadFromStorage: () => {
-        const authData = getAuthData();
+        const authData = myApi.getAuthData();
         if (authData?.user) {
           set((state) => {
             // Only update if user is not already loaded
@@ -74,7 +74,7 @@ export const useAuthStore = create<AuthState>()((set) => {
         }
       },
       isAuthenticated: () => {
-        return checkAuth();
+        return myApi.isAuthenticated();
       },
       authenticateWithBackend: async (firebaseUser: User) => {
         set((state) => ({
@@ -83,11 +83,11 @@ export const useAuthStore = create<AuthState>()((set) => {
         }));
 
         try {
-          const result = await authenticateWithBackend(firebaseUser);
+          const result = await myApi.authenticateWithBackend(firebaseUser);
 
           if (result.success) {
             // Load complete user data from localStorage (set by backend service)
-            const authData = getAuthData();
+            const authData = myApi.getAuthData();
             const backendUser: AuthUser = authData?.user || {
               id: 0,
               username: firebaseUser.displayName || "",

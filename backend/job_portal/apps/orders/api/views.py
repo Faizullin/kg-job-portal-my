@@ -1,11 +1,13 @@
+from utils.exceptions import StandardizedViewMixin
 from rest_framework import generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-
-from utils.permissions import HasSpecificPermission
+from utils.permissions import HasSpecificPermission, HasClientProfile, HasServiceProviderProfile
 from utils.pagination import CustomPagination
 from ..models import Order, OrderAddon, OrderPhoto, Bid, OrderDispute
 from job_portal.apps.users.models import ClientProfile, ServiceProviderProfile
@@ -16,9 +18,9 @@ from .serializers import (
 )
 
 
-class OrderApiView(generics.ListAPIView):
+class OrderApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = OrderSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated, HasClientProfile]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status', 'service_subcategory', 'urgency']
     search_fields = ['title', 'description', 'location', 'city', 'state']
@@ -28,10 +30,8 @@ class OrderApiView(generics.ListAPIView):
     
     def get_queryset(self):
         user = self.request.user
-        # Users can see orders they're involved in (as client)
         return Order.objects.filter(
-            client__user_profile__user=user,
-            is_deleted=False
+            client__user_profile__user=user
         ).select_related('client__user_profile__user', 'service_subcategory')
     
     @action(detail=False, methods=['get'])
@@ -39,22 +39,21 @@ class OrderApiView(generics.ListAPIView):
         """Get orders where user is the client."""
         orders = Order.objects.filter(
             client__user_profile__user=request.user,
-            is_deleted=False
+            
         ).select_related('service_subcategory')
         
         serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data)
 
 
-class OrderDetailApiView(generics.RetrieveUpdateAPIView):
+class OrderDetailApiView(StandardizedViewMixin,generics.RetrieveUpdateAPIView):
     serializer_class = OrderUpdateSerializer
-    permission_classes = [HasSpecificPermission(['orders.change_order'])]
+    permission_classes = [IsAuthenticated, HasSpecificPermission(['orders.view_order', 'orders.change_order'])]
     
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(
             client__user_profile__user=user,
-            is_deleted=False
         ).select_related('client__user_profile__user', 'service_subcategory')
     
     def get_serializer_class(self):
@@ -63,22 +62,19 @@ class OrderDetailApiView(generics.RetrieveUpdateAPIView):
         return OrderUpdateSerializer
 
 
-class OrderCreateApiView(generics.CreateAPIView):
+class OrderCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = OrderCreateSerializer
-    permission_classes = [ HasSpecificPermission(['orders.add_order'])]
+    permission_classes = [IsAuthenticated, HasClientProfile, HasSpecificPermission(['orders.add_order'])]
     
     def perform_create(self, serializer):
-        # Set the client to the current user
-        client_profile = get_object_or_404(
-            ClientProfile, 
-            user_profile__user=self.request.user
-        )
+        # Django automatically caches the profile when accessed
+        client_profile = self.request.user.job_portal_profile.client_profile
         serializer.save(client=client_profile)
 
 
-class OrderAddonApiView(generics.ListAPIView):
+class OrderAddonApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = OrderAddonSerializer
-    permission_classes = [HasSpecificPermission(['orders.add_orderaddon'])]
+    permission_classes = [IsAuthenticated, HasSpecificPermission(['orders.view_orderaddon'])]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['order']
     search_fields = ['addon__name']
@@ -89,14 +85,14 @@ class OrderAddonApiView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return OrderAddon.objects.filter(
-            order__is_deleted=False,
+            order__,
             order__client__user_profile__user=user
         ).select_related('order', 'addon')
 
 
-class OrderPhotoApiView(generics.ListAPIView):
+class OrderPhotoApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = OrderPhotoSerializer
-    permission_classes = [HasSpecificPermission(['orders.add_orderphoto'])]
+    permission_classes = [IsAuthenticated, HasSpecificPermission(['orders.view_orderphoto'])]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['order', 'is_primary']
     ordering_fields = ['is_primary', 'created_at']
@@ -106,14 +102,14 @@ class OrderPhotoApiView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return OrderPhoto.objects.filter(
-            order__is_deleted=False,
+            order__,
             order__client__user_profile__user=user
         ).select_related('order')
 
 
-class BidApiView(generics.ListAPIView):
+class BidApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = BidSerializer
-    permission_classes = [HasSpecificPermission(['orders.add_bid'])]
+    permission_classes = [IsAuthenticated, HasSpecificPermission(['orders.view_bid'])]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['status', 'order', 'is_negotiable']
     ordering_fields = ['amount', 'created_at']
@@ -123,29 +119,26 @@ class BidApiView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return Bid.objects.filter(
-            order__is_deleted=False,
+            order__,
             order__client__user_profile__user=user
         ).select_related('order', 'provider__user_profile__user')
 
 
-class BidCreateApiView(generics.CreateAPIView):
+class BidCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = BidCreateSerializer
-    permission_classes = [HasSpecificPermission(['orders.add_bid'])]
+    permission_classes = [IsAuthenticated, HasServiceProviderProfile, HasSpecificPermission(['orders.add_bid'])]
     
     def perform_create(self, serializer):
         order_id = self.kwargs.get('order_id')
-        order = get_object_or_404(Order, id=order_id, is_deleted=False)
-        # Get the service provider profile for the current user
-        provider_profile = get_object_or_404(
-            ServiceProviderProfile, 
-            user_profile__user=self.request.user
-        )
+        order = get_object_or_404(Order, id=order_id, )
+        # Django automatically caches the profile when accessed
+        provider_profile = self.request.user.job_portal_profile.service_provider_profile
         serializer.save(order=order, provider=provider_profile)
 
 
-class OrderDisputeApiView(generics.ListAPIView):
+class OrderDisputeApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = OrderDisputeSerializer
-    permission_classes = [HasSpecificPermission(['orders.add_orderdispute'])]
+    permission_classes = [IsAuthenticated, HasSpecificPermission(['orders.view_orderdispute'])]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['dispute_type', 'status', 'order']
     search_fields = ['description', 'admin_notes']
@@ -156,29 +149,29 @@ class OrderDisputeApiView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return OrderDispute.objects.filter(
-            order__is_deleted=False,
+            order__,
             order__client__user_profile__user=user
         ).select_related('order')
 
 
-class OrderDisputeCreateApiView(generics.CreateAPIView):
+class OrderDisputeCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = OrderDisputeCreateSerializer
-    permission_classes = [HasSpecificPermission(['orders.add_orderdispute'])]
+    permission_classes = [IsAuthenticated, HasClientProfile, HasSpecificPermission(['orders.add_orderdispute'])]
     
     def perform_create(self, serializer):
         order_id = self.kwargs.get('order_id')
-        order = get_object_or_404(Order, id=order_id, is_deleted=False)
+        order = get_object_or_404(Order, id=order_id, )
         serializer.save(order=order)
 
 
-class OrderDisputeDetailApiView(generics.RetrieveUpdateAPIView):
+class OrderDisputeDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = OrderDisputeUpdateSerializer
-    permission_classes = [HasSpecificPermission(['orders.change_orderdispute'])]
+    permission_classes = [IsAuthenticated, HasSpecificPermission(['orders.view_orderdispute', 'orders.change_orderdispute'])]
     
     def get_queryset(self):
         user = self.request.user
         return OrderDispute.objects.filter(
-            order__is_deleted=False,
+            order__,
             order__client__user_profile__user=user
         ).select_related('order')
     

@@ -1,13 +1,14 @@
 import { useNavigate, useLocation } from "@tanstack/react-router";
 import { AuthClient } from "@/lib/auth/auth-client";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { useDialogControl } from "@/hooks/use-dialog-control";
 
 interface SignOutDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  control: ReturnType<typeof useDialogControl<any>>;
+  onCancel?: () => void;
 }
 
-export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
+export function SignOutDialog({ control, onCancel }: SignOutDialogProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,14 +42,19 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
     }
   };
 
+  const handleCancel = () => {
+    control.hide();
+    onCancel?.();
+  };
+
   return (
     <ConfirmDialog
-      open={open}
-      onOpenChange={onOpenChange}
+      control={control}
+      onConfirm={handleSignOut}
+      onCancel={handleCancel}
       title="Sign out"
       desc="Are you sure you want to sign out? You will need to sign in again to access your account."
       confirmText="Sign out"
-      handleConfirm={handleSignOut}
       className="sm:max-w-sm"
     />
   );

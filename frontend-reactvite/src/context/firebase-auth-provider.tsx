@@ -1,13 +1,10 @@
-import { useEffect } from "react";
-import { onAuthStateChange } from "@/lib/auth/firebase";
-import { useAuthStore } from "@/stores/auth-store";
 
 export function FirebaseAuthProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { auth } = useAuthStore();
+  // const { auth } = useAuthStore();
 
   // useEffect(() => {
   //   const unsubscribe = onAuthStateChange(async (firebaseUser) => {
