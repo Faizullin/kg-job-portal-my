@@ -1,4 +1,4 @@
-from django.db.models import Max
+from django.db.models import Max, F
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.decorators import action
@@ -7,7 +7,10 @@ from rest_framework.response import Response
 from utils.exceptions import StandardizedViewMixin
 from utils.pagination import CustomPagination
 from utils.permissions import AbstractIsAuthenticatedOrReadOnly
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
+from accounts.models import UserModel
 from ..models import ChatAttachment, ChatMessage, ChatParticipant, ChatRoom
 from .serializers import (
     ChatAttachmentCreateSerializer,
@@ -33,26 +36,27 @@ class ChatRoomApiView(StandardizedViewMixin, generics.ListAPIView):
     ordering_fields = ["last_message_at", "created_at"]
     ordering = ["-last_message_at", "-created_at"]
     pagination_class = CustomPagination
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
     def get_queryset(self):
-        # Simple filtering - manager automatically handles is_deleted
         return (
             ChatRoom.objects.filter(
-                participant_status__user=self.request.user, is_active=True
+                participants=self.request.user, is_active=True
             )
-            .prefetch_related("participant_status", "messages")
-            .annotate(last_message=Max("messages__created_at"))
+            .prefetch_related("participant_status__user", "messages__sender")
+            .select_related("order")
+            .annotate(last_message_time=Max("messages__created_at"))
         )
 
     @action(detail=False, methods=["get"])
     def my_rooms(self, request):
         """Get chat rooms where user is a participant."""
-        # Simple filtering - manager automatically handles is_deleted
-        rooms = ChatRoom.objects.filter(
-            participant_status__user=request.user, is_active=True
-        ).prefetch_related("participant_status", "messages")
-
-        serializer = ChatRoomSerializer(rooms, many=True)
+        rooms = self.get_queryset()
+        serializer = ChatRoomSerializer(rooms, many=True, context={'request': request})
         return Response(serializer.data)
 
     @action(detail=False, methods=["get"])
@@ -62,15 +66,10 @@ class ChatRoomApiView(StandardizedViewMixin, generics.ListAPIView):
         if not order_id:
             return Response({"error": "order_id is required"}, status=400)
 
-        # Simple filtering - manager automatically handles is_deleted
-        room = ChatRoom.objects.filter(
-            order_id=order_id,
-            participant_status__user=request.user,
-            is_active=True,
-        ).first()
+        room = self.get_queryset().filter(order_id=order_id).first()
 
         if room:
-            serializer = ChatRoomSerializer(room)
+            serializer = ChatRoomSerializer(room, context={'request': request})
             return Response(serializer.data)
         else:
             return Response({"error": "Chat room not found"}, status=404)
@@ -81,15 +80,19 @@ class ChatRoomDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIVie
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        # Simple filtering - manager automatically handles is_deleted
         return ChatRoom.objects.filter(
-            participant_status__user=self.request.user, is_active=True
-        ).prefetch_related("participant_status", "messages")
+            participants=self.request.user, is_active=True
+        ).prefetch_related("participant_status__user", "messages__sender").select_related("order")
 
     def get_serializer_class(self):
         if self.request.method == "GET":
             return ChatRoomSerializer
         return ChatRoomUpdateSerializer
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
 
 class ChatRoomCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
@@ -97,25 +100,27 @@ class ChatRoomCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        # All creation logic is handled inside serializer.create to avoid passing
-        # unsupported writable fields to ChatRoom.objects.create()
-        serializer.save()
+        chat_room = serializer.save()
+        ChatParticipant.objects.create(
+            chat_room=chat_room, user=self.request.user, role="admin"
+        )
+        
+        # Add additional participants if provided
+        participant_ids = self.request.POST.get('participants', [])
+        for participant_id in participant_ids:
+            if participant_id != self.request.user.id:
+                try:
+                    user = UserModel.objects.get(id=participant_id)
+                    ChatParticipant.objects.get_or_create(
+                        chat_room=chat_room, 
+                        user=user,
+                        defaults={'role': 'member'}
+                    )
+                except UserModel.DoesNotExist:
+                    continue
 
-    def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
-        # Re-serialize created instance with full serializer to include id and computed fields
-        try:
-            # Find the latest room created by this user recently
-            room = ChatRoom.objects.filter(participant_status__user=request.user).order_by('-id').first()
-            if room:
-                serializer = ChatRoomSerializer(room, context={'request': request})
-                return Response(serializer.data, status=201)
-        except Exception:
-            pass
-        return response
 
-
-class MessageApiView(StandardizedViewMixin, generics.ListAPIView):
+class MessageApiView(generics.ListAPIView):
     serializer_class = MessageSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -126,17 +131,10 @@ class MessageApiView(StandardizedViewMixin, generics.ListAPIView):
 
     def get_queryset(self):
         # Simple filtering - manager automatically handles is_deleted
-        queryset = ChatMessage.objects.filter(
-            chat_room__participant_status__user=self.request.user,
+        return ChatMessage.objects.filter(
+            chat_room__participants=self.request.user,
             chat_room__is_active=True,
         ).select_related("sender", "chat_room")
-        
-        # Filter by chat_room if provided in query params
-        chat_room_id = self.request.query_params.get('chat_room')
-        if chat_room_id:
-            queryset = queryset.filter(chat_room_id=chat_room_id)
-            
-        return queryset
 
     @action(detail=False, methods=["get"])
     def unread(self, request):
@@ -176,18 +174,36 @@ class MessageCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        # All creation handled in serializer to avoid passing unsupported fields
-        message = serializer.save()
-        # Update room last_message_at and basic unread handling
-        ChatRoom.objects.filter(id=message.chat_room_id).update(last_message_at=message.created_at)
+        message = serializer.save(sender=self.request.user)
+        
+        ChatParticipant.objects.filter(
+            chat_room=message.chat_room
+        ).exclude(user=self.request.user).update(
+            unread_count=F('unread_count') + 1
+        )
+        
+        channel_layer = get_channel_layer()
+        room_group_name = f'chat_{message.chat_room.id}'
+        
+        async_to_sync(channel_layer.group_send)(
+            room_group_name,
+            {
+                'type': 'chat_message',
+                'message': message.content,
+                'sender_id': self.request.user.id,
+                'sender_name': f"{self.request.user.username}".strip(),
+                'message_id': message.id,
+                'timestamp': message.created_at.isoformat(),
+            }
+        )
 
 
-class ChatParticipantApiView(StandardizedViewMixin,generics.ListAPIView):
+class ChatParticipantApiView(generics.ListAPIView):
     serializer_class = ChatParticipantSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ["chat_room", "is_online", "notifications_enabled"]
-    ordering_fields = ["last_seen", "created_at"]
+    filterset_fields = ["chat_room", "role", "is_online"]
+    ordering_fields = ["created_at", "last_seen"]
     ordering = ["-created_at"]
     pagination_class = CustomPagination
 
@@ -206,21 +222,17 @@ class ChatParticipantCreateApiView(StandardizedViewMixin, generics.CreateAPIView
     def perform_create(self, serializer):
         # Check if user has permission to add participants to this chat room
         chat_room = serializer.validated_data["chat_room"]
-        if not ChatParticipant.objects.filter(
-            chat_room=chat_room, user=self.request.user, role__in=["admin", "moderator"]
+        if not chat_room.participant_status.filter(
+            user=self.request.user, role__in=["admin", "moderator"]
         ).exists():
             raise PermissionError(
                 "You don't have permission to add participants to this chat room"
             )
-        participant = serializer.save()
-        # Keep M2M participants in sync
-        try:
-            chat_room.participants.add(participant.user_id)
-        except Exception:
-            pass
+
+        serializer.save()
 
 
-class ChatAttachmentApiView(StandardizedViewMixin, generics.ListAPIView):
+class ChatAttachmentApiView(generics.ListAPIView):
     serializer_class = ChatAttachmentSerializer
     permission_classes = [AbstractIsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -244,8 +256,8 @@ class ChatAttachmentCreateApiView(StandardizedViewMixin, generics.CreateAPIView)
     def perform_create(self, serializer):
         # Check if user has permission to add attachments to this message
         message = serializer.validated_data["message"]
-        if not ChatParticipant.objects.filter(
-            chat_room=message.chat_room, user=self.request.user
+        if not message.chat_room.participant_status.filter(
+            user=self.request.user
         ).exists():
             raise PermissionError(
                 "You don't have permission to add attachments to this message"

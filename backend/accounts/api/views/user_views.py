@@ -128,8 +128,3 @@ class UserListApiView(generics.ListAPIView):
     def get_queryset(self):
         # Manager automatically filters out deleted objects
         return UserModel.objects.filter(is_active=True).order_by('-date_joined')
-    
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return UserListSerializer
-        return UserUpdateSerializer

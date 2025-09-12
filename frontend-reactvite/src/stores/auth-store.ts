@@ -34,8 +34,10 @@ export const useAuthStore = create<AuthState>()((set) => {
   return {
     auth: {
       user: null,
+      userProfile: null,
       firebaseUser: null,
       isLoading: false,
+      isProfileLoading: false,
       setUser: (user) =>
         set((state) => ({ ...state, auth: { ...state.auth, user } })),
       setFirebaseUser: (firebaseUser) =>
@@ -50,8 +52,10 @@ export const useAuthStore = create<AuthState>()((set) => {
             auth: {
               ...state.auth,
               user: null,
+              userProfile: null,
               firebaseUser: null,
               isLoading: false,
+              isProfileLoading: false,
             },
           };
         }),

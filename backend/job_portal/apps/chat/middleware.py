@@ -14,7 +14,7 @@ class JWTWebSocketAuthMiddleware(BaseMiddleware):
         # Get token from query string
         query_string = scope.get('query_string', b'').decode()
         query_params = {}
-        
+
         if query_string:
             for param in query_string.split('&'):
                 if '=' in param:
@@ -27,7 +27,7 @@ class JWTWebSocketAuthMiddleware(BaseMiddleware):
             scope['user'] = await self.get_user_from_token(token)
         else:
             scope['user'] = AnonymousUser()
-        
+
         return await super().__call__(scope, receive, send)
     
     @database_sync_to_async

@@ -1,34 +1,28 @@
+import type { UserProfile } from "@/lib/api/axios-client/api";
+import myApi from "@/lib/api/my-api";
+import { useQuery } from "@tanstack/react-query";
+import { createContext, useContext } from "react";
 
-export function FirebaseAuthProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  // const { auth } = useAuthStore();
+type UserContextValue = { user: UserProfile | null; isLoading: boolean };
+const UserContext = createContext<UserContextValue>({ user: null, isLoading: false });
 
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChange(async (firebaseUser) => {
-  //     if (firebaseUser) {
-  //       // User is signed in
-  //       auth.setFirebaseUser(firebaseUser);
+export function FirebaseAuthProvider({ children }: { children: React.ReactNode }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["user-profile"],
+    queryFn: () => myApi.v1ProfileRetrieve(),
+    enabled: myApi.isAuthenticated(),
+    select: (res) => res.data,
+    staleTime: 5 * 60 * 1000,
+  });
 
-  //       // If we don't have backend user data, authenticate with backend
-  //       if (!auth.user) {
-  //         try {
-  //           await auth.authenticateWithBackend(firebaseUser);
-  //         } catch (error) {
-  //           console.error("Failed to authenticate with backend:", error);
-  //           // Still keep the Firebase user, but show error
-  //         }
-  //       }
-  //     } else {
-  //       // User is signed out
-  //       auth.reset();
-  //     }
-  //   });
+  return (
+    <UserContext.Provider value={{ user: data ?? null, isLoading }}>
+      {children}
+    </UserContext.Provider>
+  );
+}
 
-  //   return () => unsubscribe();
-  // }, [auth]);
-
-  return <>{children}</>;
+// eslint-disable-next-line react-refresh/only-export-components
+export function useUser() {
+  return useContext(UserContext);
 }

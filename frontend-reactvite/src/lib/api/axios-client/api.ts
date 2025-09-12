@@ -455,6 +455,12 @@ export interface ChatAttachmentCreate {
      * @type {number}
      * @memberof ChatAttachmentCreate
      */
+    'id': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatAttachmentCreate
+     */
     'message': number;
     /**
      * 
@@ -525,12 +531,6 @@ export interface ChatParticipant {
     'user_name': string;
     /**
      * 
-     * @type {RoleEnum}
-     * @memberof ChatParticipant
-     */
-    'role'?: RoleEnum;
-    /**
-     * 
      * @type {boolean}
      * @memberof ChatParticipant
      */
@@ -583,6 +583,12 @@ export interface ChatParticipantCreate {
      * @type {number}
      * @memberof ChatParticipantCreate
      */
+    'id': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatParticipantCreate
+     */
     'chat_room': number;
     /**
      * 
@@ -590,12 +596,6 @@ export interface ChatParticipantCreate {
      * @memberof ChatParticipantCreate
      */
     'user': number;
-    /**
-     * 
-     * @type {RoleEnum}
-     * @memberof ChatParticipantCreate
-     */
-    'role'?: RoleEnum;
     /**
      * 
      * @type {boolean}
@@ -671,16 +671,16 @@ export interface ChatRoom {
     'last_message_at'?: string | null;
     /**
      * 
-     * @type {{ [key: string]: any; }}
+     * @type {string}
      * @memberof ChatRoom
      */
-    'last_message': { [key: string]: any; };
+    'last_message': string;
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof ChatRoom
      */
-    'unread_count': number;
+    'unread_count': string;
     /**
      * 
      * @type {string}
@@ -700,6 +700,12 @@ export interface ChatRoom {
  * @interface ChatRoomCreate
  */
 export interface ChatRoomCreate {
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatRoomCreate
+     */
+    'id': number;
     /**
      * 
      * @type {string}
@@ -723,13 +729,13 @@ export interface ChatRoomCreate {
      * @type {boolean}
      * @memberof ChatRoomCreate
      */
-    'is_active'?: boolean;
+    'is_active': boolean;
     /**
-     * 
+     * List of user IDs to add as participants
      * @type {Array<number>}
      * @memberof ChatRoomCreate
      */
-    'participants'?: Array<number>;
+    'participants': Array<number>;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -737,6 +743,12 @@ export interface ChatRoomCreate {
  * @interface ChatRoomUpdate
  */
 export interface ChatRoomUpdate {
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatRoomUpdate
+     */
+    'id': number;
     /**
      * 
      * @type {string}
@@ -1293,6 +1305,12 @@ export type MessageTypeEnum = typeof MessageTypeEnum[keyof typeof MessageTypeEnu
  * @interface MessageUpdate
  */
 export interface MessageUpdate {
+    /**
+     * 
+     * @type {number}
+     * @memberof MessageUpdate
+     */
+    'id': number;
     /**
      * 
      * @type {string}
@@ -3656,42 +3674,17 @@ export interface PaginatedUserListList {
     'results'?: Array<UserList>;
 }
 /**
- * 
- * @export
- * @interface PaginatedUserProfileDetailList
- */
-export interface PaginatedUserProfileDetailList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedUserProfileDetailList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedUserProfileDetailList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedUserProfileDetailList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<UserProfileDetail>}
-     * @memberof PaginatedUserProfileDetailList
-     */
-    'results'?: Array<UserProfileDetail>;
-}
-/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface PatchedChatRoomUpdate
  */
 export interface PatchedChatRoomUpdate {
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedChatRoomUpdate
+     */
+    'id'?: number;
     /**
      * 
      * @type {string}
@@ -3736,6 +3729,12 @@ export interface PatchedClientUpdate {
  * @interface PatchedMessageUpdate
  */
 export interface PatchedMessageUpdate {
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedMessageUpdate
+     */
+    'id'?: number;
     /**
      * 
      * @type {string}
@@ -4915,21 +4914,6 @@ export interface ReviewUpdate {
     'comment'?: string;
 }
 /**
- * * `member` - Member * `admin` - Admin * `moderator` - Moderator
- * @export
- * @enum {string}
- */
-
-export const RoleEnum = {
-    Member: 'member',
-    Admin: 'admin',
-    Moderator: 'moderator'
-} as const;
-
-export type RoleEnum = typeof RoleEnum[keyof typeof RoleEnum];
-
-
-/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface ServiceArea
@@ -5693,7 +5677,7 @@ export interface UserList {
      * @type {string}
      * @memberof UserList
      */
-    'date_joined'?: string;
+    'date_joined': string;
     /**
      * 
      * @type {string}
@@ -6966,7 +6950,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -7131,7 +7115,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -7344,7 +7328,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -7394,11 +7378,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Mixin to provide standardized exception handling for DRF views.
-         * @param {ChatRoomCreate} [chatRoomCreate] 
+         * @param {ChatRoomCreate} chatRoomCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatRoomsCreateCreate: async (chatRoomCreate?: ChatRoomCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatRoomsCreateCreate: async (chatRoomCreate: ChatRoomCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'chatRoomCreate' is not null or undefined
+            assertParamExists('v1ChatRoomsCreateCreate', 'chatRoomCreate', chatRoomCreate)
             const localVarPath = `/api/v1/chat/rooms/create/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11176,75 +11162,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {'female' | 'male' | 'other' | 'prefer_not_to_say'} [gender] * &#x60;male&#x60; - Male * &#x60;female&#x60; - Female * &#x60;other&#x60; - Other * &#x60;prefer_not_to_say&#x60; - Prefer not to say
-         * @param {boolean} [isVerified] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
-         * @param {'both' | 'client' | 'service_provider'} [userType] * &#x60;client&#x60; - Client * &#x60;service_provider&#x60; - Service Provider * &#x60;both&#x60; - Both
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1UsersProfilesList: async (gender?: 'female' | 'male' | 'other' | 'prefer_not_to_say', isVerified?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, userType?: 'both' | 'client' | 'service_provider', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/users/profiles/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (gender !== undefined) {
-                localVarQueryParameter['gender'] = gender;
-            }
-
-            if (isVerified !== undefined) {
-                localVarQueryParameter['is_verified'] = isVerified;
-            }
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-            if (search !== undefined) {
-                localVarQueryParameter['search'] = search;
-            }
-
-            if (userType !== undefined) {
-                localVarQueryParameter['user_type'] = userType;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
          * @param {PatchedServiceProviderUpdate} [patchedServiceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11621,7 +11538,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -11663,7 +11580,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -11717,7 +11634,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -11730,11 +11647,11 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * Mixin to provide standardized exception handling for DRF views.
-         * @param {ChatRoomCreate} [chatRoomCreate] 
+         * @param {ChatRoomCreate} chatRoomCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatRoomsCreateCreate(chatRoomCreate?: ChatRoomCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoomCreate>> {
+        async v1ChatRoomsCreateCreate(chatRoomCreate: ChatRoomCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoomCreate>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsCreateCreate(chatRoomCreate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -12676,22 +12593,6 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {'female' | 'male' | 'other' | 'prefer_not_to_say'} [gender] * &#x60;male&#x60; - Male * &#x60;female&#x60; - Female * &#x60;other&#x60; - Other * &#x60;prefer_not_to_say&#x60; - Prefer not to say
-         * @param {boolean} [isVerified] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
-         * @param {'both' | 'client' | 'service_provider'} [userType] * &#x60;client&#x60; - Client * &#x60;service_provider&#x60; - Service Provider * &#x60;both&#x60; - Both
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1UsersProfilesList(gender?: 'female' | 'male' | 'other' | 'prefer_not_to_say', isVerified?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, userType?: 'both' | 'client' | 'service_provider', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedUserProfileDetailList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProfilesList(gender, isVerified, ordering, page, pageSize, search, userType, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
          * @param {PatchedServiceProviderUpdate} [patchedServiceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12899,7 +12800,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ChatAttachmentsDestroy(id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -12937,7 +12838,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ChatMessagesDestroy(id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -12986,7 +12887,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ChatParticipantsCreateCreate(chatParticipantCreate, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -12998,11 +12899,11 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * Mixin to provide standardized exception handling for DRF views.
-         * @param {ChatRoomCreate} [chatRoomCreate] 
+         * @param {ChatRoomCreate} chatRoomCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatRoomsCreateCreate(chatRoomCreate?: ChatRoomCreate, options?: any): AxiosPromise<ChatRoomCreate> {
+        v1ChatRoomsCreateCreate(chatRoomCreate: ChatRoomCreate, options?: any): AxiosPromise<ChatRoomCreate> {
             return localVarFp.v1ChatRoomsCreateCreate(chatRoomCreate, options).then((request) => request(axios, basePath));
         },
         /**
@@ -13861,21 +13762,6 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * 
-         * @param {'female' | 'male' | 'other' | 'prefer_not_to_say'} [gender] * &#x60;male&#x60; - Male * &#x60;female&#x60; - Female * &#x60;other&#x60; - Other * &#x60;prefer_not_to_say&#x60; - Prefer not to say
-         * @param {boolean} [isVerified] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
-         * @param {'both' | 'client' | 'service_provider'} [userType] * &#x60;client&#x60; - Client * &#x60;service_provider&#x60; - Service Provider * &#x60;both&#x60; - Both
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1UsersProfilesList(gender?: 'female' | 'male' | 'other' | 'prefer_not_to_say', isVerified?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, userType?: 'both' | 'client' | 'service_provider', options?: any): AxiosPromise<PaginatedUserProfileDetailList> {
-            return localVarFp.v1UsersProfilesList(gender, isVerified, ordering, page, pageSize, search, userType, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
          * @param {PatchedServiceProviderUpdate} [patchedServiceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -14454,7 +14340,7 @@ export interface V1ApiV1ChatRoomsCreateCreateRequest {
      * @type {ChatRoomCreate}
      * @memberof V1ApiV1ChatRoomsCreateCreate
      */
-    readonly chatRoomCreate?: ChatRoomCreate
+    readonly chatRoomCreate: ChatRoomCreate
 }
 
 /**
@@ -16341,62 +16227,6 @@ export interface V1ApiV1UsersProfileUpdateRequest {
 }
 
 /**
- * Request parameters for v1UsersProfilesList operation in V1Api.
- * @export
- * @interface V1ApiV1UsersProfilesListRequest
- */
-export interface V1ApiV1UsersProfilesListRequest {
-    /**
-     * * &#x60;male&#x60; - Male * &#x60;female&#x60; - Female * &#x60;other&#x60; - Other * &#x60;prefer_not_to_say&#x60; - Prefer not to say
-     * @type {'female' | 'male' | 'other' | 'prefer_not_to_say'}
-     * @memberof V1ApiV1UsersProfilesList
-     */
-    readonly gender?: 'female' | 'male' | 'other' | 'prefer_not_to_say'
-
-    /**
-     * 
-     * @type {boolean}
-     * @memberof V1ApiV1UsersProfilesList
-     */
-    readonly isVerified?: boolean
-
-    /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1UsersProfilesList
-     */
-    readonly ordering?: string
-
-    /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1UsersProfilesList
-     */
-    readonly page?: number
-
-    /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1UsersProfilesList
-     */
-    readonly pageSize?: number
-
-    /**
-     * A search term.
-     * @type {string}
-     * @memberof V1ApiV1UsersProfilesList
-     */
-    readonly search?: string
-
-    /**
-     * * &#x60;client&#x60; - Client * &#x60;service_provider&#x60; - Service Provider * &#x60;both&#x60; - Both
-     * @type {'both' | 'client' | 'service_provider'}
-     * @memberof V1ApiV1UsersProfilesList
-     */
-    readonly userType?: 'both' | 'client' | 'service_provider'
-}
-
-/**
  * Request parameters for v1UsersProviderPartialUpdate operation in V1Api.
  * @export
  * @interface V1ApiV1UsersProviderPartialUpdateRequest
@@ -16634,7 +16464,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * 
      * @param {V1ApiV1ChatAttachmentsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16678,7 +16508,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * 
      * @param {V1ApiV1ChatMessagesListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16733,7 +16563,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * 
      * @param {V1ApiV1ChatParticipantsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16750,7 +16580,7 @@ export class V1Api extends BaseAPI {
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1ChatRoomsCreateCreate(requestParameters: V1ApiV1ChatRoomsCreateCreateRequest = {}, options?: AxiosRequestConfig) {
+    public v1ChatRoomsCreateCreate(requestParameters: V1ApiV1ChatRoomsCreateCreateRequest, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1ChatRoomsCreateCreate(requestParameters.chatRoomCreate, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -17643,17 +17473,6 @@ export class V1Api extends BaseAPI {
      */
     public v1UsersProfileUpdateCreate(options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1UsersProfileUpdateCreate(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1UsersProfilesListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1UsersProfilesList(requestParameters: V1ApiV1UsersProfilesListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersProfilesList(requestParameters.gender, requestParameters.isVerified, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, requestParameters.userType, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

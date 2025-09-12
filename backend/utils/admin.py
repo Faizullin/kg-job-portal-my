@@ -60,7 +60,7 @@ class SoftDeleteFilter(SimpleListFilter):
 
 class AbstractBaseAdmin(admin.ModelAdmin):
     """Base admin class with common functionality for all models."""
-    
+
     has_default_timestamps = False
     has_soft_delete = False
     has_html_meta = False
@@ -215,28 +215,3 @@ class AbstractBaseAdmin(admin.ModelAdmin):
                 self.lookup_key_list.append(self.lookup_important_dated_key)
 
         return new_fieldsets_dict
-
-
-class AbstractReadOnlyAdmin(AbstractBaseAdmin):
-    """Admin class for read-only models."""
-    
-    def has_add_permission(self, request):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
-
-
-class AbstractAuditAdmin(AbstractBaseAdmin):
-    """Admin class for models that need audit trail functionality."""
-    
-    readonly_fields = ('created_at', 'updated_at', 'created_by', 'updated_by')
-    
-    def save_model(self, request, obj, form, change):
-        if not change:  # Creating new object
-            obj.created_by = request.user
-        obj.updated_by = request.user
-        super().save_model(request, obj, form, change)

@@ -22,11 +22,13 @@ from job_portal.apps.chat.middleware import JWTWebSocketAuthMiddleware
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-    "websocket": AllowedHostsOriginValidator(
-        JWTWebSocketAuthMiddleware(
-            AuthMiddlewareStack(
-                URLRouter(websocket_urlpatterns)
-            )
-        ),
-    ),
+    "websocket":
+        # AllowedHostsOriginValidator(
+            JWTWebSocketAuthMiddleware(
+                AuthMiddlewareStack(
+                    URLRouter(websocket_urlpatterns)
+                )
+            ),
+        # ),
+
 })

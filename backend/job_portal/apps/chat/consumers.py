@@ -13,7 +13,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     Simple WebSocket consumer for real-time chat functionality.
     Handles basic message sending and broadcasting.
     """
-    
+
     async def connect(self):
         """Handle WebSocket connection."""
         self.room_id = self.scope['url_route']['kwargs']['room_id']
@@ -35,7 +35,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        
         await self.accept()
         
         # Send connection confirmation
@@ -43,7 +42,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'type': 'connection_established',
             'room_id': self.room_id,
             'user_id': self.user.id,
-            'timestamp': timezone.now().isoformat()
+            # 'timestamp': timezone.now().isoformat()
         }))
     
     async def disconnect(self, close_code):
@@ -56,6 +55,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
     
     async def receive(self, text_data):
         """Handle incoming WebSocket messages."""
+
+        print("Received data:", text_data)
         try:
             data = json.loads(text_data)
             message_type = data.get('type', 'chat_message')

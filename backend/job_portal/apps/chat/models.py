@@ -7,6 +7,7 @@ from accounts.models import UserModel
 class ChatRoom(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Chat room for communication between users."""
     order = models.ForeignKey('orders.Order', on_delete=models.CASCADE, related_name='chat_rooms', null=True, blank=True)
+    participants = models.ManyToManyField(UserModel, through='ChatParticipant', related_name='chat_rooms')
     
     # Chat room details
     title = models.CharField(_("Chat Title"), max_length=200, blank=True)

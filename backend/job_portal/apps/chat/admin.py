@@ -29,7 +29,7 @@ class ChatRoomAdmin(admin.ModelAdmin):
     )
     
     def participants_count(self, obj):
-        return obj.participants.count()
+        return obj.participant_status.count()
     participants_count.short_description = 'Participants'
     
     def messages_count(self, obj):
@@ -38,7 +38,7 @@ class ChatRoomAdmin(admin.ModelAdmin):
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('order').annotate(
-            participants_count=Count('participants'),
+            participants_count=Count('participant_status'),
             messages_count=Count('messages')
         )
 

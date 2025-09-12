@@ -61,6 +61,7 @@ class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ('id', 'username', 'email', 'is_active', 'date_joined', "groups", "name", "description", "photo_url", "user_type", "blocked")
+        read_only_fields = ('id', 'date_joined', 'groups')
     
     def get_groups(self, obj):
         return [group.name for group in obj.groups.all()]

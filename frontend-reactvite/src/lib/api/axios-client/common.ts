@@ -14,8 +14,8 @@
 
 
 import { Configuration } from "./configuration";
-import { RequiredError, type RequestArgs } from "./base";
-import { type AxiosInstance, type AxiosResponse } from 'axios';
+import { RequiredError,  type RequestArgs } from "./base";
+import {  type AxiosInstance,  type AxiosResponse } from 'axios';
 
 /**
  *

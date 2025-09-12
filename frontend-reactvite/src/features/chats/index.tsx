@@ -1,35 +1,37 @@
-import { useState, useCallback, useRef, useEffect } from "react";
-import { Fragment } from "react/jsx-runtime";
-import { format } from "date-fns";
-import {
-  ArrowLeft,
-  MoreVertical,
-  Edit,
-  Paperclip,
-  Phone,
-  ImagePlus,
-  Plus,
-  Search as SearchIcon,
-  Send,
-  Video,
-  MessagesSquare,
-} from "lucide-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { ConfigDrawer } from "@/components/config-drawer";
 import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { NewChat } from "./components/new-chat";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { useDialogControl } from "@/hooks/use-dialog-control";
+import type { ChatRoom, Message, PaginatedChatRoomList, PaginatedMessageList } from "@/lib/api/axios-client/api";
 import myApi from "@/lib/api/my-api";
-import type { ChatRoom, Message } from "@/lib/api/axios-client/api";
+import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/stores/auth-store";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { AxiosResponse } from "axios";
+import { format } from "date-fns";
+import {
+  ArrowLeft,
+  Edit,
+  ImagePlus,
+  MessagesSquare,
+  MoreVertical,
+  Paperclip,
+  Phone,
+  Plus,
+  Search as SearchIcon,
+  Send,
+  Video,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Fragment } from "react/jsx-runtime";
+import { NewChat } from "./components/new-chat";
 
 export function Chats() {
   const [search, setSearch] = useState("");
@@ -38,193 +40,208 @@ export function Chats() {
   const newChatControl = useDialogControl();
   const [messageInput, setMessageInput] = useState("");
   const messageInputRef = useRef<HTMLInputElement>(null);
-  const queryClient = useQueryClient();
   const [isConnected, setIsConnected] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
+  const queryClient = useQueryClient();
+  const { auth } = useAuthStore();
 
-  // Fetch chat rooms with React Query
-  const {
-    data: roomsData,
-    isLoading: roomsLoading,
-  } = useQuery({
-    queryKey: ['chatRooms'],
-    queryFn: async () => {
-      const response = await myApi.v1ChatRoomsList({
-        ordering: '-last_message_at,-created_at'
-      });
-      return response.data;
-    },
+  const { data: roomsData, isLoading: roomsLoading } = useQuery<AxiosResponse<PaginatedChatRoomList>>({
+    queryKey: ['chat-rooms'],
+    queryFn: () => myApi.v1ChatRoomsList({ ordering: '-last_message_at,-created_at' }),
   });
-  const rooms: ChatRoom[] = (roomsData as any)?.results || (roomsData as any) || [];
+  const rooms: ChatRoom[] = roomsData?.data?.results || [];
 
-  // Fetch messages for selected room
-  const {
-    data: messagesData,
-    isLoading: messagesLoading,
-  } = useQuery({
-    queryKey: ['chatMessages', selectedRoom?.id],
-    queryFn: async () => {
-      if (!selectedRoom) return [];
-      // Use URL parameters to filter by chat room on backend
-      const url = `/api/v1/chat/messages/?chat_room=${selectedRoom.id}&ordering=created_at`;
-      const response = await myApi.axios.get(url);
-      return response.data;
-    },
-    enabled: !!selectedRoom,
+  // Load messages only on initial room selection
+  const { data: messagesData, isLoading: messagesLoading } = useQuery<AxiosResponse<PaginatedMessageList>>({
+    queryKey: ['chat-messages', selectedRoom?.id],
+    queryFn: () => myApi.v1ChatMessagesList({ ordering: 'created_at' }, { params: { chat_room: selectedRoom?.id } }),
+    enabled: !!selectedRoom?.id,
+    staleTime: Infinity, // Never refetch automatically after initial load
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
-  const messages: Message[] = (messagesData as any)?.results || (messagesData as any) || [];
+  const messages: Message[] = messagesData?.data?.results || [];
 
-  // Send message mutation
-  const sendMessageMutation = useMutation({
-    mutationFn: async (content: string) => {
-      if (!selectedRoom) throw new Error('No room selected');
-      return myApi.v1ChatMessagesCreateCreate({
-        messageCreate: {
-          chat_room: selectedRoom.id,
-          content,
-          message_type: 'text',
-        }
-      });
-    },
-    onSuccess: () => {
-      // Invalidate and refetch messages
-      queryClient.invalidateQueries({ queryKey: ['chatMessages', selectedRoom?.id] });
-      setMessageInput("");
-      messageInputRef.current?.focus();
-    },
-    onError: (error) => {
-      console.error('Failed to send message:', error);
-    },
-  });
 
-  // Create chat room mutation
-  // Room creation handled inside NewChat component
+  const sendMessage = (content: string) => {
+    if (!selectedRoom || !wsRef.current) return;
+    
+    console.log('📤 [WebSocket] Sending message:', content);
+    const messageData = {
+      type: 'chat_message',
+      message: content
+    };
+    wsRef.current.send(JSON.stringify(messageData));
+    setMessageInput("");
+    messageInputRef.current?.focus();
+  };
 
-  // WebSocket connection management
-  const connectWebSocket = useCallback(async (roomId: number) => {
-    try {
-      const authData = myApi.getAuthData();
-      if (!authData?.token) return;
-
-      const wsUrl = `ws://${window.location.host}/ws/chat/${roomId}/?token=${authData.token}`;
-      wsRef.current = new WebSocket(wsUrl);
-
-      wsRef.current.onopen = () => {
-        setIsConnected(true);
-      };
-
-      wsRef.current.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.type === 'chat_message' && data.message_id) {
-            const newMessage: Message = {
-              id: data.message_id,
-              chat_room: roomId,
-              sender: data.sender_id || 0,
-              sender_name: data.sender_name || 'Unknown',
-              content: data.message || '',
-              message_type: 'text',
-              message_type_display: 'Text',
-              attachments: [],
-              is_read: false,
-              read_at: null,
-              created_at: data.timestamp || new Date().toISOString(),
-            };
-
-            // Update cache with new message
-            queryClient.setQueryData(['chatMessages', roomId], (oldData: any) => {
-              const oldMessages: Message[] = oldData?.results || oldData || [];
-              const newMessages = [...oldMessages, newMessage];
-              return oldData?.results ? { ...oldData, results: newMessages } : newMessages;
-            });
-          }
-        } catch (error) {
-          console.error('Failed to parse WebSocket message:', error);
-        }
-      };
-
-      wsRef.current.onclose = () => {
-        setIsConnected(false);
-      };
-
-      wsRef.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        setIsConnected(false);
-      };
-
-    } catch (error) {
-      console.error('WebSocket connection error:', error);
-    }
-  }, [queryClient]);
-
-  const disconnectWebSocket = useCallback(() => {
-    if (wsRef.current) {
-      wsRef.current.close();
-      wsRef.current = null;
-    }
-    setIsConnected(false);
-  }, []);
-
-  const sendWebSocketMessage = useCallback((message: any) => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify(message));
-      return true;
-    }
-    return false;
-  }, []);
-
-  // Connect/disconnect WebSocket when room changes
   useEffect(() => {
+    const connectWebSocket = (roomId: number) => {
+      console.log('🔌 [WebSocket] Attempting to connect to chat room:', roomId);
+      const token = myApi.getAuthData()?.token;
+      try {
+        if (!token) {
+          console.error('❌ [WebSocket] No authentication token available');
+          setConnectionError('Authentication required');
+          return;
+        }
+  
+        const wsUrl = `${import.meta.env.VITE_BACKEND_WS_URL}/ws/chat/${roomId}/?token=${token}`;
+        console.log('🌐 [WebSocket] Connecting to:', wsUrl);
+        
+        wsRef.current = new WebSocket(wsUrl);
+  
+        wsRef.current.onopen = () => {
+          console.log('✅ [WebSocket] Connection established to room:', roomId);
+          setIsConnected(true);
+          setConnectionError(null);
+        };
+  
+        wsRef.current.onmessage = (event) => {
+          console.log('📨 [WebSocket] Received message:', event.data);
+          
+          try {
+            const data = JSON.parse(event.data);
+            console.log('📋 [WebSocket] Parsed data:', data);
+            
+            switch (data.type) {
+              case 'connection_established':
+                console.log('🎉 [WebSocket] Connection confirmed for user:', data.user_id, 'in room:', data.room_id);
+                break;
+                
+              case 'chat_message':
+                if (data.message_id) {
+                  console.log('💬 [WebSocket] Processing chat message from:', data.sender_name, 'content:', data.message);
+                  
+                  const newMessage: Message = {
+                    id: data.message_id,
+                    chat_room: roomId,
+                    sender: data.sender_id || 0,
+                    sender_name: data.sender_name || 'Unknown',
+                    content: data.message || '',
+                    message_type: 'text',
+                    message_type_display: 'Text',
+                    attachments: [],
+                    is_read: false,
+                    read_at: null,
+                    created_at: data.timestamp || new Date().toISOString(),
+                  };
+  
+                 // Update query cache with new message
+                 queryClient.setQueryData<AxiosResponse<PaginatedMessageList>>(['chat-messages', roomId], (oldData) => {
+                   if (!oldData) {
+                     return {
+                       data: {
+                         count: 1,
+                         next: null,
+                         previous: null,
+                         results: [newMessage]
+                       }
+                     } as AxiosResponse<PaginatedMessageList>;
+                   }
+                   
+                   const existingMessages = oldData.data.results || [];
+                   const updatedMessages = [...existingMessages, newMessage];
+                   
+                   return {
+                     ...oldData,
+                     data: {
+                       ...oldData.data,
+                       count: (oldData.data.count || 0) + 1,
+                       results: updatedMessages
+                     }
+                   };
+                 });
+                 console.log('📝 [WebSocket] Added new message to cache:', newMessage.id);
+                }
+                break;
+                
+              case 'error':
+                console.error('❌ [WebSocket] Server error:', data.message);
+                setConnectionError(data.message || 'Server error occurred');
+                break;
+                
+              default:
+                console.warn('⚠️ [WebSocket] Unknown message type:', data.type, 'data:', data);
+            }
+          } catch (err) {
+            console.error('❌ [WebSocket] Failed to parse message:', err, 'raw data:', event.data);
+          }
+        };
+  
+        wsRef.current.onclose = (event) => {
+          console.log('🔌 [WebSocket] Connection closed with code:', event.code, 'reason:', event.reason);
+          setIsConnected(false);
+          
+          if (event.code === 4001) {
+            console.error('🚫 [WebSocket] Unauthorized access - invalid token');
+            setConnectionError('Authentication failed');
+          } else if (event.code === 4003) {
+            console.error('🚫 [WebSocket] Forbidden - no access to room');
+            setConnectionError('No access to this chat room');
+          } else if (event.code !== 1000) {
+            console.error('⚠️ [WebSocket] Unexpected disconnection');
+            setConnectionError('Connection lost');
+          }
+        };
+  
+        wsRef.current.onerror = (error) => {
+          console.error('❌ [WebSocket] Connection error:', error);
+          setIsConnected(false);
+          setConnectionError('Failed to connect to chat server');
+        };
+  
+      } catch (err) {
+        console.error('❌ [WebSocket] Connection setup error:', err);
+        setConnectionError('Failed to establish connection');
+      }
+    };
+    const disconnectWebSocket = () => {
+      if (wsRef.current) {
+        console.log('🔌 [WebSocket] Disconnecting from room:', selectedRoom?.id);
+        wsRef.current.close(1000, 'User disconnected');
+        wsRef.current = null;
+      }
+      
+      setIsConnected(false);
+      setConnectionError(null);
+    };
     if (selectedRoom) {
       connectWebSocket(selectedRoom.id);
     } else {
-      disconnectWebSocket();
+      // disconnectWebSocket();
     }
-
     return () => {
       disconnectWebSocket();
     };
-  }, [selectedRoom, connectWebSocket, disconnectWebSocket]);
+  }, [selectedRoom, queryClient]);
 
-  // Handle room selection
-  const handleRoomSelect = useCallback((room: ChatRoom) => {
+  const handleRoomSelect = (room: ChatRoom) => {
+    console.log('🏠 [Chat] Selecting room:', room.id, 'title:', room.title || room.order_title);
     setSelectedRoom(room);
     setMobileSelectedRoom(room);
-  }, []);
-
-  // Send message handler
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!messageInput.trim() || !selectedRoom) return;
-
-    const content = messageInput.trim();
-    
-    // Send via WebSocket for real-time updates
-    if (isConnected) {
-      sendWebSocketMessage({
-        type: 'chat_message',
-        message: content,
-      });
-    }
   };
 
-  // Filtered rooms based on search
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!messageInput.trim() || !selectedRoom) return;
+    
+    const content = messageInput.trim();
+    sendMessage(content);
+  };
+
   const filteredChatList = rooms.filter((room: ChatRoom) =>
-    room.title?.toLowerCase().includes(search.trim().toLowerCase()) ||
-    room.order_title?.toLowerCase().includes(search.trim().toLowerCase())
+    (room.title || '').toLowerCase().includes(search.trim().toLowerCase()) ||
+    (room.order_title || '').toLowerCase().includes(search.trim().toLowerCase())
   );
 
-  // Group messages by date (adapting to original format)
   const currentMessage = messages.reduce(
-    (acc: Record<string, any[]>, message: Message) => {
+    (acc: Record<string, { sender: string; message: string; timestamp: string }[]>, message: Message) => {
       const key = format(new Date(message.created_at), "d MMM, yyyy");
-      if (!acc[key]) {
-        acc[key] = [];
-      }
-      
-      const authData = myApi.getAuthData();
-      const isOwnMessage = message.sender === authData?.user?.id;
-      
+      if (!acc[key]) acc[key] = [];
+      const isOwnMessage = message.sender === auth.user?.id;
       acc[key].push({
         sender: isOwnMessage ? "You" : (message.sender_name || 'Unknown'),
         message: message.content,
@@ -235,14 +252,8 @@ export function Chats() {
     {},
   );
 
-  // For NewChat component compatibility
-  // Users for NewChat are fetched inside the dialog
-
-  // const isLoading = roomsLoading || messagesLoading || sendMessageMutation.isPending;
-
   return (
     <>
-      {/* ===== Top Heading ===== */}
       <Header>
         <Search />
         <div className="ms-auto flex items-center space-x-4">
@@ -254,7 +265,6 @@ export function Chats() {
 
       <Main fixed>
         <section className="flex h-full gap-6">
-          {/* Left Side */}
           <div className="flex w-full flex-col gap-2 sm:w-56 lg:w-72 2xl:w-80">
             <div className="bg-background sticky top-0 z-10 -mx-4 px-4 pb-3 shadow-md sm:static sm:z-auto sm:mx-0 sm:p-0 sm:shadow-none">
               <div className="flex items-center justify-between py-2">
@@ -263,72 +273,37 @@ export function Chats() {
                   <MessagesSquare size={20} />
                 </div>
 
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => newChatControl.show()}
-                  className="rounded-lg"
-                >
+                <Button size="icon" variant="ghost" onClick={() => newChatControl.show()} className="rounded-lg">
                   <Edit size={24} className="stroke-muted-foreground" />
                 </Button>
               </div>
 
-              <label
-                className={cn(
-                  "focus-within:ring-ring focus-within:ring-1 focus-within:outline-hidden",
-                  "border-border flex h-10 w-full items-center space-x-0 rounded-md border ps-2",
-                )}
-              >
+              <label className={cn("focus-within:ring-ring focus-within:ring-1 focus-within:outline-hidden","border-border flex h-10 w-full items-center space-x-0 rounded-md border ps-2",)}>
                 <SearchIcon size={15} className="me-2 stroke-slate-500" />
                 <span className="sr-only">Search</span>
-                <input
-                  type="text"
-                  className="w-full flex-1 bg-inherit text-sm focus-visible:outline-hidden"
-                  placeholder="Search chat..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
+                <input type="text" className="w-full flex-1 bg-inherit text-sm focus-visible:outline-hidden" placeholder="Search chat..." value={search} onChange={(e) => setSearch(e.target.value)} />
               </label>
             </div>
 
             <ScrollArea className="-mx-3 h-full overflow-scroll p-3">
               {roomsLoading ? (
-                <div className="flex items-center justify-center p-4">
-                  <div className="text-sm text-muted-foreground">Loading chats...</div>
-                </div>
+                <div className="flex items-center justify-center p-4"><div className="text-sm text-muted-foreground">Loading chats...</div></div>
               ) : filteredChatList.length === 0 ? (
-                <div className="flex items-center justify-center p-4">
-                  <div className="text-sm text-muted-foreground">No chats found</div>
-                </div>
+                <div className="flex items-center justify-center p-4"><div className="text-sm text-muted-foreground">No chats found</div></div>
               ) : filteredChatList.map((room) => {
                 const displayTitle = room.title || room.order_title || `Chat #${room.id}`;
-                const lastMessage = room.last_message;
-                const lastMsg = lastMessage 
-                  ? `${lastMessage.sender}: ${lastMessage.content}`
-                  : "No messages yet";
-                
+                const lastMessage = room.last_message as unknown as { sender?: string; content?: string } | null;
+                const lastMsg = lastMessage && lastMessage.content ? `${lastMessage.sender}: ${lastMessage.content}` : "No messages yet";
                 return (
                   <Fragment key={room.id}>
-                    <button
-                      type="button"
-                      className={cn(
-                        "group hover:bg-accent hover:text-accent-foreground",
-                        `flex w-full rounded-md px-2 py-2 text-start text-sm`,
-                        selectedRoom?.id === room.id && "sm:bg-muted",
-                      )}
-                      onClick={() => handleRoomSelect(room)}
-                    >
+                    <button type="button" className={cn("group hover:bg-accent hover:text-accent-foreground","flex w-full rounded-md px-2 py-2 text-start text-sm", selectedRoom?.id === room.id && "sm:bg-muted",)} onClick={() => handleRoomSelect(room)}>
                       <div className="flex gap-2">
                         <Avatar>
                           <AvatarFallback>{displayTitle.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div>
-                          <span className="col-start-2 row-span-2 font-medium">
-                            {displayTitle}
-                          </span>
-                          <span className="text-muted-foreground group-hover:text-accent-foreground/90 col-start-2 row-span-2 row-start-2 line-clamp-2 text-ellipsis">
-                            {lastMsg}
-                          </span>
+                          <span className="col-start-2 row-span-2 font-medium">{displayTitle}</span>
+                          <span className="text-muted-foreground group-hover:text-accent-foreground/90 col-start-2 row-span-2 row-start-2 line-clamp-2 text-ellipsis">{lastMsg}</span>
                         </div>
                       </div>
                     </button>
@@ -339,200 +314,88 @@ export function Chats() {
             </ScrollArea>
           </div>
 
-          {/* Right Side */}
           {selectedRoom ? (
-            <div
-              className={cn(
-                "bg-background absolute inset-0 start-full z-50 hidden w-full flex-1 flex-col border shadow-xs sm:static sm:z-auto sm:flex sm:rounded-md",
-                mobileSelectedRoom && "start-0 flex",
-              )}
-            >
-              {/* Top Part */}
+            <div className={cn("bg-background absolute inset-0 start-full z-50 hidden w-full flex-1 flex-col border shadow-xs sm:static sm:z-auto sm:flex sm:rounded-md", mobileSelectedRoom && "start-0 flex",)}>
               <div className="bg-card mb-1 flex flex-none justify-between p-4 shadow-lg sm:rounded-t-md">
-                {/* Left */}
                 <div className="flex gap-3">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="-ms-2 h-full sm:hidden"
-                    onClick={() => setMobileSelectedRoom(null)}
-                  >
+                  <Button size="icon" variant="ghost" className="-ms-2 h-full sm:hidden" onClick={() => setMobileSelectedRoom(null)}>
                     <ArrowLeft className="rtl:rotate-180" />
                   </Button>
                   <div className="flex items-center gap-2 lg:gap-4">
                     <Avatar className="size-9 lg:size-11">
-                      <AvatarFallback>
-                        {(selectedRoom.title || selectedRoom.order_title || 'C').charAt(0).toUpperCase()}
-                      </AvatarFallback>
+                      <AvatarFallback>{(selectedRoom.title || selectedRoom.order_title || 'C').charAt(0).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <span className="col-start-2 row-span-2 text-sm font-medium lg:text-base">
-                        {selectedRoom.title || selectedRoom.order_title || `Chat #${selectedRoom.id}`}
-                      </span>
+                      <span className="col-start-2 row-span-2 text-sm font-medium lg:text-base">{selectedRoom.title || selectedRoom.order_title || `Chat #${selectedRoom.id}`}</span>
                       <span className="text-muted-foreground col-start-2 row-span-2 row-start-2 line-clamp-1 block max-w-32 text-xs text-nowrap text-ellipsis lg:max-w-none lg:text-sm">
-                        {selectedRoom.chat_type_display} {isConnected && <span className="text-green-500">●</span>}
+                        {selectedRoom.chat_type_display} 
+                        {isConnected && <span className="text-green-500 ml-1" title="Connected">●</span>} 
+                        {connectionError && <span className="text-red-500 ml-1" title={connectionError}>●</span>}
+                        {!isConnected && !connectionError && <span className="text-yellow-500 ml-1" title="Connecting...">●</span>}
                       </span>
                     </div>
                   </div>
                 </div>
-
-                {/* Right */}
                 <div className="-me-1 flex items-center gap-1 lg:gap-2">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="hidden size-8 rounded-full sm:inline-flex lg:size-10"
-                  >
-                    <Video size={22} className="stroke-muted-foreground" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="hidden size-8 rounded-full sm:inline-flex lg:size-10"
-                  >
-                    <Phone size={22} className="stroke-muted-foreground" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-10 rounded-md sm:h-8 sm:w-4 lg:h-10 lg:w-6"
-                  >
-                    <MoreVertical className="stroke-muted-foreground sm:size-5" />
-                  </Button>
+                  <Button size="icon" variant="ghost" className="hidden size-8 rounded-full sm:inline-flex lg:size-10"><Video size={22} className="stroke-muted-foreground" /></Button>
+                  <Button size="icon" variant="ghost" className="hidden size-8 rounded-full sm:inline-flex lg:size-10"><Phone size={22} className="stroke-muted-foreground" /></Button>
+                  <Button size="icon" variant="ghost" className="h-10 rounded-md sm:h-8 sm:w-4 lg:h-10 lg:w-6"><MoreVertical className="stroke-muted-foreground sm:size-5" /></Button>
                 </div>
               </div>
 
-              {/* Conversation */}
               <div className="flex flex-1 flex-col gap-2 rounded-md px-4 pt-0 pb-4">
                 <div className="flex size-full flex-1">
                   <div className="chat-text-container relative -me-4 flex flex-1 flex-col overflow-y-hidden">
-                    <div className="chat-flex flex h-40 w-full grow flex-col-reverse justify-start gap-4 overflow-y-auto py-2 pe-4 pb-4">
-                      {messagesLoading ? (
-                        <div className="flex items-center justify-center p-4">
-                          <div className="text-sm text-muted-foreground">Loading messages...</div>
-                        </div>
-                      ) : currentMessage &&
-                        Object.keys(currentMessage).map((key) => (
-                          <Fragment key={key}>
-                            {currentMessage[key].map((msg, index) => (
-                              <div
-                                key={`${msg.sender}-${msg.timestamp}-${index}`}
-                                className={cn(
-                                  "chat-box max-w-72 px-3 py-2 break-words shadow-lg",
-                                  msg.sender === "You"
-                                    ? "bg-primary/90 text-primary-foreground/75 self-end rounded-[16px_16px_0_16px]"
-                                    : "bg-muted self-start rounded-[16px_16px_16px_0]",
-                                )}
-                              >
-                                {msg.message}{" "}
-                                <span
-                                  className={cn(
-                                    "text-foreground/75 mt-1 block text-xs font-light italic",
-                                    msg.sender === "You" &&
-                                      "text-primary-foreground/85 text-end",
-                                  )}
-                                >
-                                  {format(new Date(msg.timestamp), "h:mm a")}
-                                </span>
-                              </div>
-                            ))}
-                            <div className="text-center text-xs">{key}</div>
-                          </Fragment>
-                        ))}
+                     <div className="chat-flex flex h-40 w-full grow flex-col-reverse justify-start gap-4 overflow-y-auto py-2 pe-4 pb-4">
+                       {messagesLoading ? (
+                         <div className="flex items-center justify-center p-4"><div className="text-sm text-muted-foreground">Loading messages...</div></div>
+                       ) : messages.length === 0 ? (
+                         <div className="flex items-center justify-center p-4"><div className="text-sm text-muted-foreground">No messages yet. Start chatting!</div></div>
+                       ) : currentMessage && Object.keys(currentMessage).map((key) => (
+                        <Fragment key={key}>
+                          {currentMessage[key].map((msg, index) => (
+                            <div key={`${msg.sender}-${msg.timestamp}-${index}`} className={cn("chat-box max-w-72 px-3 py-2 break-words shadow-lg", msg.sender === "You" ? "bg-primary/90 text-primary-foreground/75 self-end rounded-[16px_16px_0_16px]" : "bg-muted self-start rounded-[16px_16px_16px_0]")}> 
+                              {msg.message}{" "}
+                              <span className={cn("text-foreground/75 mt-1 block text-xs font-light italic", msg.sender === "You" && "text-primary-foreground/85 text-end")}>{format(new Date(msg.timestamp), "h:mm a")}</span>
+                            </div>
+                          ))}
+                          <div className="text-center text-xs">{key}</div>
+                        </Fragment>
+                      ))}
                     </div>
                   </div>
                 </div>
                 <form onSubmit={handleSendMessage} className="flex w-full flex-none gap-2">
                   <div className="border-input bg-card focus-within:ring-ring flex flex-1 items-center gap-2 rounded-md border px-2 py-1 focus-within:ring-1 focus-within:outline-hidden lg:gap-4">
                     <div className="space-x-1">
-                      <Button
-                        size="icon"
-                        type="button"
-                        variant="ghost"
-                        className="h-8 rounded-md"
-                      >
-                        <Plus size={20} className="stroke-muted-foreground" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        type="button"
-                        variant="ghost"
-                        className="hidden h-8 rounded-md lg:inline-flex"
-                      >
-                        <ImagePlus
-                          size={20}
-                          className="stroke-muted-foreground"
-                        />
-                      </Button>
-                      <Button
-                        size="icon"
-                        type="button"
-                        variant="ghost"
-                        className="hidden h-8 rounded-md lg:inline-flex"
-                      >
-                        <Paperclip
-                          size={20}
-                          className="stroke-muted-foreground"
-                        />
-                      </Button>
+                      <Button size="icon" type="button" variant="ghost" className="h-8 rounded-md"><Plus size={20} className="stroke-muted-foreground" /></Button>
+                      <Button size="icon" type="button" variant="ghost" className="hidden h-8 rounded-md lg:inline-flex"><ImagePlus size={20} className="stroke-muted-foreground" /></Button>
+                      <Button size="icon" type="button" variant="ghost" className="hidden h-8 rounded-md lg:inline-flex"><Paperclip size={20} className="stroke-muted-foreground" /></Button>
                     </div>
                     <label className="flex-1">
                       <span className="sr-only">Chat Text Box</span>
-                      <input
-                        ref={messageInputRef}
-                        type="text"
-                        placeholder="Type your messages..."
-                        value={messageInput}
-                        onChange={(e) => setMessageInput(e.target.value)}
-                        className="h-8 w-full bg-inherit focus-visible:outline-hidden"
-                      />
+                      <input ref={messageInputRef} type="text" placeholder={isConnected ? "Type your messages..." : "Connecting..."} value={messageInput} onChange={(e) => setMessageInput(e.target.value)} className="h-8 w-full bg-inherit focus-visible:outline-hidden"  />
                     </label>
-                    <Button
-                      type="submit"
-                      variant="ghost"
-                      size="icon"
-                      className="hidden sm:inline-flex"
-                      disabled={sendMessageMutation.isPending}
-                    >
-                      <Send size={20} />
-                    </Button>
+                    <Button type="submit" variant="ghost" size="icon" className="hidden sm:inline-flex"><Send size={20} /></Button>
                   </div>
-                  <Button type="submit" className="h-full sm:hidden" disabled={sendMessageMutation.isPending}>
-                    <Send size={18} /> {sendMessageMutation.isPending ? "Sending..." : "Send"}
-                  </Button>
+                  <Button type="submit" className="h-full sm:hidden"><Send size={18} /> Send</Button>
                 </form>
               </div>
             </div>
           ) : (
-            <div
-              className={cn(
-                "bg-card absolute inset-0 start-full z-50 hidden w-full flex-1 flex-col justify-center rounded-md border shadow-xs sm:static sm:z-auto sm:flex",
-              )}
-            >
+            <div className={cn("bg-card absolute inset-0 start-full z-50 hidden w-full flex-1 flex-col justify-center rounded-md border shadow-xs sm:static sm:z-auto sm:flex",)}>
               <div className="flex flex-col items-center space-y-6">
-                <div className="border-border flex size-16 items-center justify-center rounded-full border-2">
-                  <MessagesSquare className="size-8" />
-                </div>
+                <div className="border-border flex size-16 items-center justify-center rounded-full border-2"><MessagesSquare className="size-8" /></div>
                 <div className="space-y-2 text-center">
                   <h1 className="text-xl font-semibold">Your messages</h1>
-                  <p className="text-muted-foreground text-sm">
-                    Send a message to start a chat.
-                  </p>
+                  <p className="text-muted-foreground text-sm">Send a message to start a chat.</p>
                 </div>
-                <Button onClick={() => newChatControl.show()}>
-                  Send message
-                </Button>
+                <Button onClick={() => newChatControl.show()}>Send message</Button>
               </div>
             </div>
           )}
         </section>
-        <NewChat
-          control={newChatControl}
-          onCreated={(room) => {
-            setSelectedRoom(room);
-            setMobileSelectedRoom(room);
-          }}
-        />
+        <NewChat control={newChatControl} onCreated={(room) => { setSelectedRoom(room); setMobileSelectedRoom(room); }} />
       </Main>
     </>
   );

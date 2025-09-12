@@ -9,4 +9,5 @@ __all__ = [
     'UserListSerializer',
     'ProfileImageUploadSerializer',
     'ProfileImageResponseSerializer',
+    "FirebaseAuthResponseSerializer"
 ]
