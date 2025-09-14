@@ -66,8 +66,8 @@ export const sidebarData: SidebarData = {
           icon: Search,
         },
         {
-          title: "My Applications",
-          url: "/tasks",
+          title: "Applications",
+          url: "/apps",
           icon: FileText,
         },
         {

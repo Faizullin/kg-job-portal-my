@@ -94,7 +94,7 @@ class OrderCreateSerializer(AbstractTimestampedModelSerializer):
 class OrderUpdateSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = Order
-        fields = ['title', 'description', 'location', 'city', 'state', 'country', 'postal_code', 'service_date', 'service_time', 'urgency', 'budget_min', 'budget_max', 'special_requirements']
+        fields = ['title', 'description', 'location', 'city', 'state', 'country', 'postal_code', 'service_date', 'service_time', 'urgency', 'budget_min', 'budget_max', 'special_requirements', "status"]
 
 
 class OrderAddonCreateSerializer(AbstractTimestampedModelSerializer):
@@ -109,16 +109,38 @@ class OrderAddonUpdateSerializer(AbstractTimestampedModelSerializer):
         fields = ['quantity', 'price']
 
 
-class BidCreateSerializer(AbstractTimestampedModelSerializer):
+class BidCreateUpdateSerializer(AbstractTimestampedModelSerializer):
+    """Unified serializer for bid creation and updates."""
     class Meta:
         model = Bid
         fields = ['amount', 'description', 'estimated_duration', 'terms_conditions', 'is_negotiable']
 
 
-class BidUpdateSerializer(AbstractTimestampedModelSerializer):
+class BidActionSerializer(serializers.Serializer):
+    """Serializer for bid actions (accept/reject/withdraw)."""
+    reason = serializers.CharField(max_length=500, required=False, help_text="Reason for rejection/withdrawal")
+
+
+class OrderAssignmentSerializer(AbstractTimestampedModelSerializer):
+    order_title = serializers.SerializerMethodField()
+    provider_name = serializers.SerializerMethodField()
+    
     class Meta:
-        model = Bid
-        fields = ['amount', 'description', 'estimated_duration', 'terms_conditions', 'is_negotiable']
+        model = OrderAssignment
+        fields = [
+            'id', 'order', 'order_title', 'provider', 'provider_name', 'accepted_bid',
+            'assigned_at', 'start_date', 'start_time', 'progress_notes',
+            'completion_notes', 'client_rating', 'client_review', 'created_at'
+        ]
+        read_only_fields = ('assigned_at', 'created_at')
+    
+    def get_order_title(self, obj):
+        return obj.order.title if obj.order else 'Unknown Order'
+    
+    def get_provider_name(self, obj):
+        if obj.provider and obj.provider.user_profile and obj.provider.user_profile.user:
+            return obj.provider.user_profile.user.name
+        return "Unknown Provider"
 
 
 class OrderDisputeCreateSerializer(AbstractTimestampedModelSerializer):

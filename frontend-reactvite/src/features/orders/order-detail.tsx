@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDialogControl } from "@/hooks/use-dialog-control";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import { BidCreateEditDialog, type BidFormData } from "./components/bid-create-edit-dialog";
 import myApi from "@/lib/api/my-api";
 import { AuthClient } from "@/lib/auth/auth-client";
@@ -13,24 +12,6 @@ interface OrderDetailProps {
 }
 
 export function OrderDetail({ orderId }: OrderDetailProps) {
-  const [bids, setBids] = useState([
-    {
-      id: 1,
-      provider_name: "CleanPro Services",
-      amount: 140,
-      description: "Professional cleaning with eco-friendly products",
-      status: "pending",
-      created_at: "2024-01-16T08:00:00Z"
-    },
-    {
-      id: 2,
-      provider_name: "Sparkle Clean",
-      amount: 160,
-      description: "Thorough deep cleaning service",
-      status: "pending",
-      created_at: "2024-01-16T10:30:00Z"
-    }
-  ]);
 
   // Dialog controls
   const bidDialog = useDialogControl<BidFormData>();
@@ -106,6 +87,8 @@ export function OrderDetail({ orderId }: OrderDetailProps) {
   const userRole = AuthClient.getCurrentUser()?.user_role || "client";
   const isProvider = /provider/i.test(userRole);
 
+  const bids = (order as any)?.bids || [];
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-start">
@@ -170,7 +153,7 @@ export function OrderDetail({ orderId }: OrderDetailProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {bids.map((bid) => (
+              {bids.map((bid: any) => (
                 <div key={bid.id} className="border rounded-lg p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-medium">{bid.provider_name}</h4>

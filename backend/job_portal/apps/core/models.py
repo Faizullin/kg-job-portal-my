@@ -101,8 +101,8 @@ class ServiceSubcategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
     ], default='intermediate')
     
     # Requirements
-    required_tools = models.JSONField(_("Required Tools"), default=list)
-    required_materials = models.JSONField(_("Required Materials"), default=list)
+    required_tools = models.JSONField(_("Required Tools"), default=list, blank=True)
+    required_materials = models.JSONField(_("Required Materials"), default=list, blank=True)
     safety_requirements = models.TextField(_("Safety Requirements"), blank=True)
     
     # SEO

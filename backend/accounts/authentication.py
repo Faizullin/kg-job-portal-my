@@ -16,11 +16,11 @@ class CustomTokenAuthentication(TokenAuthentication):
         Authenticate using token and print headers for debugging.
         """
         # Print headers for debugging
-        self._print_headers(request)
+        # self._print_headers(request)
         
         # Get token from Authorization header
         auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-        if not auth_header.startswith('Token '):
+        if not (auth_header.startswith('Token ') or auth_header.startswith('Bearer ')):
             return None
         
         token_key = auth_header.split(' ')[1]
@@ -31,17 +31,17 @@ class CustomTokenAuthentication(TokenAuthentication):
             
             # Check if user is active and not blocked
             if not token.user.is_active:
-                print(f"Inactive user attempted authentication: {token.user.email}")
+                # print(f"Inactive user attempted authentication: {token.user.email}")
                 return None
             
             if hasattr(token.user, 'blocked') and token.user.blocked:
-                print(f"Blocked user attempted authentication: {token.user.email}")
+                # print(f"Blocked user attempted authentication: {token.user.email}")
                 return None
             
-            return (token.user, token)
+            return (token.user, token) 
             
         except Token.DoesNotExist:
-            print(f"Invalid token attempted: {token_key[:10]}...")
+            # print(f"Invalid token attempted: {token_key[:10]}...")
             return None
     
     def _print_headers(self, request):

@@ -1,8 +1,10 @@
 from django.urls import path
 from .api.views import (
     OrderApiView, OrderDetailApiView, OrderCreateApiView, OrderAddonApiView,
-    OrderPhotoApiView, BidApiView, BidCreateApiView, OrderDisputeApiView,
-    OrderDisputeCreateApiView, OrderDisputeDetailApiView
+    OrderPhotoApiView, BidApiView, BidCreateApiView, BidDetailApiView,
+    BidAcceptApiView, BidRejectApiView, BidWithdrawApiView,
+    OrderAssignmentApiView, OrderAssignmentDetailApiView,
+    OrderDisputeApiView, OrderDisputeCreateApiView, OrderDisputeDetailApiView
 )
 
 app_name = 'orders'
@@ -22,6 +24,16 @@ urlpatterns = [
     # Bids
     path('api/v1/orders/bids/', BidApiView.as_view(), name='bids'),
     path('api/v1/orders/<int:order_id>/bids/', BidCreateApiView.as_view(), name='bid-create'),
+    path('api/v1/orders/bids/<int:pk>/', BidDetailApiView.as_view(), name='bid-detail'),
+    
+    # Bid Actions
+    path('api/v1/orders/bids/<int:bid_id>/accept/', BidAcceptApiView.as_view(), name='bid-accept'),
+    path('api/v1/orders/bids/<int:bid_id>/reject/', BidRejectApiView.as_view(), name='bid-reject'),
+    path('api/v1/orders/bids/<int:bid_id>/withdraw/', BidWithdrawApiView.as_view(), name='bid-withdraw'),
+    
+    # Order Assignments
+    path('api/v1/orders/assignments/', OrderAssignmentApiView.as_view(), name='order-assignments'),
+    path('api/v1/orders/assignments/<int:pk>/', OrderAssignmentDetailApiView.as_view(), name='order-assignment-detail'),
     
     # Order Disputes
     path('api/v1/orders/disputes/', OrderDisputeApiView.as_view(), name='order-disputes'),

@@ -80,8 +80,8 @@ AUTH_TOKEN_VALIDITY = timezone.timedelta(days=1)
 REST_FRAMEWORK = {
     "NON_FIELD_ERRORS_KEY": "errors",
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        # "accounts.authentication.CustomTokenAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
+        "accounts.authentication.CustomTokenAuthentication",
+        # "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
