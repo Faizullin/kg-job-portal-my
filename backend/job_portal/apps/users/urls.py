@@ -3,7 +3,7 @@ from .api.views import (
     UserProfileDetailApiView, ServiceProviderApiView,
     ServiceProviderDetailApiView, ClientApiView, ClientDetailApiView,
     UserProfileUpdateView, ClientProfileUpdateView, ServiceProviderProfileUpdateView,
-    AdvancedProfileApiView
+    AdvancedProfileApiView, ServiceProviderFeaturedApiView, TaskHistoryApiView
 )
 
 app_name = 'users'
@@ -22,9 +22,14 @@ urlpatterns = [
     
     # Service Providers
     path('api/v1/users/providers/', ServiceProviderApiView.as_view(), name='service-providers'),
+    path('api/v1/users/providers/featured/', ServiceProviderFeaturedApiView.as_view(), name='service-providers-featured'),
+    path('api/v1/users/providers/<int:pk>/details/', ServiceProviderDetailApiView.as_view(), name='service-provider-details'),
     path('api/v1/users/provider/', ServiceProviderDetailApiView.as_view(), name='service-provider-detail'),
     
     # Clients
     path('api/v1/users/clients/', ClientApiView.as_view(), name='clients'),
     path('api/v1/users/client/', ClientDetailApiView.as_view(), name='client-detail'),
+    
+    # Task History
+    path('api/v1/users/task-history/', TaskHistoryApiView.as_view(), name='task-history'),
 ]

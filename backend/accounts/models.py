@@ -73,7 +73,6 @@ class UserModel(AbstractUser, AbstractSoftDeleteModel):
     user_type = models.CharField(max_length=20, choices=UserTypes.choices(), default=UserTypes.free, )
     blocked = models.BooleanField(default=False)
     firebase_user_id = models.CharField(max_length=200, null=True, blank=True)
-    fcm_token = models.CharField(max_length=255, null=True, blank=True)  # for push notifications
 
     # user data
     name = models.CharField(max_length=255, verbose_name='Имя')
@@ -82,17 +81,7 @@ class UserModel(AbstractUser, AbstractSoftDeleteModel):
     photo = models.ImageField(upload_to='user_photos/', blank=True, null=True, verbose_name='Фото')
     photo_url = models.URLField(blank=True, null=True, verbose_name='Ссылка на фото (Firebase)')
 
-    # user social data
-    friends = models.ManyToManyField("self", blank=True, verbose_name='Друзья', symmetrical=True)
-    friendship_requests = models.ManyToManyField("self", blank=True, symmetrical=False,
-                                                 related_name='pending_friend_requests',
-                                                 verbose_name='Запросы в друзья')
 
-    # App related stuff
-    timezone_difference = models.IntegerField(default=0, verbose_name='Разница во времени')
-    points = models.IntegerField(default=0, verbose_name='Баллы')
-    day_streak = models.IntegerField(default=0, verbose_name='Дневная серия')
-    max_day_streak = models.IntegerField(default=0, verbose_name='Максимальная дневная серия')
 
     REQUIRED_FIELDS = ['email']
 
@@ -110,15 +99,10 @@ class UserModel(AbstractUser, AbstractSoftDeleteModel):
     def _cleanup_deleted_user(self):
         """Clean up user data when soft-deleted."""
         # Clear sensitive data
-        self.fcm_token = None
         self.firebase_user_id = None
 
-        # Clear social connections
-        self.friends.clear()
-        self.friendship_requests.clear()
-
         # Save the cleanup
-        self.save(update_fields=['fcm_token', 'firebase_user_id'])
+        self.save(update_fields=['firebase_user_id'])
 
     def restore(self, strict=True):
         """Restore a soft-deleted user."""
@@ -128,51 +112,9 @@ class UserModel(AbstractUser, AbstractSoftDeleteModel):
         self.is_active = True
         self.save(update_fields=['is_active'])
 
-    def add_points(self, points: int, description: str):
-        if points < 0:
-            raise ValueError('Points must be positive')
-        if description == '':
-            raise ValueError('Description must be filled')
-        self.points += points
-        self.save()
-        UserPointAddHistory.objects.create(user=self, points=points, description=description)
-
     def is_paid(self):
         return self.user_type in (UserTypes.paid, UserTypes.premium_paid)
 
-    def current_datetime(self) -> timezone.datetime:
-        return timezone.now() + timezone.timedelta(hours=self.timezone_difference)
-
-    def remaining_hours_till_streak_reset(self) -> int:
-        last_active_date = self.activity_dates.first()
-        if last_active_date is None:
-            return -1
-
-        # прибавляем разницу часов потому что ласт актив дейттайм в UTC
-        last_datetime = last_active_date.datetime + timezone.timedelta(hours=self.timezone_difference)
-
-        # разница в часах до след дня КОГДА пользователь получил +1 к страйку
-        hours_till_tomorrow = 24 - last_datetime.hour
-
-        difference = (self.current_datetime() - last_datetime).total_seconds() // 3600
-        return hours_till_tomorrow + 24 - difference
-
-    def send_friend_request(self, to_user):
-        if (to_user != self) and (to_user not in self.friends.all()):
-            if self.friendship_requests.filter(pk=to_user.pk).exists():
-                self.accept_friend_request(to_user)
-            else:
-                to_user.friendship_requests.add(self)
-
-    def accept_friend_request(self, from_user):
-        if from_user in self.friendship_requests.all():
-            self.friendship_requests.remove(from_user)
-            self.friends.add(from_user)
-            from_user.friends.add(self)
-
-    def decline_friend_request(self, from_user):
-        if from_user in self.friendship_requests.all():
-            self.friendship_requests.remove(from_user)
 
 
 class UserActivityDateModel(models.Model):
@@ -186,20 +128,6 @@ class UserActivityDateModel(models.Model):
 
     def __str__(self):
         return f'{self.pk} Activity '
-
-
-class UserPointAddHistory(models.Model):
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='point_add_history')
-    points = models.IntegerField()
-    description = models.TextField()
-    created_date = models.DateTimeField(default=timezone.now, verbose_name='Дата добавления')
-
-    class Meta:
-        verbose_name = 'История добавления баллов'
-        verbose_name_plural = 'Истории добавления баллов'
-
-    def __str__(self):
-        return f'{self.pk} UserPointAddHistory'
 
 
 class LoginSession(models.Model):

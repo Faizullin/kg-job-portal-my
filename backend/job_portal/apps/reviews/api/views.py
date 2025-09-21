@@ -5,12 +5,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from rest_framework.permissions import IsAuthenticated
+from utils.crud_base.views import StandardizedViewMixin
 from utils.pagination import CustomPagination
-from ..models import Review
-from .serializers import ReviewSerializer, ReviewCreateSerializer, ReviewUpdateSerializer, ReviewAnalyticsSerializer
+from ..models import Review, AppFeedback
+from .serializers import ReviewSerializer, ReviewCreateSerializer, ReviewUpdateSerializer, ReviewAnalyticsSerializer, AppFeedbackSerializer, AppFeedbackCreateSerializer
 
 
-class ReviewApiView(generics.ListCreateAPIView):
+class ReviewApiView(StandardizedViewMixin, generics.ListCreateAPIView):
     """List and create reviews."""
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
@@ -38,7 +39,7 @@ class ReviewApiView(generics.ListCreateAPIView):
         serializer.save(reviewer=self.request.user)
 
 
-class ReviewDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+class ReviewDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateDestroyAPIView):
     """Retrieve, update, and delete specific review."""
     serializer_class = ReviewUpdateSerializer
     permission_classes = [IsAuthenticated]
@@ -56,7 +57,7 @@ class ReviewDetailApiView(generics.RetrieveUpdateDestroyAPIView):
         return ReviewUpdateSerializer
 
 
-class ProviderReviewsApiView(generics.ListAPIView):
+class ProviderReviewsApiView(StandardizedViewMixin, generics.ListAPIView):
     """Get reviews for a specific service provider."""
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
@@ -77,7 +78,7 @@ class ProviderReviewsApiView(generics.ListAPIView):
         )
 
 
-class OrderReviewsApiView(generics.ListAPIView):
+class OrderReviewsApiView(StandardizedViewMixin, generics.ListAPIView):
     """Get reviews for a specific order."""
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
@@ -94,7 +95,7 @@ class OrderReviewsApiView(generics.ListAPIView):
         )
 
 
-class ReviewAnalyticsApiView(generics.GenericAPIView):
+class ReviewAnalyticsApiView(StandardizedViewMixin, generics.GenericAPIView):
     """Get simple review analytics for a provider."""
     serializer_class = ReviewAnalyticsSerializer
     permission_classes = [IsAuthenticated]
@@ -134,4 +135,23 @@ class ReviewAnalyticsApiView(generics.GenericAPIView):
         
         serializer = self.get_serializer(stats)
         return Response(serializer.data)
+
+
+class AppFeedbackApiView(StandardizedViewMixin, generics.ListCreateAPIView):
+    """List and create app feedback."""
+    serializer_class = AppFeedbackSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ['is_processed']
+    ordering_fields = ['created_at']
+    ordering = ['-created_at']
+    pagination_class = CustomPagination
+    
+    def get_queryset(self):
+        return AppFeedback.objects.filter(user=self.request.user)
+    
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return AppFeedbackCreateSerializer
+        return AppFeedbackSerializer
 

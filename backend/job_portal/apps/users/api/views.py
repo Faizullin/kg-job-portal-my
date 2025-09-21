@@ -5,9 +5,11 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from utils.crud_base.views import StandardizedViewMixin
 from utils.pagination import CustomPagination
 
 from ..models import ClientProfile, ServiceProviderProfile, UserProfile
+from orders.models import Order
 from .serializers import (
     ClientSerializer,
     ClientUpdateSerializer,
@@ -20,12 +22,11 @@ from .serializers import (
 )
 
 
-class UserProfileDetailApiView(generics.RetrieveUpdateAPIView):
+class UserProfileDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileUpdateSerializer
     permission_classes = [IsAuthenticated]
     
     def get_object(self):
-        # Simple filtering - manager automatically handles is_deleted
         return get_object_or_404(UserProfile, user=self.request.user)
     
     def get_serializer_class(self):
@@ -34,21 +35,46 @@ class UserProfileDetailApiView(generics.RetrieveUpdateAPIView):
         return UserProfileUpdateSerializer
 
 
-class ServiceProviderApiView(generics.ListAPIView):
+class ServiceProviderApiView(StandardizedViewMixin, generics.ListAPIView):
+    """List all available service providers with search and filtering."""
     serializer_class = ServiceProviderSerializer
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['is_verified_provider', 'is_available']
+    filterset_fields = ['is_verified_provider']
     search_fields = ['business_name', 'user_profile__user__first_name', 'user_profile__user__last_name']
-    ordering_fields = ['average_rating', 'years_of_experience', 'total_reviews']
+    ordering_fields = ['average_rating', 'total_reviews']
     ordering = ['-average_rating', '-total_reviews']
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        return ServiceProviderProfile.objects.all().select_related('user_profile__user')
+        """Always filter on available providers only."""
+        return ServiceProviderProfile.objects.filter(
+            is_available=True
+        ).select_related('user_profile__user')
 
 
-class ServiceProviderDetailApiView(generics.RetrieveUpdateAPIView):
+class ServiceProviderFeaturedApiView(StandardizedViewMixin, generics.ListAPIView):
+    """Featured service providers for mobile app."""
+    serializer_class = ServiceProviderSerializer
+    permission_classes = [AllowAny]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ['is_verified_provider', 'is_available']
+    ordering_fields = ['average_rating', 'total_reviews']
+    ordering = ['-average_rating', '-total_reviews']
+    pagination_class = CustomPagination
+    
+    def get_queryset(self):
+        """Get featured providers (verified and highly rated)."""
+        return ServiceProviderProfile.objects.filter(
+            is_verified_provider=True,
+            is_available=True,
+            average_rating__gte=4.0
+        ).select_related('user_profile__user')
+
+
+
+
+class ServiceProviderDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = ServiceProviderUpdateSerializer
     permission_classes = [IsAuthenticated]
     
@@ -64,7 +90,7 @@ class ServiceProviderDetailApiView(generics.RetrieveUpdateAPIView):
         return ServiceProviderUpdateSerializer
 
 
-class ClientApiView(generics.ListAPIView):
+class ClientApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = ClientSerializer
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -80,7 +106,7 @@ class ClientApiView(generics.ListAPIView):
         ).select_related('user_profile__user')
 
 
-class ClientDetailApiView(generics.RetrieveUpdateAPIView):
+class ClientDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = ClientUpdateSerializer
     permission_classes = [IsAuthenticated]
     
@@ -98,12 +124,10 @@ class ClientDetailApiView(generics.RetrieveUpdateAPIView):
 
 
 # Simple Profile Update Views
-class UserProfileUpdateView(APIView):
-    """Update user profile - works for both registration and profile updates"""
+class UserProfileUpdateView(StandardizedViewMixin, APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        """Create or update user profile"""
         serializer = UserProfileUpdateSerializer(data=request.data)
         if serializer.is_valid():
             user_profile, created = UserProfile.objects.update_or_create(
@@ -117,12 +141,10 @@ class UserProfileUpdateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ClientProfileUpdateView(APIView):
-    """Update client profile - works for both registration and profile updates"""
+class ClientProfileUpdateView(StandardizedViewMixin, APIView):
     permission_classes = [IsAuthenticated,]
     
     def post(self, request):
-        """Create or update client profile"""
         serializer = ClientUpdateSerializer(data=request.data)
         if serializer.is_valid():
             user_profile = request.user.job_portal_profile
@@ -137,12 +159,10 @@ class ClientProfileUpdateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ServiceProviderProfileUpdateView(APIView):
-    """Update service provider profile - works for both registration and profile updates"""
+class ServiceProviderProfileUpdateView(StandardizedViewMixin, APIView):
     permission_classes = [IsAuthenticated, ]
     
     def post(self, request):
-        """Create or update service provider profile"""
         serializer = ServiceProviderUpdateSerializer(data=request.data)
         if serializer.is_valid():
             user_profile = request.user.job_portal_profile
@@ -157,17 +177,14 @@ class ServiceProviderProfileUpdateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AdvancedProfileApiView(APIView):
-    """Advanced profile API that combines user account data and job portal profile."""
+class AdvancedProfileApiView(StandardizedViewMixin, APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        """Get combined user account and job portal profile data."""
         serializer = AdvancedProfileSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
-        """Update both user account and job portal profile data."""
         serializer = AdvancedProfileUpdateSerializer(
             instance=request.user, 
             data=request.data, 
@@ -183,3 +200,34 @@ class AdvancedProfileApiView(APIView):
             }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TaskHistoryApiView(StandardizedViewMixin, generics.ListAPIView):
+    """Task history for users (orders they created or worked on)."""
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ['status']
+    ordering_fields = ['created_at', 'service_date']
+    ordering = ['-created_at']
+    pagination_class = CustomPagination
+    
+    def get_queryset(self):
+        """Get user's task history based on their role."""
+        user = self.request.user
+        try:
+            if hasattr(user, 'job_portal_profile'):
+                if user.job_portal_profile.user_type in ['client', 'both']:
+                    # Client's created orders
+                    return Order.objects.filter(
+                        client__user_profile__user=user
+                    ).select_related('service_subcategory', 'client__user_profile__user')
+                elif user.job_portal_profile.user_type in ['service_provider', 'both']:
+                    # Provider's assigned orders
+                    return Order.objects.filter(
+                        assignment__provider__user_profile__user=user
+                    ).select_related('service_subcategory', 'assignment__provider__user_profile__user')
+        except Exception:
+            pass
+        
+        # Fallback: return empty queryset
+        return Order.objects.none()

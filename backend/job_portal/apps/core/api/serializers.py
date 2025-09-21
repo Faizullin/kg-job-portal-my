@@ -6,7 +6,7 @@ from utils.serializers import (
     AbstractChoiceFieldSerializerMixin,
     AbstractComputedFieldSerializerMixin
 )
-from ..models import Language, ServiceCategory, ServiceSubcategory, ServiceArea, SystemSettings, AppVersion
+from ..models import Language, ServiceCategory, ServiceSubcategory, ServiceArea, SystemSettings, AppVersion, SupportFAQ
 
 
 class LanguageSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin):
@@ -71,3 +71,16 @@ class AppVersionSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFie
     @extend_schema_field(serializers.CharField())
     def get_platform_display(self, obj):
         return self.get_choice_display(obj, 'platform')
+
+
+class SupportFAQSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin):
+    """Serializer for support FAQ items."""
+    category_display = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = SupportFAQ
+        fields = ['id', 'question', 'answer', 'category', 'category_display', 'sort_order', 'is_popular', 'is_active', 'view_count', 'created_at']
+    
+    @extend_schema_field(serializers.CharField())
+    def get_category_display(self, obj):
+        return self.get_choice_display(obj, 'category')

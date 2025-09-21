@@ -1,17 +1,19 @@
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from utils.crud_base.views import StandardizedViewMixin
 from utils.permissions import HasSpecificPermission
 from utils.pagination import CustomPagination
-from ..models import Language, ServiceCategory, ServiceSubcategory, ServiceArea, SystemSettings, AppVersion
+from ..models import Language, ServiceCategory, ServiceSubcategory, ServiceArea, SystemSettings, AppVersion, SupportFAQ
 from .serializers import (
     LanguageSerializer, ServiceCategorySerializer, ServiceSubcategorySerializer,
-    ServiceAreaSerializer, SystemSettingsSerializer, AppVersionSerializer
+    ServiceAreaSerializer, SystemSettingsSerializer, AppVersionSerializer,
+    SupportFAQSerializer
 )
 
 
-class LanguageApiView(generics.ListAPIView):
+class LanguageApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = LanguageSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -22,11 +24,10 @@ class LanguageApiView(generics.ListAPIView):
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        # Simple filtering - manager automatically handles is_deleted
         return Language.objects.all()
 
 
-class ServiceCategoryApiView(generics.ListAPIView):
+class ServiceCategoryApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = ServiceCategorySerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -37,11 +38,10 @@ class ServiceCategoryApiView(generics.ListAPIView):
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        # Simple filtering - manager automatically handles is_deleted
         return ServiceCategory.objects.all()
 
 
-class ServiceSubcategoryApiView(generics.ListAPIView):
+class ServiceSubcategoryApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = ServiceSubcategorySerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -52,11 +52,10 @@ class ServiceSubcategoryApiView(generics.ListAPIView):
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        # Simple filtering - manager automatically handles is_deleted
         return ServiceSubcategory.objects.all()
 
 
-class ServiceAreaApiView(generics.ListAPIView):
+class ServiceAreaApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = ServiceAreaSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -67,11 +66,10 @@ class ServiceAreaApiView(generics.ListAPIView):
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        # Simple filtering - manager automatically handles is_deleted
         return ServiceArea.objects.all()
 
 
-class SystemSettingsApiView(generics.ListAPIView):
+class SystemSettingsApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = SystemSettingsSerializer
     permission_classes = [HasSpecificPermission(['core.add_systemsettings'])]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -84,11 +82,10 @@ class SystemSettingsApiView(generics.ListAPIView):
     def get_queryset(self):
         if self.request.user.is_staff:
             return SystemSettings.objects.all()
-        # Simple filtering - manager automatically handles is_deleted
         return SystemSettings.objects.filter(is_public=True)
 
 
-class AppVersionApiView(generics.ListAPIView):
+class AppVersionApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = AppVersionSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -100,3 +97,18 @@ class AppVersionApiView(generics.ListAPIView):
     
     def get_queryset(self):
         return AppVersion.objects.all()
+
+
+class SupportFAQApiView(StandardizedViewMixin, generics.ListAPIView):
+    """List support FAQ items."""
+    serializer_class = SupportFAQSerializer
+    permission_classes = [AllowAny]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['category', 'is_popular', 'is_active']
+    search_fields = ['question', 'answer']
+    ordering_fields = ['sort_order', 'view_count', 'created_at']
+    ordering = ['sort_order', 'question']
+    pagination_class = CustomPagination
+    
+    def get_queryset(self):
+        return SupportFAQ.objects.filter(is_active=True)

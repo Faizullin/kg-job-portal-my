@@ -8,17 +8,18 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from rest_framework.permissions import IsAuthenticated
+from utils.crud_base.views import StandardizedViewMixin
 from utils.permissions import HasSpecificPermission
 from utils.pagination import CustomPagination
 from ..models import UserActivity, OrderAnalytics, ServiceCategoryAnalytics, PerformanceMetrics, BusinessMetrics
 from .serializers import (
     UserActivitySerializer, OrderAnalyticsSerializer, ServiceCategoryAnalyticsSerializer,
     PerformanceMetricsSerializer, BusinessMetricsSerializer, UserActivityCreateSerializer,
-    ServiceCategoryAnalyticsCreateSerializer, OrderAnalyticsCreateSerializer,DashboardResponseSerializer
+    ServiceCategoryAnalyticsCreateSerializer, OrderAnalyticsCreateSerializer, DashboardResponseSerializer
 )
 
 
-class UserActivityApiView(generics.ListAPIView):
+class UserActivityApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = UserActivitySerializer
     permission_classes = [HasSpecificPermission(['analytics.add_useractivity'])]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -29,35 +30,27 @@ class UserActivityApiView(generics.ListAPIView):
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        # Manager automatically filters out deleted objects
         return UserActivity.objects.all().select_related('user')
     
     @action(detail=False, methods=['get'])
     def recent_activities(self, request):
-        """Get recent user activities (last 24 hours)."""
         yesterday = timezone.now() - timedelta(days=1)
-        
-        # Manager automatically filters out deleted objects
         activities = UserActivity.objects.filter(
             created_at__gte=yesterday
         ).select_related('user')[:100]
-        
         serializer = UserActivitySerializer(activities, many=True)
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
     def user_summary(self, request):
-        """Get activity summary for a specific user."""
         user_id = request.query_params.get('user_id')
         if not user_id:
             return Response({'error': 'user_id is required'}, status=400)
         
-        # Manager automatically filters out deleted objects
         activities = UserActivity.objects.filter(
             user_id=user_id
         ).select_related('user')
         
-        # Group by activity type
         summary = {}
         for activity in activities:
             activity_type = activity.activity_type
@@ -72,7 +65,7 @@ class UserActivityApiView(generics.ListAPIView):
         })
 
 
-class UserActivityCreateApiView(generics.CreateAPIView):
+class UserActivityCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = UserActivityCreateSerializer
     permission_classes = [IsAuthenticated]
     
@@ -84,7 +77,7 @@ class UserActivityCreateApiView(generics.CreateAPIView):
         )
 
 
-class ServiceCategoryAnalyticsApiView(generics.ListAPIView):
+class ServiceCategoryAnalyticsApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = ServiceCategoryAnalyticsSerializer
     permission_classes = [HasSpecificPermission(['analytics.add_servicecategoryanalytics'])]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -125,12 +118,12 @@ class ServiceCategoryAnalyticsApiView(generics.ListAPIView):
         return Response(serializer.data)
 
 
-class ServiceCategoryAnalyticsCreateApiView(generics.CreateAPIView):
+class ServiceCategoryAnalyticsCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = ServiceCategoryAnalyticsCreateSerializer
     permission_classes = [HasSpecificPermission(['analytics.add_servicecategoryanalytics'])]
 
 
-class OrderAnalyticsApiView(generics.ListAPIView):
+class OrderAnalyticsApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = OrderAnalyticsSerializer
     permission_classes = [HasSpecificPermission(['analytics.add_orderanalytics'])]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -173,12 +166,12 @@ class OrderAnalyticsApiView(generics.ListAPIView):
         })
 
 
-class OrderAnalyticsCreateApiView(generics.CreateAPIView):
+class OrderAnalyticsCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = OrderAnalyticsCreateSerializer
     permission_classes = [HasSpecificPermission(['analytics.add_orderanalytics'])]
 
 
-class BusinessMetricsApiView(generics.ListAPIView):
+class BusinessMetricsApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = BusinessMetricsSerializer
     permission_classes = [HasSpecificPermission(['analytics.add_businessmetrics'])]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -218,7 +211,7 @@ class BusinessMetricsApiView(generics.ListAPIView):
             'average_profit_margin': round(summary['profit_margin'] or 0, 2)
         })
 
-class PerformanceMetricsApiView(generics.ListAPIView):
+class PerformanceMetricsApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = PerformanceMetricsSerializer
     permission_classes = [HasSpecificPermission(['analytics.add_performancemetrics'])]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -250,7 +243,7 @@ class PerformanceMetricsApiView(generics.ListAPIView):
         })
 
 
-class DashboardApiView(generics.GenericAPIView):
+class DashboardApiView(StandardizedViewMixin, generics.GenericAPIView):
     serializer_class = DashboardResponseSerializer
     permission_classes = [HasSpecificPermission(['analytics.add_servicecategoryanalytics'])]
     

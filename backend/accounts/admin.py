@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     UserModel, 
-    UserActivityDateModel, UserPointAddHistory, LoginSession
+    UserActivityDateModel, LoginSession
 )
 
 
@@ -22,14 +22,8 @@ class UserModelAdmin(admin.ModelAdmin):
         ('User Type & Status', {
             'fields': ('user_type', 'blocked', 'is_active', 'is_staff', 'is_superuser')
         }),
-        ('Firebase & Notifications', {
-            'fields': ('firebase_user_id', 'fcm_token')
-        }),
-        ('App Data', {
-            'fields': ('timezone_difference', 'points', 'day_streak', 'max_day_streak')
-        }),
-        ('Social', {
-            'fields': ('friends', 'friendship_requests')
+        ('Firebase', {
+            'fields': ('firebase_user_id',)
         }),
         ('Important dates', {
             'fields': ('last_login', 'date_joined')
@@ -91,14 +85,6 @@ class UserActivityDateModelAdmin(admin.ModelAdmin):
     list_filter = ('datetime',)
     search_fields = ('user__username', 'user__email')
     ordering = ('-datetime',)
-
-
-@admin.register(UserPointAddHistory)
-class UserPointAddHistoryAdmin(admin.ModelAdmin):
-    list_display = ('user', 'points', 'description', 'created_date')
-    list_filter = ('created_date', 'points')
-    search_fields = ('user__username', 'user__email', 'description')
-    ordering = ('-created_date',)
 
 
 @admin.register(LoginSession)

@@ -1,35 +1,36 @@
-from utils.exceptions import StandardizedViewMixin
+# Django imports
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.db import transaction, models
+
+# DRF imports
 from rest_framework import generics, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from django.shortcuts import get_object_or_404
-from django.utils import timezone
-from django.db import transaction, models
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
+# Local imports
+from utils.exceptions import StandardizedViewMixin
 from utils.permissions import (
     HasSpecificPermission,
     HasClientProfile,
     HasServiceProviderProfile,
 )
 from utils.pagination import CustomPagination
-from ..models import Order, OrderAddon, OrderPhoto, Bid, OrderDispute, OrderAssignment
+from ..models import Order, Bid, OrderAssignment
 from .serializers import (
     OrderSerializer,
-    OrderAddonSerializer,
-    OrderPhotoSerializer,
     BidSerializer,
-    OrderDisputeSerializer,
     OrderCreateSerializer,
     OrderUpdateSerializer,
     BidCreateUpdateSerializer,
-    OrderDisputeCreateSerializer,
-    OrderDisputeUpdateSerializer,
     BidActionSerializer,
     OrderAssignmentSerializer,
 )
+from job_portal.apps.chat.models import ChatRoom, ChatParticipant
 
 
 class OrderApiView(StandardizedViewMixin, generics.ListAPIView):
@@ -87,48 +88,10 @@ class OrderCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     ]
 
     def perform_create(self, serializer):
-        # Django automatically caches the profile when accessed
         client_profile = self.request.user.job_portal_profile.client_profile
         serializer.save(client=client_profile)
 
 
-class OrderAddonApiView(StandardizedViewMixin, generics.ListAPIView):
-    serializer_class = OrderAddonSerializer
-    permission_classes = [
-        IsAuthenticated,
-        HasSpecificPermission(["orders.view_orderaddon"]),
-    ]
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ["order"]
-    search_fields = ["addon__name"]
-    ordering_fields = ["quantity", "price", "created_at"]
-    ordering = ["-created_at"]
-    pagination_class = CustomPagination
-
-    def get_queryset(self):
-        user = self.request.user
-        return OrderAddon.objects.filter(
-            order__client__user_profile__user=user
-        ).select_related("order", "addon")
-
-
-class OrderPhotoApiView(StandardizedViewMixin, generics.ListAPIView):
-    serializer_class = OrderPhotoSerializer
-    permission_classes = [
-        IsAuthenticated,
-        HasSpecificPermission(["orders.view_orderphoto"]),
-    ]
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ["order", "is_primary"]
-    ordering_fields = ["is_primary", "created_at"]
-    ordering = ["-is_primary", "-created_at"]
-    pagination_class = CustomPagination
-
-    def get_queryset(self):
-        user = self.request.user
-        return OrderPhoto.objects.filter(
-            order__client__user_profile__user=user
-        ).select_related("order")
 
 
 class BidApiView(StandardizedViewMixin, generics.ListAPIView):
@@ -155,7 +118,7 @@ class BidApiView(StandardizedViewMixin, generics.ListAPIView):
                     return Bid.objects.filter(
                         provider__user_profile__user=user
                     ).select_related("order", "provider__user_profile__user")
-        except:
+        except Exception:
             pass
 
         # Fallback: return empty queryset
@@ -190,61 +153,6 @@ class BidCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
         serializer.save(order=order, provider=provider_profile)
 
 
-class OrderDisputeApiView(StandardizedViewMixin, generics.ListAPIView):
-    serializer_class = OrderDisputeSerializer
-    permission_classes = [
-        IsAuthenticated,
-        HasSpecificPermission(["orders.view_orderdispute"]),
-    ]
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ["dispute_type", "status", "order"]
-    search_fields = ["description", "admin_notes"]
-    ordering_fields = ["dispute_type", "status", "created_at"]
-    ordering = ["-created_at"]
-    pagination_class = CustomPagination
-
-    def get_queryset(self):
-        user = self.request.user
-        return OrderDispute.objects.filter(
-            order__client__user_profile__user=user
-        ).select_related("order")
-
-
-class OrderDisputeCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
-    serializer_class = OrderDisputeCreateSerializer
-    permission_classes = [
-        IsAuthenticated,
-        HasClientProfile,
-        HasSpecificPermission(["orders.add_orderdispute"]),
-    ]
-
-    def perform_create(self, serializer):
-        order_id = self.kwargs.get("order_id")
-        order = get_object_or_404(
-            Order, id=order_id, client__user_profile__user=self.request.user
-        )
-        serializer.save(order=order, raised_by=self.request.user)
-
-
-class OrderDisputeDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
-    serializer_class = OrderDisputeUpdateSerializer
-    permission_classes = [
-        IsAuthenticated,
-        HasSpecificPermission(
-            ["orders.view_orderdispute", "orders.change_orderdispute"]
-        ),
-    ]
-
-    def get_queryset(self):
-        user = self.request.user
-        return OrderDispute.objects.filter(
-            order__client__user_profile__user=user
-        ).select_related("order")
-
-    def get_serializer_class(self):
-        if self.request.method == "GET":
-            return OrderDisputeSerializer
-        return OrderDisputeUpdateSerializer
 
 
 class BidDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateDestroyAPIView):
@@ -312,6 +220,9 @@ class BidAcceptApiView(StandardizedViewMixin, APIView):
                 defaults={"provider": bid.provider, "accepted_bid": bid},
             )
 
+            # Add provider to chat room when bid is accepted
+            self._add_provider_to_chat(bid.order, bid.provider)
+
             return Response(
                 {
                     "message": "Bid accepted successfully",
@@ -326,6 +237,24 @@ class BidAcceptApiView(StandardizedViewMixin, APIView):
                 {"error": f"Failed to accept bid: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+    
+    def _add_provider_to_chat(self, order, provider):
+        """Add provider to order's chat room."""
+        try:
+            # Get or create chat room for this order
+            chat_room = ChatRoom.objects.filter(order=order).first()
+            if not chat_room:
+                chat_room = order._create_chat_room()
+            
+            # Add provider as participant if not already added
+            ChatParticipant.objects.get_or_create(
+                chat_room=chat_room,
+                user=provider.user_profile.user,
+                defaults={'role': 'member'}
+            )
+        except Exception as e:
+            # Log error but don't fail the bid acceptance
+            print(f"Failed to add provider to chat: {e}")
 
 
 class BidRejectApiView(StandardizedViewMixin, APIView):

@@ -13,7 +13,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'id', 'username', 'email', 'first_name', 'last_name',
             'date_joined', 'last_login', 'is_active', 'is_staff', 'is_superuser',
             'groups', 'permissions', 'name', 'description', 
-            'photo', 'photo_url', 'timezone_difference', 'points', 'day_streak', 'max_day_streak'
+            'photo', 'photo_url'
         )
         read_only_fields = ('id', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
     
@@ -39,7 +39,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     """Serializer for updating user profile - enhanced version of api_users EditUserSettingsView"""
     class Meta:
         model = UserModel
-        fields = ('name', 'email', 'description', 'photo_url', 'first_name', 'last_name', 'timezone_difference')
+        fields = ('name', 'email', 'description', 'photo_url', 'first_name', 'last_name')
         read_only_fields = ('email',)  # Email should not be changed via profile update
     
     def validate_name(self, value):

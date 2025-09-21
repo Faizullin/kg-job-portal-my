@@ -1,8 +1,12 @@
+# Django imports
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
+
+# Local imports
 from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedModel, AbstractCascadingSoftDeleteModel
 from accounts.models import UserModel
+from job_portal.apps.chat.models import ChatRoom, ChatParticipant
 
 
 class Order(AbstractCascadingSoftDeleteModel, AbstractTimestampedModel):
@@ -54,7 +58,7 @@ class Order(AbstractCascadingSoftDeleteModel, AbstractTimestampedModel):
     cancelled_at = models.DateTimeField(_("Cancelled At"), null=True, blank=True)
     
     # Additional information
-    attachments = models.JSONField(_("Attachments"), default=list)  # List of file URLs
+    attachments = models.ManyToManyField('OrderAttachment', blank=True, related_name='orders')
     special_requirements = models.TextField(_("Special Requirements"), blank=True)
     is_featured = models.BooleanField(_("Featured Order"), default=False)
     
@@ -65,42 +69,48 @@ class Order(AbstractCascadingSoftDeleteModel, AbstractTimestampedModel):
     
     def get_cascade_fields(self):
         """Specify fields that should cascade soft delete."""
-        return ['bids', 'order_addons', 'order_photos']
+        return ['bids']
+    
+    def save(self, *args, **kwargs):
+        """Override save to auto-create chat room when order is published."""
+        is_new = self.pk is None
+        was_published = False
+        
+        if not is_new:
+            try:
+                old_order = Order.objects.get(pk=self.pk)
+                was_published = old_order.status == 'published'
+            except Order.DoesNotExist:
+                pass
+        
+        super().save(*args, **kwargs)
+        
+        # Auto-create chat room when order is published
+        if not was_published and self.status == 'published' and not is_new:
+            self._create_chat_room()
+    
+    def _create_chat_room(self):
+        """Create chat room for this order."""
+        # Create chat room
+        chat_room = ChatRoom.objects.create(
+            order=self,
+            title=f"Chat for Order: {self.title}",
+            chat_type='order_chat'
+        )
+        
+        # Add client as participant
+        ChatParticipant.objects.create(
+            chat_room=chat_room,
+            user=self.client.user_profile.user,
+            role='member'
+        )
+        
+        return chat_room
     
     def __str__(self):
         return f"Order #{self.id} - {self.title} [#{self.id}]"
 
 
-class OrderAddon(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Add-ons selected for an order."""
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_addons')
-    addon = models.ForeignKey('core.ServiceAddon', on_delete=models.CASCADE, related_name='order_addons')
-    quantity = models.PositiveIntegerField(_("Quantity"), default=1)
-    price = models.DecimalField(_("Price"), max_digits=10, decimal_places=2)
-    
-    class Meta:
-        verbose_name = _("Order Addon")
-        verbose_name_plural = _("Order Addons")
-        unique_together = ['order', 'addon']
-    
-    def __str__(self):
-        return f"{self.order.title} - {self.addon.name} [#{self.id}]"
-
-
-class OrderPhoto(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Photos attached to orders."""
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_photos')
-    photo_url = models.URLField(_("Photo URL"))
-    caption = models.CharField(_("Caption"), max_length=200, blank=True)
-    is_primary = models.BooleanField(_("Primary Photo"), default=False)
-    
-    class Meta:
-        verbose_name = _("Order Photo")
-        verbose_name_plural = _("Order Photos")
-        ordering = ['-is_primary', '-created_at']
-    
-    def __str__(self):
-        return f"{self.order.title} - Photo [#{self.id}]"
 
 
 class Bid(AbstractSoftDeleteModel, AbstractTimestampedModel):
@@ -205,3 +215,21 @@ class OrderDispute(AbstractTimestampedModel):
     
     def __str__(self):
         return f"Dispute on {self.order.title} - {self.get_dispute_type_display()} [#{self.id}]"
+
+
+class OrderAttachment(AbstractTimestampedModel):
+    file_name = models.CharField(_("File Name"), max_length=255)
+    file_type = models.CharField(_("File Type"), max_length=50)
+    file_size = models.PositiveIntegerField(_("File Size (bytes)"))
+    file_url = models.URLField(_("File URL"))
+    mime_type = models.CharField(_("MIME Type"), max_length=100, blank=True)
+    description = models.TextField(_("Description"), blank=True)
+    uploaded_by = models.ForeignKey('accounts.UserModel', on_delete=models.CASCADE, related_name='uploaded_attachments')
+    
+    class Meta:
+        verbose_name = _("Order Attachment")
+        verbose_name_plural = _("Order Attachments")
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.file_name}... [#{self.id}]"

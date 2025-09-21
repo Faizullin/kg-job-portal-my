@@ -125,10 +125,6 @@ class FirebaseAuthView(APIView):
                 photo_url=photo_url,
                 is_active=True,
                 user_type='free',  # Default user type
-                timezone_difference=0,
-                points=0,
-                day_streak=0,
-                max_day_streak=0,
             )
 
             # Automatically create UserProfile for job portal

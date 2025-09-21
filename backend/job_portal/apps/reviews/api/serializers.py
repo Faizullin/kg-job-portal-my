@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from django.db import models
-from ..models import Review
+from utils.serializers import AbstractTimestampedModelSerializer
+from ..models import Review, AppFeedback
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -102,3 +102,28 @@ class ReviewAnalyticsSerializer(serializers.Serializer):
     rating_distribution = serializers.ListField(
         child=serializers.DictField()
     )
+
+
+class AppFeedbackSerializer(AbstractTimestampedModelSerializer):
+    """Serializer for app feedback and ratings."""
+    user_name = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = AppFeedback
+        fields = ['id', 'user', 'user_name', 'rating_options', 'detailed_feedback', 'app_version', 'device_info', 'is_processed', 'created_at']
+        read_only_fields = ['user', 'created_at']
+    
+    def get_user_name(self, obj):
+        return obj.user.name if obj.user else "Unknown"
+
+
+class AppFeedbackCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating app feedback."""
+    
+    class Meta:
+        model = AppFeedback
+        fields = ['rating_options', 'detailed_feedback', 'app_version', 'device_info']
+    
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)

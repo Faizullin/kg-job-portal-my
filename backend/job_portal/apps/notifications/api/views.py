@@ -8,6 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from rest_framework.permissions import IsAuthenticated
+from utils.crud_base.views import StandardizedViewMixin
 from utils.permissions import HasSpecificPermission
 from utils.pagination import CustomPagination
 from ..models import UserNotification, NotificationTemplate, NotificationPreference
@@ -19,7 +20,7 @@ from .serializers import (
 )
 
 
-class NotificationApiView(generics.ListAPIView):
+class NotificationApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = NotificationSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -84,7 +85,7 @@ class NotificationApiView(generics.ListAPIView):
         })
 
 
-class NotificationDetailApiView(generics.RetrieveUpdateAPIView):
+class NotificationDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = NotificationUpdateSerializer
     permission_classes = [IsAuthenticated]
     
@@ -105,12 +106,12 @@ class NotificationDetailApiView(generics.RetrieveUpdateAPIView):
             serializer.save()
 
 
-class NotificationCreateApiView(generics.CreateAPIView):
+class NotificationCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = NotificationCreateSerializer
     permission_classes = [HasSpecificPermission(['notifications.add_notification'])]
 
 
-class NotificationSettingApiView(generics.RetrieveUpdateAPIView):
+class NotificationSettingApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = NotificationSettingUpdateSerializer
     permission_classes = [IsAuthenticated]
     
@@ -143,7 +144,7 @@ class NotificationSettingApiView(generics.RetrieveUpdateAPIView):
 
 
 
-class NotificationTemplateApiView(generics.ListAPIView):
+class NotificationTemplateApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = NotificationTemplateSerializer
     permission_classes = [HasSpecificPermission(['notifications.add_notificationtemplate'])]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -157,7 +158,7 @@ class NotificationTemplateApiView(generics.ListAPIView):
         return NotificationTemplate.objects.all()
 
 
-class NotificationTemplateDetailApiView(generics.RetrieveUpdateAPIView):
+class NotificationTemplateDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = NotificationTemplateUpdateSerializer
     permission_classes = [HasSpecificPermission(['notifications.change_notificationtemplate'])]
     
@@ -170,6 +171,6 @@ class NotificationTemplateDetailApiView(generics.RetrieveUpdateAPIView):
         return NotificationTemplateUpdateSerializer
 
 
-class NotificationTemplateCreateApiView(generics.CreateAPIView):
+class NotificationTemplateCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = NotificationTemplateCreateSerializer
     permission_classes = [HasSpecificPermission(['notifications.add_notificationtemplate'])]

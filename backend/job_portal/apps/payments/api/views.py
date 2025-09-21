@@ -8,6 +8,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from rest_framework.permissions import IsAuthenticated
 from utils.permissions import HasSpecificPermission
+from utils.crud_base.views import StandardizedViewMixin
 from utils.decorators import GroupRequiredMixin, RateLimitMixin, LogActionMixin
 from utils.pagination import CustomPagination
 from ..models import Payment, PaymentMethod, Invoice, StripeWebhookEvent
@@ -19,7 +20,7 @@ from .serializers import (
 )
 
 
-class PaymentApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generics.ListAPIView):
+class PaymentApiView(StandardizedViewMixin, GroupRequiredMixin, RateLimitMixin, LogActionMixin, generics.ListAPIView):
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -63,7 +64,7 @@ class PaymentApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generic
         return Response(serializer.data)
 
 
-class PaymentDetailApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generics.RetrieveUpdateAPIView):
+class PaymentDetailApiView(StandardizedViewMixin, GroupRequiredMixin, RateLimitMixin, LogActionMixin, generics.RetrieveUpdateAPIView):
     serializer_class = PaymentCreateSerializer
     permission_classes = [IsAuthenticated]
     
@@ -85,7 +86,7 @@ class PaymentDetailApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, g
         return PaymentCreateSerializer
 
 
-class PaymentCreateApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generics.CreateAPIView):
+class PaymentCreateApiView(StandardizedViewMixin, GroupRequiredMixin, RateLimitMixin, LogActionMixin, generics.CreateAPIView):
     serializer_class = PaymentCreateSerializer
     permission_classes = [IsAuthenticated]
     
@@ -97,7 +98,7 @@ class PaymentCreateApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, g
     group_required = 'Payment Managers'
 
 
-class PaymentMethodApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generics.ListAPIView):
+class PaymentMethodApiView(StandardizedViewMixin, GroupRequiredMixin, RateLimitMixin, LogActionMixin, generics.ListAPIView):
     serializer_class = PaymentMethodSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -119,7 +120,7 @@ class PaymentMethodApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, g
         )
 
 
-class PaymentMethodDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+class PaymentMethodDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PaymentMethodUpdateSerializer
     permission_classes = [IsAuthenticated]
     
@@ -134,7 +135,7 @@ class PaymentMethodDetailApiView(generics.RetrieveUpdateDestroyAPIView):
         return PaymentMethodUpdateSerializer
 
 
-class PaymentMethodCreateApiView(generics.CreateAPIView):
+class PaymentMethodCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = PaymentMethodCreateSerializer
     permission_classes = [IsAuthenticated]
     
@@ -142,7 +143,7 @@ class PaymentMethodCreateApiView(generics.CreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class InvoiceApiView(generics.ListAPIView):
+class InvoiceApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = InvoiceSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -158,7 +159,7 @@ class InvoiceApiView(generics.ListAPIView):
         ).select_related('order')
 
 
-class InvoiceDetailApiView(generics.RetrieveAPIView):
+class InvoiceDetailApiView(StandardizedViewMixin, generics.RetrieveAPIView):
     serializer_class = InvoiceSerializer
     permission_classes = [IsAuthenticated]
     
@@ -169,6 +170,6 @@ class InvoiceDetailApiView(generics.RetrieveAPIView):
         ).select_related('order')
 
 
-class InvoiceCreateApiView(generics.CreateAPIView):
+class InvoiceCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = InvoiceCreateSerializer
     permission_classes = [HasSpecificPermission(['payments.add_invoice'])]

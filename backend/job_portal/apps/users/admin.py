@@ -86,7 +86,7 @@ class ClientProfileAdmin(admin.ModelAdmin):
             'fields': ('user_profile',)
         }),
         ('Preferences', {
-            'fields': ('preferred_service_areas', 'budget_preferences')
+            'fields': ('preferred_services', 'budget_preferences')
         }),
         ('Order History', {
             'fields': ('total_orders', 'completed_orders', 'cancelled_orders')
@@ -100,51 +100,3 @@ class ClientProfileAdmin(admin.ModelAdmin):
         return super().get_queryset(request).select_related('user_profile__user')
 
 
-@admin.register(ServiceProviderService)
-class ServiceProviderServiceAdmin(admin.ModelAdmin):
-    list_display = ['provider', 'subcategory', 'base_price', 'price_type', 'is_available']
-    list_filter = ['price_type', 'is_available', 'created_at']
-    search_fields = ['provider__user_profile__user__first_name', 'subcategory__name']
-    ordering = ['-created_at']
-    list_editable = ['is_available', 'base_price']
-    raw_id_fields = ['provider', 'subcategory', 'available_addons']
-    
-    fieldsets = (
-        ('Service Information', {
-            'fields': ('provider', 'subcategory', 'description')
-        }),
-        ('Pricing & Availability', {
-            'fields': ('base_price', 'price_type', 'is_available', 'estimated_duration')
-        }),
-        ('Add-ons', {
-            'fields': ('available_addons',)
-        }),
-    )
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('provider__user_profile__user', 'subcategory')
-
-
-@admin.register(UserVerification)
-class UserVerificationAdmin(admin.ModelAdmin):
-    list_display = ['user_profile', 'verification_type', 'verification_status', 'verified_by', 'verified_at']
-    list_filter = ['verification_type', 'verification_status', 'created_at']
-    search_fields = ['user_profile__user__first_name', 'user_profile__user__last_name', 'verification_type']
-    ordering = ['-created_at']
-    list_editable = ['verification_status']
-    raw_id_fields = ['user_profile', 'verified_by']
-    
-    fieldsets = (
-        ('Verification Information', {
-            'fields': ('user_profile', 'verification_type', 'verification_data')
-        }),
-        ('Status & Notes', {
-            'fields': ('verification_status', 'admin_notes')
-        }),
-        ('Approval', {
-            'fields': ('verified_by', 'verified_at')
-        }),
-    )
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('user_profile__user', 'verified_by')

@@ -1,7 +1,7 @@
 from django.urls import path
 from .api.views import (
     LanguageApiView, ServiceCategoryApiView, ServiceSubcategoryApiView,
-    ServiceAreaApiView, SystemSettingsApiView, AppVersionApiView
+    ServiceAreaApiView, SystemSettingsApiView, AppVersionApiView, SupportFAQApiView
 )
 
 app_name = 'core'
@@ -13,4 +13,7 @@ urlpatterns = [
     path('api/v1/core/service-areas/', ServiceAreaApiView.as_view(), name='service-areas'),
     path('api/v1/core/system-settings/', SystemSettingsApiView.as_view(), name='system-settings'),
     path('api/v1/core/app-versions/', AppVersionApiView.as_view(), name='app-versions'),
+    
+    # Support
+    path('api/v1/core/support/faq/', SupportFAQApiView.as_view(), name='support-faq'),
 ]

@@ -74,7 +74,7 @@ class ServiceCategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
 
 
 class ServiceSubcategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Subcategories within main service categories."""
+    """Specific services within job types."""
     # Uses default SoftDeleteManager from AbstractSoftDeleteModel
     
     category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE, related_name='subcategories')
@@ -101,8 +101,6 @@ class ServiceSubcategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
     ], default='intermediate')
     
     # Requirements
-    required_tools = models.JSONField(_("Required Tools"), default=list, blank=True)
-    required_materials = models.JSONField(_("Required Materials"), default=list, blank=True)
     safety_requirements = models.TextField(_("Safety Requirements"), blank=True)
     
     # SEO
@@ -126,7 +124,7 @@ class ServiceSubcategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
         super().save(*args, **kwargs)
 
 
-class ServiceAddon(AbstractSoftDeleteModel, AbstractTimestampedModel):
+class ServiceAddon(AbstractTimestampedModel):
     """Optional add-ons for services."""
     subcategory = models.ForeignKey(ServiceSubcategory, on_delete=models.CASCADE, related_name='addons')
     name = models.CharField(_("Addon Name"), max_length=100)
@@ -162,7 +160,7 @@ class ServiceAddon(AbstractSoftDeleteModel, AbstractTimestampedModel):
         return f"{self.subcategory.name} - {self.name}... [#{self.id}]"
 
 
-class ServicePackage(AbstractSoftDeleteModel, AbstractTimestampedModel):
+class ServicePackage(AbstractTimestampedModel):
     """Predefined service packages combining multiple addons."""
     name = models.CharField(_("Package Name"), max_length=100)
     description = models.TextField(_("Description"))
@@ -289,3 +287,40 @@ class AppVersion(AbstractTimestampedModel):
     
     def __str__(self):
         return f"v{self.version} (Build {self.build_number})... [#{self.id}]"
+
+
+
+
+class SupportFAQ(AbstractTimestampedModel):
+    """Support FAQ items (from screen 5)."""
+    
+    question = models.CharField(_("Question"), max_length=500)
+    answer = models.TextField(_("Answer"))
+    
+    # Categorization
+    category = models.CharField(_("Category"), max_length=50, choices=[
+        ('general', _('General')),
+        ('specialist', _('Specialist')),
+        ('reviews', _('Reviews')),
+        ('account', _('Account')),
+        ('search', _('Search')),
+        ('safety', _('Safety')),
+    ], default='general')
+    
+    # Ordering and visibility
+    sort_order = models.PositiveIntegerField(_("Sort Order"), default=0)
+    is_popular = models.BooleanField(_("Popular Question"), default=False)
+    is_active = models.BooleanField(_("Active"), default=True)
+    
+    # Usage tracking
+    view_count = models.PositiveIntegerField(_("View Count"), default=0)
+    
+    class Meta:
+        verbose_name = _("Support FAQ")
+        verbose_name_plural = _("Support FAQ")
+        ordering = ['sort_order', 'question']
+    
+    def __str__(self):
+        return f"{self.question[:50]}... [#{self.id}]"
+
+
