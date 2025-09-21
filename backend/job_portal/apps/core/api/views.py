@@ -1,10 +1,8 @@
 from rest_framework import generics
-# from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-# from django.db.models import Q
-
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly, HasSpecificPermission
+from rest_framework.permissions import IsAuthenticated
+from utils.permissions import HasSpecificPermission
 from utils.pagination import CustomPagination
 from ..models import Language, ServiceCategory, ServiceSubcategory, ServiceArea, SystemSettings, AppVersion
 from .serializers import (
@@ -15,7 +13,7 @@ from .serializers import (
 
 class LanguageApiView(generics.ListAPIView):
     serializer_class = LanguageSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_active', 'is_default']
     search_fields = ['code', 'name', 'native_name']
@@ -30,7 +28,7 @@ class LanguageApiView(generics.ListAPIView):
 
 class ServiceCategoryApiView(generics.ListAPIView):
     serializer_class = ServiceCategorySerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_active', 'featured']
     search_fields = ['name', 'description', 'slug']
@@ -45,7 +43,7 @@ class ServiceCategoryApiView(generics.ListAPIView):
 
 class ServiceSubcategoryApiView(generics.ListAPIView):
     serializer_class = ServiceSubcategorySerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_active', 'category', 'featured']
     search_fields = ['name', 'description']
@@ -60,7 +58,7 @@ class ServiceSubcategoryApiView(generics.ListAPIView):
 
 class ServiceAreaApiView(generics.ListAPIView):
     serializer_class = ServiceAreaSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_active', 'country', 'state']
     search_fields = ['name', 'city', 'state', 'country']
@@ -92,7 +90,7 @@ class SystemSettingsApiView(generics.ListAPIView):
 
 class AppVersionApiView(generics.ListAPIView):
     serializer_class = AppVersionSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_active', 'platform']
     search_fields = ['version', 'release_notes']

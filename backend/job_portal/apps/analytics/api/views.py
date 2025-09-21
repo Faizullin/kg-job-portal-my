@@ -7,14 +7,14 @@ from datetime import timedelta
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly, HasSpecificPermission
+from rest_framework.permissions import IsAuthenticated
+from utils.permissions import HasSpecificPermission
 from utils.pagination import CustomPagination
 from ..models import UserActivity, OrderAnalytics, ServiceCategoryAnalytics, PerformanceMetrics, BusinessMetrics
 from .serializers import (
     UserActivitySerializer, OrderAnalyticsSerializer, ServiceCategoryAnalyticsSerializer,
     PerformanceMetricsSerializer, BusinessMetricsSerializer, UserActivityCreateSerializer,
-    ServiceCategoryAnalyticsCreateSerializer, OrderAnalyticsCreateSerializer, 
-    BusinessMetricsCreateSerializer, PerformanceMetricsCreateSerializer, DashboardResponseSerializer
+    ServiceCategoryAnalyticsCreateSerializer, OrderAnalyticsCreateSerializer,DashboardResponseSerializer
 )
 
 
@@ -74,7 +74,7 @@ class UserActivityApiView(generics.ListAPIView):
 
 class UserActivityCreateApiView(generics.CreateAPIView):
     serializer_class = UserActivityCreateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     def perform_create(self, serializer):
         serializer.save(
@@ -217,12 +217,6 @@ class BusinessMetricsApiView(generics.ListAPIView):
             'net_revenue': summary['net_revenue'] or 0,
             'average_profit_margin': round(summary['profit_margin'] or 0, 2)
         })
-
-
-class BusinessMetricsCreateApiView(generics.CreateAPIView):
-    serializer_class = BusinessMetricsCreateSerializer
-    permission_classes = [HasSpecificPermission(['analytics.add_businessmetrics'])]
-
 
 class PerformanceMetricsApiView(generics.ListAPIView):
     serializer_class = PerformanceMetricsSerializer

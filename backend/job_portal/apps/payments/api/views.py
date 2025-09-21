@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly, HasSpecificPermission
+from rest_framework.permissions import IsAuthenticated
+from utils.permissions import HasSpecificPermission
 from utils.decorators import GroupRequiredMixin, RateLimitMixin, LogActionMixin
 from utils.pagination import CustomPagination
 from ..models import Payment, PaymentMethod, Invoice, StripeWebhookEvent
@@ -20,7 +21,7 @@ from .serializers import (
 
 class PaymentApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generics.ListAPIView):
     serializer_class = PaymentSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status', 'currency']
     search_fields = ['invoice__order__title', 'payment_id']
@@ -64,7 +65,7 @@ class PaymentApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generic
 
 class PaymentDetailApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generics.RetrieveUpdateAPIView):
     serializer_class = PaymentCreateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     # Rate limiting configuration
     max_requests = 500
@@ -86,7 +87,7 @@ class PaymentDetailApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, g
 
 class PaymentCreateApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generics.CreateAPIView):
     serializer_class = PaymentCreateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     # Rate limiting configuration
     max_requests = 500
@@ -98,7 +99,7 @@ class PaymentCreateApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, g
 
 class PaymentMethodApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, generics.ListAPIView):
     serializer_class = PaymentMethodSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['method_type', 'is_active', 'is_default']
     ordering_fields = ['is_default', 'created_at']
@@ -120,7 +121,7 @@ class PaymentMethodApiView(GroupRequiredMixin, RateLimitMixin, LogActionMixin, g
 
 class PaymentMethodDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PaymentMethodUpdateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         return PaymentMethod.objects.filter(
@@ -135,7 +136,7 @@ class PaymentMethodDetailApiView(generics.RetrieveUpdateDestroyAPIView):
 
 class PaymentMethodCreateApiView(generics.CreateAPIView):
     serializer_class = PaymentMethodCreateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -143,7 +144,7 @@ class PaymentMethodCreateApiView(generics.CreateAPIView):
 
 class InvoiceApiView(generics.ListAPIView):
     serializer_class = InvoiceSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['status', 'order']
     ordering_fields = ['total_amount', 'due_date', 'created_at']
@@ -159,7 +160,7 @@ class InvoiceApiView(generics.ListAPIView):
 
 class InvoiceDetailApiView(generics.RetrieveAPIView):
     serializer_class = InvoiceSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         user = self.request.user

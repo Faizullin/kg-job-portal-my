@@ -6,9 +6,9 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
 from utils.exceptions import StandardizedViewMixin
 from utils.pagination import CustomPagination
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import UserModel
 from ..models import ChatAttachment, ChatMessage, ChatParticipant, ChatRoom
@@ -29,7 +29,7 @@ from .serializers import (
 
 class ChatRoomApiView(StandardizedViewMixin, generics.ListAPIView):
     serializer_class = ChatRoomSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ["chat_type", "is_active"]
     search_fields = ["title", "order__title"]
@@ -77,7 +77,7 @@ class ChatRoomApiView(StandardizedViewMixin, generics.ListAPIView):
 
 class ChatRoomDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = ChatRoomUpdateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return ChatRoom.objects.filter(
@@ -97,7 +97,7 @@ class ChatRoomDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIVie
 
 class ChatRoomCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = ChatRoomCreateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         chat_room = serializer.save()
@@ -122,7 +122,7 @@ class ChatRoomCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
 
 class MessageApiView(generics.ListAPIView):
     serializer_class = MessageSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ["chat_room", "message_type", "is_read"]
     ordering_fields = ["created_at"]
@@ -154,7 +154,7 @@ class MessageDetailApiView(
     StandardizedViewMixin, generics.RetrieveUpdateDestroyAPIView
 ):
     serializer_class = MessageUpdateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
@@ -171,7 +171,7 @@ class MessageDetailApiView(
 
 class MessageCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = MessageCreateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         message = serializer.save(sender=self.request.user)
@@ -200,7 +200,7 @@ class MessageCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
 
 class ChatParticipantApiView(generics.ListAPIView):
     serializer_class = ChatParticipantSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ["chat_room", "role", "is_online"]
     ordering_fields = ["created_at", "last_seen"]
@@ -217,7 +217,7 @@ class ChatParticipantApiView(generics.ListAPIView):
 
 class ChatParticipantCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = ChatParticipantCreateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         # Check if user has permission to add participants to this chat room
@@ -234,7 +234,7 @@ class ChatParticipantCreateApiView(StandardizedViewMixin, generics.CreateAPIView
 
 class ChatAttachmentApiView(generics.ListAPIView):
     serializer_class = ChatAttachmentSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ["message", "file_type"]
     ordering_fields = ["file_size", "created_at"]
@@ -251,7 +251,7 @@ class ChatAttachmentApiView(generics.ListAPIView):
 
 class ChatAttachmentCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
     serializer_class = ChatAttachmentCreateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         # Check if user has permission to add attachments to this message
@@ -270,7 +270,7 @@ class ChatAttachmentDetailApiView(
     StandardizedViewMixin, generics.RetrieveDestroyAPIView
 ):
     serializer_class = ChatAttachmentSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user

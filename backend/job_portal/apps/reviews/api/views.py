@@ -4,7 +4,7 @@ from django.db.models import Avg, Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from utils.pagination import CustomPagination
 from ..models import Review
 from .serializers import ReviewSerializer, ReviewCreateSerializer, ReviewUpdateSerializer, ReviewAnalyticsSerializer
@@ -13,7 +13,7 @@ from .serializers import ReviewSerializer, ReviewCreateSerializer, ReviewUpdateS
 class ReviewApiView(generics.ListCreateAPIView):
     """List and create reviews."""
     serializer_class = ReviewSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['overall_rating', 'is_verified']
     search_fields = ['title', 'comment', 'reviewer__name', 'provider__user_profile__user__name']
@@ -41,7 +41,7 @@ class ReviewApiView(generics.ListCreateAPIView):
 class ReviewDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     """Retrieve, update, and delete specific review."""
     serializer_class = ReviewUpdateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         return Review.objects.select_related(
@@ -59,7 +59,7 @@ class ReviewDetailApiView(generics.RetrieveUpdateDestroyAPIView):
 class ProviderReviewsApiView(generics.ListAPIView):
     """Get reviews for a specific service provider."""
     serializer_class = ReviewSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['overall_rating', 'is_verified']
     ordering_fields = ['overall_rating', 'created_at']
@@ -80,7 +80,7 @@ class ProviderReviewsApiView(generics.ListAPIView):
 class OrderReviewsApiView(generics.ListAPIView):
     """Get reviews for a specific order."""
     serializer_class = ReviewSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
     
     def get_queryset(self):
@@ -97,7 +97,7 @@ class OrderReviewsApiView(generics.ListAPIView):
 class ReviewAnalyticsApiView(generics.GenericAPIView):
     """Get simple review analytics for a provider."""
     serializer_class = ReviewAnalyticsSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         provider_id = self.kwargs.get('provider_id')

@@ -2,11 +2,10 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from utils.pagination import CustomPagination
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly
 
 from ..models import ClientProfile, ServiceProviderProfile, UserProfile
 from .serializers import (
@@ -16,12 +15,14 @@ from .serializers import (
     ServiceProviderUpdateSerializer,
     UserProfileDetailSerializer,
     UserProfileUpdateSerializer,
+    AdvancedProfileSerializer,
+    AdvancedProfileUpdateSerializer,
 )
 
 
 class UserProfileDetailApiView(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileUpdateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     def get_object(self):
         # Simple filtering - manager automatically handles is_deleted
@@ -35,7 +36,7 @@ class UserProfileDetailApiView(generics.RetrieveUpdateAPIView):
 
 class ServiceProviderApiView(generics.ListAPIView):
     serializer_class = ServiceProviderSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_verified_provider', 'is_available']
     search_fields = ['business_name', 'user_profile__user__first_name', 'user_profile__user__last_name']
@@ -44,16 +45,14 @@ class ServiceProviderApiView(generics.ListAPIView):
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        # Simple filtering - manager automatically handles is_deleted
         return ServiceProviderProfile.objects.all().select_related('user_profile__user')
 
 
 class ServiceProviderDetailApiView(generics.RetrieveUpdateAPIView):
     serializer_class = ServiceProviderUpdateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     def get_object(self):
-        # Simple filtering - manager automatically handles is_deleted
         return get_object_or_404(
             ServiceProviderProfile, 
             user_profile__user=self.request.user
@@ -67,7 +66,7 @@ class ServiceProviderDetailApiView(generics.RetrieveUpdateAPIView):
 
 class ClientApiView(generics.ListAPIView):
     serializer_class = ClientSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['created_at']
     search_fields = ['user_profile__user__first_name', 'user_profile__user__last_name']
@@ -76,7 +75,6 @@ class ClientApiView(generics.ListAPIView):
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        # Simple filtering - manager automatically handles is_deleted
         return ClientProfile.objects.filter(
             user_profile__user_type='client'
         ).select_related('user_profile__user')
@@ -84,7 +82,7 @@ class ClientApiView(generics.ListAPIView):
 
 class ClientDetailApiView(generics.RetrieveUpdateAPIView):
     serializer_class = ClientUpdateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     def get_object(self):
         return get_object_or_404(
@@ -156,4 +154,32 @@ class ServiceProviderProfileUpdateView(APIView):
                 'message': 'Service provider profile updated successfully',
                 'provider_profile': ServiceProviderUpdateSerializer(provider_profile).data
             }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdvancedProfileApiView(APIView):
+    """Advanced profile API that combines user account data and job portal profile."""
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        """Get combined user account and job portal profile data."""
+        serializer = AdvancedProfileSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        """Update both user account and job portal profile data."""
+        serializer = AdvancedProfileUpdateSerializer(
+            instance=request.user, 
+            data=request.data, 
+            partial=True
+        )
+        
+        if serializer.is_valid():
+            updated_user = serializer.save()
+            response_serializer = AdvancedProfileSerializer(updated_user)
+            return Response({
+                'message': 'Profile updated successfully',
+                'data': response_serializer.data
+            }, status=status.HTTP_200_OK)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -183,10 +183,80 @@ The backend provides multiple layers for service providers to showcase their wor
 - `POST /api/v1/users/client/update/` - Update client preferences
 - `GET /api/v1/orders/` - Get all posted orders and their outcomes
 
+#### **Advanced Profile Management**
+- `GET /api/v1/users/profile/advanced/` - Get combined user account + job portal profile data
+- `POST /api/v1/users/profile/advanced/` - Update both user account and job portal profile
+
 #### **File Upload Endpoints**
 - `POST /api/v1/profile/` - Upload avatar/profile images
 - `POST /api/v1/chat/attachments/create/` - Upload portfolio files via chat
 - `POST /api/v1/orders/create/` - Include attachments in order posting
+
+### **📱 Advanced Profile API Example**
+
+#### **GET Combined Profile Data**
+```http
+GET /api/v1/users/profile/advanced/
+Authorization: Bearer {jwt_token}
+```
+
+**Response:**
+```json
+{
+  "user_data": {
+    "id": 1,
+    "username": "john_doe",
+    "email": "john@example.com",
+    "name": "John Doe",
+    "description": "Full-stack developer",
+    "photo_url": "https://storage.com/avatar.jpg",
+    "groups": ["service_provider"],
+    "permissions": ["add_order", "add_bid"]
+  },
+  "job_portal_profile": {
+    "id": 1,
+    "user_type": "service_provider",
+    "bio": "Experienced React and Node.js developer",
+    "phone_number": "+1234567890",
+    "city": "New York",
+    "country": "USA",
+    "is_verified": true,
+    "created_at": "2024-01-01T10:00:00Z"
+  }
+}
+```
+
+#### **POST Update Combined Profile**
+```http
+POST /api/v1/users/profile/advanced/
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "user_data": {
+    "name": "John Smith",
+    "description": "Senior Full-stack Developer",
+    "photo_url": "https://new-avatar.jpg"
+  },
+  "job_portal_profile": {
+    "bio": "Senior React and Node.js developer with 5+ years experience",
+    "phone_number": "+1234567890",
+    "city": "San Francisco",
+    "state": "California"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Profile updated successfully",
+  "data": {
+    "user_data": { /* updated user data */ },
+    "job_portal_profile": { /* updated job portal profile */ }
+  }
+}
+```
 
 ### **⚠️ Current Limitations & Opportunities**
 

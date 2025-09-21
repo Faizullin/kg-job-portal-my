@@ -99,26 +99,7 @@ class OrderAnalyticsCreateSerializer(AbstractTimestampedModelSerializer):
             'cancelled_orders', 'average_order_value', 'total_revenue',
             'total_bids', 'average_bids_per_order', 'active_clients', 'active_providers', 'new_users'
         ]
-
-
-class BusinessMetricsCreateSerializer(AbstractTimestampedModelSerializer):
-    class Meta:
-        model = BusinessMetrics
-        fields = [
-            'date', 'gross_merchandise_volume', 'net_revenue', 'profit_margin',
-            'order_fulfillment_rate', 'average_order_processing_time', 'customer_satisfaction_score'
-        ]
-
-
-class PerformanceMetricsCreateSerializer(AbstractTimestampedModelSerializer):
-    class Meta:
-        model = PerformanceMetrics
-        fields = [
-            'date', 'time_period', 'average_response_time', 'max_response_time',
-            'min_response_time', 'total_errors', 'error_rate', 'active_users',
-            'concurrent_users', 'database_queries', 'cpu_usage', 'memory_usage', 'disk_usage'
-        ]
-
+        
 
 class DashboardResponseSerializer(serializers.Serializer):
     """Serializer for dashboard API response."""

@@ -7,7 +7,7 @@ from job_portal.apps.users.api.serializers import ServiceProviderSerializer
 from rest_framework import generics, serializers, status, filters
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter, NumberFilter, ChoiceFilter
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from utils.pagination import CustomPagination
 
 
@@ -112,7 +112,7 @@ class GlobalSearchApiView(generics.ListAPIView):
     """Simple global search across all content types."""
 
     serializer_class = GlobalSearchResponseSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = GlobalSearchFilter
     ordering_fields = ['created_at', 'budget_min', 'budget_max', 'average_rating']
@@ -270,7 +270,7 @@ class GlobalSearchApiView(generics.ListAPIView):
 class OrderSearchApiView(generics.ListAPIView):
     """Search specifically for orders (job vacancies)."""
     serializer_class = OrderSearchResponseSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = OrderSearchFilter
     ordering_fields = ['created_at', 'budget_min', 'budget_max', 'service_date']
@@ -311,7 +311,7 @@ class OrderSearchApiView(generics.ListAPIView):
 class ProviderSearchApiView(generics.ListAPIView):
     """Search specifically for service providers."""
     serializer_class = ProviderSearchResponseSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = ProviderSearchFilter
     ordering_fields = ['average_rating', 'total_reviews', 'created_at']

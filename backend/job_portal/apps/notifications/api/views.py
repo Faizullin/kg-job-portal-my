@@ -7,7 +7,8 @@ from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from utils.permissions import AbstractIsAuthenticatedOrReadOnly, HasSpecificPermission
+from rest_framework.permissions import IsAuthenticated
+from utils.permissions import HasSpecificPermission
 from utils.pagination import CustomPagination
 from ..models import UserNotification, NotificationTemplate, NotificationPreference
 from .serializers import (
@@ -20,7 +21,7 @@ from .serializers import (
 
 class NotificationApiView(generics.ListAPIView):
     serializer_class = NotificationSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['priority', 'is_read']
     search_fields = ['subject', 'message']
@@ -85,7 +86,7 @@ class NotificationApiView(generics.ListAPIView):
 
 class NotificationDetailApiView(generics.RetrieveUpdateAPIView):
     serializer_class = NotificationUpdateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         return UserNotification.objects.filter(
@@ -111,7 +112,7 @@ class NotificationCreateApiView(generics.CreateAPIView):
 
 class NotificationSettingApiView(generics.RetrieveUpdateAPIView):
     serializer_class = NotificationSettingUpdateSerializer
-    permission_classes = [AbstractIsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     
     def get_object(self):
         # Get or create notification preferences for the current user

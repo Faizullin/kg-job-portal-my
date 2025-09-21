@@ -2,12 +2,16 @@ from django.urls import path
 from .api.views import (
     UserProfileDetailApiView, ServiceProviderApiView,
     ServiceProviderDetailApiView, ClientApiView, ClientDetailApiView,
-    UserProfileUpdateView, ClientProfileUpdateView, ServiceProviderProfileUpdateView
+    UserProfileUpdateView, ClientProfileUpdateView, ServiceProviderProfileUpdateView,
+    AdvancedProfileApiView
 )
 
 app_name = 'users'
 
 urlpatterns = [
+    # Advanced Profile (combines user account + job portal profile)
+    path('api/v1/users/profile/advanced/', AdvancedProfileApiView.as_view(), name='advanced-profile'),
+    
     # Profile Updates (works for both registration and profile updates)
     path('api/v1/users/profile/update/', UserProfileUpdateView.as_view(), name='profile-update'),
     path('api/v1/users/client/update/', ClientProfileUpdateView.as_view(), name='client-update'),
