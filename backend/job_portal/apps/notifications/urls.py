@@ -1,8 +1,7 @@
 from django.urls import path
 from .api.views import (
     NotificationApiView, NotificationDetailApiView, NotificationCreateApiView,
-    NotificationSettingApiView,
-    NotificationTemplateApiView, NotificationTemplateDetailApiView, NotificationTemplateCreateApiView,
+    NotificationUnreadView, NotificationRecentView, NotificationMarkAllReadView, NotificationCountView
 )
 
 app_name = 'notifications'
@@ -13,11 +12,9 @@ urlpatterns = [
     path('api/v1/notifications/create/', NotificationCreateApiView.as_view(), name='notification-create'),
     path('api/v1/notifications/<int:pk>/', NotificationDetailApiView.as_view(), name='notification-detail'),
     
-    # Notification Settings (single user preference)
-    path('api/v1/notifications/settings/', NotificationSettingApiView.as_view(), name='notification-settings'),
-    
-    # Notification Templates
-    path('api/v1/notifications/templates/', NotificationTemplateApiView.as_view(), name='notification-templates'),
-    path('api/v1/notifications/templates/create/', NotificationTemplateCreateApiView.as_view(), name='notification-template-create'),
-    path('api/v1/notifications/templates/<int:pk>/', NotificationTemplateDetailApiView.as_view(), name='notification-template-detail'),
+    # Additional notification endpoints
+    path('api/v1/notifications/unread/', NotificationUnreadView.as_view(), name='notification-unread'),
+    path('api/v1/notifications/recent/', NotificationRecentView.as_view(), name='notification-recent'),
+    path('api/v1/notifications/mark-all-read/', NotificationMarkAllReadView.as_view(), name='notification-mark-all-read'),
+    path('api/v1/notifications/count/', NotificationCountView.as_view(), name='notification-count'),
 ]

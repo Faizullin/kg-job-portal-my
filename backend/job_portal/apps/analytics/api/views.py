@@ -6,9 +6,8 @@ from django.utils import timezone
 from datetime import timedelta
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-
+from utils.exceptions import StandardizedViewMixin
 from rest_framework.permissions import IsAuthenticated
-from utils.crud_base.views import StandardizedViewMixin
 from utils.permissions import HasSpecificPermission
 from utils.pagination import CustomPagination
 from ..models import UserActivity, OrderAnalytics, ServiceCategoryAnalytics, PerformanceMetrics, BusinessMetrics
@@ -87,13 +86,11 @@ class ServiceCategoryAnalyticsApiView(StandardizedViewMixin, generics.ListAPIVie
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        # Manager automatically filters out deleted objects
         return ServiceCategoryAnalytics.objects.all().select_related('category')
     
     @action(detail=False, methods=['get'])
     def top_performing_categories(self, request):
         """Get top performing service categories by revenue."""
-        # Manager automatically filters out deleted objects
         categories = ServiceCategoryAnalytics.objects.all().select_related('category').order_by('-total_revenue')[:10]
         
         serializer = ServiceCategoryAnalyticsSerializer(categories, many=True)
@@ -108,7 +105,6 @@ class ServiceCategoryAnalyticsApiView(StandardizedViewMixin, generics.ListAPIVie
         if not start_date or not end_date:
             return Response({'error': 'start_date and end_date are required'}, status=400)
         
-        # Manager automatically filters out deleted objects
         metrics = ServiceCategoryAnalytics.objects.filter(
             date__gte=start_date,
             date__lte=end_date

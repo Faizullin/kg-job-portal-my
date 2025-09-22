@@ -124,7 +124,7 @@ class InvoiceAdmin(admin.ModelAdmin):
     )
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('order', 'client__user_profile__user', 'provider__user_profile__user')
+        return super().get_queryset(request).select_related('order', 'client__user_profile', 'provider__user_profile')
     
     def has_change_permission(self, request, obj=None):
         """Only superusers, payment managers, and finance managers can modify invoices."""

@@ -5,7 +5,7 @@ from .api.views import (
     InvoiceApiView, InvoiceDetailApiView, InvoiceCreateApiView
 )
 from .api.webhook_views import (
-    StripeWebhookView, stripe_webhook, webhook_events, retry_webhook
+    StripeWebhookView, StripeWebhookAPIView, WebhookEventsAPIView, RetryWebhookAPIView
 )
 
 app_name = 'payments'
@@ -28,9 +28,9 @@ urlpatterns = [
     
     # Stripe Webhooks
     path('api/v1/payments/webhooks/stripe/', StripeWebhookView.as_view(), name='stripe-webhook'),
-    path('api/v1/payments/webhooks/stripe/drf/', stripe_webhook, name='stripe-webhook-drf'),
+    path('api/v1/payments/webhooks/stripe/drf/', StripeWebhookAPIView.as_view(), name='stripe-webhook-drf'),
     
     # Webhook Management
-    path('api/v1/payments/webhooks/events/', webhook_events, name='webhook-events'),
-    path('api/v1/payments/webhooks/events/<int:event_id>/retry/', retry_webhook, name='retry-webhook'),
+    path('api/v1/payments/webhooks/events/', WebhookEventsAPIView.as_view(), name='webhook-events'),
+    path('api/v1/payments/webhooks/events/<int:event_id>/retry/', RetryWebhookAPIView.as_view(), name='retry-webhook'),
 ]

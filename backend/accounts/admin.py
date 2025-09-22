@@ -44,7 +44,7 @@ class UserModelAdmin(admin.ModelAdmin):
         }),
     )
     
-    filter_horizontal = ('friends', 'friendship_requests', 'groups', 'user_permissions')
+    filter_horizontal = ('groups', 'user_permissions')
     
     actions = ['restore_users', 'hard_delete_users']
     

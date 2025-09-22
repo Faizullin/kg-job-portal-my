@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from utils.serializers import AbstractTimestampedModelSerializer
-from ..models import Review, AppFeedback
+from ..models import Review
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -62,8 +62,13 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         provider = attrs.get('provider')
         
         if order and provider:
-            # Check if the order belongs to the provider
-            if order.provider != provider:
+            # Check if the order has an assignment and belongs to the provider
+            if not hasattr(order, 'assignment') or not order.assignment:
+                raise serializers.ValidationError(
+                    "The order has not been assigned to any provider."
+                )
+            
+            if order.assignment.provider != provider:
                 raise serializers.ValidationError(
                     "The order does not belong to the specified provider."
                 )
@@ -104,26 +109,3 @@ class ReviewAnalyticsSerializer(serializers.Serializer):
     )
 
 
-class AppFeedbackSerializer(AbstractTimestampedModelSerializer):
-    """Serializer for app feedback and ratings."""
-    user_name = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = AppFeedback
-        fields = ['id', 'user', 'user_name', 'rating_options', 'detailed_feedback', 'app_version', 'device_info', 'is_processed', 'created_at']
-        read_only_fields = ['user', 'created_at']
-    
-    def get_user_name(self, obj):
-        return obj.user.name if obj.user else "Unknown"
-
-
-class AppFeedbackCreateSerializer(serializers.ModelSerializer):
-    """Serializer for creating app feedback."""
-    
-    class Meta:
-        model = AppFeedback
-        fields = ['rating_options', 'detailed_feedback', 'app_version', 'device_info']
-    
-    def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)

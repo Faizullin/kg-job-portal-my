@@ -4,11 +4,13 @@ from job_portal.apps.orders.models import Order
 from job_portal.apps.orders.api.serializers import OrderSerializer
 from job_portal.apps.users.models import ServiceProviderProfile
 from job_portal.apps.users.api.serializers import ServiceProviderSerializer
-from rest_framework import generics, serializers, status, filters
+from rest_framework import serializers, status, filters
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter, NumberFilter, ChoiceFilter
 from rest_framework.permissions import IsAuthenticated
-from utils.crud_base.views import StandardizedViewMixin
+from utils.exceptions import StandardizedViewMixin
 from utils.pagination import CustomPagination
 
 
@@ -109,22 +111,14 @@ class GlobalSearchFilter(FilterSet):
         fields = ['q', 'type', 'city', 'service_category', 'min_budget', 'max_budget', 'urgency', 'min_rating']
 
 
-class GlobalSearchApiView(StandardizedViewMixin, generics.ListAPIView):
+class GlobalSearchApiView(StandardizedViewMixin, APIView):
     """Simple global search across all content types."""
-
     serializer_class = GlobalSearchResponseSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_class = GlobalSearchFilter
-    ordering_fields = ['created_at', 'budget_min', 'budget_max', 'average_rating']
-    ordering = ['-created_at']
-    pagination_class = CustomPagination
 
-    def get_queryset(self):
-        return Order.objects.none()
-
-    def list(self, request, *args, **kwargs):
-        filterset = self.filterset_class(request.query_params, queryset=self.get_queryset())
+    def get(self, request, *args, **kwargs):
+        # Use FilterSet for parameter validation and extraction
+        filterset = GlobalSearchFilter(request.query_params, queryset=Order.objects.none())
         if not filterset.is_valid():
             return Response(
                 {"error": "Invalid query parameters", "details": filterset.errors},
@@ -132,7 +126,7 @@ class GlobalSearchApiView(StandardizedViewMixin, generics.ListAPIView):
             )
         
         validated_data = filterset.form.cleaned_data
-        query = validated_data.get("q", "")
+        query = validated_data.get("q", "").strip()
         
         if not query:
             return Response(
@@ -154,7 +148,7 @@ class GlobalSearchApiView(StandardizedViewMixin, generics.ListAPIView):
             results["services"] = self.search_services(query, validated_data)
 
         response_data = {"query": query, "search_type": search_type, "results": results}
-        serializer = self.get_serializer(response_data)
+        serializer = GlobalSearchResponseSerializer(response_data)
         return Response(serializer.data)
 
     def search_orders(self, query, validated_data):
@@ -163,11 +157,11 @@ class GlobalSearchApiView(StandardizedViewMixin, generics.ListAPIView):
         ).select_related(
             "service_subcategory",
             "service_subcategory__category",
-            "client__user_profile__user"
+            "client__user_profile"
         ).prefetch_related(
             "addons__addon",
             "photos",
-            "bids__provider__user_profile__user"
+            "bids__provider__user_profile"
         )
         
         if query:
@@ -207,9 +201,9 @@ class GlobalSearchApiView(StandardizedViewMixin, generics.ListAPIView):
             "user_profile__user",
             "user_profile__preferred_language"
         ).prefetch_related(
-            "services__subcategory",
-            "services__subcategory__category",
-            "services__available_addons"
+            "services_offered",
+            "services_offered__category",
+            "service_areas"
         )
         
         if query:
@@ -254,9 +248,9 @@ class GlobalSearchApiView(StandardizedViewMixin, generics.ListAPIView):
         return {"count": services.count(), "results": services[:50]}
 
 
-class OrderSearchApiView(StandardizedViewMixin, generics.ListAPIView):
+class OrderSearchApiView(StandardizedViewMixin, ListAPIView):
     """Search specifically for orders (job vacancies)."""
-    serializer_class = OrderSearchResponseSerializer
+    serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = OrderSearchFilter
@@ -269,12 +263,10 @@ class OrderSearchApiView(StandardizedViewMixin, generics.ListAPIView):
             status__in=["published", "bidding"],
         ).select_related(
             "service_subcategory",
-            "service_subcategory__category",  # For service category details
-            "client__user_profile__user"      # For client_name in serializer
+            "service_subcategory__category",
+            "client__user_profile"
         ).prefetch_related(
-            "addons__addon",                  # For OrderAddonSerializer.addon_name
-            "photos",                         # For OrderPhotoSerializer
-            "bids__provider__user_profile__user"  # For BidSerializer.provider_name
+            "bids__provider__user_profile"
         )
 
     def list(self, request, *args, **kwargs):
@@ -291,13 +283,13 @@ class OrderSearchApiView(StandardizedViewMixin, generics.ListAPIView):
             "count": queryset.count(),
             "results": order_serializer.data
         }
-        serializer = self.get_serializer(response_data)
+        serializer = OrderSearchResponseSerializer(response_data)
         return Response(serializer.data)
 
 
-class ProviderSearchApiView(StandardizedViewMixin, generics.ListAPIView):
+class ProviderSearchApiView(StandardizedViewMixin, ListAPIView):
     """Search specifically for service providers."""
-    serializer_class = ProviderSearchResponseSerializer
+    serializer_class = ServiceProviderSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = ProviderSearchFilter
@@ -310,12 +302,12 @@ class ProviderSearchApiView(StandardizedViewMixin, generics.ListAPIView):
             user_profile__is_deleted=False,
             is_available=True
         ).select_related(
-            "user_profile__user",           # For user details in serializer
-            "user_profile__preferred_language"  # For language preferences
+            "user_profile__user",
+            "user_profile__preferred_language"
         ).prefetch_related(
-            "services__subcategory",        # For service provider services
-            "services__subcategory__category",  # For service categories
-            "services__available_addons"    # For available addons
+            "services_offered",
+            "services_offered__category",
+            "service_areas"
         )
 
     def list(self, request, *args, **kwargs):
@@ -332,5 +324,5 @@ class ProviderSearchApiView(StandardizedViewMixin, generics.ListAPIView):
             "count": queryset.count(),
             "results": provider_serializer.data
         }
-        serializer = self.get_serializer(response_data)
+        serializer = ProviderSearchResponseSerializer(response_data)
         return Response(serializer.data)

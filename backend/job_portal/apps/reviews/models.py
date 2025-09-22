@@ -57,30 +57,3 @@ class Review(AbstractSoftDeleteModel, AbstractTimestampedModel):
         
         provider.save(update_fields=['average_rating', 'total_reviews'])
 
-
-class AppFeedback(AbstractTimestampedModel):
-    """App feedback and rating from users."""
-    
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='app_feedback')
-    
-    # Rating options (from screen 7)
-    rating_options = models.JSONField(_("Rating Options"), default=list, help_text="Selected rating options from predefined list")
-    
-    # Detailed feedback (from screen 8)
-    detailed_feedback = models.TextField(_("Detailed Feedback"), blank=True)
-    
-    # App version info
-    app_version = models.CharField(_("App Version"), max_length=20, blank=True)
-    device_info = models.CharField(_("Device Info"), max_length=100, blank=True)
-    
-    # Status
-    is_processed = models.BooleanField(_("Processed"), default=False)
-    admin_notes = models.TextField(_("Admin Notes"), blank=True)
-    
-    class Meta:
-        verbose_name = _("App Feedback")
-        verbose_name_plural = _("App Feedback")
-        ordering = ['-created_at']
-    
-    def __str__(self):
-        return f"Feedback from {self.user.name} - {self.created_at.strftime('%Y-%m-%d')}... [#{self.id}]"

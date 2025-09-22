@@ -29,7 +29,6 @@ class Language(AbstractSoftDeleteModel, AbstractTimestampedModel):
 
 class ServiceCategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Main service categories (e.g., Cleaning, Plumbing, etc.)."""
-    # Uses default SoftDeleteManager from AbstractSoftDeleteModel
     
     name = models.CharField(_("Category Name"), max_length=100)
     description = models.TextField(_("Description"))
@@ -75,7 +74,6 @@ class ServiceCategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
 
 class ServiceSubcategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Specific services within job types."""
-    # Uses default SoftDeleteManager from AbstractSoftDeleteModel
     
     category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE, related_name='subcategories')
     name = models.CharField(_("Subcategory Name"), max_length=100)

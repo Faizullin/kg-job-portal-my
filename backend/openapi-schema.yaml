@@ -1,0 +1,6329 @@
+openapi: 3.0.3
+info:
+  title: Master KG Job Portal API
+  version: 1.0.0
+  description: Master KG Job Portal API
+paths:
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/analytics/dashboard/:
+    get:
+      operationId: v1_analytics_dashboard_retrieve
+      description: Get dashboard overview data.
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardResponse'
+          description: ''
+  /api/v1/auth/firebase/:
+    post:
+      operationId: v1_auth_firebase_create
+      description: Authenticate user with Firebase ID token or register new user if
+        verified.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FireBaseAuth'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FireBaseAuth'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FireBaseAuth'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FireBaseAuth'
+          description: ''
+  /api/v1/auth/logout/:
+    post:
+      operationId: v1_auth_logout_create
+      description: User logout view - enhanced version of api_users LogOutView
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutResponse'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LogoutResponse'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LogoutResponse'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
+          description: ''
+  /api/v1/chat/conversations/:
+    get:
+      operationId: v1_chat_conversations_list
+      description: Mobile-optimized view for chat conversation list.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedChatConversationList'
+          description: ''
+  /api/v1/chat/conversations/{id}/:
+    get:
+      operationId: v1_chat_conversations_retrieve
+      description: Mobile-optimized view for chat conversation details with messages.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatConversationDetail'
+          description: ''
+  /api/v1/chat/conversations/{id}/send/:
+    post:
+      operationId: v1_chat_conversations_send_create
+      description: Send a message to a chat room.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatSendMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChatSendMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChatSendMessage'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatSendMessage'
+          description: ''
+  /api/v1/chat/websocket-info/:
+    get:
+      operationId: v1_chat_websocket_info_retrieve
+      description: Get WebSocket connection info for the user.
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebSocketInfo'
+          description: ''
+  /api/v1/core/app-versions/:
+    get:
+      operationId: v1_core_app_versions_list
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: platform
+        schema:
+          type: string
+          enum:
+          - all
+          - android
+          - ios
+          - web
+        description: |-
+          * `android` - Android
+          * `ios` - iOS
+          * `web` - Web
+          * `all` - All Platforms
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAppVersionList'
+          description: ''
+  /api/v1/core/languages/:
+    get:
+      operationId: v1_core_languages_list
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: is_default
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLanguageList'
+          description: ''
+  /api/v1/core/service-areas/:
+    get:
+      operationId: v1_core_service_areas_list
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: state
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedServiceAreaList'
+          description: ''
+  /api/v1/core/service-categories/:
+    get:
+      operationId: v1_core_service_categories_list
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: query
+        name: featured
+        schema:
+          type: boolean
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedServiceCategoryList'
+          description: ''
+  /api/v1/core/service-subcategories/:
+    get:
+      operationId: v1_core_service_subcategories_list
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: integer
+      - in: query
+        name: featured
+        schema:
+          type: boolean
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedServiceSubcategoryList'
+          description: ''
+  /api/v1/core/support/faq/:
+    get:
+      operationId: v1_core_support_faq_list
+      description: List support FAQ items.
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+          enum:
+          - account
+          - general
+          - reviews
+          - safety
+          - search
+          - specialist
+        description: |-
+          * `general` - General
+          * `specialist` - Specialist
+          * `reviews` - Reviews
+          * `account` - Account
+          * `search` - Найти
+          * `safety` - Safety
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: is_popular
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSupportFAQList'
+          description: ''
+  /api/v1/core/system-settings/:
+    get:
+      operationId: v1_core_system_settings_list
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+      - in: query
+        name: is_public
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSystemSettingsList'
+          description: ''
+  /api/v1/notifications/:
+    get:
+      operationId: v1_notifications_list
+      description: List notifications for the current user.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNotificationList'
+          description: ''
+  /api/v1/notifications/{id}/:
+    get:
+      operationId: v1_notifications_retrieve
+      description: Retrieve and update individual notifications.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    put:
+      operationId: v1_notifications_update
+      description: Retrieve and update individual notifications.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationUpdate'
+          description: ''
+    patch:
+      operationId: v1_notifications_partial_update
+      description: Retrieve and update individual notifications.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationUpdate'
+          description: ''
+  /api/v1/notifications/count/:
+    get:
+      operationId: v1_notifications_count_retrieve
+      description: Get notification counts for current user.
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/create/:
+    post:
+      operationId: v1_notifications_create_create
+      description: Create new notifications (admin only).
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationCreate'
+          description: ''
+  /api/v1/notifications/mark-all-read/:
+    post:
+      operationId: v1_notifications_mark_all_read_create
+      description: Mark all notifications as read for current user.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/recent/:
+    get:
+      operationId: v1_notifications_recent_list
+      description: Get recent notifications (last 7 days).
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNotificationList'
+          description: ''
+  /api/v1/notifications/unread/:
+    get:
+      operationId: v1_notifications_unread_list
+      description: Get unread notifications for current user.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNotificationList'
+          description: ''
+  /api/v1/orders/:
+    get:
+      operationId: v1_orders_list
+      description: List all orders (admin view).
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: service_subcategory
+        schema:
+          type: integer
+      - in: query
+        name: status
+        schema:
+          type: string
+          title: Order Status
+          enum:
+          - assigned
+          - bidding
+          - cancelled
+          - completed
+          - disputed
+          - draft
+          - in_progress
+          - published
+        description: |-
+          * `draft` - Draft
+          * `published` - Published
+          * `bidding` - Bidding
+          * `assigned` - Assigned
+          * `in_progress` - In Progress
+          * `completed` - Completed
+          * `cancelled` - Cancelled
+          * `disputed` - Disputed
+      - in: query
+        name: urgency
+        schema:
+          type: string
+          enum:
+          - high
+          - low
+          - medium
+          - urgent
+        description: |-
+          * `low` - Low
+          * `medium` - Medium
+          * `high` - High
+          * `urgent` - Urgent
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrderList'
+          description: ''
+  /api/v1/orders/{order_id}/bids/:
+    post:
+      operationId: v1_orders_bids_create
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: order_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BidCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BidCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BidCreateUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BidCreateUpdate'
+          description: ''
+  /api/v1/orders/{id}/:
+    get:
+      operationId: v1_orders_retrieve
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+    put:
+      operationId: v1_orders_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrderUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrderUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderUpdate'
+          description: ''
+    patch:
+      operationId: v1_orders_partial_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderUpdate'
+          description: ''
+  /api/v1/orders/assignments/:
+    get:
+      operationId: v1_orders_assignments_list
+      description: List all order assignments (admin view).
+      parameters:
+      - in: query
+        name: order
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: provider
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrderAssignmentList'
+          description: ''
+  /api/v1/orders/assignments/{id}/:
+    get:
+      operationId: v1_orders_assignments_retrieve
+      description: View and update order assignment details.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderAssignment'
+          description: ''
+    put:
+      operationId: v1_orders_assignments_update
+      description: View and update order assignment details.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderAssignment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrderAssignment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrderAssignment'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderAssignment'
+          description: ''
+    patch:
+      operationId: v1_orders_assignments_partial_update
+      description: View and update order assignment details.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderAssignment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderAssignment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderAssignment'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderAssignment'
+          description: ''
+  /api/v1/orders/bids/:
+    get:
+      operationId: v1_orders_bids_list
+      description: List all bids (admin view).
+      parameters:
+      - in: query
+        name: is_negotiable
+        schema:
+          type: boolean
+      - in: query
+        name: order
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: status
+        schema:
+          type: string
+          title: Bid Status
+          enum:
+          - accepted
+          - pending
+          - rejected
+          - withdrawn
+        description: |-
+          * `pending` - Pending
+          * `accepted` - Accepted
+          * `rejected` - Rejected
+          * `withdrawn` - Withdrawn
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBidList'
+          description: ''
+  /api/v1/orders/bids/{bid_id}/accept/:
+    post:
+      operationId: v1_orders_bids_accept_create
+      description: Accept a bid and create order assignment.
+      parameters:
+      - in: path
+        name: bid_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BidAction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BidAction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BidAction'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BidAction'
+          description: ''
+  /api/v1/orders/bids/{bid_id}/reject/:
+    post:
+      operationId: v1_orders_bids_reject_create
+      description: Reject a bid.
+      parameters:
+      - in: path
+        name: bid_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BidAction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BidAction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BidAction'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BidAction'
+          description: ''
+  /api/v1/orders/bids/{bid_id}/withdraw/:
+    post:
+      operationId: v1_orders_bids_withdraw_create
+      description: Withdraw a bid (by provider).
+      parameters:
+      - in: path
+        name: bid_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BidAction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BidAction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BidAction'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BidAction'
+          description: ''
+  /api/v1/orders/bids/{id}/:
+    get:
+      operationId: v1_orders_bids_retrieve
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bid'
+          description: ''
+    put:
+      operationId: v1_orders_bids_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BidCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BidCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BidCreateUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BidCreateUpdate'
+          description: ''
+    patch:
+      operationId: v1_orders_bids_partial_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBidCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBidCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBidCreateUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BidCreateUpdate'
+          description: ''
+    delete:
+      operationId: v1_orders_bids_destroy
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/orders/create/:
+    post:
+      operationId: v1_orders_create_create
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCreate'
+          description: ''
+  /api/v1/orders/my/:
+    get:
+      operationId: v1_orders_my_list
+      description: Get current user's orders (as client).
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrderList'
+          description: ''
+  /api/v1/orders/my-assignments/:
+    get:
+      operationId: v1_orders_my_assignments_list
+      description: Get current user's assignments (as service provider).
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrderAssignmentList'
+          description: ''
+  /api/v1/orders/my-bids/:
+    get:
+      operationId: v1_orders_my_bids_list
+      description: Get current user's bids (as service provider).
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBidList'
+          description: ''
+  /api/v1/orders/my-orders/assignments/:
+    get:
+      operationId: v1_orders_my_orders_assignments_list
+      description: Get assignments for current user's orders (as client).
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrderAssignmentList'
+          description: ''
+  /api/v1/orders/my-orders/bids/:
+    get:
+      operationId: v1_orders_my_orders_bids_list
+      description: Get bids for current user's orders (as client).
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBidList'
+          description: ''
+  /api/v1/payments/:
+    get:
+      operationId: v1_payments_list
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPaymentList'
+          description: ''
+  /api/v1/payments/{id}/:
+    get:
+      operationId: v1_payments_retrieve
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+    put:
+      operationId: v1_payments_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCreate'
+          description: ''
+    patch:
+      operationId: v1_payments_partial_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPaymentCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPaymentCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPaymentCreate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCreate'
+          description: ''
+  /api/v1/payments/create/:
+    post:
+      operationId: v1_payments_create_create
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCreate'
+          description: ''
+  /api/v1/payments/invoices/:
+    get:
+      operationId: v1_payments_invoices_list
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInvoiceList'
+          description: ''
+  /api/v1/payments/invoices/{id}/:
+    get:
+      operationId: v1_payments_invoices_retrieve
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+          description: ''
+  /api/v1/payments/invoices/create/:
+    post:
+      operationId: v1_payments_invoices_create_create
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InvoiceCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InvoiceCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceCreate'
+          description: ''
+  /api/v1/payments/methods/:
+    get:
+      operationId: v1_payments_methods_list
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPaymentMethodList'
+          description: ''
+  /api/v1/payments/methods/{id}/:
+    get:
+      operationId: v1_payments_methods_retrieve
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+          description: ''
+    put:
+      operationId: v1_payments_methods_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentMethodUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentMethodUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentMethodUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethodUpdate'
+          description: ''
+    patch:
+      operationId: v1_payments_methods_partial_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPaymentMethodUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPaymentMethodUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPaymentMethodUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethodUpdate'
+          description: ''
+    delete:
+      operationId: v1_payments_methods_destroy
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/payments/methods/create/:
+    post:
+      operationId: v1_payments_methods_create_create
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentMethodCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentMethodCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentMethodCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethodCreate'
+          description: ''
+  /api/v1/payments/webhooks/events/:
+    get:
+      operationId: v1_payments_webhooks_events_retrieve
+      description: List webhook events.
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StripeWebhookEvent'
+          description: ''
+  /api/v1/payments/webhooks/events/{event_id}/retry/:
+    post:
+      operationId: v1_payments_webhooks_events_retry_create
+      description: Retry processing a webhook event.
+      parameters:
+      - in: path
+        name: event_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookRetryResponse'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WebhookRetryResponse'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WebhookRetryResponse'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookRetryResponse'
+          description: ''
+  /api/v1/payments/webhooks/stripe/drf/:
+    post:
+      operationId: v1_payments_webhooks_stripe_drf_create
+      description: API view for Stripe webhook handling.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookResponse'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WebhookResponse'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WebhookResponse'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookResponse'
+          description: ''
+  /api/v1/profile/:
+    get:
+      operationId: v1_profile_retrieve
+      description: User profile view with image upload
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    post:
+      operationId: v1_profile_create
+      description: Upload profile image
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUpdate'
+          description: ''
+    put:
+      operationId: v1_profile_update
+      description: User profile view with image upload
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUpdate'
+          description: ''
+    patch:
+      operationId: v1_profile_partial_update
+      description: User profile view with image upload
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUpdate'
+          description: ''
+    delete:
+      operationId: v1_profile_destroy
+      description: |-
+        Reset profile image to default by removing uploaded photo.
+
+        This clears the stored ImageField `photo`. The `photo_url` (e.g., Firebase avatar)
+        remains unchanged. Frontend should use `photo_url` as fallback.
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/reviews/:
+    get:
+      operationId: v1_reviews_list
+      description: List and create reviews.
+      parameters:
+      - in: query
+        name: is_verified
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - in: query
+        name: overall_rating
+        schema:
+          type: integer
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReviewList'
+          description: ''
+    post:
+      operationId: v1_reviews_create
+      description: List and create reviews.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewCreate'
+          description: ''
+  /api/v1/reviews/{id}/:
+    get:
+      operationId: v1_reviews_retrieve
+      description: Retrieve, update, and delete specific review.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+          description: ''
+    put:
+      operationId: v1_reviews_update
+      description: Retrieve, update, and delete specific review.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewUpdate'
+          description: ''
+    patch:
+      operationId: v1_reviews_partial_update
+      description: Retrieve, update, and delete specific review.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedReviewUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedReviewUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedReviewUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewUpdate'
+          description: ''
+    delete:
+      operationId: v1_reviews_destroy
+      description: Retrieve, update, and delete specific review.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/reviews/analytics/:
+    get:
+      operationId: v1_reviews_analytics_retrieve
+      description: Get review analytics.
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewAnalytics'
+          description: ''
+  /api/v1/reviews/order/{order_id}/:
+    get:
+      operationId: v1_reviews_order_list
+      description: Get reviews for a specific order.
+      parameters:
+      - in: path
+        name: order_id
+        schema:
+          type: integer
+        required: true
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReviewList'
+          description: ''
+  /api/v1/reviews/provider/{provider_id}/:
+    get:
+      operationId: v1_reviews_provider_list
+      description: Get reviews for a specific service provider.
+      parameters:
+      - in: query
+        name: is_verified
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - in: query
+        name: overall_rating
+        schema:
+          type: integer
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: path
+        name: provider_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReviewList'
+          description: ''
+  /api/v1/search/global/:
+    get:
+      operationId: v1_search_global_list
+      description: Simple global search across all content types.
+      parameters:
+      - in: query
+        name: city
+        schema:
+          type: string
+        description: Filter by city
+      - in: query
+        name: max_budget
+        schema:
+          type: number
+        description: Maximum budget
+      - in: query
+        name: min_budget
+        schema:
+          type: number
+        description: Minimum budget
+      - in: query
+        name: min_rating
+        schema:
+          type: number
+        description: Minimum rating for providers
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Search query
+      - in: query
+        name: service_category
+        schema:
+          type: number
+        description: Filter by service category ID
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - all
+          - orders
+          - providers
+          - services
+        description: |-
+          Type of search to perform
+
+          * `all` - All
+          * `orders` - Orders
+          * `providers` - Providers
+          * `services` - Services
+      - in: query
+        name: urgency
+        schema:
+          type: string
+          enum:
+          - high
+          - low
+          - medium
+          - urgent
+        description: |-
+          Filter by urgency level
+
+          * `low` - Low
+          * `medium` - Medium
+          * `high` - High
+          * `urgent` - Urgent
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGlobalSearchResponseList'
+          description: ''
+  /api/v1/search/orders/:
+    get:
+      operationId: v1_search_orders_list
+      description: Search specifically for orders (job vacancies).
+      parameters:
+      - in: query
+        name: city
+        schema:
+          type: string
+        description: Filter by city
+      - in: query
+        name: max_budget
+        schema:
+          type: number
+        description: Maximum budget
+      - in: query
+        name: min_budget
+        schema:
+          type: number
+        description: Minimum budget
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Search query
+      - in: query
+        name: service_category
+        schema:
+          type: number
+        description: Filter by service category ID
+      - in: query
+        name: urgency
+        schema:
+          type: string
+          enum:
+          - high
+          - low
+          - medium
+          - urgent
+        description: |-
+          Filter by urgency level
+
+          * `low` - Low
+          * `medium` - Medium
+          * `high` - High
+          * `urgent` - Urgent
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrderSearchResponseList'
+          description: ''
+  /api/v1/search/providers/:
+    get:
+      operationId: v1_search_providers_list
+      description: Search specifically for service providers.
+      parameters:
+      - in: query
+        name: city
+        schema:
+          type: string
+        description: Filter by city
+      - in: query
+        name: min_rating
+        schema:
+          type: number
+        description: Minimum rating
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Search query
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProviderSearchResponseList'
+          description: ''
+  /api/v1/users/:
+    get:
+      operationId: v1_users_list
+      description: List all users - not in api_users, useful for admin
+      parameters:
+      - in: query
+        name: blocked
+        schema:
+          type: boolean
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: user_type
+        schema:
+          type: string
+          enum:
+          - free
+          - paid
+          - premium_paid
+        description: |-
+          * `free` - Бесплатный
+          * `paid` - Оплаченный
+          * `premium_paid` - Премиум оплаченный
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserListList'
+          description: ''
+  /api/v1/users/client/:
+    get:
+      operationId: v1_users_client_retrieve
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+          description: ''
+    put:
+      operationId: v1_users_client_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClientUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClientUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientUpdate'
+          description: ''
+    patch:
+      operationId: v1_users_client_partial_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedClientUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedClientUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedClientUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientUpdate'
+          description: ''
+  /api/v1/users/client/create/:
+    post:
+      operationId: v1_users_client_create_create
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClientUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClientUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientUpdate'
+          description: ''
+  /api/v1/users/client/update/:
+    post:
+      operationId: v1_users_client_update_create
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClientUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClientUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientUpdate'
+          description: ''
+  /api/v1/users/clients/:
+    get:
+      operationId: v1_users_clients_list
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: query
+        name: created_at
+        schema:
+          type: string
+          format: date-time
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedClientList'
+          description: ''
+  /api/v1/users/profile/:
+    get:
+      operationId: v1_users_profile_retrieve
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileDetail'
+          description: ''
+    put:
+      operationId: v1_users_profile_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileUpdate'
+          description: ''
+    patch:
+      operationId: v1_users_profile_partial_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfileUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfileUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfileUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileUpdate'
+          description: ''
+  /api/v1/users/profile/advanced/:
+    get:
+      operationId: v1_users_profile_advanced_retrieve
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvancedProfile'
+          description: ''
+    post:
+      operationId: v1_users_profile_advanced_create
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdvancedProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdvancedProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdvancedProfile'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvancedProfile'
+          description: ''
+  /api/v1/users/provider/:
+    get:
+      operationId: v1_users_provider_retrieve
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceProvider'
+          description: ''
+    put:
+      operationId: v1_users_provider_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceProviderUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServiceProviderUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServiceProviderUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceProviderUpdate'
+          description: ''
+    patch:
+      operationId: v1_users_provider_partial_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedServiceProviderUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedServiceProviderUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedServiceProviderUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceProviderUpdate'
+          description: ''
+  /api/v1/users/provider/create/:
+    post:
+      operationId: v1_users_provider_create_create
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceProviderUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServiceProviderUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServiceProviderUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceProviderUpdate'
+          description: ''
+  /api/v1/users/provider/update/:
+    post:
+      operationId: v1_users_provider_update_create
+      description: Mixin to provide standardized exception handling for DRF views.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceProviderUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServiceProviderUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServiceProviderUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceProviderUpdate'
+          description: ''
+  /api/v1/users/providers/:
+    get:
+      operationId: v1_users_providers_list
+      description: List all available service providers with search and filtering.
+      parameters:
+      - in: query
+        name: is_verified_provider
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedServiceProviderList'
+          description: ''
+  /api/v1/users/providers/{id}/details/:
+    get:
+      operationId: v1_users_providers_details_retrieve
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceProvider'
+          description: ''
+    put:
+      operationId: v1_users_providers_details_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceProviderUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServiceProviderUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServiceProviderUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceProviderUpdate'
+          description: ''
+    patch:
+      operationId: v1_users_providers_details_partial_update
+      description: Mixin to provide standardized exception handling for DRF views.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedServiceProviderUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedServiceProviderUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedServiceProviderUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceProviderUpdate'
+          description: ''
+  /api/v1/users/providers/featured/:
+    get:
+      operationId: v1_users_providers_featured_list
+      description: Featured service providers for mobile app.
+      parameters:
+      - in: query
+        name: is_available
+        schema:
+          type: boolean
+      - in: query
+        name: is_verified_provider
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedServiceProviderList'
+          description: ''
+  /api/v1/users/task-history/:
+    get:
+      operationId: v1_users_task_history_list
+      description: Task history for users (orders they created or worked on).
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrderList'
+          description: ''
+components:
+  schemas:
+    AdvancedProfile:
+      type: object
+      description: Combined serializer for user account data and job portal profile.
+      properties:
+        user_data:
+          allOf:
+          - $ref: '#/components/schemas/UserProfile'
+          readOnly: true
+        job_portal_profile:
+          allOf:
+          - $ref: '#/components/schemas/UserProfileDetail'
+          readOnly: true
+      required:
+      - job_portal_profile
+      - user_data
+    AppVersion:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        version:
+          type: string
+          title: Версия
+          maxLength: 20
+        build_number:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        platform:
+          $ref: '#/components/schemas/PlatformEnum'
+        is_active:
+          type: boolean
+          title: Действие
+        is_forced_update:
+          type: boolean
+          title: Forced Update
+        release_date:
+          type: string
+          format: date-time
+          readOnly: true
+        download_url:
+          type: string
+          format: uri
+          maxLength: 200
+        platform_display:
+          type: string
+          readOnly: true
+      required:
+      - build_number
+      - id
+      - platform_display
+      - release_date
+      - version
+    Bid:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order:
+          type: integer
+        provider:
+          type: integer
+        provider_name:
+          type: string
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          title: Bid Amount
+        description:
+          type: string
+          title: Bid Description
+        estimated_duration:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          title: Estimated Duration (hours)
+        status:
+          allOf:
+          - $ref: '#/components/schemas/BidStatusEnum'
+          title: Bid Status
+        is_negotiable:
+          type: boolean
+          title: Price Negotiable
+        terms_conditions:
+          type: string
+          title: Terms & Conditions
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - amount
+      - created_at
+      - description
+      - id
+      - order
+      - provider
+      - provider_name
+    BidAction:
+      type: object
+      description: Serializer for bid actions (accept/reject/withdraw).
+      properties:
+        reason:
+          type: string
+          description: Reason for rejection/withdrawal
+          maxLength: 500
+    BidCreateUpdate:
+      type: object
+      description: Unified serializer for bid creation and updates.
+      properties:
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          title: Bid Amount
+        description:
+          type: string
+          title: Bid Description
+        estimated_duration:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          title: Estimated Duration (hours)
+        terms_conditions:
+          type: string
+          title: Terms & Conditions
+        is_negotiable:
+          type: boolean
+          title: Price Negotiable
+      required:
+      - amount
+      - description
+    BidStatusEnum:
+      enum:
+      - pending
+      - accepted
+      - rejected
+      - withdrawn
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `accepted` - Accepted
+        * `rejected` - Rejected
+        * `withdrawn` - Withdrawn
+    BlankEnum:
+      enum:
+      - ''
+    CategoryEnum:
+      enum:
+      - general
+      - specialist
+      - reviews
+      - account
+      - search
+      - safety
+      type: string
+      description: |-
+        * `general` - General
+        * `specialist` - Specialist
+        * `reviews` - Reviews
+        * `account` - Account
+        * `search` - Найти
+        * `safety` - Safety
+    ChatConversation:
+      type: object
+      description: Mobile-optimized serializer for chat conversation list.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Chat Title
+          maxLength: 200
+        chat_type:
+          $ref: '#/components/schemas/ChatTypeEnum'
+        other_participant_name:
+          type: string
+          readOnly: true
+        other_participant_avatar:
+          type: string
+          readOnly: true
+        other_participant_online:
+          type: string
+          readOnly: true
+        last_message_preview:
+          type: string
+          readOnly: true
+        last_message_time:
+          type: string
+          readOnly: true
+        service_category:
+          type: string
+          readOnly: true
+        unread_count:
+          type: string
+          readOnly: true
+        is_active:
+          type: boolean
+          title: Действие
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - last_message_preview
+      - last_message_time
+      - other_participant_avatar
+      - other_participant_name
+      - other_participant_online
+      - service_category
+      - unread_count
+    ChatConversationDetail:
+      type: object
+      description: Mobile-optimized serializer for chat conversation details with
+        messages.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Chat Title
+          maxLength: 200
+        chat_type:
+          $ref: '#/components/schemas/ChatTypeEnum'
+        messages:
+          type: string
+          readOnly: true
+        other_participant_info:
+          type: string
+          readOnly: true
+        service_info:
+          type: string
+          readOnly: true
+        is_active:
+          type: boolean
+          title: Действие
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - messages
+      - other_participant_info
+      - service_info
+    ChatSendMessage:
+      type: object
+      description: Serializer for sending messages via mobile API.
+      properties:
+        message:
+          type: string
+          description: Message content
+          maxLength: 1000
+        message_type:
+          allOf:
+          - $ref: '#/components/schemas/MessageTypeEnum'
+          default: text
+          description: |-
+            Message type
+
+            * `text` - Text
+            * `image` - Image
+        attachment_url:
+          type: string
+          format: uri
+          description: Attachment URL for images
+      required:
+      - message
+    ChatTypeEnum:
+      enum:
+      - order_chat
+      - support_chat
+      - general_chat
+      type: string
+      description: |-
+        * `order_chat` - Order Chat
+        * `support_chat` - Support Chat
+        * `general_chat` - General Chat
+    Client:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user_profile:
+          type: integer
+        preferred_services:
+          type: array
+          items:
+            type: integer
+        total_orders:
+          type: integer
+          readOnly: true
+        completed_orders:
+          type: integer
+          readOnly: true
+        cancelled_orders:
+          type: integer
+          readOnly: true
+        favorite_providers:
+          type: array
+          items:
+            type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - cancelled_orders
+      - completed_orders
+      - created_at
+      - id
+      - total_orders
+      - updated_at
+      - user_profile
+    ClientUpdate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        preferred_services:
+          type: array
+          items:
+            type: integer
+    ComplexityLevelEnum:
+      enum:
+      - beginner
+      - intermediate
+      - advanced
+      - expert
+      type: string
+      description: |-
+        * `beginner` - Beginner
+        * `intermediate` - Intermediate
+        * `advanced` - Advanced
+        * `expert` - Expert
+    DashboardResponse:
+      type: object
+      description: Serializer for dashboard API response.
+      properties:
+        current_month:
+          type: object
+          additionalProperties: {}
+      required:
+      - current_month
+    FireBaseAuth:
+      type: object
+      description: Serializer for Firebase authentication request
+      properties:
+        id_token:
+          type: string
+          description: Firebase ID token
+      required:
+      - id_token
+    GenderEnum:
+      enum:
+      - male
+      - female
+      - other
+      - prefer_not_to_say
+      type: string
+      description: |-
+        * `male` - Male
+        * `female` - Female
+        * `other` - Other
+        * `prefer_not_to_say` - Prefer not to say
+    GlobalSearchResponse:
+      type: object
+      description: Serializer for global search response.
+      properties:
+        query:
+          type: string
+          description: Search query
+        search_type:
+          type: string
+          description: Type of search performed
+        results:
+          type: object
+          additionalProperties: {}
+          description: Search results by category
+      required:
+      - query
+      - results
+      - search_type
+    Invoice:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order:
+          type: integer
+        invoice_number:
+          type: string
+          maxLength: 50
+        status:
+          allOf:
+          - $ref: '#/components/schemas/InvoiceStatusEnum'
+          title: Статус
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        platform_fee:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        total_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        due_date:
+          type: string
+          format: date
+          nullable: true
+        paid_date:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - invoice_number
+      - order
+      - subtotal
+      - total_amount
+    InvoiceCreate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        order:
+          type: integer
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        platform_fee:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        due_date:
+          type: string
+          format: date
+          nullable: true
+      required:
+      - order
+      - subtotal
+    InvoiceStatusEnum:
+      enum:
+      - draft
+      - sent
+      - paid
+      - overdue
+      - cancelled
+      type: string
+      description: |-
+        * `draft` - Draft
+        * `sent` - Sent
+        * `paid` - Paid
+        * `overdue` - Overdue
+        * `cancelled` - Cancelled
+    Language:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          title: Language Code
+          maxLength: 5
+        name:
+          type: string
+          title: Language Name
+          maxLength: 50
+        native_name:
+          type: string
+          maxLength: 50
+        is_active:
+          type: boolean
+          title: Действие
+        is_default:
+          type: boolean
+          title: Default Language
+        flag_icon:
+          type: string
+          maxLength: 50
+        rtl_support:
+          type: boolean
+      required:
+      - code
+      - id
+      - name
+      - native_name
+    LogoutResponse:
+      type: object
+      description: Serializer for logout response
+      properties:
+        message:
+          type: string
+          description: Logout confirmation message
+      required:
+      - message
+    MessageTypeEnum:
+      enum:
+      - text
+      - image
+      type: string
+      description: |-
+        * `text` - Text
+        * `image` - Image
+    MethodTypeEnum:
+      enum:
+      - credit_card
+      - debit_card
+      - bank_transfer
+      - digital_wallet
+      type: string
+      description: |-
+        * `credit_card` - Credit Card
+        * `debit_card` - Debit Card
+        * `bank_transfer` - Bank Transfer
+        * `digital_wallet` - Digital Wallet
+    Notification:
+      type: object
+      description: Serializer for UserNotification model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        title:
+          type: string
+          maxLength: 200
+        message:
+          type: string
+          title: Message Content
+        notification_type:
+          $ref: '#/components/schemas/NotificationTypeEnum'
+        is_read:
+          type: boolean
+          title: Read
+        read_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        order:
+          type: integer
+          nullable: true
+        bid:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - message
+      - notification_type
+      - read_at
+      - title
+      - user
+    NotificationCreate:
+      type: object
+      description: Serializer for creating notifications.
+      properties:
+        user:
+          type: integer
+        title:
+          type: string
+          maxLength: 200
+        message:
+          type: string
+          title: Message Content
+        notification_type:
+          $ref: '#/components/schemas/NotificationTypeEnum'
+        order:
+          type: integer
+          nullable: true
+        bid:
+          type: integer
+          nullable: true
+      required:
+      - message
+      - notification_type
+      - title
+      - user
+    NotificationTypeEnum:
+      enum:
+      - bid_received
+      - bid_accepted
+      - bid_rejected
+      - order_assigned
+      - order_completed
+      - chat_message
+      - system_alert
+      type: string
+      description: |-
+        * `bid_received` - Bid Received
+        * `bid_accepted` - Bid Accepted
+        * `bid_rejected` - Bid Rejected
+        * `order_assigned` - Order Assigned
+        * `order_completed` - Order Completed
+        * `chat_message` - Chat Message
+        * `system_alert` - System Alert
+    NotificationUpdate:
+      type: object
+      description: Serializer for updating notification read status.
+      properties:
+        is_read:
+          type: boolean
+          title: Read
+        read_at:
+          type: string
+          format: date-time
+          nullable: true
+    Order:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        client:
+          type: integer
+        client_name:
+          type: string
+          readOnly: true
+        service_subcategory:
+          type: integer
+        title:
+          type: string
+          title: Order Title
+          maxLength: 200
+        description:
+          type: string
+          title: Order Description
+        status:
+          allOf:
+          - $ref: '#/components/schemas/Status638Enum'
+          title: Order Status
+        location:
+          type: string
+          title: Service Location
+        city:
+          type: string
+          maxLength: 100
+        state:
+          type: string
+          title: State/Province
+          maxLength: 100
+        country:
+          type: string
+          maxLength: 100
+        postal_code:
+          type: string
+          maxLength: 20
+        service_date:
+          type: string
+          format: date
+          nullable: true
+          title: Preferred Service Date
+        service_time:
+          type: string
+          format: time
+          nullable: true
+          title: Preferred Service Time
+        urgency:
+          $ref: '#/components/schemas/UrgencyEnum'
+        budget_min:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+          title: Minimum Budget
+        budget_max:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+          title: Maximum Budget
+        final_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+        bids:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bid'
+          readOnly: true
+        attachments:
+          type: array
+          items:
+            type: integer
+        special_requirements:
+          type: string
+        is_featured:
+          type: boolean
+          title: Featured Order
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - bids
+      - city
+      - client
+      - client_name
+      - country
+      - created_at
+      - description
+      - id
+      - location
+      - postal_code
+      - service_subcategory
+      - state
+      - title
+      - updated_at
+    OrderAssignment:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order:
+          type: integer
+        order_title:
+          type: string
+          readOnly: true
+        provider:
+          type: integer
+        provider_name:
+          type: string
+          readOnly: true
+        accepted_bid:
+          type: integer
+        assigned_at:
+          type: string
+          format: date-time
+          readOnly: true
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        start_time:
+          type: string
+          format: time
+          nullable: true
+        progress_notes:
+          type: string
+        completion_notes:
+          type: string
+        client_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+        client_review:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - accepted_bid
+      - assigned_at
+      - created_at
+      - id
+      - order
+      - order_title
+      - provider
+      - provider_name
+    OrderCreate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        service_subcategory:
+          type: integer
+        title:
+          type: string
+          title: Order Title
+          maxLength: 200
+        description:
+          type: string
+          title: Order Description
+        location:
+          type: string
+          title: Service Location
+        city:
+          type: string
+          maxLength: 100
+        state:
+          type: string
+          title: State/Province
+          maxLength: 100
+        country:
+          type: string
+          maxLength: 100
+        postal_code:
+          type: string
+          maxLength: 20
+        service_date:
+          type: string
+          format: date
+          nullable: true
+          title: Preferred Service Date
+        service_time:
+          type: string
+          format: time
+          nullable: true
+          title: Preferred Service Time
+        urgency:
+          $ref: '#/components/schemas/UrgencyEnum'
+        budget_min:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+          title: Minimum Budget
+        budget_max:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+          title: Maximum Budget
+        special_requirements:
+          type: string
+      required:
+      - city
+      - country
+      - description
+      - location
+      - postal_code
+      - service_subcategory
+      - state
+      - title
+    OrderSearchResponse:
+      type: object
+      description: Serializer for order search response.
+      properties:
+        query:
+          type: string
+          description: Search query
+        count:
+          type: integer
+          description: Number of results found
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+          description: List of order results
+      required:
+      - count
+      - query
+      - results
+    OrderUpdate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        title:
+          type: string
+          title: Order Title
+          maxLength: 200
+        description:
+          type: string
+          title: Order Description
+        location:
+          type: string
+          title: Service Location
+        city:
+          type: string
+          maxLength: 100
+        state:
+          type: string
+          title: State/Province
+          maxLength: 100
+        country:
+          type: string
+          maxLength: 100
+        postal_code:
+          type: string
+          maxLength: 20
+        service_date:
+          type: string
+          format: date
+          nullable: true
+          title: Preferred Service Date
+        service_time:
+          type: string
+          format: time
+          nullable: true
+          title: Preferred Service Time
+        urgency:
+          $ref: '#/components/schemas/UrgencyEnum'
+        budget_min:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+          title: Minimum Budget
+        budget_max:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+          title: Maximum Budget
+        special_requirements:
+          type: string
+        status:
+          allOf:
+          - $ref: '#/components/schemas/Status638Enum'
+          title: Order Status
+      required:
+      - city
+      - country
+      - description
+      - location
+      - postal_code
+      - state
+      - title
+    PaginatedAppVersionList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppVersion'
+    PaginatedBidList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bid'
+    PaginatedChatConversationList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatConversation'
+    PaginatedClientList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Client'
+    PaginatedGlobalSearchResponseList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/GlobalSearchResponse'
+    PaginatedInvoiceList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Invoice'
+    PaginatedLanguageList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Language'
+    PaginatedNotificationList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+    PaginatedOrderAssignmentList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderAssignment'
+    PaginatedOrderList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+    PaginatedOrderSearchResponseList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderSearchResponse'
+    PaginatedPaymentList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+    PaginatedPaymentMethodList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentMethod'
+    PaginatedProviderSearchResponseList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderSearchResponse'
+    PaginatedReviewList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Review'
+    PaginatedServiceAreaList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceArea'
+    PaginatedServiceCategoryList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceCategory'
+    PaginatedServiceProviderList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceProvider'
+    PaginatedServiceSubcategoryList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceSubcategory'
+    PaginatedSupportFAQList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupportFAQ'
+    PaginatedSystemSettingsList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SystemSettings'
+    PaginatedUserListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserList'
+    PatchedBidCreateUpdate:
+      type: object
+      description: Unified serializer for bid creation and updates.
+      properties:
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          title: Bid Amount
+        description:
+          type: string
+          title: Bid Description
+        estimated_duration:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          title: Estimated Duration (hours)
+        terms_conditions:
+          type: string
+          title: Terms & Conditions
+        is_negotiable:
+          type: boolean
+          title: Price Negotiable
+    PatchedClientUpdate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        preferred_services:
+          type: array
+          items:
+            type: integer
+    PatchedNotificationUpdate:
+      type: object
+      description: Serializer for updating notification read status.
+      properties:
+        is_read:
+          type: boolean
+          title: Read
+        read_at:
+          type: string
+          format: date-time
+          nullable: true
+    PatchedOrderAssignment:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order:
+          type: integer
+        order_title:
+          type: string
+          readOnly: true
+        provider:
+          type: integer
+        provider_name:
+          type: string
+          readOnly: true
+        accepted_bid:
+          type: integer
+        assigned_at:
+          type: string
+          format: date-time
+          readOnly: true
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        start_time:
+          type: string
+          format: time
+          nullable: true
+        progress_notes:
+          type: string
+        completion_notes:
+          type: string
+        client_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+        client_review:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedOrderUpdate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        title:
+          type: string
+          title: Order Title
+          maxLength: 200
+        description:
+          type: string
+          title: Order Description
+        location:
+          type: string
+          title: Service Location
+        city:
+          type: string
+          maxLength: 100
+        state:
+          type: string
+          title: State/Province
+          maxLength: 100
+        country:
+          type: string
+          maxLength: 100
+        postal_code:
+          type: string
+          maxLength: 20
+        service_date:
+          type: string
+          format: date
+          nullable: true
+          title: Preferred Service Date
+        service_time:
+          type: string
+          format: time
+          nullable: true
+          title: Preferred Service Time
+        urgency:
+          $ref: '#/components/schemas/UrgencyEnum'
+        budget_min:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+          title: Minimum Budget
+        budget_max:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+          title: Maximum Budget
+        special_requirements:
+          type: string
+        status:
+          allOf:
+          - $ref: '#/components/schemas/Status638Enum'
+          title: Order Status
+    PatchedPaymentCreate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        invoice:
+          type: integer
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        currency:
+          type: string
+        payment_method:
+          type: integer
+    PatchedPaymentMethodUpdate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        is_default:
+          type: boolean
+          title: Default Method
+        is_active:
+          type: boolean
+          title: Действие
+    PatchedReviewUpdate:
+      type: object
+      description: Serializer for updating existing reviews.
+      properties:
+        overall_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          description: Overall rating from 1 to 5 stars
+        title:
+          type: string
+          title: Review Title
+          maxLength: 200
+        comment:
+          type: string
+          title: Review Comment
+    PatchedServiceProviderUpdate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        business_name:
+          type: string
+          maxLength: 200
+        business_description:
+          type: string
+        service_areas:
+          type: array
+          items:
+            type: integer
+        services_offered:
+          type: array
+          items:
+            type: integer
+        works_remotely:
+          type: boolean
+        accepts_clients_at_location:
+          type: boolean
+        travels_to_clients:
+          type: boolean
+        is_available:
+          type: boolean
+          title: Available for Work
+    PatchedUserProfileUpdate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        user_type:
+          $ref: '#/components/schemas/UserTypeD25Enum'
+        bio:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        gender:
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        phone_number:
+          type: string
+          maxLength: 20
+        address:
+          type: string
+        city:
+          type: string
+          maxLength: 100
+        state:
+          type: string
+          title: State/Province
+          maxLength: 100
+        country:
+          type: string
+          maxLength: 100
+        postal_code:
+          type: string
+          maxLength: 20
+        preferred_language:
+          type: integer
+          nullable: true
+        notification_preferences: {}
+    PatchedUserUpdate:
+      type: object
+      description: Serializer for updating user profile - enhanced version of api_users
+        EditUserSettingsView
+      properties:
+        name:
+          type: string
+          title: Имя
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          readOnly: true
+        description:
+          type: string
+          nullable: true
+          title: Описание
+        photo_url:
+          type: string
+          format: uri
+          nullable: true
+          title: Ссылка на фото (Firebase)
+          maxLength: 200
+        first_name:
+          type: string
+          title: Имя
+          maxLength: 150
+        last_name:
+          type: string
+          title: Фамилия
+          maxLength: 150
+    Payment:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        invoice:
+          type: integer
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        currency:
+          type: string
+        status:
+          allOf:
+          - $ref: '#/components/schemas/PaymentStatusEnum'
+          title: Статус
+        payment_method:
+          allOf:
+          - $ref: '#/components/schemas/PaymentMethod'
+          readOnly: true
+        stripe_payment_intent_id:
+          type: string
+          maxLength: 255
+        stripe_charge_id:
+          type: string
+          maxLength: 255
+        processed_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - amount
+      - created_at
+      - id
+      - invoice
+      - payment_method
+      - updated_at
+    PaymentCreate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        invoice:
+          type: integer
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        currency:
+          type: string
+        payment_method:
+          type: integer
+      required:
+      - amount
+      - invoice
+      - payment_method
+    PaymentMethod:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        method_type:
+          $ref: '#/components/schemas/MethodTypeEnum'
+        method_type_display:
+          type: string
+          readOnly: true
+        card_last4:
+          type: string
+          title: Last 4 Digits
+          maxLength: 4
+        card_brand:
+          type: string
+          maxLength: 20
+        card_exp_month:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          title: Expiry Month
+        card_exp_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          title: Expiry Year
+        is_default:
+          type: boolean
+          title: Default Method
+        is_active:
+          type: boolean
+          title: Действие
+      required:
+      - id
+      - method_type
+      - method_type_display
+      - user
+    PaymentMethodCreate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        method_type:
+          $ref: '#/components/schemas/MethodTypeEnum'
+        card_last4:
+          type: string
+          title: Last 4 Digits
+          maxLength: 4
+        card_brand:
+          type: string
+          maxLength: 20
+        card_exp_month:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          title: Expiry Month
+        card_exp_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          title: Expiry Year
+      required:
+      - method_type
+    PaymentMethodUpdate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        is_default:
+          type: boolean
+          title: Default Method
+        is_active:
+          type: boolean
+          title: Действие
+    PaymentStatusEnum:
+      enum:
+      - pending
+      - processing
+      - completed
+      - failed
+      - cancelled
+      - refunded
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `processing` - Processing
+        * `completed` - Completed
+        * `failed` - Failed
+        * `cancelled` - Cancelled
+        * `refunded` - Refunded
+    PlatformEnum:
+      enum:
+      - android
+      - ios
+      - web
+      - all
+      type: string
+      description: |-
+        * `android` - Android
+        * `ios` - iOS
+        * `web` - Web
+        * `all` - All Platforms
+    ProviderSearchResponse:
+      type: object
+      description: Serializer for provider search response.
+      properties:
+        query:
+          type: string
+          description: Search query
+        count:
+          type: integer
+          description: Number of results found
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceProvider'
+          description: List of provider results
+      required:
+      - count
+      - query
+      - results
+    Review:
+      type: object
+      description: Serializer for reading review data.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order_id:
+          type: integer
+          readOnly: true
+        order_title:
+          type: string
+          readOnly: true
+        reviewer_name:
+          type: string
+          readOnly: true
+        reviewer_email:
+          type: string
+          format: email
+          readOnly: true
+        provider_name:
+          type: string
+          readOnly: true
+        provider_email:
+          type: string
+          format: email
+          readOnly: true
+        overall_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          description: Overall rating from 1 to 5 stars
+        title:
+          type: string
+          title: Review Title
+          maxLength: 200
+        comment:
+          type: string
+          title: Review Comment
+        is_verified:
+          type: boolean
+          readOnly: true
+          title: Verified Review
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - is_verified
+      - order_id
+      - order_title
+      - overall_rating
+      - provider_email
+      - provider_name
+      - reviewer_email
+      - reviewer_name
+      - updated_at
+    ReviewAnalytics:
+      type: object
+      description: Serializer for review analytics data.
+      properties:
+        total_reviews:
+          type: integer
+        average_rating:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,1}(?:\.\d{0,2})?$
+        rating_distribution:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+      required:
+      - average_rating
+      - rating_distribution
+      - total_reviews
+    ReviewCreate:
+      type: object
+      description: Serializer for creating new reviews.
+      properties:
+        order:
+          type: integer
+        provider:
+          type: integer
+        overall_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          description: Overall rating from 1 to 5 stars
+        title:
+          type: string
+          title: Review Title
+          maxLength: 200
+        comment:
+          type: string
+          title: Review Comment
+      required:
+      - order
+      - overall_rating
+      - provider
+    ReviewUpdate:
+      type: object
+      description: Serializer for updating existing reviews.
+      properties:
+        overall_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          description: Overall rating from 1 to 5 stars
+        title:
+          type: string
+          title: Review Title
+          maxLength: 200
+        comment:
+          type: string
+          title: Review Comment
+      required:
+      - overall_rating
+    ServiceArea:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Area Name
+          maxLength: 100
+        city:
+          type: string
+          maxLength: 100
+        state:
+          type: string
+          title: State/Province
+          maxLength: 100
+        country:
+          type: string
+          maxLength: 100
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+          nullable: true
+        is_active:
+          type: boolean
+          title: Действие
+        base_price_multiplier:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,2})?$
+        travel_fee:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        coordinates:
+          type: string
+          readOnly: true
+      required:
+      - city
+      - coordinates
+      - country
+      - id
+      - name
+      - state
+    ServiceCategory:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Category Name
+          maxLength: 100
+        description:
+          type: string
+        icon:
+          type: string
+          maxLength: 50
+        color:
+          type: string
+          maxLength: 7
+        is_active:
+          type: boolean
+          title: Действие
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        banner_image:
+          type: string
+          format: uri
+          maxLength: 200
+        featured:
+          type: boolean
+          title: Featured Category
+        commission_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: Commission Rate (%)
+        slug:
+          type: string
+          maxLength: 100
+          pattern: ^[-a-zA-Z0-9_]+$
+        subcategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceSubcategory'
+          readOnly: true
+      required:
+      - description
+      - id
+      - name
+      - subcategories
+    ServiceProvider:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user_profile:
+          type: integer
+        business_name:
+          type: string
+          maxLength: 200
+        business_description:
+          type: string
+        service_areas:
+          type: array
+          items:
+            type: integer
+        services_offered:
+          type: array
+          items:
+            type: integer
+        works_remotely:
+          type: boolean
+        accepts_clients_at_location:
+          type: boolean
+        travels_to_clients:
+          type: boolean
+        is_available:
+          type: boolean
+          title: Available for Work
+        average_rating:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,1}(?:\.\d{0,2})?$
+          readOnly: true
+        total_reviews:
+          type: integer
+          readOnly: true
+        is_verified_provider:
+          type: boolean
+          readOnly: true
+          title: Verified Provider
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - average_rating
+      - created_at
+      - id
+      - is_verified_provider
+      - total_reviews
+      - updated_at
+      - user_profile
+    ServiceProviderUpdate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        business_name:
+          type: string
+          maxLength: 200
+        business_description:
+          type: string
+        service_areas:
+          type: array
+          items:
+            type: integer
+        services_offered:
+          type: array
+          items:
+            type: integer
+        works_remotely:
+          type: boolean
+        accepts_clients_at_location:
+          type: boolean
+        travels_to_clients:
+          type: boolean
+        is_available:
+          type: boolean
+          title: Available for Work
+    ServiceSubcategory:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Subcategory Name
+          maxLength: 100
+        description:
+          type: string
+        icon:
+          type: string
+          maxLength: 50
+        is_active:
+          type: boolean
+          title: Действие
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        image:
+          type: string
+          format: uri
+          title: Изображение
+          maxLength: 200
+        featured:
+          type: boolean
+          title: Featured Subcategory
+        base_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+        complexity_level:
+          $ref: '#/components/schemas/ComplexityLevelEnum'
+        complexity_level_display:
+          type: string
+          readOnly: true
+      required:
+      - complexity_level_display
+      - description
+      - id
+      - name
+    SettingTypeEnum:
+      enum:
+      - string
+      - integer
+      - boolean
+      - json
+      - file
+      type: string
+      description: |-
+        * `string` - String
+        * `integer` - Целое
+        * `boolean` - Boolean
+        * `json` - JSON
+        * `file` - Файл
+    Status638Enum:
+      enum:
+      - draft
+      - published
+      - bidding
+      - assigned
+      - in_progress
+      - completed
+      - cancelled
+      - disputed
+      type: string
+      description: |-
+        * `draft` - Draft
+        * `published` - Published
+        * `bidding` - Bidding
+        * `assigned` - Assigned
+        * `in_progress` - In Progress
+        * `completed` - Completed
+        * `cancelled` - Cancelled
+        * `disputed` - Disputed
+    StripeWebhookEvent:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        stripe_event_id:
+          type: string
+          maxLength: 255
+        event_type:
+          type: string
+          maxLength: 100
+        event_data: {}
+        processed:
+          type: boolean
+        processed_at:
+          type: string
+          format: date-time
+          nullable: true
+        error_message:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - event_type
+      - id
+      - stripe_event_id
+    SupportFAQ:
+      type: object
+      description: Serializer for support FAQ items.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        question:
+          type: string
+          maxLength: 500
+        answer:
+          type: string
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        category_display:
+          type: string
+          readOnly: true
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        is_popular:
+          type: boolean
+          title: Popular Question
+        is_active:
+          type: boolean
+          title: Действие
+        view_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - answer
+      - category_display
+      - created_at
+      - id
+      - question
+    SystemSettings:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        key:
+          type: string
+          title: Setting Key
+          maxLength: 100
+        value:
+          type: string
+          title: Setting Value
+        description:
+          type: string
+        is_public:
+          type: boolean
+          title: Public Setting
+        setting_type:
+          $ref: '#/components/schemas/SettingTypeEnum'
+        category:
+          type: string
+          maxLength: 50
+        setting_type_display:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - key
+      - setting_type_display
+      - value
+    UrgencyEnum:
+      enum:
+      - low
+      - medium
+      - high
+      - urgent
+      type: string
+      description: |-
+        * `low` - Low
+        * `medium` - Medium
+        * `high` - High
+        * `urgent` - Urgent
+    UserList:
+      type: object
+      description: Serializer for listing users - not in api_users, useful for admin
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          title: Имя пользователя
+          description: Обязательное поле. Не более 150 символов. Только буквы, цифры
+            и символы @/./+/-/_.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        is_active:
+          type: boolean
+          title: Активный
+          description: Отметьте, если пользователь должен считаться активным. Уберите
+            эту отметку вместо удаления учётной записи.
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата регистрации
+        groups:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          title: Имя
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          title: Описание
+        photo_url:
+          type: string
+          format: uri
+          nullable: true
+          title: Ссылка на фото (Firebase)
+          maxLength: 200
+        user_type:
+          $ref: '#/components/schemas/UserListUserTypeEnum'
+        blocked:
+          type: boolean
+      required:
+      - date_joined
+      - email
+      - groups
+      - id
+      - name
+      - username
+    UserListUserTypeEnum:
+      enum:
+      - free
+      - paid
+      - premium_paid
+      type: string
+      description: |-
+        * `free` - Бесплатный
+        * `paid` - Оплаченный
+        * `premium_paid` - Премиум оплаченный
+    UserProfile:
+      type: object
+      description: Serializer for user profile information - enhanced version of api_users
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          title: Имя пользователя
+          description: Обязательное поле. Не более 150 символов. Только буквы, цифры
+            и символы @/./+/-/_.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        first_name:
+          type: string
+          title: Имя
+          maxLength: 150
+        last_name:
+          type: string
+          title: Фамилия
+          maxLength: 150
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата регистрации
+        last_login:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Последний вход
+        is_active:
+          type: boolean
+          title: Активный
+          description: Отметьте, если пользователь должен считаться активным. Уберите
+            эту отметку вместо удаления учётной записи.
+        is_staff:
+          type: boolean
+          readOnly: true
+          title: Статус персонала
+          description: Отметьте, если пользователь может входить в административную
+            часть сайта.
+        is_superuser:
+          type: boolean
+          readOnly: true
+          title: Статус суперпользователя
+          description: Указывает, что пользователь имеет все права без явного их назначения.
+        groups:
+          type: string
+          readOnly: true
+        permissions:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          title: Имя
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          title: Описание
+        photo:
+          type: string
+          format: uri
+          nullable: true
+          title: Фото
+        photo_url:
+          type: string
+          format: uri
+          nullable: true
+          title: Ссылка на фото (Firebase)
+          maxLength: 200
+      required:
+      - date_joined
+      - email
+      - groups
+      - id
+      - is_staff
+      - is_superuser
+      - last_login
+      - name
+      - permissions
+      - username
+    UserProfileDetail:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+        user_type:
+          $ref: '#/components/schemas/UserTypeD25Enum'
+        bio:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        gender:
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        phone_number:
+          type: string
+          maxLength: 20
+        address:
+          type: string
+        city:
+          type: string
+          maxLength: 100
+        state:
+          type: string
+          title: State/Province
+          maxLength: 100
+        country:
+          type: string
+          maxLength: 100
+        postal_code:
+          type: string
+          maxLength: 20
+        terms_accepted:
+          type: boolean
+        terms_accepted_at:
+          type: string
+          format: date-time
+          nullable: true
+        preferred_language:
+          type: integer
+          nullable: true
+        notification_preferences: {}
+        is_verified:
+          type: boolean
+          readOnly: true
+          title: Verified
+        verification_date:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - is_verified
+      - updated_at
+      - user
+      - verification_date
+    UserProfileUpdate:
+      type: object
+      description: Serializer for models with timestamp fields.
+      properties:
+        user_type:
+          $ref: '#/components/schemas/UserTypeD25Enum'
+        bio:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        gender:
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        phone_number:
+          type: string
+          maxLength: 20
+        address:
+          type: string
+        city:
+          type: string
+          maxLength: 100
+        state:
+          type: string
+          title: State/Province
+          maxLength: 100
+        country:
+          type: string
+          maxLength: 100
+        postal_code:
+          type: string
+          maxLength: 20
+        preferred_language:
+          type: integer
+          nullable: true
+        notification_preferences: {}
+    UserTypeD25Enum:
+      enum:
+      - client
+      - service_provider
+      - both
+      type: string
+      description: |-
+        * `client` - Client
+        * `service_provider` - Service Provider
+        * `both` - Both
+    UserUpdate:
+      type: object
+      description: Serializer for updating user profile - enhanced version of api_users
+        EditUserSettingsView
+      properties:
+        name:
+          type: string
+          title: Имя
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          readOnly: true
+        description:
+          type: string
+          nullable: true
+          title: Описание
+        photo_url:
+          type: string
+          format: uri
+          nullable: true
+          title: Ссылка на фото (Firebase)
+          maxLength: 200
+        first_name:
+          type: string
+          title: Имя
+          maxLength: 150
+        last_name:
+          type: string
+          title: Фамилия
+          maxLength: 150
+      required:
+      - email
+      - name
+    WebSocketInfo:
+      type: object
+      description: Serializer for WebSocket connection information.
+      properties:
+        websocket_url:
+          type: string
+          description: Base WebSocket URL
+        temp_token:
+          type: string
+          description: Temporary token for WebSocket connection
+        user_id:
+          type: integer
+          description: User ID for WebSocket connection
+      required:
+      - temp_token
+      - user_id
+      - websocket_url
+    WebhookResponse:
+      type: object
+      description: Serializer for webhook response.
+      properties:
+        status:
+          type: string
+          description: Webhook processing status
+        message:
+          type: string
+          description: Additional message
+      required:
+      - status
+    WebhookRetryResponse:
+      type: object
+      description: Serializer for webhook retry response.
+      properties:
+        status:
+          type: string
+          description: Retry processing status
+        message:
+          type: string
+          description: Additional message
+      required:
+      - status
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

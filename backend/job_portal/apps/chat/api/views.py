@@ -1,5 +1,5 @@
 # Django imports
-from django.db.models import Max, F
+from django.db.models import Max
 from django.utils import timezone
 from django.db import models
 
@@ -174,9 +174,13 @@ class WebSocketInfoApiView(StandardizedViewMixin, generics.GenericAPIView):
     
     def get(self, request):
         """Get WebSocket connection info for the user."""
+        # Generate a temporary token for WebSocket connection instead of exposing auth token
+        import secrets
+        temp_token = secrets.token_urlsafe(32)
+        
         serializer = WebSocketInfoSerializer({
             'websocket_url': f'ws://{request.get_host()}/ws/chat/',
-            'auth_token': request.auth.token if hasattr(request, 'auth') else None,
+            'temp_token': temp_token,  # Use temporary token instead of auth token
             'user_id': request.user.id
         })
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,7 +1,7 @@
 from django.urls import path
 from .api.views import (
     ReviewApiView, ReviewDetailApiView, ProviderReviewsApiView,
-    OrderReviewsApiView, ReviewAnalyticsApiView, AppFeedbackApiView
+    OrderReviewsApiView, ReviewAnalyticsApiView
 )
 
 app_name = 'reviews'
@@ -19,8 +19,4 @@ urlpatterns = [
     
     # Review analytics
     path('api/v1/reviews/analytics/', ReviewAnalyticsApiView.as_view(), name='review-analytics'),
-    
-    # TODO: rename url to app prefix
-    # App Feedback
-    path('api/v1/reviews/feedback/', AppFeedbackApiView.as_view(), name='app-feedback'),
 ]

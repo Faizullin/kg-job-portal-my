@@ -5,10 +5,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from rest_framework.permissions import IsAuthenticated
-from utils.crud_base.views import StandardizedViewMixin
+from utils.exceptions import StandardizedViewMixin
 from utils.pagination import CustomPagination
-from ..models import Review, AppFeedback
-from .serializers import ReviewSerializer, ReviewCreateSerializer, ReviewUpdateSerializer, ReviewAnalyticsSerializer, AppFeedbackSerializer, AppFeedbackCreateSerializer
+from ..models import Review
+from .serializers import ReviewSerializer, ReviewCreateSerializer, ReviewUpdateSerializer, ReviewAnalyticsSerializer
 
 
 class ReviewApiView(StandardizedViewMixin, generics.ListCreateAPIView):
@@ -17,7 +17,7 @@ class ReviewApiView(StandardizedViewMixin, generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['overall_rating', 'is_verified']
-    search_fields = ['title', 'comment', 'reviewer__name', 'provider__user_profile__user__name']
+    search_fields = ['title', 'comment', 'reviewer__name', 'provider__user_profile__name']
     ordering_fields = ['overall_rating', 'created_at']
     ordering = ['-created_at']
     pagination_class = CustomPagination
@@ -25,7 +25,7 @@ class ReviewApiView(StandardizedViewMixin, generics.ListCreateAPIView):
     def get_queryset(self):
         return Review.objects.select_related(
             'reviewer', 
-            'provider__user_profile__user',
+            'provider__user_profile',
             'order'
         )
     
@@ -47,7 +47,7 @@ class ReviewDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateDestroyA
     def get_queryset(self):
         return Review.objects.select_related(
             'reviewer', 
-            'provider__user_profile__user',
+            'provider__user_profile',
             'order'
         )
     
@@ -73,7 +73,7 @@ class ProviderReviewsApiView(StandardizedViewMixin, generics.ListAPIView):
             provider_id=provider_id
         ).select_related(
             'reviewer', 
-            'provider__user_profile__user',
+            'provider__user_profile',
             'order'
         )
 
@@ -90,7 +90,7 @@ class OrderReviewsApiView(StandardizedViewMixin, generics.ListAPIView):
             order_id=order_id,
         ).select_related(
             'reviewer', 
-            'provider__user_profile__user',
+            'provider__user_profile',
             'order'
         )
 
@@ -106,7 +106,7 @@ class ReviewAnalyticsApiView(StandardizedViewMixin, generics.GenericAPIView):
             provider_id=provider_id
         ).select_related(
             'reviewer', 
-            'provider__user_profile__user',
+            'provider__user_profile',
             'order'
         )
     
@@ -137,21 +137,4 @@ class ReviewAnalyticsApiView(StandardizedViewMixin, generics.GenericAPIView):
         return Response(serializer.data)
 
 
-class AppFeedbackApiView(StandardizedViewMixin, generics.ListCreateAPIView):
-    """List and create app feedback."""
-    serializer_class = AppFeedbackSerializer
-    permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['is_processed']
-    ordering_fields = ['created_at']
-    ordering = ['-created_at']
-    pagination_class = CustomPagination
-    
-    def get_queryset(self):
-        return AppFeedback.objects.filter(user=self.request.user)
-    
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return AppFeedbackCreateSerializer
-        return AppFeedbackSerializer
 

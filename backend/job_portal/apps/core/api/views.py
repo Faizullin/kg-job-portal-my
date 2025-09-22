@@ -2,7 +2,7 @@ from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from utils.crud_base.views import StandardizedViewMixin
+from utils.exceptions import StandardizedViewMixin
 from utils.permissions import HasSpecificPermission
 from utils.pagination import CustomPagination
 from ..models import Language, ServiceCategory, ServiceSubcategory, ServiceArea, SystemSettings, AppVersion, SupportFAQ
@@ -112,3 +112,5 @@ class SupportFAQApiView(StandardizedViewMixin, generics.ListAPIView):
     
     def get_queryset(self):
         return SupportFAQ.objects.filter(is_active=True)
+
+

@@ -1,7 +1,6 @@
 from django.contrib import admin
-from django.utils.html import format_html
-from django.db.models import Count, Max, Q
-from .models import ChatRoom, ChatMessage, ChatParticipant, ChatTemplate, ChatNotification, ChatReport
+from django.db.models import Count
+from .models import ChatRoom, ChatMessage, ChatParticipant
 
 
 @admin.register(ChatRoom)
@@ -50,7 +49,7 @@ class ChatMessageAdmin(admin.ModelAdmin):
         'is_read', 'attachment_info', 'created_at'
     ]
     list_filter = ['message_type', 'is_read', 'created_at']
-    search_fields = ['content', 'sender__first_name', 'chat_room__name']
+    search_fields = ['content', 'sender__first_name', 'chat_room__title']
     ordering = ['-created_at']
     list_editable = ['is_read']
     raw_id_fields = ['chat_room', 'sender', 'reply_to']
@@ -118,81 +117,3 @@ class ChatParticipantAdmin(admin.ModelAdmin):
         return super().get_queryset(request).select_related('user', 'chat_room')
 
 
-@admin.register(ChatTemplate)
-class ChatTemplateAdmin(admin.ModelAdmin):
-    list_display = [
-        'id', 'name', 'category', 'subject_preview', 'is_active', 'usage_count', 'created_at'
-    ]
-    list_filter = ['category', 'is_active', 'created_at']
-    search_fields = ['name', 'subject', 'content']
-    ordering = ['category', 'name']
-    list_editable = ['is_active']
-    
-    fieldsets = (
-        ('Template Information', {
-            'fields': ('name', 'category', 'is_active')
-        }),
-        ('Content', {
-            'fields': ('subject', 'content')
-        }),
-        ('Variables', {
-            'fields': ('variables',)
-        }),
-        ('Usage', {
-            'fields': ('usage_count',)
-        }),
-    )
-    
-    def subject_preview(self, obj):
-        if obj.subject:
-            return obj.subject[:50] + '...' if len(obj.subject) > 50 else obj.subject
-        return '-'
-    subject_preview.short_description = 'Subject'
-
-
-@admin.register(ChatNotification)
-class ChatNotificationAdmin(admin.ModelAdmin):
-    list_display = [
-        'id', 'user', 'chat_room', 'notification_type', 'is_read', 'created_at'
-    ]
-    list_filter = ['notification_type', 'is_read', 'created_at']
-    search_fields = ['user__first_name', 'chat_room__name']
-    ordering = ['-created_at']
-    
-    fieldsets = (
-        ('Notification Information', {
-            'fields': ('user', 'chat_room', 'message', 'notification_type')
-        }),
-        ('Status', {
-            'fields': ('is_read', 'read_at')
-        }),
-    )
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('user', 'chat_room', 'message')
-
-
-@admin.register(ChatReport)
-class ChatReportAdmin(admin.ModelAdmin):
-    list_display = [
-        'id', 'reported_by', 'reported_message', 'reason', 'status', 'created_at'
-    ]
-    list_filter = ['reason', 'status', 'created_at']
-    search_fields = ['reported_by__first_name', 'reported_message__content', 'description']
-    ordering = ['-created_at']
-    list_editable = ['status']
-    
-    fieldsets = (
-        ('Report Information', {
-            'fields': ('reported_message', 'reported_by', 'reason', 'description', 'evidence')
-        }),
-        ('Status', {
-            'fields': ('status', 'admin_notes')
-        }),
-        ('Resolution', {
-            'fields': ('resolved_by', 'resolved_at', 'action_taken')
-        }),
-    )
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('reported_by', 'reported_message', 'resolved_by')

@@ -69,6 +69,7 @@ class ServiceProviderUpdateSerializer(AbstractTimestampedModelSerializer):
             'works_remotely', 'accepts_clients_at_location', 'travels_to_clients',
             'is_available',
         )
+        read_only_fields = ('is_verified_provider',)
 
 
 class ClientUpdateSerializer(AbstractTimestampedModelSerializer):

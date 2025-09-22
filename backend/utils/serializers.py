@@ -34,6 +34,7 @@ class AbstractTimestampedModelSerializer(AbstractTimestampedSerializerMixin, ser
 
     class Meta:
         abstract = True
+        read_only_fields = ('created_at', 'updated_at')
 
 
 class AbstractSoftDeleteModelSerializer(AbstractSoftDeleteSerializerMixin, serializers.ModelSerializer):
@@ -41,6 +42,7 @@ class AbstractSoftDeleteModelSerializer(AbstractSoftDeleteSerializerMixin, seria
 
     class Meta:
         abstract = True
+        read_only_fields = ('deleted_at', 'restored_at', 'is_deleted')
 
 
 class AbstractMetaModelSerializer(AbstractMetaSerializerMixin, serializers.ModelSerializer):
@@ -60,6 +62,7 @@ class AbstractFullModelSerializer(
 
     class Meta:
         abstract = True
+        read_only_fields = ('created_at', 'updated_at', 'deleted_at', 'restored_at', 'is_deleted')
 
 
 class AbstractNestedSerializerMixin:

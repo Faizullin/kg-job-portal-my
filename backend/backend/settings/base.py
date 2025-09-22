@@ -196,4 +196,4 @@ firebase_admin.initialize_app(cred)
 # Job Portal and Accounts apps
 # LMS apps removed - replaced with job_portal and accounts
 
-LOGGING = {}
+# LOGGING = {}

@@ -5,11 +5,12 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from utils.crud_base.views import StandardizedViewMixin
+from utils.exceptions import StandardizedViewMixin
 from utils.pagination import CustomPagination
 
 from ..models import ClientProfile, ServiceProviderProfile, UserProfile
-from orders.models import Order
+from job_portal.apps.orders.models import Order
+from job_portal.apps.orders.api.serializers import OrderSerializer
 from .serializers import (
     ClientSerializer,
     ClientUpdateSerializer,
@@ -101,9 +102,7 @@ class ClientApiView(StandardizedViewMixin, generics.ListAPIView):
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        return ClientProfile.objects.filter(
-            user_profile__user_type='client'
-        ).select_related('user_profile__user')
+        return ClientProfile.objects.all().select_related('user_profile__user')
 
 
 class ClientDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
@@ -113,8 +112,7 @@ class ClientDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView)
     def get_object(self):
         return get_object_or_404(
             ClientProfile, 
-            user_profile__user=self.request.user, 
-            user_profile__is_deleted=False
+            user_profile__user=self.request.user
         )
     
     def get_serializer_class(self):
@@ -123,35 +121,71 @@ class ClientDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView)
         return ClientUpdateSerializer
 
 
+# Profile Creation Views
 # Simple Profile Update Views
-class UserProfileUpdateView(StandardizedViewMixin, APIView):
+class ClientProfileCreateView(StandardizedViewMixin, APIView):
+    serializer_class = ClientUpdateSerializer
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        serializer = UserProfileUpdateSerializer(data=request.data)
-        if serializer.is_valid():
-            user_profile, created = UserProfile.objects.update_or_create(
-                user=request.user,
-                defaults=serializer.validated_data
-            )
+        # Check if user has job portal profile
+        try:
+            user_profile = UserProfile.objects.get(user=request.user)
+        except UserProfile.DoesNotExist:
             return Response({
-                'message': 'Profile updated successfully',
-                'profile': UserProfileUpdateSerializer(user_profile).data
-            }, status=status.HTTP_200_OK)
+                'error': 'User must have a job portal profile first'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check if user already has a client profile
+        if ClientProfile.objects.filter(user_profile=user_profile).exists():
+            return Response({
+                'error': 'User already has a client profile'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = ClientUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            # Extract many-to-many fields
+            validated_data = serializer.validated_data.copy()
+            preferred_services = validated_data.pop('preferred_services', None)
+            
+            client_profile = ClientProfile.objects.create(
+                user_profile=user_profile,
+                **validated_data
+            )
+            
+            # Set many-to-many fields if provided
+            if preferred_services is not None:
+                client_profile.preferred_services.set(preferred_services)
+            
+            return Response({
+                'message': 'Client profile created successfully',
+                'client_profile': ClientUpdateSerializer(client_profile).data
+            }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ClientProfileUpdateView(StandardizedViewMixin, APIView):
+    serializer_class = ClientUpdateSerializer
     permission_classes = [IsAuthenticated,]
     
     def post(self, request):
         serializer = ClientUpdateSerializer(data=request.data)
         if serializer.is_valid():
             user_profile = request.user.job_portal_profile
+            
+            # Extract many-to-many fields
+            validated_data = serializer.validated_data.copy()
+            preferred_services = validated_data.pop('preferred_services', None)
+            
             client_profile, created = ClientProfile.objects.update_or_create(
                 user_profile=user_profile,
-                defaults=serializer.validated_data
+                defaults=validated_data
             )
+            
+            # Set many-to-many fields if provided
+            if preferred_services is not None:
+                client_profile.preferred_services.set(preferred_services)
+            
             return Response({
                 'message': 'Client profile updated successfully',
                 'client_profile': ClientUpdateSerializer(client_profile).data
@@ -159,17 +193,75 @@ class ClientProfileUpdateView(StandardizedViewMixin, APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ServiceProviderProfileCreateView(StandardizedViewMixin, APIView):
+    serializer_class = ServiceProviderUpdateSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        # Check if user has job portal profile
+        try:
+            user_profile = UserProfile.objects.get(user=request.user)
+        except UserProfile.DoesNotExist:
+            return Response({
+                'error': 'User must have a job portal profile first'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check if user already has a service provider profile
+        if ServiceProviderProfile.objects.filter(user_profile=user_profile).exists():
+            return Response({
+                'error': 'User already has a service provider profile'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = ServiceProviderUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            # Extract many-to-many fields
+            validated_data = serializer.validated_data.copy()
+            service_areas = validated_data.pop('service_areas', None)
+            services_offered = validated_data.pop('services_offered', None)
+            
+            provider_profile = ServiceProviderProfile.objects.create(
+                user_profile=user_profile,
+                **validated_data
+            )
+            
+            # Set many-to-many fields if provided
+            if service_areas is not None:
+                provider_profile.service_areas.set(service_areas)
+            if services_offered is not None:
+                provider_profile.services_offered.set(services_offered)
+            
+            return Response({
+                'message': 'Service provider profile created successfully',
+                'provider_profile': ServiceProviderUpdateSerializer(provider_profile).data
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ServiceProviderProfileUpdateView(StandardizedViewMixin, APIView):
+    serializer_class = ServiceProviderUpdateSerializer
     permission_classes = [IsAuthenticated, ]
     
     def post(self, request):
         serializer = ServiceProviderUpdateSerializer(data=request.data)
         if serializer.is_valid():
             user_profile = request.user.job_portal_profile
+            
+            # Extract many-to-many fields
+            validated_data = serializer.validated_data.copy()
+            service_areas = validated_data.pop('service_areas', None)
+            services_offered = validated_data.pop('services_offered', None)
+            
             provider_profile, created = ServiceProviderProfile.objects.update_or_create(
                 user_profile=user_profile,
-                defaults=serializer.validated_data
+                defaults=validated_data
             )
+            
+            # Set many-to-many fields if provided
+            if service_areas is not None:
+                provider_profile.service_areas.set(service_areas)
+            if services_offered is not None:
+                provider_profile.services_offered.set(services_offered)
+            
             return Response({
                 'message': 'Service provider profile updated successfully',
                 'provider_profile': ServiceProviderUpdateSerializer(provider_profile).data
@@ -178,6 +270,7 @@ class ServiceProviderProfileUpdateView(StandardizedViewMixin, APIView):
 
 
 class AdvancedProfileApiView(StandardizedViewMixin, APIView):
+    serializer_class = AdvancedProfileSerializer
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
@@ -204,6 +297,7 @@ class AdvancedProfileApiView(StandardizedViewMixin, APIView):
 
 class TaskHistoryApiView(StandardizedViewMixin, generics.ListAPIView):
     """Task history for users (orders they created or worked on)."""
+    serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['status']
@@ -214,20 +308,20 @@ class TaskHistoryApiView(StandardizedViewMixin, generics.ListAPIView):
     def get_queryset(self):
         """Get user's task history based on their role."""
         user = self.request.user
-        try:
-            if hasattr(user, 'job_portal_profile'):
-                if user.job_portal_profile.user_type in ['client', 'both']:
-                    # Client's created orders
-                    return Order.objects.filter(
-                        client__user_profile__user=user
-                    ).select_related('service_subcategory', 'client__user_profile__user')
-                elif user.job_portal_profile.user_type in ['service_provider', 'both']:
-                    # Provider's assigned orders
-                    return Order.objects.filter(
-                        assignment__provider__user_profile__user=user
-                    ).select_related('service_subcategory', 'assignment__provider__user_profile__user')
-        except Exception:
-            pass
+        
+        # Check if user has client profile
+        if ClientProfile.objects.filter(user_profile__user=user).exists():
+            # Client's created orders
+            return Order.objects.filter(
+                client__user_profile__user=user
+            ).select_related('service_subcategory', 'client__user_profile')
+        
+        # Check if user has service provider profile
+        if ServiceProviderProfile.objects.filter(user_profile__user=user).exists():
+            # Provider's assigned orders
+            return Order.objects.filter(
+                assignment__provider__user_profile__user=user
+            ).select_related('service_subcategory', 'assignment__provider__user_profile')
         
         # Fallback: return empty queryset
         return Order.objects.none()

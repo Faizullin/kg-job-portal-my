@@ -2,9 +2,7 @@ from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_field
 from utils.serializers import (
     AbstractTimestampedModelSerializer, 
-    AbstractSoftDeleteModelSerializer,
-    AbstractChoiceFieldSerializerMixin,
-    AbstractComputedFieldSerializerMixin
+    AbstractChoiceFieldSerializerMixin
 )
 from ..models import Language, ServiceCategory, ServiceSubcategory, ServiceArea, SystemSettings, AppVersion, SupportFAQ
 
@@ -84,3 +82,5 @@ class SupportFAQSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFie
     @extend_schema_field(serializers.CharField())
     def get_category_display(self, obj):
         return self.get_choice_display(obj, 'category')
+
+

@@ -1,6 +1,5 @@
 from django.contrib import admin
-from django.utils.html import format_html
-from .models import UserProfile, ServiceProviderProfile, ClientProfile, UserVerification, ServiceProviderService
+from .models import UserProfile, ServiceProviderProfile, ClientProfile
 
 
 @admin.register(UserProfile)
@@ -47,7 +46,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 @admin.register(ServiceProviderProfile)
 class ServiceProviderProfileAdmin(admin.ModelAdmin):
-    list_display = ['user_profile', 'business_name', 'years_of_experience', 'is_available', 'is_verified_provider', 'average_rating', 'total_reviews']
+    list_display = ['user_profile', 'business_name', 'is_available', 'is_verified_provider', 'average_rating', 'total_reviews']
     list_filter = ['is_verified_provider', 'is_available', 'created_at']
     search_fields = ['user_profile__user__first_name', 'user_profile__user__last_name', 'business_name']
     ordering = ['-average_rating', '-total_reviews']
@@ -56,13 +55,13 @@ class ServiceProviderProfileAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('user_profile', 'business_name', 'business_description', 'years_of_experience')
+            'fields': ('user_profile', 'business_name', 'business_description')
         }),
         ('Business Details', {
-            'fields': ('business_license', 'service_areas', 'travel_radius')
+            'fields': ('service_areas', 'services_offered', 'works_remotely', 'accepts_clients_at_location', 'travels_to_clients')
         }),
         ('Availability & Verification', {
-            'fields': ('is_available', 'availability_schedule', 'is_verified_provider', 'verification_documents')
+            'fields': ('is_available', 'is_verified_provider')
         }),
         ('Performance', {
             'fields': ('average_rating', 'total_reviews')
@@ -86,7 +85,7 @@ class ClientProfileAdmin(admin.ModelAdmin):
             'fields': ('user_profile',)
         }),
         ('Preferences', {
-            'fields': ('preferred_services', 'budget_preferences')
+            'fields': ('preferred_services',)
         }),
         ('Order History', {
             'fields': ('total_orders', 'completed_orders', 'cancelled_orders')

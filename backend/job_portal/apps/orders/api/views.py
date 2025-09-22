@@ -1,39 +1,58 @@
 # Django imports
+from django.db import models, transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.db import transaction, models
+from django_filters.rest_framework import DjangoFilterBackend
+from job_portal.apps.chat.models import ChatParticipant, ChatRoom
 
 # DRF imports
 from rest_framework import generics, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.filters import SearchFilter, OrderingFilter
-from django_filters.rest_framework import DjangoFilterBackend
 
 # Local imports
 from utils.exceptions import StandardizedViewMixin
+from utils.pagination import CustomPagination
 from utils.permissions import (
-    HasSpecificPermission,
     HasClientProfile,
     HasServiceProviderProfile,
+    HasSpecificPermission,
 )
-from utils.pagination import CustomPagination
-from ..models import Order, Bid, OrderAssignment
+
+from ..models import Bid, Order, OrderAssignment
 from .serializers import (
-    OrderSerializer,
-    BidSerializer,
-    OrderCreateSerializer,
-    OrderUpdateSerializer,
-    BidCreateUpdateSerializer,
     BidActionSerializer,
+    BidCreateUpdateSerializer,
+    BidSerializer,
     OrderAssignmentSerializer,
+    OrderCreateSerializer,
+    OrderSerializer,
+    OrderUpdateSerializer,
 )
-from job_portal.apps.chat.models import ChatRoom, ChatParticipant
 
 
 class OrderApiView(StandardizedViewMixin, generics.ListAPIView):
+    """List all orders (admin view)."""
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated, HasSpecificPermission(["orders.view_order"])]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ["status", "service_subcategory", "urgency"]
+    search_fields = ["title", "description", "location", "city", "state"]
+    ordering_fields = ["created_at", "service_date", "budget_min", "budget_max"]
+    ordering = ["-created_at"]
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        return Order.objects.all().select_related(
+            "client__user_profile", "service_subcategory"
+        )
+
+
+class MyOrdersView(StandardizedViewMixin, generics.ListAPIView):
+    """Get current user's orders (as client)."""
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated, HasClientProfile]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -46,32 +65,19 @@ class OrderApiView(StandardizedViewMixin, generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(client__user_profile__user=user).select_related(
-            "client__user_profile__user", "service_subcategory"
+            "client__user_profile", "service_subcategory"
         )
-
-    @action(detail=False, methods=["get"])
-    def my_orders(self, request):
-        """Get orders where user is the client."""
-        orders = Order.objects.filter(
-            client__user_profile__user=request.user,
-        ).select_related("service_subcategory")
-
-        serializer = OrderSerializer(orders, many=True)
-        return Response(serializer.data)
 
 
 class OrderDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = OrderUpdateSerializer
-    permission_classes = [
-        IsAuthenticated,
-        HasSpecificPermission(["orders.view_order", "orders.change_order"]),
-    ]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(
             client__user_profile__user=user,
-        ).select_related("client__user_profile__user", "service_subcategory")
+        ).select_related("client__user_profile", "service_subcategory")
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -95,8 +101,23 @@ class OrderCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
 
 
 class BidApiView(StandardizedViewMixin, generics.ListAPIView):
+    """List all bids (admin view)."""
     serializer_class = BidSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasSpecificPermission(["orders.view_bid"])]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ["status", "order", "is_negotiable"]
+    ordering_fields = ["amount", "created_at"]
+    ordering = ["amount", "-created_at"]
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        return Bid.objects.all().select_related("order", "provider__user_profile")
+
+
+class MyBidsView(StandardizedViewMixin, generics.ListAPIView):
+    """Get current user's bids (as service provider)."""
+    serializer_class = BidSerializer
+    permission_classes = [IsAuthenticated, HasServiceProviderProfile]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ["status", "order", "is_negotiable"]
     ordering_fields = ["amount", "created_at"]
@@ -105,24 +126,26 @@ class BidApiView(StandardizedViewMixin, generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        # Return bids based on user role:
-        # - Clients see bids on their orders
-        # - Providers see their own bids
-        try:
-            if hasattr(user, "job_portal_profile"):
-                if user.job_portal_profile.user_type in ["client", "both"]:
-                    return Bid.objects.filter(
-                        order__client__user_profile__user=user
-                    ).select_related("order", "provider__user_profile__user")
-                elif user.job_portal_profile.user_type in ["service_provider", "both"]:
-                    return Bid.objects.filter(
-                        provider__user_profile__user=user
-                    ).select_related("order", "provider__user_profile__user")
-        except Exception:
-            pass
+        return Bid.objects.filter(
+            provider__user_profile__user=user
+        ).select_related("order", "provider__user_profile")
 
-        # Fallback: return empty queryset
-        return Bid.objects.none()
+
+class OrderBidsView(StandardizedViewMixin, generics.ListAPIView):
+    """Get bids for current user's orders (as client)."""
+    serializer_class = BidSerializer
+    permission_classes = [IsAuthenticated, HasClientProfile]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ["status", "is_negotiable"]
+    ordering_fields = ["amount", "created_at"]
+    ordering = ["amount", "-created_at"]
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        user = self.request.user
+        return Bid.objects.filter(
+            order__client__user_profile__user=user
+        ).select_related("order", "provider__user_profile")
 
 
 class BidCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
@@ -146,7 +169,6 @@ class BidCreateApiView(StandardizedViewMixin, generics.CreateAPIView):
         ).first()
 
         if existing_bid:
-            from rest_framework.exceptions import ValidationError
 
             raise ValidationError("You have already submitted a bid for this order")
 
@@ -168,7 +190,7 @@ class BidDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateDestroyAPIV
         return Bid.objects.filter(
             models.Q(order__client__user_profile__user=user)
             | models.Q(provider__user_profile__user=user)
-        ).select_related("order", "provider__user_profile__user")
+        ).select_related("order", "provider__user_profile")
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -178,7 +200,7 @@ class BidDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateDestroyAPIV
 
 class BidAcceptApiView(StandardizedViewMixin, APIView):
     """Accept a bid and create order assignment."""
-
+    serializer_class = BidActionSerializer
     permission_classes = [IsAuthenticated, HasClientProfile]
 
     @transaction.atomic
@@ -334,10 +356,10 @@ class BidWithdrawApiView(StandardizedViewMixin, APIView):
 
 
 class OrderAssignmentApiView(StandardizedViewMixin, generics.ListAPIView):
-    """List order assignments."""
+    """List all order assignments (admin view)."""
 
     serializer_class = OrderAssignmentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasSpecificPermission(["orders.view_orderassignment"])]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ["order", "provider"]
     ordering_fields = ["assigned_at", "start_date"]
@@ -345,12 +367,43 @@ class OrderAssignmentApiView(StandardizedViewMixin, generics.ListAPIView):
     pagination_class = CustomPagination
 
     def get_queryset(self):
+        return OrderAssignment.objects.all().select_related("order", "provider__user_profile", "accepted_bid")
+
+
+class MyAssignmentsView(StandardizedViewMixin, generics.ListAPIView):
+    """Get current user's assignments (as service provider)."""
+
+    serializer_class = OrderAssignmentSerializer
+    permission_classes = [IsAuthenticated, HasServiceProviderProfile]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ["order"]
+    ordering_fields = ["assigned_at", "start_date"]
+    ordering = ["-assigned_at"]
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
         user = self.request.user
-        # Show assignments where user is either client or provider
         return OrderAssignment.objects.filter(
-            models.Q(order__client__user_profile__user=user)
-            | models.Q(provider__user_profile__user=user)
-        ).select_related("order", "provider__user_profile__user", "accepted_bid")
+            provider__user_profile__user=user
+        ).select_related("order", "provider__user_profile", "accepted_bid")
+
+
+class MyOrderAssignmentsView(StandardizedViewMixin, generics.ListAPIView):
+    """Get assignments for current user's orders (as client)."""
+
+    serializer_class = OrderAssignmentSerializer
+    permission_classes = [IsAuthenticated, HasClientProfile]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ["provider"]
+    ordering_fields = ["assigned_at", "start_date"]
+    ordering = ["-assigned_at"]
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        user = self.request.user
+        return OrderAssignment.objects.filter(
+            order__client__user_profile__user=user
+        ).select_related("order", "provider__user_profile", "accepted_bid")
 
 
 class OrderAssignmentDetailApiView(
@@ -366,4 +419,4 @@ class OrderAssignmentDetailApiView(
         return OrderAssignment.objects.filter(
             models.Q(order__client__user_profile__user=user)
             | models.Q(provider__user_profile__user=user)
-        ).select_related("order", "provider__user_profile__user", "accepted_bid")
+        ).select_related("order", "provider__user_profile", "accepted_bid")

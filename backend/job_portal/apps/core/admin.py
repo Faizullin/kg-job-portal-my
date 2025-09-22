@@ -84,7 +84,7 @@ class ServiceSubcategoryAdmin(admin.ModelAdmin):
             'fields': ('image', 'featured', 'base_price', 'price_range_min', 'price_range_max')
         }),
         ('Service Details', {
-            'fields': ('estimated_duration', 'complexity_level', 'required_tools', 'required_materials'),
+            'fields': ('estimated_duration', 'complexity_level',),
             'classes': ('collapse',)
         }),
     )
@@ -186,3 +186,5 @@ class AppVersionAdmin(admin.ModelAdmin):
             return f"{size_kb:.0f} KB"
         return '-'
     file_size_display.short_description = 'File Size'
+
+

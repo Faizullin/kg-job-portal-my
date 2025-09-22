@@ -1,14 +1,12 @@
 from django.contrib import admin
-from django.utils.html import format_html
-from django.db.models import Sum, Count
-from .models import Order, OrderAddon, OrderPhoto, Bid, OrderAssignment, OrderDispute
+from .models import Order, Bid, OrderAssignment, OrderDispute, OrderAttachment
 
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = [
         'id', 'title', 'client', 'service_subcategory', 'status', 'budget_display',
-        'service_date', 'created_at', 'addons_count'
+        'service_date', 'created_at'
     ]
     list_filter = ['status', 'service_subcategory', 'created_at', 'service_date', 'urgency']
     search_fields = ['title', 'description', 'location', 'client__user_profile__user__first_name']
@@ -44,66 +42,11 @@ class OrderAdmin(admin.ModelAdmin):
         return "Not specified"
     budget_display.short_description = 'Budget Range'
     
-    def addons_count(self, obj):
-        return obj.order_addons.count()
-    addons_count.short_description = 'Add-ons'
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related(
             'client__user_profile__user', 'service_subcategory'
         )
-
-
-@admin.register(OrderAddon)
-class OrderAddonAdmin(admin.ModelAdmin):
-    list_display = [
-        'id', 'order', 'addon', 'quantity', 'price', 'total_price_display'
-    ]
-    list_filter = ['order__status', 'created_at']
-    search_fields = ['order__title', 'addon__name']
-    ordering = ['-created_at']
-    list_editable = ['quantity', 'price']
-    raw_id_fields = ['order', 'addon']
-    
-    fieldsets = (
-        ('Addon Information', {
-            'fields': ('order', 'addon', 'quantity', 'price')
-        }),
-    )
-    
-    def total_price_display(self, obj):
-        return f"${obj.quantity * obj.price:.2f}"
-    total_price_display.short_description = 'Total Price'
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('order', 'addon')
-
-
-@admin.register(OrderPhoto)
-class OrderPhotoAdmin(admin.ModelAdmin):
-    list_display = [
-        'id', 'order', 'photo_preview', 'caption', 'is_primary', 'created_at'
-    ]
-    list_filter = ['is_primary', 'created_at']
-    search_fields = ['order__title', 'caption']
-    ordering = ['-is_primary', '-created_at']
-    list_editable = ['is_primary']
-    raw_id_fields = ['order']
-    
-    fieldsets = (
-        ('Photo Information', {
-            'fields': ('order', 'photo_url', 'caption', 'is_primary')
-        }),
-    )
-    
-    def photo_preview(self, obj):
-        if obj.photo_url:
-            return format_html('<img src="{}" width="50" height="50" style="object-fit: cover;" />', obj.photo_url)
-        return 'No photo'
-    photo_preview.short_description = 'Photo'
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('order')
 
 
 @admin.register(OrderDispute)
@@ -171,7 +114,7 @@ class BidAdmin(admin.ModelAdmin):
     )
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('order', 'provider__user_profile__user')
+        return super().get_queryset(request).select_related('order', 'provider__user_profile')
 
 
 @admin.register(OrderAssignment)
@@ -200,4 +143,27 @@ class OrderAssignmentAdmin(admin.ModelAdmin):
     )
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('order', 'provider__user_profile__user', 'accepted_bid')
+        return super().get_queryset(request).select_related('order', 'provider__user_profile', 'accepted_bid')
+
+
+@admin.register(OrderAttachment)
+class OrderAttachmentAdmin(admin.ModelAdmin):
+    list_display = [
+        'id', 'file_name', 'file_type', 'file_size', 'uploaded_by', 'created_at'
+    ]
+    list_filter = ['file_type', 'created_at']
+    search_fields = ['file_name', 'description', 'uploaded_by__first_name']
+    ordering = ['-created_at']
+    raw_id_fields = ['uploaded_by']
+    
+    fieldsets = (
+        ('File Information', {
+            'fields': ('file_name', 'file_type', 'file_size', 'file_url', 'mime_type')
+        }),
+        ('Details', {
+            'fields': ('description', 'uploaded_by')
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('uploaded_by')
