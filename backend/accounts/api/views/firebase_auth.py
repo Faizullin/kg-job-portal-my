@@ -1,4 +1,5 @@
 from django.db import IntegrityError
+from django.conf import settings
 from firebase_admin import auth
 from firebase_admin.auth import InvalidIdTokenError
 from rest_framework.authtoken.models import Token
@@ -146,3 +147,54 @@ class FirebaseAuthView(APIView):
 
     def _get_client_ip(self, request):
         return get_client_ip(request)
+
+
+class DebugFirebaseTokenView(APIView):
+    """Debug view to get Firebase user token by email - only available in DEBUG mode"""
+    permission_classes = [AllowAny]
+    
+    def post(self, request, *args, **kwargs):
+        """Get Firebase user token by email address - DEBUG ONLY"""
+        # Only allow in DEBUG mode
+        if not settings.DEBUG:
+            return Response({'error': 'This endpoint is only available in DEBUG mode'}, status=403)
+        
+        email = request.data.get('email')
+        if not email:
+            return Response({'error': 'email is required'}, status=400)
+        
+        try:
+            # Get user by email from Firebase
+            firebase_user = auth.get_user_by_email(email)
+            
+            # Create custom token for this user
+            custom_token = auth.create_custom_token(firebase_user.uid)
+            
+            response_data = {
+                'firebase_user_id': firebase_user.uid,
+                'email': firebase_user.email,
+                'display_name': firebase_user.display_name,
+                'photo_url': firebase_user.photo_url,
+                'custom_token': custom_token.decode('utf-8'),
+                'user_metadata': {
+                    'creation_timestamp': firebase_user.user_metadata.creation_timestamp,
+                    'last_sign_in_timestamp': firebase_user.user_metadata.last_sign_in_timestamp,
+                },
+                'provider_data': [
+                    {
+                        'provider_id': provider.provider_id,
+                        'uid': provider.uid,
+                        'email': provider.email,
+                        'display_name': provider.display_name,
+                        'photo_url': provider.photo_url,
+                    }
+                    for provider in firebase_user.provider_data
+                ]
+            }
+            
+            return Response(response_data)
+            
+        except auth.UserNotFoundError:
+            return Response({'error': f'User with email {email} not found in Firebase'}, status=404)
+        except Exception as e:
+            return Response({'error': f'Error getting Firebase user: {str(e)}'}, status=500)
