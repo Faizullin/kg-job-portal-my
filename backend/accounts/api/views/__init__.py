@@ -4,7 +4,6 @@ from .firebase_auth import *
 
 __all__ = [
     'FirebaseAuthView',
-    'DebugFirebaseTokenView',
     'LogoutView',
     'UserProfileApiView',
     'UserListApiView',

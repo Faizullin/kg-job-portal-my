@@ -10,9 +10,6 @@ urlpatterns = [
     # Firebase authentication
     path('api/v1/auth/firebase/', FirebaseAuthView.as_view(), name='auth_firebase'),
     
-    # Debug Firebase token endpoint (only works in DEBUG mode)
-    path('api/v1/debug/firebase-token/', DebugFirebaseTokenView.as_view(), name='debug_firebase_token'),
-    
     # User logout
     path('api/v1/auth/logout/', LogoutView.as_view(), name='auth_logout'),
     
