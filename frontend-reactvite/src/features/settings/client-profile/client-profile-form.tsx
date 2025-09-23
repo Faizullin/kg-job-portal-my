@@ -1,33 +1,29 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MultiCombobox } from "@/components/ui/combobox";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { DollarSign, Loader2, MapPin, Save } from "lucide-react";
-import React from "react";
+import { Loader2, MapPin, Save } from "lucide-react";
+import React, { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const clientProfileSchema = z.object({
-  preferred_service_areas: z.array(z.string()).optional(),
-  budget_preferences: z.object({
-    min_budget: z.number().min(0).optional(),
-    max_budget: z.number().min(0).optional(),
-    currency: z.string().optional(),
-  }).optional(),
+  preferred_services: z.array(z.string()),
 });
 
 type ClientProfileFormData = z.infer<typeof clientProfileSchema>;
 
+const loadClientProfileQueryKey = "client-profile";
+
 export function ClientProfileForm() {
   const queryClient = useQueryClient();
 
-  const { data: profileData, isLoading: isProfileLoading } = useQuery({
-    queryKey: ["client-profile"],
+  const loadClientProfileQuery = useQuery({
+    queryKey: [loadClientProfileQueryKey],
     queryFn: async () => {
       const response = await myApi.v1UsersClientRetrieve();
       return response.data;
@@ -37,43 +33,43 @@ export function ClientProfileForm() {
   });
 
   // Fetch service categories for preferred areas
-  const { data: serviceCategories } = useQuery({
-    queryKey: ["service-categories"],
+  const loadServiceCategoriesQuery = useQuery({
+    queryKey: ["service-subcategories"],
     queryFn: async () => {
-      const response = await myApi.v1CoreServiceCategoriesList();
-      return response.data.results as any[];
+      const response = await myApi.v1CoreServiceSubcategoriesList();
+      return response.data.results;
     },
   });
+  const serviceCategoryOptions = useMemo(() => {
+    return loadServiceCategoriesQuery.data?.map((category) => ({
+      label: `${category.name} [#${category.id}]`,
+      value: category.id.toString(),
+    })) || [];
+  }, [loadServiceCategoriesQuery.data]);
 
   const form = useForm<ClientProfileFormData>({
     resolver: zodResolver(clientProfileSchema),
     defaultValues: {
-      preferred_service_areas: profileData?.preferred_service_areas || [],
-      budget_preferences: {
-        min_budget: profileData?.budget_preferences?.min_budget || 0,
-        max_budget: profileData?.budget_preferences?.max_budget || 1000,
-        currency: profileData?.budget_preferences?.currency || "USD",
-      },
+      preferred_services:  [],
     },
   });
 
-  // Update form when profile data loads
   React.useEffect(() => {
+    const profileData = loadClientProfileQuery.data;
     if (profileData) {
       form.reset({
-        preferred_service_areas: profileData.preferred_service_areas || [],
-        budget_preferences: {
-          min_budget: profileData.budget_preferences?.min_budget || 0,
-          max_budget: profileData.budget_preferences?.max_budget || 1000,
-          currency: profileData.budget_preferences?.currency || "USD",
-        },
+        preferred_services: (profileData.preferred_services || []).map(i => i.toString()),
       });
     }
-  }, [profileData, form]);
+  }, [loadClientProfileQuery.data, form]);
 
   const updateClientMutation = useMutation({
     mutationFn: async (data: ClientProfileFormData) => {
-      const response = await myApi.v1UsersClientPartialUpdate({ patchedClientUpdate: data });
+      const transformedData = {
+        ...data,
+        preferred_services: data.preferred_services.map(i => parseInt(i)) 
+      }
+      const response = await myApi.v1UsersClientPartialUpdate({ patchedClientUpdate: transformedData });
       return response.data;
     },
     onSuccess: () => {
@@ -89,19 +85,7 @@ export function ClientProfileForm() {
     await updateClientMutation.mutateAsync(data);
   };
 
-  const addPreferredArea = (categoryId: string) => {
-    const currentAreas = form.getValues("preferred_service_areas") || [];
-    if (!currentAreas.includes(categoryId)) {
-      form.setValue("preferred_service_areas", [...currentAreas, categoryId]);
-    }
-  };
-
-  const removePreferredArea = (categoryId: string) => {
-    const currentAreas = form.getValues("preferred_service_areas") || [];
-    form.setValue("preferred_service_areas", currentAreas.filter(id => id !== categoryId));
-  };
-
-  if (isProfileLoading) {
+  if (loadClientProfileQuery.isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
         <Loader2 className="h-6 w-6 animate-spin" />
@@ -119,113 +103,52 @@ export function ClientProfileForm() {
             Preferred Service Areas
           </h3>
 
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {serviceCategories?.map((category: any) => (
-                <Button
-                  key={category.id}
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => addPreferredArea(category.id.toString())}
-                  className="justify-start"
-                >
-                  {category.name}
-                </Button>
-              ))}
+          <FormField
+            control={form.control}
+            name="preferred_services"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Select Preferred Services</FormLabel>
+                <FormControl>
+                  <MultiCombobox
+                    options={serviceCategoryOptions}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    placeholder="Select service areas..."
+                    searchPlaceholder="Search services..."
+                    emptyText="No services found."
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {form.watch("preferred_services")?.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Selected services:</p>
+              <div className="flex flex-wrap gap-2">
+                {form.watch("preferred_services")?.map((areaId) => {
+                  const category = serviceCategoryOptions?.find((cat) => cat.value === areaId);
+                  return (
+                    <Badge key={areaId} variant="secondary" className="flex items-center gap-1">
+                      {category?.label}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const currentAreas = form.getValues("preferred_services") || [];
+                          form.setValue("preferred_services", currentAreas.filter(id => id !== areaId));
+                        }}
+                        className="ml-1 hover:text-destructive"
+                      >
+                        ×
+                      </button>
+                    </Badge>
+                  );
+                })}
+              </div>
             </div>
-
-            <div className="flex flex-wrap gap-2">
-              {form.watch("preferred_service_areas")?.map((areaId) => {
-                const category = serviceCategories?.find((cat: any) => cat.id.toString() === areaId);
-                return (
-                  <Badge key={areaId} variant="secondary" className="flex items-center gap-1">
-                    {category?.name}
-                    <button
-                      type="button"
-                      onClick={() => removePreferredArea(areaId)}
-                      className="ml-1 hover:text-destructive"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium flex items-center gap-2">
-            <DollarSign className="h-5 w-5" />
-            Budget Preferences
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <FormField
-              control={form.control}
-              name="budget_preferences.min_budget"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Minimum Budget</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min="0"
-                      placeholder="Enter minimum budget"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="budget_preferences.max_budget"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Maximum Budget</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min="0"
-                      placeholder="Enter maximum budget"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value) || 1000)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="budget_preferences.currency"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Currency</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select currency" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="USD">USD ($)</SelectItem>
-                      <SelectItem value="EUR">EUR (€)</SelectItem>
-                      <SelectItem value="GBP">GBP (£)</SelectItem>
-                      <SelectItem value="KGS">KGS (сом)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          )}
         </div>
 
         <div className="flex justify-end">

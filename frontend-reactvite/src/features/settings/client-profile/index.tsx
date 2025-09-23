@@ -2,11 +2,21 @@ import { ContentSection } from "../_components/content-section";
 import { ClientProfileForm } from "./client-profile-form";
 import myApi from "@/lib/api/my-api";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+
+const loadClientProfileQueryKey = "client-profile";
 
 export function SettingsClientProfile() {
-  const { data, isLoading } = useQuery({
-    queryKey: ["client-profile-init-check"],
+  const submitMutation = useMutation({
+    mutationFn: async () => {
+      await myApi.v1UsersClientCreateCreate();
+    },
+    onSuccess: () => {
+      window.location.reload();
+    }
+  });
+  const loadClientProfileQuery = useQuery({
+    queryKey: [loadClientProfileQueryKey],
     queryFn: async () => {
       try {
         const res = await myApi.v1UsersClientRetrieve();
@@ -16,23 +26,21 @@ export function SettingsClientProfile() {
       }
     }
   });
-
+  const clientProfileExists = loadClientProfileQuery.data && loadClientProfileQuery.data.exists;
   return (
     <ContentSection
       title="Client Profile"
       desc="Manage your client preferences and settings."
     >
-      {!isLoading && data && !data.exists ? (
+      {!clientProfileExists ? (
         <div className="flex items-center justify-between rounded-md border p-4">
           <div>
             <div className="font-medium">No client profile found</div>
             <div className="text-sm text-muted-foreground">Initialize a client profile to enable client-specific settings.</div>
           </div>
           <Button
-            onClick={async () => {
-              await myApi.v1UsersClientUpdateCreate();
-              window.location.reload();
-            }}
+            disabled={submitMutation.isPending}
+            onClick={() => submitMutation.mutate()}
           >
             Initialize
           </Button>

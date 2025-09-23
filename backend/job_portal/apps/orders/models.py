@@ -147,7 +147,7 @@ class Bid(AbstractSoftDeleteModel, AbstractTimestampedModel):
         unique_together = ['order', 'provider']
     
     def __str__(self):
-        return f"{self.provider.user_profile.user.name} - ${self.amount} on {self.order.title} [#{self.id}]"
+        return f"{self.provider.user_profile.user.username} - ${self.amount} on {self.order.title} [#{self.id}]"
 
 
 class OrderAssignment(AbstractTimestampedModel):
@@ -175,7 +175,7 @@ class OrderAssignment(AbstractTimestampedModel):
         verbose_name_plural = _("Order Assignments")
     
     def __str__(self):
-        return f"{self.order.title} - {self.provider.user_profile.user.name} [#{self.id}]"
+        return f"{self.order.title} - {self.provider.user_profile.user.username} [#{self.id}]"
 
 
 class OrderDispute(AbstractTimestampedModel):

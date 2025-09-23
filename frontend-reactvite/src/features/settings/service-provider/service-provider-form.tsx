@@ -4,11 +4,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { MultiCombobox } from "@/components/ui/combobox";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Briefcase, Clock, Loader2, MapPin, Save } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -16,21 +17,23 @@ import { z } from "zod";
 const serviceProviderSchema = z.object({
   business_name: z.string().min(2, "Business name must be at least 2 characters").optional(),
   business_description: z.string().max(1000, "Description must be less than 1000 characters").optional(),
-  business_license: z.string().optional(),
-  years_of_experience: z.number().min(0, "Experience must be 0 or more").optional(),
-  service_areas: z.array(z.string()).optional(),
-  travel_radius: z.number().min(1, "Travel radius must be at least 1 km").optional(),
+  service_areas: z.array(z.string()),
+  services_offered: z.array(z.string()),
+  works_remotely: z.boolean().optional(),
+  accepts_clients_at_location: z.boolean().optional(),
+  travels_to_clients: z.boolean().optional(),
   is_available: z.boolean().optional(),
-  availability_schedule: z.record(z.string(), z.any()).optional(),
 });
 
 type ServiceProviderFormData = z.infer<typeof serviceProviderSchema>;
 
+const loadServiceProviderQueryKey = "service-provider-profile";
+
 export function ServiceProviderForm() {
   const queryClient = useQueryClient();
   
-  const { data: profileData, isLoading: isProfileLoading } = useQuery({
-    queryKey: ["service-provider-profile"],
+  const loadServiceProviderQuery = useQuery({
+    queryKey: [loadServiceProviderQueryKey],
     queryFn: async () => {
       const response = await myApi.v1UsersProviderRetrieve();
       return response.data;
@@ -39,52 +42,112 @@ export function ServiceProviderForm() {
     retry: 1,
   });
 
-  // Fetch service categories for service areas
+  // Fetch service categories for services offered
   const { data: serviceCategories } = useQuery({
-    queryKey: ["service-categories"],
+    queryKey: ["service-subcategories"],
     queryFn: async () => {
-      const response = await myApi.v1CoreServiceCategoriesList();
-      return response.data.results as any[];
+      const response = await myApi.v1CoreServiceSubcategoriesList();
+      return response.data.results;
+    },
+  });
+
+  // Fetch service areas for location-based services
+  const { data: serviceAreas } = useQuery({
+    queryKey: ["service-areas"],
+    queryFn: async () => {
+      const response = await myApi.v1CoreServiceAreasList();
+      return response.data.results;
     },
   });
 
   const form = useForm<ServiceProviderFormData>({
     resolver: zodResolver(serviceProviderSchema),
     defaultValues: {
-      business_name: profileData?.business_name || "",
-      business_description: profileData?.business_description || "",
-      business_license: profileData?.business_license || "",
-      years_of_experience: profileData?.years_of_experience || 0,
-      service_areas: profileData?.service_areas || [],
-      travel_radius: profileData?.travel_radius || 50,
-      is_available: profileData?.is_available ?? true,
-      availability_schedule: profileData?.availability_schedule || {},
+      business_name: "",
+      business_description: "",
+      service_areas: [],
+      services_offered: [],
+      works_remotely: false,
+      accepts_clients_at_location: false,
+      travels_to_clients: false,
+      is_available: true,
     },
   });
 
+  const watchedServicesOffered = form.watch("services_offered");
+  const watchedServiceAreas = form.watch("service_areas");
+
+  const serviceCategoryOptions = useMemo(() => {
+    const allOptions = serviceCategories?.map((category: any) => ({
+      label: `${category.name} [#${category.id}]`,
+      value: category.id.toString(),
+    })) || [];
+
+    const userPreferences = watchedServicesOffered;
+    const availableOptions = allOptions.filter(
+      option => !userPreferences.includes(option.value)
+    );
+    const userPreferenceOptions = allOptions.filter(
+      option => userPreferences.includes(option.value)
+    );
+
+    return {
+      available: availableOptions,
+      userPreferences: userPreferenceOptions,
+      all: allOptions
+    };
+  }, [serviceCategories, watchedServicesOffered]);
+
+  const serviceAreaOptions = useMemo(() => {
+    const allOptions = serviceAreas?.map((area: any) => ({
+      label: `${area.name} [#${area.id}]`,
+      value: area.id.toString(),
+    })) || [];
+
+    const userPreferences = watchedServiceAreas;
+    const availableOptions = allOptions.filter(
+      option => !userPreferences.includes(option.value)
+    );
+    const userPreferenceOptions = allOptions.filter(
+      option => userPreferences.includes(option.value)
+    );
+
+    return {
+      available: availableOptions,
+      userPreferences: userPreferenceOptions,
+      all: allOptions
+    };
+  }, [serviceAreas, watchedServiceAreas]);
+
   // Update form when profile data loads
   useEffect(() => {
+    const profileData = loadServiceProviderQuery.data;
     if (profileData) {
       form.reset({
         business_name: profileData.business_name || "",
         business_description: profileData.business_description || "",
-        business_license: profileData.business_license || "",
-        years_of_experience: profileData.years_of_experience || 0,
-        service_areas: profileData.service_areas || [],
-        travel_radius: profileData.travel_radius || 50,
-        is_available: profileData.is_available ?? true,
-        availability_schedule: profileData.availability_schedule || {},
+        service_areas: (profileData.service_areas || []).map((id: number) => id.toString()),
+        services_offered: (profileData.services_offered || []).map((id: number) => id.toString()),
+        works_remotely: profileData.works_remotely || false,
+        accepts_clients_at_location: profileData.accepts_clients_at_location || false,
+        travels_to_clients: profileData.travels_to_clients || false,
+        is_available: profileData.is_available || true,
       });
     }
-  }, [profileData, form]);
+  }, [loadServiceProviderQuery.data, form]);
 
   const updateProviderMutation = useMutation({
     mutationFn: async (data: ServiceProviderFormData) => {
-      const response = await myApi.v1UsersProviderPartialUpdate({ patchedServiceProviderUpdate: data });
+      const transformedData = {
+        ...data,
+        service_areas: data.service_areas.map(id => parseInt(id)),
+        services_offered: data.services_offered.map(id => parseInt(id))
+      };
+      const response = await myApi.v1UsersProviderPartialUpdate({ patchedServiceProviderUpdate: transformedData });
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+      queryClient.invalidateQueries({ queryKey: [loadServiceProviderQueryKey] });
       toast.success("Service provider profile updated successfully");
     },
     onError: (error: any) => {
@@ -96,19 +159,7 @@ export function ServiceProviderForm() {
     await updateProviderMutation.mutateAsync(data);
   };
 
-  const addServiceArea = (categoryId: string) => {
-    const currentAreas = form.getValues("service_areas") || [];
-    if (!currentAreas.includes(categoryId)) {
-      form.setValue("service_areas", [...currentAreas, categoryId]);
-    }
-  };
-
-  const removeServiceArea = (categoryId: string) => {
-    const currentAreas = form.getValues("service_areas") || [];
-    form.setValue("service_areas", currentAreas.filter(id => id !== categoryId));
-  };
-
-  if (isProfileLoading) {
+  if (loadServiceProviderQuery.isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
         <Loader2 className="h-6 w-6 animate-spin" />
@@ -141,59 +192,6 @@ export function ServiceProviderForm() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="business_license"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Business License</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter license number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="years_of_experience"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Years of Experience</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      min="0" 
-                      placeholder="Enter years of experience" 
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="travel_radius"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Travel Radius (km)</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      min="1" 
-                      placeholder="Enter travel radius" 
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value) || 50)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
 
           <FormField
@@ -217,44 +215,104 @@ export function ServiceProviderForm() {
 
         <div className="space-y-4">
           <h3 className="text-lg font-medium flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
-            Service Areas
+            <Briefcase className="h-5 w-5" />
+            Services Offered
           </h3>
           
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {serviceCategories?.map((category: any) => (
-                <Button
-                  key={category.id}
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => addServiceArea(category.id.toString())}
-                  className="justify-start"
-                >
-                  {category.name}
-                </Button>
-              ))}
-            </div>
-            
-            <div className="flex flex-wrap gap-2">
-              {form.watch("service_areas")?.map((areaId) => {
-                const category = serviceCategories?.find((cat: any) => cat.id.toString() === areaId);
-                return (
-                  <Badge key={areaId} variant="secondary" className="flex items-center gap-1">
-                    {category?.name}
+          <FormField
+            control={form.control}
+            name="services_offered"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Select Services You Offer</FormLabel>
+                <FormControl>
+                  <MultiCombobox
+                    options={serviceCategoryOptions?.available || []}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    placeholder="Select services..."
+                    searchPlaceholder="Search services..."
+                    emptyText="No services found."
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {form.watch("services_offered").length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Selected services:</p>
+              <div className="flex flex-wrap gap-2">
+                {serviceCategoryOptions?.userPreferences?.map((service) => (
+                  <Badge key={service.value} variant="secondary" className="flex items-center gap-1">
+                    {service.label}
                     <button
                       type="button"
-                      onClick={() => removeServiceArea(areaId)}
+                      onClick={() => {
+                        const currentServices = form.getValues("services_offered");
+                        form.setValue("services_offered", currentServices.filter(id => id !== service.value));
+                      }}
                       className="ml-1 hover:text-destructive"
                     >
                       ×
                     </button>
                   </Badge>
-                );
-              })}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium flex items-center gap-2">
+            <MapPin className="h-5 w-5" />
+            Service Areas
+          </h3>
+          
+          <FormField
+            control={form.control}
+            name="service_areas"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Select Service Areas</FormLabel>
+                <FormControl>
+                  <MultiCombobox
+                    options={serviceAreaOptions?.available || []}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    placeholder="Select service areas..."
+                    searchPlaceholder="Search areas..."
+                    emptyText="No areas found."
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {form.watch("service_areas").length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Selected areas:</p>
+              <div className="flex flex-wrap gap-2">
+                {serviceAreaOptions?.userPreferences?.map((area) => (
+                  <Badge key={area.value} variant="secondary" className="flex items-center gap-1">
+                    {area.label}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentAreas = form.getValues("service_areas");
+                        form.setValue("service_areas", currentAreas.filter(id => id !== area.value));
+                      }}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="space-y-4">
@@ -285,6 +343,84 @@ export function ServiceProviderForm() {
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium flex items-center gap-2">
+            <Clock className="h-5 w-5" />
+            Availability Options
+          </h3>
+          
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="works_remotely"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Works Remotely
+                    </FormLabel>
+                    <div className="text-sm text-muted-foreground">
+                      I can provide services remotely/online
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="accepts_clients_at_location"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Accepts Clients at My Location
+                    </FormLabel>
+                    <div className="text-sm text-muted-foreground">
+                      Clients can come to my business location
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="travels_to_clients"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Travels to Clients
+                    </FormLabel>
+                    <div className="text-sm text-muted-foreground">
+                      I can travel to client locations for services
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         <div className="flex justify-end">

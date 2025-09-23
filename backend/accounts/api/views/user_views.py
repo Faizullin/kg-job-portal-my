@@ -3,10 +3,9 @@ from rest_framework import generics, status
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from django.core.files.storage import default_storage
 import uuid
-
+from rest_framework.decorators import action
 from ...models import UserModel
 from ..serializers import (
     UserListSerializer,
@@ -62,12 +61,14 @@ class UserProfileApiView(generics.RetrieveUpdateAPIView):
             # Generate unique filename
             unique_id = uuid.uuid4().hex[:8]
             filename = f"user_photos/{request.user.id}/profile_{unique_id}.jpg"
-            
+
             # Save the image
             request.user.photo.save(filename, image_file, save=True)
             
             # Return success response
             image_url = request.build_absolute_uri(request.user.photo.url) if request.user.photo else None
+            request.user.photo_url = image_url
+            request.user.save(update_fields=["photo_url"])
             
             return Response({
                 'message': 'Profile image uploaded successfully',
@@ -80,38 +81,49 @@ class UserProfileApiView(generics.RetrieveUpdateAPIView):
                 'error': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def delete(self, request):
-        """Reset profile image to default by removing uploaded photo.
+    # action for reset iage fomr google avatar
+    # @action(detail=False, methods=['post'])
+    # def reset_image(self, request):
+    #     """Reset profile image to default by removing uploaded photo."""
+        
+        
+    #     request.user.save(update_fields=["photo"])
+    #     return Response({
+    #         'message': 'Profile image reset successfully'
+    #     }, status=status.HTTP_200_OK)
 
-        This clears the stored ImageField `photo`. The `photo_url` (e.g., Firebase avatar)
-        remains unchanged. Frontend should use `photo_url` as fallback.
-        """
-        try:
-            # Delete stored image file if exists
-            if request.user.photo:
-                try:
-                    if default_storage.exists(request.user.photo.name):
-                        default_storage.delete(request.user.photo.name)
-                except Exception:
-                    # Ignore storage errors during delete; proceed to clear field
-                    pass
-                request.user.photo.delete(save=False)
+    # def delete(self, request):
+    #     """Reset profile image to default by removing uploaded photo.
 
-            # Clear reference and save
-            request.user.photo = None
-            request.user.save(update_fields=["photo"]) 
+    #     This clears the stored ImageField `photo`. The `photo_url` (e.g., Firebase avatar)
+    #     remains unchanged. Frontend should use `photo_url` as fallback.
+    #     """
+    #     try:
+    #         # Delete stored image file if exists
+    #         if request.user.photo:
+    #             try:
+    #                 if default_storage.exists(request.user.photo.name):
+    #                     default_storage.delete(request.user.photo.name)
+    #             except Exception:
+    #                 # Ignore storage errors during delete; proceed to clear field
+    #                 pass
+    #             request.user.photo.delete(save=False)
 
-            image_url = request.build_absolute_uri(request.user.photo.url) if request.user.photo else None
-            return Response({
-                'message': 'Profile image reset successfully',
-                'image_url': image_url,
-                'photo_url': request.user.photo_url,
-            }, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({
-                'message': 'Failed to reset image',
-                'error': str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #         # Clear reference and save
+    #         request.user.photo = None
+    #         request.user.save(update_fields=["photo"]) 
+
+    #         image_url = request.build_absolute_uri(request.user.photo.url) if request.user.photo else None
+    #         return Response({
+    #             'message': 'Profile image reset successfully',
+    #             'image_url': image_url,
+    #             'photo_url': request.user.photo_url,
+    #         }, status=status.HTTP_200_OK)
+    #     except Exception as e:
+    #         return Response({
+    #             'message': 'Failed to reset image',
+    #             'error': str(e)
+    #         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class UserListApiView(generics.ListAPIView):
@@ -120,8 +132,8 @@ class UserListApiView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['user_type', 'is_active', 'blocked']
-    search_fields = ['username', 'email', 'name']
-    ordering_fields = ['date_joined', 'username', 'name']
+    search_fields = ['username', 'email']
+    ordering_fields = ['date_joined', 'username']
     ordering = ['-date_joined']
     pagination_class = CustomPagination
     

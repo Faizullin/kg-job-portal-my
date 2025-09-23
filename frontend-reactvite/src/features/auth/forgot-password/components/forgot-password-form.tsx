@@ -5,7 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { sleep, cn } from "@/lib/utils";
+import { AuthClient } from "@/lib/auth/auth-client";
+import { getUserFriendlyErrorMessage } from "@/lib/auth/error-handler";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -35,21 +37,24 @@ export function ForgotPasswordForm({
     defaultValues: { email: "" },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    console.log(data);
 
-    toast.promise(sleep(2000), {
-      loading: "Sending reset email...",
-      success: () => {
-        setIsLoading(false);
+    try {
+      const result = await AuthClient.sendPasswordResetEmail(data.email);
+
+      if (result.success) {
+        toast.success(result.message || 'Password reset email sent successfully!');
         form.reset();
-        // Redirect directly to login with success message
         navigate({ to: "/sign-in" });
-        return `Password reset email sent to ${data.email}. Please check your inbox.`;
-      },
-      error: "Failed to send reset email. Please try again.",
-    });
+      } else {
+        toast.error(getUserFriendlyErrorMessage(result.error));
+      }
+    } catch (error) {
+      toast.error(getUserFriendlyErrorMessage(error));
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -66,7 +71,7 @@ export function ForgotPasswordForm({
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="name@example.com" {...field} />
+                <Input placeholder="name@example.com" autoComplete="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

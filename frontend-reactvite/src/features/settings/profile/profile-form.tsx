@@ -1,40 +1,39 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Save, User, Mail, Image, FileText } from "lucide-react";
-import { useEffect } from "react";
+import { Loader2, Save } from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const profileSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  username: z.string().min(2, "Username must be at least 2 characters"),
   email: z.email().optional(),
   description: z.string().max(500, "Description must be less than 500 characters").optional(),
-  photo_url: z.string().url().optional().or(z.literal("")),
   first_name: z.string().min(1, "First name is required").optional(),
   last_name: z.string().min(1, "Last name is required").optional(),
-  timezone_difference: z.number().min(-12).max(14).optional(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
+const loadUserProfileAdvancedQueryKey = "user-profile-advanced";
+
 export function ProfileForm() {
   const queryClient = useQueryClient();
 
-  const { data: profileData, isLoading: isProfileLoading } = useQuery({
-    queryKey: ["user-profile"],
+  const loadUserProfileAdvancedQuery = useQuery({
+    queryKey: [loadUserProfileAdvancedQueryKey],
     queryFn: async () => {
-      const response = await myApi.v1ProfileRetrieve();
-      return response.data;
+      const response = await myApi.v1UsersProfileAdvancedRetrieve();
+      return response.data.user_data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 1,
@@ -43,30 +42,27 @@ export function ProfileForm() {
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: profileData?.name || "",
-      email: profileData?.email || "",
-      description: profileData?.description || "",
-      photo_url: profileData?.photo_url || "",
-      first_name: profileData?.first_name || "",
-      last_name: profileData?.last_name || "",
-      timezone_difference: profileData?.timezone_difference || 0,
+      username: "",
+      email: "",
+      description: "",
+      first_name:  "",
+      last_name:  "",
     },
   });
 
   // Update form when profile data loads
   useEffect(() => {
+    const profileData = loadUserProfileAdvancedQuery.data;
     if (profileData) {
       form.reset({
-        name: profileData.name || "",
+        username: profileData.username || "",
         email: profileData.email || "",
         description: profileData.description || "",
-        photo_url: profileData.photo_url || "",
         first_name: profileData.first_name || "",
         last_name: profileData.last_name || "",
-        timezone_difference: profileData.timezone_difference || 0,
       });
     }
-  }, [profileData, form]);
+  }, [loadUserProfileAdvancedQuery.data, form]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: ProfileFormData) => {
@@ -74,7 +70,7 @@ export function ProfileForm() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+      queryClient.invalidateQueries({ queryKey: [loadUserProfileAdvancedQueryKey] });
       toast.success("Profile updated successfully");
     },
     onError: (error: any) => {
@@ -88,21 +84,25 @@ export function ProfileForm() {
     await myApi.axios.post("/api/v1/profile/", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    await queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+    await queryClient.invalidateQueries({ queryKey: [loadUserProfileAdvancedQueryKey] });
     toast.success("Profile image uploaded");
   };
 
-  const resetAvatar = async () => {
-    await myApi.axios.delete("/api/v1/profile/");
-    await queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-    toast.success("Profile image reset");
-  };
+  // const resetAvatar = async () => {
+  //   await myApi.axios.delete("/api/v1/profile/");
+  //   await queryClient.invalidateQueries({ queryKey: [loadUserProfileAdvancedQueryKey] });
+  //   toast.success("Profile image reset");
+  // };
 
   const onSubmit = async (data: ProfileFormData) => {
     await updateProfileMutation.mutateAsync(data);
   };
 
-  if (isProfileLoading) {
+  const fullName = useMemo(() => {
+    return `${loadUserProfileAdvancedQuery.data?.first_name || ""} ${loadUserProfileAdvancedQuery.data?.last_name || ""}`;
+  }, [loadUserProfileAdvancedQuery.data]);
+
+  if (loadUserProfileAdvancedQuery.isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
         <Loader2 className="h-6 w-6 animate-spin" />
@@ -117,25 +117,23 @@ export function ProfileForm() {
           <Card>
             <CardHeader>
               <CardTitle>Account Information</CardTitle>
-              <CardDescription>
-                Update your account details and preferences
-              </CardDescription>
+              <CardDescription />
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-4">
                   <Avatar className="size-16">
-                    <AvatarImage src={profileData?.photo ?? undefined} />
-                    <AvatarFallback>{(profileData?.name || "").slice(0, 1)}</AvatarFallback>
+                    <AvatarImage src={loadUserProfileAdvancedQuery.data?.photo_url ?? undefined} className="object-cover" />
+                    <AvatarFallback>{(fullName || "").slice(0, 1)}</AvatarFallback>
                   </Avatar>
                   <div className="flex items-center gap-2">
                     <Input type="file" accept="image/*" onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) uploadAvatar(file);
                     }} />
-                    {profileData?.photo && (
+                    {/* {loadUserProfileAdvancedQuery.data?.photo && (
                       <Button type="button" variant="outline" onClick={resetAvatar}>Reset</Button>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>
@@ -174,7 +172,7 @@ export function ProfileForm() {
 
               <FormField
                 control={form.control}
-                name="name"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Display Name</FormLabel>
@@ -202,27 +200,6 @@ export function ProfileForm() {
 
               <FormField
                 control={form.control}
-                name="timezone_difference"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Timezone (UTC)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        min="-12" 
-                        max="14" 
-                        placeholder="0" 
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
@@ -233,20 +210,6 @@ export function ProfileForm() {
                         className="min-h-[80px]"
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="photo_url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Photo URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter photo URL" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -7,9 +7,9 @@ from .models import (
 
 @admin.register(UserModel)
 class UserModelAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'name', 'user_type', 'is_active', 'blocked', 'is_deleted', 'date_joined')
+    list_display = ('username', 'email', 'user_type', 'is_active', 'blocked', 'is_deleted', 'date_joined')
     list_filter = ('user_type', 'is_active', 'blocked', 'is_deleted', 'is_staff', 'is_superuser', 'date_joined')
-    search_fields = ('username', 'email', 'name', 'first_name', 'last_name')
+    search_fields = ('username', 'email',  'first_name', 'last_name')
     ordering = ('-date_joined',)
     
     fieldsets = (
@@ -17,7 +17,7 @@ class UserModelAdmin(admin.ModelAdmin):
             'fields': ('username', 'password')
         }),
         ('Personal info', {
-            'fields': ('first_name', 'last_name', 'email', 'name', 'description', 'photo', 'photo_url')
+            'fields': ('first_name', 'last_name', 'email', 'description', 'photo', 'photo_url')
         }),
         ('User Type & Status', {
             'fields': ('user_type', 'blocked', 'is_active', 'is_staff', 'is_superuser')
@@ -40,7 +40,7 @@ class UserModelAdmin(admin.ModelAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'name', 'password1', 'password2', 'user_type'),
+            'fields': ('username', 'email', 'password1', 'password2', 'user_type'),
         }),
     )
     

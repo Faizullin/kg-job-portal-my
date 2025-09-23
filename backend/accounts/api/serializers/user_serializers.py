@@ -12,7 +12,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'username', 'email', 'first_name', 'last_name',
             'date_joined', 'last_login', 'is_active', 'is_staff', 'is_superuser',
-            'groups', 'permissions', 'name', 'description', 
+            'groups', 'permissions', 'description', 
             'photo', 'photo_url'
         )
         read_only_fields = ('id', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
@@ -39,19 +39,10 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     """Serializer for updating user profile - enhanced version of api_users EditUserSettingsView"""
     class Meta:
         model = UserModel
-        fields = ('name', 'email', 'description', 'photo_url', 'first_name', 'last_name')
+        fields = ('email', 'description', 'photo_url', 'first_name', 'last_name')
         read_only_fields = ('email',)  # Email should not be changed via profile update
     
-    def validate_name(self, value):
-        if not value or len(value.strip()) < 2:
-            raise serializers.ValidationError('Name must be at least 2 characters long.')
-        return value.strip()
-    
-    
-    def validate_timezone_difference(self, value):
-        if value < -12 or value > 14:
-            raise serializers.ValidationError('Timezone difference must be between -12 and +14 hours.')
-        return value
+
 
 
 class UserListSerializer(serializers.ModelSerializer):
@@ -60,7 +51,7 @@ class UserListSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = UserModel
-        fields = ('id', 'username', 'email', 'is_active', 'date_joined', "groups", "name", "description", "photo_url", "user_type", "blocked")
+        fields = ('id', 'username', 'email', 'is_active', 'date_joined', "groups", "description", "photo_url", "user_type", "blocked")
         read_only_fields = ('id', 'date_joined', 'groups')
     
     def get_groups(self, obj):

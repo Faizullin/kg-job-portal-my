@@ -32,7 +32,7 @@ class Review(AbstractSoftDeleteModel, AbstractTimestampedModel):
         ordering = ['-created_at']
     
     def __str__(self):
-        return f"Review by {self.reviewer.name} for {self.provider.user_profile.user.name} - {self.overall_rating}★ [#{self.id}]"
+        return f"Review by {self.reviewer.name} for {self.provider.user_profile.user.username} - {self.overall_rating}★ [#{self.id}]"
     
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

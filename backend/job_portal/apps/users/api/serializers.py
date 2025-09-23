@@ -2,7 +2,7 @@ from rest_framework import serializers
 from utils.serializers import AbstractTimestampedModelSerializer
 from ..models import UserProfile, ServiceProviderProfile, ClientProfile
 from accounts.api.serializers.user_serializers import UserProfileSerializer, UserUpdateSerializer
-
+from job_portal.apps.core.models import ServiceSubcategory
 
 class ServiceProviderSerializer(AbstractTimestampedModelSerializer):
     class Meta:
@@ -20,7 +20,14 @@ class ServiceProviderSerializer(AbstractTimestampedModelSerializer):
         read_only_fields = ('average_rating', 'total_reviews', 'is_verified_provider', 'created_at', 'updated_at')
 
 
+class PreferredServiceSubcategorySerializer(AbstractTimestampedModelSerializer):
+    class Meta:
+        model = ServiceSubcategory
+        fields = ('id', 'name', 'description', 'icon', 'is_active', 'sort_order', 'featured', 'base_price', 'price_range_min', 'price_range_max', 'estimated_duration', 'complexity_level', 'safety_requirements', 'slug', 'meta_title', 'meta_description')
+
 class ClientSerializer(AbstractTimestampedModelSerializer):
+    preferred_services = PreferredServiceSubcategorySerializer(many=True, read_only=True)
+
     class Meta:
         model = ClientProfile
         fields = (

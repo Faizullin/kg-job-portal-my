@@ -1,3 +1,5 @@
+import { FirebaseError } from "firebase/app";
+
 interface AuthError {
   code: string;
   message: string;
@@ -8,7 +10,7 @@ interface AuthError {
  * Maps Firebase authentication error codes to user-friendly messages
  * with i18next translation keys
  */
-export const getFirebaseErrorMessage = (errorCode: string): AuthError => {
+const getFirebaseErrorMessage = (errorCode: string): AuthError => {
   const errorMap: Record<string, AuthError> = {
     // Essential Firebase Auth Errors only
     "auth/invalid-email": {
@@ -30,6 +32,11 @@ export const getFirebaseErrorMessage = (errorCode: string): AuthError => {
       code: "auth/invalid-credential",
       message: "The credential is invalid or has expired.",
       userMessage: "validation:auth.error.invalid_credential",
+    },
+    "auth/invalid-login-credentials": {
+      code: "auth/invalid-login-credentials",
+      message: "Invalid login credentials provided.",
+      userMessage: "validation:auth.error.invalid_login_credentials",
     },
     "auth/email-already-in-use": {
       code: "auth/email-already-in-use",
@@ -69,36 +76,17 @@ export const getFirebaseErrorMessage = (errorCode: string): AuthError => {
 };
 
 /**
- * Extracts Firebase error code from error message or error object
- */
-export const extractFirebaseErrorCode = (error: any): string => {
-  if (typeof error === "string") {
-    // Check if it's a Firebase error code
-    if (error.startsWith("auth/")) {
-      return error;
-    }
-    // Try to extract error code from message
-    const match = error.match(/auth\/[a-z-]+/);
-    return match ? match[0] : "auth/unknown";
-  }
-
-  if (error?.code && typeof error.code === "string") {
-    return error.code;
-  }
-
-  if (error?.message && typeof error.message === "string") {
-    const match = error.message.match(/auth\/[a-z-]+/);
-    return match ? match[0] : "auth/unknown";
-  }
-
-  return "auth/unknown";
-};
-
-/**
  * Gets user-friendly error message for display
  */
-export const getUserFriendlyErrorMessage = (error: any): string => {
-  const errorCode = extractFirebaseErrorCode(error);
-  const authError = getFirebaseErrorMessage(errorCode);
-  return authError.userMessage;
+export const getUserFriendlyErrorMessage = (error: any): AuthError => {
+  if(error instanceof Object) {
+    const _typedError = error as FirebaseError;
+    const authError = getFirebaseErrorMessage(_typedError.code);
+    return authError;
+  }
+  return {
+    message: "Unknown error",
+    code: "Unknown error",
+    userMessage: "Unknown error",
+  };
 };

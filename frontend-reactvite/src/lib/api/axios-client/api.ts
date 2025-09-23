@@ -19,30 +19,251 @@ import globalAxios, { type AxiosPromise, type AxiosInstance, type AxiosRequestCo
 // @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from './common';
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS,  type RequestArgs, BaseAPI, RequiredError } from './base';
+import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError } from './base';
 
 /**
- * * `login` - Login * `logout` - Logout * `order_created` - Order Created * `order_viewed` - Order Viewed * `bid_submitted` - Bid Submitted * `chat_message` - Chat Message * `payment_made` - Payment Made * `profile_updated` - Profile Updated * `search_performed` - Search Performed * `service_viewed` - Service Viewed
+ * Combined serializer for user account data and job portal profile.
  * @export
- * @enum {string}
+ * @interface AdvancedProfile
  */
-
-export const ActivityTypeEnum = {
-    Login: 'login',
-    Logout: 'logout',
-    OrderCreated: 'order_created',
-    OrderViewed: 'order_viewed',
-    BidSubmitted: 'bid_submitted',
-    ChatMessage: 'chat_message',
-    PaymentMade: 'payment_made',
-    ProfileUpdated: 'profile_updated',
-    SearchPerformed: 'search_performed',
-    ServiceViewed: 'service_viewed'
-} as const;
-
-export type ActivityTypeEnum = typeof ActivityTypeEnum[keyof typeof ActivityTypeEnum];
-
-
+export interface AdvancedProfile {
+    /**
+     * 
+     * @type {AdvancedProfileUserData}
+     * @memberof AdvancedProfile
+     */
+    'user_data': AdvancedProfileUserData;
+    /**
+     * 
+     * @type {AdvancedProfileJobPortalProfile}
+     * @memberof AdvancedProfile
+     */
+    'job_portal_profile': AdvancedProfileJobPortalProfile;
+}
+/**
+ * 
+ * @export
+ * @interface AdvancedProfileJobPortalProfile
+ */
+export interface AdvancedProfileJobPortalProfile {
+    /**
+     * 
+     * @type {number}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'id': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'user': number;
+    /**
+     * 
+     * @type {UserTypeD25Enum}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'user_type'?: UserTypeD25Enum;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'bio'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'date_of_birth'?: string | null;
+    /**
+     * 
+     * @type {PatchedUserProfileUpdateGender}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'gender'?: PatchedUserProfileUpdateGender;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'phone_number'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'address'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'city'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'state'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'country'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'postal_code'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'terms_accepted'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'terms_accepted_at'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'preferred_language'?: number | null;
+    /**
+     * 
+     * @type {any}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'notification_preferences'?: any;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'is_verified': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'verification_date': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'created_at': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileJobPortalProfile
+     */
+    'updated_at': string;
+}
+/**
+ * 
+ * @export
+ * @interface AdvancedProfileUserData
+ */
+export interface AdvancedProfileUserData {
+    /**
+     * 
+     * @type {number}
+     * @memberof AdvancedProfileUserData
+     */
+    'id': number;
+    /**
+     * Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.
+     * @type {string}
+     * @memberof AdvancedProfileUserData
+     */
+    'username': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileUserData
+     */
+    'email': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileUserData
+     */
+    'first_name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileUserData
+     */
+    'last_name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileUserData
+     */
+    'date_joined': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileUserData
+     */
+    'last_login': string | null;
+    /**
+     * Отметьте, если пользователь должен считаться активным. Уберите эту отметку вместо удаления учётной записи.
+     * @type {boolean}
+     * @memberof AdvancedProfileUserData
+     */
+    'is_active'?: boolean;
+    /**
+     * Отметьте, если пользователь может входить в административную часть сайта.
+     * @type {boolean}
+     * @memberof AdvancedProfileUserData
+     */
+    'is_staff': boolean;
+    /**
+     * Указывает, что пользователь имеет все права без явного их назначения.
+     * @type {boolean}
+     * @memberof AdvancedProfileUserData
+     */
+    'is_superuser': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileUserData
+     */
+    'groups': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileUserData
+     */
+    'permissions': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileUserData
+     */
+    'description'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileUserData
+     */
+    'photo'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdvancedProfileUserData
+     */
+    'photo_url'?: string | null;
+}
 /**
  * Serializer for models with timestamp fields.
  * @export
@@ -178,39 +399,52 @@ export interface Bid {
     'created_at': string;
 }
 /**
- * Serializer for models with timestamp fields.
+ * Serializer for bid actions (accept/reject/withdraw).
  * @export
- * @interface BidCreate
+ * @interface BidAction
  */
-export interface BidCreate {
+export interface BidAction {
+    /**
+     * Reason for rejection/withdrawal
+     * @type {string}
+     * @memberof BidAction
+     */
+    'reason'?: string;
+}
+/**
+ * Unified serializer for bid creation and updates.
+ * @export
+ * @interface BidCreateUpdate
+ */
+export interface BidCreateUpdate {
     /**
      * 
      * @type {string}
-     * @memberof BidCreate
+     * @memberof BidCreateUpdate
      */
     'amount': string;
     /**
      * 
      * @type {string}
-     * @memberof BidCreate
+     * @memberof BidCreateUpdate
      */
     'description': string;
     /**
      * 
      * @type {number}
-     * @memberof BidCreate
+     * @memberof BidCreateUpdate
      */
     'estimated_duration'?: number | null;
     /**
      * 
      * @type {string}
-     * @memberof BidCreate
+     * @memberof BidCreateUpdate
      */
     'terms_conditions'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof BidCreate
+     * @memberof BidCreateUpdate
      */
     'is_negotiable'?: boolean;
 }
@@ -220,14 +454,12 @@ export interface BidCreate {
  * @enum {string}
  */
 
-export const BidStatusEnum = {
-    Pending: 'pending',
-    Accepted: 'accepted',
-    Rejected: 'rejected',
-    Withdrawn: 'withdrawn'
-} as const;
-
-export type BidStatusEnum = typeof BidStatusEnum[keyof typeof BidStatusEnum];
+export enum BidStatusEnum {
+    pending = 'pending',
+    accepted = 'accepted',
+    rejected = 'rejected',
+    withdrawn = 'withdrawn'
+}
 
 
 /**
@@ -236,537 +468,185 @@ export type BidStatusEnum = typeof BidStatusEnum[keyof typeof BidStatusEnum];
  * @enum {string}
  */
 
-export const BlankEnum = {
-    Empty: ''
-} as const;
-
-export type BlankEnum = typeof BlankEnum[keyof typeof BlankEnum];
+export enum BlankEnum {
+    empty = ''
+}
 
 
 /**
- * Serializer for models with timestamp fields.
+ * * `general` - General * `specialist` - Specialist * `reviews` - Reviews * `account` - Account * `search` - Найти * `safety` - Safety
  * @export
- * @interface BusinessMetrics
+ * @enum {string}
  */
-export interface BusinessMetrics {
-    /**
-     * 
-     * @type {number}
-     * @memberof BusinessMetrics
-     */
-    'id': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetrics
-     */
-    'date': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetrics
-     */
-    'gross_merchandise_volume'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetrics
-     */
-    'net_revenue'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetrics
-     */
-    'profit_margin'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetrics
-     */
-    'order_fulfillment_rate'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof BusinessMetrics
-     */
-    'average_order_processing_time'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetrics
-     */
-    'customer_satisfaction_score'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetrics
-     */
-    'month_over_month_growth'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetrics
-     */
-    'year_over_year_growth'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetrics
-     */
-    'market_share'?: string;
-    /**
-     * 
-     * @type {BusinessMetricsCompetitivePosition}
-     * @memberof BusinessMetrics
-     */
-    'competitive_position'?: BusinessMetricsCompetitivePosition;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetrics
-     */
-    'created_at': string;
+
+export enum CategoryEnum {
+    general = 'general',
+    specialist = 'specialist',
+    reviews = 'reviews',
+    account = 'account',
+    search = 'search',
+    safety = 'safety'
 }
-/**
- * @type BusinessMetricsCompetitivePosition
- * @export
- */
-export type BusinessMetricsCompetitivePosition = BlankEnum | CompetitivePositionEnum;
+
 
 /**
- * Serializer for models with timestamp fields.
+ * Mobile-optimized serializer for chat conversation list.
  * @export
- * @interface BusinessMetricsCreate
+ * @interface ChatConversation
  */
-export interface BusinessMetricsCreate {
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetricsCreate
-     */
-    'date': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetricsCreate
-     */
-    'gross_merchandise_volume'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetricsCreate
-     */
-    'net_revenue'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetricsCreate
-     */
-    'profit_margin'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetricsCreate
-     */
-    'order_fulfillment_rate'?: string;
+export interface ChatConversation {
     /**
      * 
      * @type {number}
-     * @memberof BusinessMetricsCreate
-     */
-    'average_order_processing_time'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof BusinessMetricsCreate
-     */
-    'customer_satisfaction_score'?: string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface ChatAttachment
- */
-export interface ChatAttachment {
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatAttachment
-     */
-    'id': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatAttachment
-     */
-    'message': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatAttachment
-     */
-    'file_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatAttachment
-     */
-    'file_type': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatAttachment
-     */
-    'file_size': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatAttachment
-     */
-    'file_size_display': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatAttachment
-     */
-    'file_url': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatAttachment
-     */
-    'thumbnail_url'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatAttachment
-     */
-    'created_at': string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface ChatAttachmentCreate
- */
-export interface ChatAttachmentCreate {
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatAttachmentCreate
-     */
-    'id': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatAttachmentCreate
-     */
-    'message': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatAttachmentCreate
-     */
-    'file_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatAttachmentCreate
-     */
-    'file_type': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatAttachmentCreate
-     */
-    'file_size': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatAttachmentCreate
-     */
-    'file_url': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatAttachmentCreate
-     */
-    'thumbnail_url'?: string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface ChatParticipant
- */
-export interface ChatParticipant {
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatParticipant
-     */
-    'id': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatParticipant
-     */
-    'chat_room': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatParticipant
-     */
-    'chat_room_title': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatParticipant
-     */
-    'user': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatParticipant
-     */
-    'user_name': string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ChatParticipant
-     */
-    'is_online'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatParticipant
-     */
-    'last_seen'?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatParticipant
-     */
-    'unread_count'?: number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ChatParticipant
-     */
-    'notifications_enabled'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatParticipant
-     */
-    'mute_until'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatParticipant
-     */
-    'created_at': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatParticipant
-     */
-    'updated_at': string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface ChatParticipantCreate
- */
-export interface ChatParticipantCreate {
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatParticipantCreate
-     */
-    'id': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatParticipantCreate
-     */
-    'chat_room': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatParticipantCreate
-     */
-    'user': number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ChatParticipantCreate
-     */
-    'is_online'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ChatParticipantCreate
-     */
-    'notifications_enabled'?: boolean;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface ChatRoom
- */
-export interface ChatRoom {
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatRoom
+     * @memberof ChatConversation
      */
     'id': number;
     /**
      * 
      * @type {string}
-     * @memberof ChatRoom
+     * @memberof ChatConversation
      */
     'title'?: string;
     /**
      * 
      * @type {ChatTypeEnum}
-     * @memberof ChatRoom
+     * @memberof ChatConversation
      */
     'chat_type'?: ChatTypeEnum;
     /**
      * 
      * @type {string}
-     * @memberof ChatRoom
+     * @memberof ChatConversation
      */
-    'chat_type_display': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatRoom
-     */
-    'order'?: number | null;
+    'other_participant_name': string;
     /**
      * 
      * @type {string}
-     * @memberof ChatRoom
+     * @memberof ChatConversation
      */
-    'order_title': string;
-    /**
-     * 
-     * @type {Array<ChatParticipant>}
-     * @memberof ChatRoom
-     */
-    'participants': Array<ChatParticipant>;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ChatRoom
-     */
-    'is_active'?: boolean;
+    'other_participant_avatar': string;
     /**
      * 
      * @type {string}
-     * @memberof ChatRoom
+     * @memberof ChatConversation
      */
-    'last_message_at'?: string | null;
+    'other_participant_online': string;
     /**
      * 
      * @type {string}
-     * @memberof ChatRoom
+     * @memberof ChatConversation
      */
-    'last_message': string;
+    'last_message_preview': string;
     /**
      * 
      * @type {string}
-     * @memberof ChatRoom
+     * @memberof ChatConversation
+     */
+    'last_message_time': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatConversation
+     */
+    'service_category': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatConversation
      */
     'unread_count': string;
     /**
      * 
-     * @type {string}
-     * @memberof ChatRoom
-     */
-    'created_at': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatRoom
-     */
-    'updated_at': string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface ChatRoomCreate
- */
-export interface ChatRoomCreate {
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatRoomCreate
-     */
-    'id': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatRoomCreate
-     */
-    'title'?: string;
-    /**
-     * 
-     * @type {ChatTypeEnum}
-     * @memberof ChatRoomCreate
-     */
-    'chat_type'?: ChatTypeEnum;
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatRoomCreate
-     */
-    'order'?: number | null;
-    /**
-     * 
      * @type {boolean}
-     * @memberof ChatRoomCreate
-     */
-    'is_active': boolean;
-    /**
-     * List of user IDs to add as participants
-     * @type {Array<number>}
-     * @memberof ChatRoomCreate
-     */
-    'participants': Array<number>;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface ChatRoomUpdate
- */
-export interface ChatRoomUpdate {
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatRoomUpdate
-     */
-    'id': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatRoomUpdate
-     */
-    'title'?: string;
-    /**
-     * 
-     * @type {ChatTypeEnum}
-     * @memberof ChatRoomUpdate
-     */
-    'chat_type'?: ChatTypeEnum;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ChatRoomUpdate
+     * @memberof ChatConversation
      */
     'is_active'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatConversation
+     */
+    'created_at': string;
+}
+/**
+ * Mobile-optimized serializer for chat conversation details with messages.
+ * @export
+ * @interface ChatConversationDetail
+ */
+export interface ChatConversationDetail {
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatConversationDetail
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatConversationDetail
+     */
+    'title'?: string;
+    /**
+     * 
+     * @type {ChatTypeEnum}
+     * @memberof ChatConversationDetail
+     */
+    'chat_type'?: ChatTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatConversationDetail
+     */
+    'messages': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatConversationDetail
+     */
+    'other_participant_info': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatConversationDetail
+     */
+    'service_info': string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ChatConversationDetail
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatConversationDetail
+     */
+    'created_at': string;
+}
+/**
+ * Serializer for sending messages via mobile API.
+ * @export
+ * @interface ChatSendMessage
+ */
+export interface ChatSendMessage {
+    /**
+     * Message content
+     * @type {string}
+     * @memberof ChatSendMessage
+     */
+    'message': string;
+    /**
+     * Message type  * `text` - Text * `image` - Image
+     * @type {MessageTypeEnum}
+     * @memberof ChatSendMessage
+     */
+    'message_type'?: MessageTypeEnum;
+    /**
+     * Attachment URL for images
+     * @type {string}
+     * @memberof ChatSendMessage
+     */
+    'attachment_url'?: string;
 }
 /**
  * * `order_chat` - Order Chat * `support_chat` - Support Chat * `general_chat` - General Chat
@@ -774,13 +654,11 @@ export interface ChatRoomUpdate {
  * @enum {string}
  */
 
-export const ChatTypeEnum = {
-    OrderChat: 'order_chat',
-    SupportChat: 'support_chat',
-    GeneralChat: 'general_chat'
-} as const;
-
-export type ChatTypeEnum = typeof ChatTypeEnum[keyof typeof ChatTypeEnum];
+export enum ChatTypeEnum {
+    order_chat = 'order_chat',
+    support_chat = 'support_chat',
+    general_chat = 'general_chat'
+}
 
 
 /**
@@ -803,16 +681,10 @@ export interface Client {
     'user_profile': number;
     /**
      * 
-     * @type {any}
+     * @type {Array<PreferredServiceSubcategory>}
      * @memberof Client
      */
-    'preferred_service_areas'?: any;
-    /**
-     * 
-     * @type {any}
-     * @memberof Client
-     */
-    'budget_preferences'?: any;
+    'preferred_services': Array<PreferredServiceSubcategory>;
     /**
      * 
      * @type {number}
@@ -858,47 +730,23 @@ export interface Client {
 export interface ClientUpdate {
     /**
      * 
-     * @type {any}
+     * @type {Array<number>}
      * @memberof ClientUpdate
      */
-    'preferred_service_areas'?: any;
-    /**
-     * 
-     * @type {any}
-     * @memberof ClientUpdate
-     */
-    'budget_preferences'?: any;
+    'preferred_services'?: Array<number>;
 }
-/**
- * * `leader` - Market Leader * `challenger` - Market Challenger * `follower` - Market Follower * `niche` - Niche Player
- * @export
- * @enum {string}
- */
-
-export const CompetitivePositionEnum = {
-    Leader: 'leader',
-    Challenger: 'challenger',
-    Follower: 'follower',
-    Niche: 'niche'
-} as const;
-
-export type CompetitivePositionEnum = typeof CompetitivePositionEnum[keyof typeof CompetitivePositionEnum];
-
-
 /**
  * * `beginner` - Beginner * `intermediate` - Intermediate * `advanced` - Advanced * `expert` - Expert
  * @export
  * @enum {string}
  */
 
-export const ComplexityLevelEnum = {
-    Beginner: 'beginner',
-    Intermediate: 'intermediate',
-    Advanced: 'advanced',
-    Expert: 'expert'
-} as const;
-
-export type ComplexityLevelEnum = typeof ComplexityLevelEnum[keyof typeof ComplexityLevelEnum];
+export enum ComplexityLevelEnum {
+    beginner = 'beginner',
+    intermediate = 'intermediate',
+    advanced = 'advanced',
+    expert = 'expert'
+}
 
 
 /**
@@ -914,39 +762,6 @@ export interface DashboardResponse {
      */
     'current_month': { [key: string]: any; };
 }
-/**
- * * `immediate` - Immediate * `hourly` - Hourly * `daily` - Daily * `weekly` - Weekly
- * @export
- * @enum {string}
- */
-
-export const DigestFrequencyEnum = {
-    Immediate: 'immediate',
-    Hourly: 'hourly',
-    Daily: 'daily',
-    Weekly: 'weekly'
-} as const;
-
-export type DigestFrequencyEnum = typeof DigestFrequencyEnum[keyof typeof DigestFrequencyEnum];
-
-
-/**
- * * `quality_issue` - Quality Issue * `payment_dispute` - Payment Dispute * `schedule_conflict` - Schedule Conflict * `communication_issue` - Communication Issue * `other` - Other
- * @export
- * @enum {string}
- */
-
-export const DisputeTypeEnum = {
-    QualityIssue: 'quality_issue',
-    PaymentDispute: 'payment_dispute',
-    ScheduleConflict: 'schedule_conflict',
-    CommunicationIssue: 'communication_issue',
-    Other: 'other'
-} as const;
-
-export type DisputeTypeEnum = typeof DisputeTypeEnum[keyof typeof DisputeTypeEnum];
-
-
 /**
  * Serializer for Firebase authentication request
  * @export
@@ -966,14 +781,12 @@ export interface FireBaseAuth {
  * @enum {string}
  */
 
-export const GenderEnum = {
-    Male: 'male',
-    Female: 'female',
-    Other: 'other',
-    PreferNotToSay: 'prefer_not_to_say'
-} as const;
-
-export type GenderEnum = typeof GenderEnum[keyof typeof GenderEnum];
+export enum GenderEnum {
+    male = 'male',
+    female = 'female',
+    other = 'other',
+    prefer_not_to_say = 'prefer_not_to_say'
+}
 
 
 /**
@@ -1105,15 +918,13 @@ export interface InvoiceCreate {
  * @enum {string}
  */
 
-export const InvoiceStatusEnum = {
-    Draft: 'draft',
-    Sent: 'sent',
-    Paid: 'paid',
-    Overdue: 'overdue',
-    Cancelled: 'cancelled'
-} as const;
-
-export type InvoiceStatusEnum = typeof InvoiceStatusEnum[keyof typeof InvoiceStatusEnum];
+export enum InvoiceStatusEnum {
+    draft = 'draft',
+    sent = 'sent',
+    paid = 'paid',
+    overdue = 'overdue',
+    cancelled = 'cancelled'
+}
 
 
 /**
@@ -1185,163 +996,33 @@ export interface LogoutResponse {
     'message': string;
 }
 /**
- * Serializer for models with timestamp fields.
- * @export
- * @interface Message
- */
-export interface Message {
-    /**
-     * 
-     * @type {number}
-     * @memberof Message
-     */
-    'id': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Message
-     */
-    'chat_room': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Message
-     */
-    'sender': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Message
-     */
-    'sender_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Message
-     */
-    'content': string;
-    /**
-     * 
-     * @type {MessageTypeEnum}
-     * @memberof Message
-     */
-    'message_type'?: MessageTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Message
-     */
-    'message_type_display': string;
-    /**
-     * 
-     * @type {Array<ChatAttachment>}
-     * @memberof Message
-     */
-    'attachments': Array<ChatAttachment>;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof Message
-     */
-    'is_read'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof Message
-     */
-    'read_at'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof Message
-     */
-    'created_at': string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface MessageCreate
- */
-export interface MessageCreate {
-    /**
-     * 
-     * @type {number}
-     * @memberof MessageCreate
-     */
-    'chat_room': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof MessageCreate
-     */
-    'content': string;
-    /**
-     * 
-     * @type {MessageTypeEnum}
-     * @memberof MessageCreate
-     */
-    'message_type'?: MessageTypeEnum;
-}
-/**
- * * `text` - Текст * `image` - Изображение * `file` - Файл * `system` - System Message * `order_update` - Order Update
+ * * `text` - Text * `image` - Image
  * @export
  * @enum {string}
  */
 
-export const MessageTypeEnum = {
-    Text: 'text',
-    Image: 'image',
-    File: 'file',
-    System: 'system',
-    OrderUpdate: 'order_update'
-} as const;
-
-export type MessageTypeEnum = typeof MessageTypeEnum[keyof typeof MessageTypeEnum];
-
-
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface MessageUpdate
- */
-export interface MessageUpdate {
-    /**
-     * 
-     * @type {number}
-     * @memberof MessageUpdate
-     */
-    'id': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof MessageUpdate
-     */
-    'content': string;
-    /**
-     * 
-     * @type {MessageTypeEnum}
-     * @memberof MessageUpdate
-     */
-    'message_type'?: MessageTypeEnum;
+export enum MessageTypeEnum {
+    text = 'text',
+    image = 'image'
 }
+
+
 /**
  * * `credit_card` - Credit Card * `debit_card` - Debit Card * `bank_transfer` - Bank Transfer * `digital_wallet` - Digital Wallet
  * @export
  * @enum {string}
  */
 
-export const MethodTypeEnum = {
-    CreditCard: 'credit_card',
-    DebitCard: 'debit_card',
-    BankTransfer: 'bank_transfer',
-    DigitalWallet: 'digital_wallet'
-} as const;
-
-export type MethodTypeEnum = typeof MethodTypeEnum[keyof typeof MethodTypeEnum];
+export enum MethodTypeEnum {
+    credit_card = 'credit_card',
+    debit_card = 'debit_card',
+    bank_transfer = 'bank_transfer',
+    digital_wallet = 'digital_wallet'
+}
 
 
 /**
- * Serializer for models with timestamp fields.
+ * Serializer for UserNotification model.
  * @export
  * @interface Notification
  */
@@ -1360,16 +1041,10 @@ export interface Notification {
     'user': number;
     /**
      * 
-     * @type {number}
-     * @memberof Notification
-     */
-    'template': number;
-    /**
-     * 
      * @type {string}
      * @memberof Notification
      */
-    'subject': string;
+    'title': string;
     /**
      * 
      * @type {string}
@@ -1378,40 +1053,10 @@ export interface Notification {
     'message': string;
     /**
      * 
-     * @type {string}
+     * @type {NotificationTypeEnum}
      * @memberof Notification
      */
-    'short_message'?: string;
-    /**
-     * 
-     * @type {any}
-     * @memberof Notification
-     */
-    'context_data'?: any;
-    /**
-     * 
-     * @type {string}
-     * @memberof Notification
-     */
-    'related_object_type'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Notification
-     */
-    'related_object_id'?: number | null;
-    /**
-     * 
-     * @type {NotificationStatusEnum}
-     * @memberof Notification
-     */
-    'status'?: NotificationStatusEnum;
-    /**
-     * 
-     * @type {PriorityEnum}
-     * @memberof Notification
-     */
-    'priority'?: PriorityEnum;
+    'notification_type': NotificationTypeEnum;
     /**
      * 
      * @type {boolean}
@@ -1423,19 +1068,19 @@ export interface Notification {
      * @type {string}
      * @memberof Notification
      */
-    'read_at'?: string | null;
+    'read_at': string | null;
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof Notification
      */
-    'sent_at'?: string | null;
+    'order'?: number | null;
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof Notification
      */
-    'delivered_at'?: string | null;
+    'bid'?: number | null;
     /**
      * 
      * @type {string}
@@ -1444,7 +1089,7 @@ export interface Notification {
     'created_at': string;
 }
 /**
- * Serializer for models with timestamp fields.
+ * Serializer for creating notifications.
  * @export
  * @interface NotificationCreate
  */
@@ -1457,16 +1102,10 @@ export interface NotificationCreate {
     'user': number;
     /**
      * 
-     * @type {number}
-     * @memberof NotificationCreate
-     */
-    'template': number;
-    /**
-     * 
      * @type {string}
      * @memberof NotificationCreate
      */
-    'subject': string;
+    'title': string;
     /**
      * 
      * @type {string}
@@ -1475,414 +1114,42 @@ export interface NotificationCreate {
     'message': string;
     /**
      * 
-     * @type {string}
-     * @memberof NotificationCreate
-     */
-    'short_message'?: string;
-    /**
-     * 
-     * @type {any}
-     * @memberof NotificationCreate
-     */
-    'context_data'?: any;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationCreate
-     */
-    'related_object_type'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof NotificationCreate
-     */
-    'related_object_id'?: number | null;
-    /**
-     * 
-     * @type {PriorityEnum}
-     * @memberof NotificationCreate
-     */
-    'priority'?: PriorityEnum;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface NotificationSetting
- */
-export interface NotificationSetting {
-    /**
-     * 
-     * @type {number}
-     * @memberof NotificationSetting
-     */
-    'id': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NotificationSetting
-     */
-    'user': number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSetting
-     */
-    'email_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSetting
-     */
-    'push_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSetting
-     */
-    'sms_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSetting
-     */
-    'in_app_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSetting
-     */
-    'order_updates'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSetting
-     */
-    'bid_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSetting
-     */
-    'payment_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSetting
-     */
-    'chat_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSetting
-     */
-    'promotional_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSetting
-     */
-    'system_notifications'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationSetting
-     */
-    'quiet_hours_start'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationSetting
-     */
-    'quiet_hours_end'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationSetting
-     */
-    'timezone'?: string;
-    /**
-     * 
-     * @type {DigestFrequencyEnum}
-     * @memberof NotificationSetting
-     */
-    'digest_frequency'?: DigestFrequencyEnum;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface NotificationSettingUpdate
- */
-export interface NotificationSettingUpdate {
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSettingUpdate
-     */
-    'email_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSettingUpdate
-     */
-    'push_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSettingUpdate
-     */
-    'sms_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSettingUpdate
-     */
-    'in_app_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSettingUpdate
-     */
-    'order_updates'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSettingUpdate
-     */
-    'bid_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSettingUpdate
-     */
-    'payment_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSettingUpdate
-     */
-    'chat_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSettingUpdate
-     */
-    'promotional_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationSettingUpdate
-     */
-    'system_notifications'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationSettingUpdate
-     */
-    'quiet_hours_start'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationSettingUpdate
-     */
-    'quiet_hours_end'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationSettingUpdate
-     */
-    'timezone'?: string;
-    /**
-     * 
-     * @type {DigestFrequencyEnum}
-     * @memberof NotificationSettingUpdate
-     */
-    'digest_frequency'?: DigestFrequencyEnum;
-}
-/**
- * * `pending` - Pending * `sent` - Sent * `delivered` - Delivered * `failed` - Failed * `cancelled` - Cancelled
- * @export
- * @enum {string}
- */
-
-export const NotificationStatusEnum = {
-    Pending: 'pending',
-    Sent: 'sent',
-    Delivered: 'delivered',
-    Failed: 'failed',
-    Cancelled: 'cancelled'
-} as const;
-
-export type NotificationStatusEnum = typeof NotificationStatusEnum[keyof typeof NotificationStatusEnum];
-
-
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface NotificationTemplate
- */
-export interface NotificationTemplate {
-    /**
-     * 
-     * @type {number}
-     * @memberof NotificationTemplate
-     */
-    'id': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationTemplate
-     */
-    'name': string;
-    /**
-     * 
      * @type {NotificationTypeEnum}
-     * @memberof NotificationTemplate
+     * @memberof NotificationCreate
      */
     'notification_type': NotificationTypeEnum;
     /**
      * 
-     * @type {string}
-     * @memberof NotificationTemplate
+     * @type {number}
+     * @memberof NotificationCreate
      */
-    'subject': string;
+    'order'?: number | null;
     /**
      * 
-     * @type {string}
-     * @memberof NotificationTemplate
+     * @type {number}
+     * @memberof NotificationCreate
      */
-    'message': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationTemplate
-     */
-    'short_message'?: string;
-    /**
-     * 
-     * @type {any}
-     * @memberof NotificationTemplate
-     */
-    'variables'?: any;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationTemplate
-     */
-    'is_active'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationTemplate
-     */
-    'created_at': string;
+    'bid'?: number | null;
 }
 /**
- * Serializer for models with timestamp fields.
- * @export
- * @interface NotificationTemplateCreate
- */
-export interface NotificationTemplateCreate {
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationTemplateCreate
-     */
-    'name': string;
-    /**
-     * 
-     * @type {NotificationTypeEnum}
-     * @memberof NotificationTemplateCreate
-     */
-    'notification_type': NotificationTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationTemplateCreate
-     */
-    'subject': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationTemplateCreate
-     */
-    'message': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationTemplateCreate
-     */
-    'short_message'?: string;
-    /**
-     * 
-     * @type {any}
-     * @memberof NotificationTemplateCreate
-     */
-    'variables'?: any;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationTemplateCreate
-     */
-    'is_active'?: boolean;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface NotificationTemplateUpdate
- */
-export interface NotificationTemplateUpdate {
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationTemplateUpdate
-     */
-    'subject': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationTemplateUpdate
-     */
-    'message': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NotificationTemplateUpdate
-     */
-    'short_message'?: string;
-    /**
-     * 
-     * @type {any}
-     * @memberof NotificationTemplateUpdate
-     */
-    'variables'?: any;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NotificationTemplateUpdate
-     */
-    'is_active'?: boolean;
-}
-/**
- * * `order_update` - Order Update * `bid_received` - Bid Received * `payment_success` - Payment Success * `payment_failed` - Payment Failed * `chat_message` - Chat Message * `system_alert` - System Alert * `promotional` - Promotional
+ * * `bid_received` - Bid Received * `bid_accepted` - Bid Accepted * `bid_rejected` - Bid Rejected * `order_assigned` - Order Assigned * `order_completed` - Order Completed * `chat_message` - Chat Message * `system_alert` - System Alert
  * @export
  * @enum {string}
  */
 
-export const NotificationTypeEnum = {
-    OrderUpdate: 'order_update',
-    BidReceived: 'bid_received',
-    PaymentSuccess: 'payment_success',
-    PaymentFailed: 'payment_failed',
-    ChatMessage: 'chat_message',
-    SystemAlert: 'system_alert',
-    Promotional: 'promotional'
-} as const;
-
-export type NotificationTypeEnum = typeof NotificationTypeEnum[keyof typeof NotificationTypeEnum];
+export enum NotificationTypeEnum {
+    bid_received = 'bid_received',
+    bid_accepted = 'bid_accepted',
+    bid_rejected = 'bid_rejected',
+    order_assigned = 'order_assigned',
+    order_completed = 'order_completed',
+    chat_message = 'chat_message',
+    system_alert = 'system_alert'
+}
 
 
 /**
- * Serializer for models with timestamp fields.
+ * Serializer for updating notification read status.
  * @export
  * @interface NotificationUpdate
  */
@@ -1944,10 +1211,10 @@ export interface Order {
     'description': string;
     /**
      * 
-     * @type {OrderStatusEnum}
+     * @type {Status638Enum}
      * @memberof Order
      */
-    'status'?: OrderStatusEnum;
+    'status'?: Status638Enum;
     /**
      * 
      * @type {string}
@@ -2016,28 +1283,16 @@ export interface Order {
     'final_price'?: string | null;
     /**
      * 
-     * @type {Array<OrderAddon>}
-     * @memberof Order
-     */
-    'addons': Array<OrderAddon>;
-    /**
-     * 
-     * @type {Array<OrderPhoto>}
-     * @memberof Order
-     */
-    'photos': Array<OrderPhoto>;
-    /**
-     * 
      * @type {Array<Bid>}
      * @memberof Order
      */
     'bids': Array<Bid>;
     /**
      * 
-     * @type {any}
+     * @type {Array<number>}
      * @memberof Order
      */
-    'attachments'?: any;
+    'attachments'?: Array<number>;
     /**
      * 
      * @type {string}
@@ -2066,221 +1321,93 @@ export interface Order {
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface OrderAddon
+ * @interface OrderAssignment
  */
-export interface OrderAddon {
+export interface OrderAssignment {
     /**
      * 
      * @type {number}
-     * @memberof OrderAddon
+     * @memberof OrderAssignment
      */
     'id': number;
     /**
      * 
      * @type {number}
-     * @memberof OrderAddon
+     * @memberof OrderAssignment
      */
     'order': number;
     /**
      * 
-     * @type {number}
-     * @memberof OrderAddon
+     * @type {string}
+     * @memberof OrderAssignment
      */
-    'addon': number;
+    'order_title': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof OrderAssignment
+     */
+    'provider': number;
     /**
      * 
      * @type {string}
-     * @memberof OrderAddon
+     * @memberof OrderAssignment
      */
-    'addon_name': string;
+    'provider_name': string;
     /**
      * 
      * @type {number}
-     * @memberof OrderAddon
+     * @memberof OrderAssignment
      */
-    'quantity'?: number;
+    'accepted_bid': number;
     /**
      * 
      * @type {string}
-     * @memberof OrderAddon
+     * @memberof OrderAssignment
      */
-    'price': string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface OrderAnalytics
- */
-export interface OrderAnalytics {
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalytics
-     */
-    'id': number;
+    'assigned_at': string;
     /**
      * 
      * @type {string}
-     * @memberof OrderAnalytics
+     * @memberof OrderAssignment
      */
-    'date': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalytics
-     */
-    'total_orders'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalytics
-     */
-    'new_orders'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalytics
-     */
-    'completed_orders'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalytics
-     */
-    'cancelled_orders'?: number;
+    'start_date'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof OrderAnalytics
+     * @memberof OrderAssignment
      */
-    'average_order_value'?: string;
+    'start_time'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof OrderAnalytics
+     * @memberof OrderAssignment
      */
-    'revenue_per_order': string;
+    'progress_notes'?: string;
     /**
      * 
      * @type {string}
-     * @memberof OrderAnalytics
+     * @memberof OrderAssignment
      */
-    'total_revenue'?: string;
+    'completion_notes'?: string;
     /**
      * 
      * @type {number}
-     * @memberof OrderAnalytics
+     * @memberof OrderAssignment
      */
-    'total_bids'?: number;
+    'client_rating'?: number | null;
     /**
      * 
      * @type {string}
-     * @memberof OrderAnalytics
+     * @memberof OrderAssignment
      */
-    'average_bids_per_order'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalytics
-     */
-    'active_clients'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalytics
-     */
-    'active_providers'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalytics
-     */
-    'new_users'?: number;
+    'client_review'?: string;
     /**
      * 
      * @type {string}
-     * @memberof OrderAnalytics
+     * @memberof OrderAssignment
      */
     'created_at': string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface OrderAnalyticsCreate
- */
-export interface OrderAnalyticsCreate {
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderAnalyticsCreate
-     */
-    'date': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalyticsCreate
-     */
-    'total_orders'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalyticsCreate
-     */
-    'new_orders'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalyticsCreate
-     */
-    'completed_orders'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalyticsCreate
-     */
-    'cancelled_orders'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderAnalyticsCreate
-     */
-    'average_order_value'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderAnalyticsCreate
-     */
-    'total_revenue'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalyticsCreate
-     */
-    'total_bids'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderAnalyticsCreate
-     */
-    'average_bids_per_order'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalyticsCreate
-     */
-    'active_clients'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalyticsCreate
-     */
-    'active_providers'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderAnalyticsCreate
-     */
-    'new_users'?: number;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -2376,229 +1503,6 @@ export interface OrderCreate {
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface OrderDispute
- */
-export interface OrderDispute {
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderDispute
-     */
-    'id': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderDispute
-     */
-    'order': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderDispute
-     */
-    'raised_by': number;
-    /**
-     * 
-     * @type {DisputeTypeEnum}
-     * @memberof OrderDispute
-     */
-    'dispute_type': DisputeTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderDispute
-     */
-    'dispute_type_display': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderDispute
-     */
-    'description': string;
-    /**
-     * 
-     * @type {any}
-     * @memberof OrderDispute
-     */
-    'evidence'?: any;
-    /**
-     * 
-     * @type {Status61fEnum}
-     * @memberof OrderDispute
-     */
-    'status'?: Status61fEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderDispute
-     */
-    'admin_notes'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderDispute
-     */
-    'resolved_by'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderDispute
-     */
-    'resolved_at'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderDispute
-     */
-    'resolution'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderDispute
-     */
-    'created_at': string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface OrderDisputeCreate
- */
-export interface OrderDisputeCreate {
-    /**
-     * 
-     * @type {DisputeTypeEnum}
-     * @memberof OrderDisputeCreate
-     */
-    'dispute_type': DisputeTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderDisputeCreate
-     */
-    'description': string;
-    /**
-     * 
-     * @type {any}
-     * @memberof OrderDisputeCreate
-     */
-    'evidence'?: any;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface OrderDisputeUpdate
- */
-export interface OrderDisputeUpdate {
-    /**
-     * 
-     * @type {Status61fEnum}
-     * @memberof OrderDisputeUpdate
-     */
-    'status'?: Status61fEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderDisputeUpdate
-     */
-    'admin_notes'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderDisputeUpdate
-     */
-    'resolution'?: string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface OrderPhoto
- */
-export interface OrderPhoto {
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderPhoto
-     */
-    'id': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderPhoto
-     */
-    'order': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderPhoto
-     */
-    'photo_url': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderPhoto
-     */
-    'caption'?: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof OrderPhoto
-     */
-    'is_primary'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderPhoto
-     */
-    'created_at': string;
-}
-/**
- * Serializer for order search response.
- * @export
- * @interface OrderSearchResponse
- */
-export interface OrderSearchResponse {
-    /**
-     * Search query
-     * @type {string}
-     * @memberof OrderSearchResponse
-     */
-    'query': string;
-    /**
-     * Number of results found
-     * @type {number}
-     * @memberof OrderSearchResponse
-     */
-    'count': number;
-    /**
-     * List of order results
-     * @type {Array<Order>}
-     * @memberof OrderSearchResponse
-     */
-    'results': Array<Order>;
-}
-/**
- * * `draft` - Draft * `published` - Published * `bidding` - Bidding * `assigned` - Assigned * `in_progress` - In Progress * `completed` - Completed * `cancelled` - Cancelled * `disputed` - Disputed
- * @export
- * @enum {string}
- */
-
-export const OrderStatusEnum = {
-    Draft: 'draft',
-    Published: 'published',
-    Bidding: 'bidding',
-    Assigned: 'assigned',
-    InProgress: 'in_progress',
-    Completed: 'completed',
-    Cancelled: 'cancelled',
-    Disputed: 'disputed'
-} as const;
-
-export type OrderStatusEnum = typeof OrderStatusEnum[keyof typeof OrderStatusEnum];
-
-
-/**
- * Serializer for models with timestamp fields.
- * @export
  * @interface OrderUpdate
  */
 export interface OrderUpdate {
@@ -2680,6 +1584,12 @@ export interface OrderUpdate {
      * @memberof OrderUpdate
      */
     'special_requirements'?: string;
+    /**
+     * 
+     * @type {Status638Enum}
+     * @memberof OrderUpdate
+     */
+    'status'?: Status638Enum;
 }
 /**
  * 
@@ -2746,126 +1656,33 @@ export interface PaginatedBidList {
 /**
  * 
  * @export
- * @interface PaginatedBusinessMetricsList
+ * @interface PaginatedChatConversationList
  */
-export interface PaginatedBusinessMetricsList {
+export interface PaginatedChatConversationList {
     /**
      * 
      * @type {number}
-     * @memberof PaginatedBusinessMetricsList
+     * @memberof PaginatedChatConversationList
      */
     'count'?: number;
     /**
      * 
      * @type {string}
-     * @memberof PaginatedBusinessMetricsList
+     * @memberof PaginatedChatConversationList
      */
     'next'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PaginatedBusinessMetricsList
+     * @memberof PaginatedChatConversationList
      */
     'previous'?: string | null;
     /**
      * 
-     * @type {Array<BusinessMetrics>}
-     * @memberof PaginatedBusinessMetricsList
+     * @type {Array<ChatConversation>}
+     * @memberof PaginatedChatConversationList
      */
-    'results'?: Array<BusinessMetrics>;
-}
-/**
- * 
- * @export
- * @interface PaginatedChatAttachmentList
- */
-export interface PaginatedChatAttachmentList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedChatAttachmentList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedChatAttachmentList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedChatAttachmentList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<ChatAttachment>}
-     * @memberof PaginatedChatAttachmentList
-     */
-    'results'?: Array<ChatAttachment>;
-}
-/**
- * 
- * @export
- * @interface PaginatedChatParticipantList
- */
-export interface PaginatedChatParticipantList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedChatParticipantList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedChatParticipantList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedChatParticipantList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<ChatParticipant>}
-     * @memberof PaginatedChatParticipantList
-     */
-    'results'?: Array<ChatParticipant>;
-}
-/**
- * 
- * @export
- * @interface PaginatedChatRoomList
- */
-export interface PaginatedChatRoomList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedChatRoomList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedChatRoomList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedChatRoomList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<ChatRoom>}
-     * @memberof PaginatedChatRoomList
-     */
-    'results'?: Array<ChatRoom>;
+    'results'?: Array<ChatConversation>;
 }
 /**
  * 
@@ -2897,37 +1714,6 @@ export interface PaginatedClientList {
      * @memberof PaginatedClientList
      */
     'results'?: Array<Client>;
-}
-/**
- * 
- * @export
- * @interface PaginatedGlobalSearchResponseList
- */
-export interface PaginatedGlobalSearchResponseList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedGlobalSearchResponseList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedGlobalSearchResponseList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedGlobalSearchResponseList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<GlobalSearchResponse>}
-     * @memberof PaginatedGlobalSearchResponseList
-     */
-    'results'?: Array<GlobalSearchResponse>;
 }
 /**
  * 
@@ -2994,37 +1780,6 @@ export interface PaginatedLanguageList {
 /**
  * 
  * @export
- * @interface PaginatedMessageList
- */
-export interface PaginatedMessageList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedMessageList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedMessageList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedMessageList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<Message>}
-     * @memberof PaginatedMessageList
-     */
-    'results'?: Array<Message>;
-}
-/**
- * 
- * @export
  * @interface PaginatedNotificationList
  */
 export interface PaginatedNotificationList {
@@ -3056,126 +1811,33 @@ export interface PaginatedNotificationList {
 /**
  * 
  * @export
- * @interface PaginatedNotificationTemplateList
+ * @interface PaginatedOrderAssignmentList
  */
-export interface PaginatedNotificationTemplateList {
+export interface PaginatedOrderAssignmentList {
     /**
      * 
      * @type {number}
-     * @memberof PaginatedNotificationTemplateList
+     * @memberof PaginatedOrderAssignmentList
      */
     'count'?: number;
     /**
      * 
      * @type {string}
-     * @memberof PaginatedNotificationTemplateList
+     * @memberof PaginatedOrderAssignmentList
      */
     'next'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PaginatedNotificationTemplateList
+     * @memberof PaginatedOrderAssignmentList
      */
     'previous'?: string | null;
     /**
      * 
-     * @type {Array<NotificationTemplate>}
-     * @memberof PaginatedNotificationTemplateList
+     * @type {Array<OrderAssignment>}
+     * @memberof PaginatedOrderAssignmentList
      */
-    'results'?: Array<NotificationTemplate>;
-}
-/**
- * 
- * @export
- * @interface PaginatedOrderAddonList
- */
-export interface PaginatedOrderAddonList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedOrderAddonList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedOrderAddonList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedOrderAddonList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<OrderAddon>}
-     * @memberof PaginatedOrderAddonList
-     */
-    'results'?: Array<OrderAddon>;
-}
-/**
- * 
- * @export
- * @interface PaginatedOrderAnalyticsList
- */
-export interface PaginatedOrderAnalyticsList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedOrderAnalyticsList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedOrderAnalyticsList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedOrderAnalyticsList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<OrderAnalytics>}
-     * @memberof PaginatedOrderAnalyticsList
-     */
-    'results'?: Array<OrderAnalytics>;
-}
-/**
- * 
- * @export
- * @interface PaginatedOrderDisputeList
- */
-export interface PaginatedOrderDisputeList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedOrderDisputeList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedOrderDisputeList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedOrderDisputeList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<OrderDispute>}
-     * @memberof PaginatedOrderDisputeList
-     */
-    'results'?: Array<OrderDispute>;
+    'results'?: Array<OrderAssignment>;
 }
 /**
  * 
@@ -3207,68 +1869,6 @@ export interface PaginatedOrderList {
      * @memberof PaginatedOrderList
      */
     'results'?: Array<Order>;
-}
-/**
- * 
- * @export
- * @interface PaginatedOrderPhotoList
- */
-export interface PaginatedOrderPhotoList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedOrderPhotoList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedOrderPhotoList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedOrderPhotoList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<OrderPhoto>}
-     * @memberof PaginatedOrderPhotoList
-     */
-    'results'?: Array<OrderPhoto>;
-}
-/**
- * 
- * @export
- * @interface PaginatedOrderSearchResponseList
- */
-export interface PaginatedOrderSearchResponseList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedOrderSearchResponseList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedOrderSearchResponseList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedOrderSearchResponseList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<OrderSearchResponse>}
-     * @memberof PaginatedOrderSearchResponseList
-     */
-    'results'?: Array<OrderSearchResponse>;
 }
 /**
  * 
@@ -3335,68 +1935,6 @@ export interface PaginatedPaymentMethodList {
 /**
  * 
  * @export
- * @interface PaginatedPerformanceMetricsList
- */
-export interface PaginatedPerformanceMetricsList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedPerformanceMetricsList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedPerformanceMetricsList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedPerformanceMetricsList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<PerformanceMetrics>}
-     * @memberof PaginatedPerformanceMetricsList
-     */
-    'results'?: Array<PerformanceMetrics>;
-}
-/**
- * 
- * @export
- * @interface PaginatedProviderSearchResponseList
- */
-export interface PaginatedProviderSearchResponseList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedProviderSearchResponseList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedProviderSearchResponseList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedProviderSearchResponseList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<ProviderSearchResponse>}
-     * @memberof PaginatedProviderSearchResponseList
-     */
-    'results'?: Array<ProviderSearchResponse>;
-}
-/**
- * 
- * @export
  * @interface PaginatedReviewList
  */
 export interface PaginatedReviewList {
@@ -3455,37 +1993,6 @@ export interface PaginatedServiceAreaList {
      * @memberof PaginatedServiceAreaList
      */
     'results'?: Array<ServiceArea>;
-}
-/**
- * 
- * @export
- * @interface PaginatedServiceCategoryAnalyticsList
- */
-export interface PaginatedServiceCategoryAnalyticsList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedServiceCategoryAnalyticsList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedServiceCategoryAnalyticsList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedServiceCategoryAnalyticsList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<ServiceCategoryAnalytics>}
-     * @memberof PaginatedServiceCategoryAnalyticsList
-     */
-    'results'?: Array<ServiceCategoryAnalytics>;
 }
 /**
  * 
@@ -3583,6 +2090,37 @@ export interface PaginatedServiceSubcategoryList {
 /**
  * 
  * @export
+ * @interface PaginatedSupportFAQList
+ */
+export interface PaginatedSupportFAQList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedSupportFAQList
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedSupportFAQList
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedSupportFAQList
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<SupportFAQ>}
+     * @memberof PaginatedSupportFAQList
+     */
+    'results'?: Array<SupportFAQ>;
+}
+/**
+ * 
+ * @export
  * @interface PaginatedSystemSettingsList
  */
 export interface PaginatedSystemSettingsList {
@@ -3610,37 +2148,6 @@ export interface PaginatedSystemSettingsList {
      * @memberof PaginatedSystemSettingsList
      */
     'results'?: Array<SystemSettings>;
-}
-/**
- * 
- * @export
- * @interface PaginatedUserActivityList
- */
-export interface PaginatedUserActivityList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedUserActivityList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedUserActivityList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedUserActivityList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<UserActivity>}
-     * @memberof PaginatedUserActivityList
-     */
-    'results'?: Array<UserActivity>;
 }
 /**
  * 
@@ -3674,35 +2181,41 @@ export interface PaginatedUserListList {
     'results'?: Array<UserList>;
 }
 /**
- * Serializer for models with timestamp fields.
+ * Unified serializer for bid creation and updates.
  * @export
- * @interface PatchedChatRoomUpdate
+ * @interface PatchedBidCreateUpdate
  */
-export interface PatchedChatRoomUpdate {
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedChatRoomUpdate
-     */
-    'id'?: number;
+export interface PatchedBidCreateUpdate {
     /**
      * 
      * @type {string}
-     * @memberof PatchedChatRoomUpdate
+     * @memberof PatchedBidCreateUpdate
      */
-    'title'?: string;
+    'amount'?: string;
     /**
      * 
-     * @type {ChatTypeEnum}
-     * @memberof PatchedChatRoomUpdate
+     * @type {string}
+     * @memberof PatchedBidCreateUpdate
      */
-    'chat_type'?: ChatTypeEnum;
+    'description'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedBidCreateUpdate
+     */
+    'estimated_duration'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedBidCreateUpdate
+     */
+    'terms_conditions'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedChatRoomUpdate
+     * @memberof PatchedBidCreateUpdate
      */
-    'is_active'?: boolean;
+    'is_negotiable'?: boolean;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -3712,172 +2225,13 @@ export interface PatchedChatRoomUpdate {
 export interface PatchedClientUpdate {
     /**
      * 
-     * @type {any}
+     * @type {Array<number>}
      * @memberof PatchedClientUpdate
      */
-    'preferred_service_areas'?: any;
-    /**
-     * 
-     * @type {any}
-     * @memberof PatchedClientUpdate
-     */
-    'budget_preferences'?: any;
+    'preferred_services'?: Array<number>;
 }
 /**
- * Serializer for models with timestamp fields.
- * @export
- * @interface PatchedMessageUpdate
- */
-export interface PatchedMessageUpdate {
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedMessageUpdate
-     */
-    'id'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedMessageUpdate
-     */
-    'content'?: string;
-    /**
-     * 
-     * @type {MessageTypeEnum}
-     * @memberof PatchedMessageUpdate
-     */
-    'message_type'?: MessageTypeEnum;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface PatchedNotificationSettingUpdate
- */
-export interface PatchedNotificationSettingUpdate {
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'email_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'push_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'sms_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'in_app_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'order_updates'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'bid_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'payment_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'chat_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'promotional_notifications'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'system_notifications'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'quiet_hours_start'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'quiet_hours_end'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'timezone'?: string;
-    /**
-     * 
-     * @type {DigestFrequencyEnum}
-     * @memberof PatchedNotificationSettingUpdate
-     */
-    'digest_frequency'?: DigestFrequencyEnum;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface PatchedNotificationTemplateUpdate
- */
-export interface PatchedNotificationTemplateUpdate {
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedNotificationTemplateUpdate
-     */
-    'subject'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedNotificationTemplateUpdate
-     */
-    'message'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedNotificationTemplateUpdate
-     */
-    'short_message'?: string;
-    /**
-     * 
-     * @type {any}
-     * @memberof PatchedNotificationTemplateUpdate
-     */
-    'variables'?: any;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedNotificationTemplateUpdate
-     */
-    'is_active'?: boolean;
-}
-/**
- * Serializer for models with timestamp fields.
+ * Serializer for updating notification read status.
  * @export
  * @interface PatchedNotificationUpdate
  */
@@ -3898,27 +2252,93 @@ export interface PatchedNotificationUpdate {
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface PatchedOrderDisputeUpdate
+ * @interface PatchedOrderAssignment
  */
-export interface PatchedOrderDisputeUpdate {
+export interface PatchedOrderAssignment {
     /**
      * 
-     * @type {Status61fEnum}
-     * @memberof PatchedOrderDisputeUpdate
+     * @type {number}
+     * @memberof PatchedOrderAssignment
      */
-    'status'?: Status61fEnum;
+    'id'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedOrderAssignment
+     */
+    'order'?: number;
     /**
      * 
      * @type {string}
-     * @memberof PatchedOrderDisputeUpdate
+     * @memberof PatchedOrderAssignment
      */
-    'admin_notes'?: string;
+    'order_title'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedOrderAssignment
+     */
+    'provider'?: number;
     /**
      * 
      * @type {string}
-     * @memberof PatchedOrderDisputeUpdate
+     * @memberof PatchedOrderAssignment
      */
-    'resolution'?: string;
+    'provider_name'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedOrderAssignment
+     */
+    'accepted_bid'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedOrderAssignment
+     */
+    'assigned_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedOrderAssignment
+     */
+    'start_date'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedOrderAssignment
+     */
+    'start_time'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedOrderAssignment
+     */
+    'progress_notes'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedOrderAssignment
+     */
+    'completion_notes'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedOrderAssignment
+     */
+    'client_rating'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedOrderAssignment
+     */
+    'client_review'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedOrderAssignment
+     */
+    'created_at'?: string;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -4004,6 +2424,12 @@ export interface PatchedOrderUpdate {
      * @memberof PatchedOrderUpdate
      */
     'special_requirements'?: string;
+    /**
+     * 
+     * @type {Status638Enum}
+     * @memberof PatchedOrderUpdate
+     */
+    'status'?: Status638Enum;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -4100,46 +2526,40 @@ export interface PatchedServiceProviderUpdate {
     'business_description'?: string;
     /**
      * 
-     * @type {string}
+     * @type {Array<number>}
      * @memberof PatchedServiceProviderUpdate
      */
-    'business_license'?: string;
+    'service_areas'?: Array<number>;
     /**
      * 
-     * @type {number}
+     * @type {Array<number>}
      * @memberof PatchedServiceProviderUpdate
      */
-    'years_of_experience'?: number;
+    'services_offered'?: Array<number>;
     /**
      * 
-     * @type {any}
+     * @type {boolean}
      * @memberof PatchedServiceProviderUpdate
      */
-    'service_areas'?: any;
+    'works_remotely'?: boolean;
     /**
      * 
-     * @type {number}
+     * @type {boolean}
      * @memberof PatchedServiceProviderUpdate
      */
-    'travel_radius'?: number;
+    'accepts_clients_at_location'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedServiceProviderUpdate
+     */
+    'travels_to_clients'?: boolean;
     /**
      * 
      * @type {boolean}
      * @memberof PatchedServiceProviderUpdate
      */
     'is_available'?: boolean;
-    /**
-     * 
-     * @type {any}
-     * @memberof PatchedServiceProviderUpdate
-     */
-    'availability_schedule'?: any;
-    /**
-     * 
-     * @type {any}
-     * @memberof PatchedServiceProviderUpdate
-     */
-    'verification_documents'?: any;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -4237,12 +2657,6 @@ export interface PatchedUserUpdate {
      * @type {string}
      * @memberof PatchedUserUpdate
      */
-    'name'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedUserUpdate
-     */
     'email'?: string;
     /**
      * 
@@ -4268,12 +2682,6 @@ export interface PatchedUserUpdate {
      * @memberof PatchedUserUpdate
      */
     'last_name'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedUserUpdate
-     */
-    'timezone_difference'?: number;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -4575,171 +2983,132 @@ export interface PaymentPaymentMethod {
  * @enum {string}
  */
 
-export const PaymentStatusEnum = {
-    Pending: 'pending',
-    Processing: 'processing',
-    Completed: 'completed',
-    Failed: 'failed',
-    Cancelled: 'cancelled',
-    Refunded: 'refunded'
-} as const;
-
-export type PaymentStatusEnum = typeof PaymentStatusEnum[keyof typeof PaymentStatusEnum];
-
-
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface PerformanceMetrics
- */
-export interface PerformanceMetrics {
-    /**
-     * 
-     * @type {number}
-     * @memberof PerformanceMetrics
-     */
-    'id': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PerformanceMetrics
-     */
-    'date': string;
-    /**
-     * 
-     * @type {TimePeriodEnum}
-     * @memberof PerformanceMetrics
-     */
-    'time_period'?: TimePeriodEnum;
-    /**
-     * 
-     * @type {number}
-     * @memberof PerformanceMetrics
-     */
-    'average_response_time'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof PerformanceMetrics
-     */
-    'max_response_time'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof PerformanceMetrics
-     */
-    'min_response_time'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof PerformanceMetrics
-     */
-    'total_errors'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PerformanceMetrics
-     */
-    'error_rate'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof PerformanceMetrics
-     */
-    'active_users'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof PerformanceMetrics
-     */
-    'concurrent_users'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof PerformanceMetrics
-     */
-    'database_queries'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PerformanceMetrics
-     */
-    'cpu_usage'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PerformanceMetrics
-     */
-    'memory_usage'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PerformanceMetrics
-     */
-    'disk_usage'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PerformanceMetrics
-     */
-    'created_at': string;
+export enum PaymentStatusEnum {
+    pending = 'pending',
+    processing = 'processing',
+    completed = 'completed',
+    failed = 'failed',
+    cancelled = 'cancelled',
+    refunded = 'refunded'
 }
+
+
 /**
  * * `android` - Android * `ios` - iOS * `web` - Web * `all` - All Platforms
  * @export
  * @enum {string}
  */
 
-export const PlatformEnum = {
-    Android: 'android',
-    Ios: 'ios',
-    Web: 'web',
-    All: 'all'
-} as const;
-
-export type PlatformEnum = typeof PlatformEnum[keyof typeof PlatformEnum];
+export enum PlatformEnum {
+    android = 'android',
+    ios = 'ios',
+    web = 'web',
+    all = 'all'
+}
 
 
 /**
- * * `low` - Low * `normal` - Normal * `high` - High * `urgent` - Urgent
+ * Serializer for models with timestamp fields.
  * @export
- * @enum {string}
+ * @interface PreferredServiceSubcategory
  */
-
-export const PriorityEnum = {
-    Low: 'low',
-    Normal: 'normal',
-    High: 'high',
-    Urgent: 'urgent'
-} as const;
-
-export type PriorityEnum = typeof PriorityEnum[keyof typeof PriorityEnum];
-
-
-/**
- * Serializer for provider search response.
- * @export
- * @interface ProviderSearchResponse
- */
-export interface ProviderSearchResponse {
+export interface PreferredServiceSubcategory {
     /**
-     * Search query
-     * @type {string}
-     * @memberof ProviderSearchResponse
-     */
-    'query': string;
-    /**
-     * Number of results found
+     * 
      * @type {number}
-     * @memberof ProviderSearchResponse
+     * @memberof PreferredServiceSubcategory
      */
-    'count': number;
+    'id': number;
     /**
-     * List of provider results
-     * @type {Array<ServiceProvider>}
-     * @memberof ProviderSearchResponse
+     * 
+     * @type {string}
+     * @memberof PreferredServiceSubcategory
      */
-    'results': Array<ServiceProvider>;
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PreferredServiceSubcategory
+     */
+    'description': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PreferredServiceSubcategory
+     */
+    'icon'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PreferredServiceSubcategory
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof PreferredServiceSubcategory
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PreferredServiceSubcategory
+     */
+    'featured'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof PreferredServiceSubcategory
+     */
+    'base_price'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PreferredServiceSubcategory
+     */
+    'price_range_min'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PreferredServiceSubcategory
+     */
+    'price_range_max'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof PreferredServiceSubcategory
+     */
+    'estimated_duration'?: number | null;
+    /**
+     * 
+     * @type {ComplexityLevelEnum}
+     * @memberof PreferredServiceSubcategory
+     */
+    'complexity_level'?: ComplexityLevelEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof PreferredServiceSubcategory
+     */
+    'safety_requirements'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PreferredServiceSubcategory
+     */
+    'slug'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PreferredServiceSubcategory
+     */
+    'meta_title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PreferredServiceSubcategory
+     */
+    'meta_description'?: string;
 }
 /**
  * Serializer for reading review data.
@@ -5068,116 +3437,6 @@ export interface ServiceCategory {
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface ServiceCategoryAnalytics
- */
-export interface ServiceCategoryAnalytics {
-    /**
-     * 
-     * @type {number}
-     * @memberof ServiceCategoryAnalytics
-     */
-    'id': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceCategoryAnalytics
-     */
-    'date': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ServiceCategoryAnalytics
-     */
-    'category': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ServiceCategoryAnalytics
-     */
-    'order_count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceCategoryAnalytics
-     */
-    'total_revenue'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceCategoryAnalytics
-     */
-    'average_order_value'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ServiceCategoryAnalytics
-     */
-    'bid_count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceCategoryAnalytics
-     */
-    'completion_rate'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceCategoryAnalytics
-     */
-    'created_at': string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface ServiceCategoryAnalyticsCreate
- */
-export interface ServiceCategoryAnalyticsCreate {
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceCategoryAnalyticsCreate
-     */
-    'date': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ServiceCategoryAnalyticsCreate
-     */
-    'category': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ServiceCategoryAnalyticsCreate
-     */
-    'order_count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceCategoryAnalyticsCreate
-     */
-    'total_revenue'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceCategoryAnalyticsCreate
-     */
-    'average_order_value'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ServiceCategoryAnalyticsCreate
-     */
-    'bid_count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceCategoryAnalyticsCreate
-     */
-    'completion_rate'?: string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
  * @interface ServiceProvider
  */
 export interface ServiceProvider {
@@ -5207,40 +3466,40 @@ export interface ServiceProvider {
     'business_description'?: string;
     /**
      * 
-     * @type {string}
+     * @type {Array<number>}
      * @memberof ServiceProvider
      */
-    'business_license'?: string;
+    'service_areas'?: Array<number>;
     /**
      * 
-     * @type {number}
+     * @type {Array<number>}
      * @memberof ServiceProvider
      */
-    'years_of_experience'?: number;
+    'services_offered'?: Array<number>;
     /**
      * 
-     * @type {any}
+     * @type {boolean}
      * @memberof ServiceProvider
      */
-    'service_areas'?: any;
+    'works_remotely'?: boolean;
     /**
      * 
-     * @type {number}
+     * @type {boolean}
      * @memberof ServiceProvider
      */
-    'travel_radius'?: number;
+    'accepts_clients_at_location'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceProvider
+     */
+    'travels_to_clients'?: boolean;
     /**
      * 
      * @type {boolean}
      * @memberof ServiceProvider
      */
     'is_available'?: boolean;
-    /**
-     * 
-     * @type {any}
-     * @memberof ServiceProvider
-     */
-    'availability_schedule'?: any;
     /**
      * 
      * @type {string}
@@ -5259,12 +3518,6 @@ export interface ServiceProvider {
      * @memberof ServiceProvider
      */
     'is_verified_provider': boolean;
-    /**
-     * 
-     * @type {any}
-     * @memberof ServiceProvider
-     */
-    'verification_documents'?: any;
     /**
      * 
      * @type {string}
@@ -5298,46 +3551,40 @@ export interface ServiceProviderUpdate {
     'business_description'?: string;
     /**
      * 
-     * @type {string}
+     * @type {Array<number>}
      * @memberof ServiceProviderUpdate
      */
-    'business_license'?: string;
+    'service_areas'?: Array<number>;
     /**
      * 
-     * @type {number}
+     * @type {Array<number>}
      * @memberof ServiceProviderUpdate
      */
-    'years_of_experience'?: number;
+    'services_offered'?: Array<number>;
     /**
      * 
-     * @type {any}
+     * @type {boolean}
      * @memberof ServiceProviderUpdate
      */
-    'service_areas'?: any;
+    'works_remotely'?: boolean;
     /**
      * 
-     * @type {number}
+     * @type {boolean}
      * @memberof ServiceProviderUpdate
      */
-    'travel_radius'?: number;
+    'accepts_clients_at_location'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceProviderUpdate
+     */
+    'travels_to_clients'?: boolean;
     /**
      * 
      * @type {boolean}
      * @memberof ServiceProviderUpdate
      */
     'is_available'?: boolean;
-    /**
-     * 
-     * @type {any}
-     * @memberof ServiceProviderUpdate
-     */
-    'availability_schedule'?: any;
-    /**
-     * 
-     * @type {any}
-     * @memberof ServiceProviderUpdate
-     */
-    'verification_documents'?: any;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -5418,33 +3665,155 @@ export interface ServiceSubcategory {
  * @enum {string}
  */
 
-export const SettingTypeEnum = {
-    String: 'string',
-    Integer: 'integer',
-    Boolean: 'boolean',
-    Json: 'json',
-    File: 'file'
-} as const;
-
-export type SettingTypeEnum = typeof SettingTypeEnum[keyof typeof SettingTypeEnum];
+export enum SettingTypeEnum {
+    string = 'string',
+    integer = 'integer',
+    boolean = 'boolean',
+    json = 'json',
+    file = 'file'
+}
 
 
 /**
- * * `open` - Open * `under_review` - Under Review * `resolved` - Resolved * `closed` - Closed
+ * * `draft` - Draft * `published` - Published * `bidding` - Bidding * `assigned` - Assigned * `in_progress` - In Progress * `completed` - Completed * `cancelled` - Cancelled * `disputed` - Disputed
  * @export
  * @enum {string}
  */
 
-export const Status61fEnum = {
-    Open: 'open',
-    UnderReview: 'under_review',
-    Resolved: 'resolved',
-    Closed: 'closed'
-} as const;
+export enum Status638Enum {
+    draft = 'draft',
+    published = 'published',
+    bidding = 'bidding',
+    assigned = 'assigned',
+    in_progress = 'in_progress',
+    completed = 'completed',
+    cancelled = 'cancelled',
+    disputed = 'disputed'
+}
 
-export type Status61fEnum = typeof Status61fEnum[keyof typeof Status61fEnum];
 
-
+/**
+ * Serializer for models with timestamp fields.
+ * @export
+ * @interface StripeWebhookEvent
+ */
+export interface StripeWebhookEvent {
+    /**
+     * 
+     * @type {number}
+     * @memberof StripeWebhookEvent
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof StripeWebhookEvent
+     */
+    'stripe_event_id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StripeWebhookEvent
+     */
+    'event_type': string;
+    /**
+     * 
+     * @type {any}
+     * @memberof StripeWebhookEvent
+     */
+    'event_data'?: any;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof StripeWebhookEvent
+     */
+    'processed'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof StripeWebhookEvent
+     */
+    'processed_at'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof StripeWebhookEvent
+     */
+    'error_message'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StripeWebhookEvent
+     */
+    'created_at': string;
+}
+/**
+ * Serializer for support FAQ items.
+ * @export
+ * @interface SupportFAQ
+ */
+export interface SupportFAQ {
+    /**
+     * 
+     * @type {number}
+     * @memberof SupportFAQ
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof SupportFAQ
+     */
+    'question': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SupportFAQ
+     */
+    'answer': string;
+    /**
+     * 
+     * @type {CategoryEnum}
+     * @memberof SupportFAQ
+     */
+    'category'?: CategoryEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof SupportFAQ
+     */
+    'category_display': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof SupportFAQ
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SupportFAQ
+     */
+    'is_popular'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SupportFAQ
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof SupportFAQ
+     */
+    'view_count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof SupportFAQ
+     */
+    'created_at': string;
+}
 /**
  * Serializer for models with timestamp fields.
  * @export
@@ -5501,147 +3870,19 @@ export interface SystemSettings {
     'setting_type_display': string;
 }
 /**
- * * `hourly` - Hourly * `daily` - Daily * `weekly` - Weekly * `monthly` - Monthly
- * @export
- * @enum {string}
- */
-
-export const TimePeriodEnum = {
-    Hourly: 'hourly',
-    Daily: 'daily',
-    Weekly: 'weekly',
-    Monthly: 'monthly'
-} as const;
-
-export type TimePeriodEnum = typeof TimePeriodEnum[keyof typeof TimePeriodEnum];
-
-
-/**
  * * `low` - Low * `medium` - Medium * `high` - High * `urgent` - Urgent
  * @export
  * @enum {string}
  */
 
-export const UrgencyEnum = {
-    Low: 'low',
-    Medium: 'medium',
-    High: 'high',
-    Urgent: 'urgent'
-} as const;
-
-export type UrgencyEnum = typeof UrgencyEnum[keyof typeof UrgencyEnum];
-
-
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface UserActivity
- */
-export interface UserActivity {
-    /**
-     * 
-     * @type {number}
-     * @memberof UserActivity
-     */
-    'id': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof UserActivity
-     */
-    'user': number;
-    /**
-     * 
-     * @type {ActivityTypeEnum}
-     * @memberof UserActivity
-     */
-    'activity_type': ActivityTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserActivity
-     */
-    'activity_type_display': string;
-    /**
-     * 
-     * @type {any}
-     * @memberof UserActivity
-     */
-    'context_data'?: any;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserActivity
-     */
-    'ip_address'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserActivity
-     */
-    'user_agent'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserActivity
-     */
-    'session_id'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserActivity
-     */
-    'related_object_type'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof UserActivity
-     */
-    'related_object_id'?: number | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof UserActivity
-     */
-    'response_time'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserActivity
-     */
-    'created_at': string;
+export enum UrgencyEnum {
+    low = 'low',
+    medium = 'medium',
+    high = 'high',
+    urgent = 'urgent'
 }
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface UserActivityCreate
- */
-export interface UserActivityCreate {
-    /**
-     * 
-     * @type {ActivityTypeEnum}
-     * @memberof UserActivityCreate
-     */
-    'activity_type': ActivityTypeEnum;
-    /**
-     * 
-     * @type {any}
-     * @memberof UserActivityCreate
-     */
-    'context_data'?: any;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserActivityCreate
-     */
-    'related_object_type'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof UserActivityCreate
-     */
-    'related_object_id'?: number | null;
-}
+
+
 /**
  * Serializer for listing users - not in api_users, useful for admin
  * @export
@@ -5689,12 +3930,6 @@ export interface UserList {
      * @type {string}
      * @memberof UserList
      */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserList
-     */
     'description'?: string | null;
     /**
      * 
@@ -5721,13 +3956,11 @@ export interface UserList {
  * @enum {string}
  */
 
-export const UserListUserTypeEnum = {
-    Free: 'free',
-    Paid: 'paid',
-    PremiumPaid: 'premium_paid'
-} as const;
-
-export type UserListUserTypeEnum = typeof UserListUserTypeEnum[keyof typeof UserListUserTypeEnum];
+export enum UserListUserTypeEnum {
+    free = 'free',
+    paid = 'paid',
+    premium_paid = 'premium_paid'
+}
 
 
 /**
@@ -5813,12 +4046,6 @@ export interface UserProfile {
      * @type {string}
      * @memberof UserProfile
      */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserProfile
-     */
     'description'?: string | null;
     /**
      * 
@@ -5832,30 +4059,6 @@ export interface UserProfile {
      * @memberof UserProfile
      */
     'photo_url'?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof UserProfile
-     */
-    'timezone_difference'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof UserProfile
-     */
-    'points'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof UserProfile
-     */
-    'day_streak'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof UserProfile
-     */
-    'max_day_streak'?: number;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -5935,6 +4138,18 @@ export interface UserProfileDetail {
      * @memberof UserProfileDetail
      */
     'postal_code'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserProfileDetail
+     */
+    'terms_accepted'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserProfileDetail
+     */
+    'terms_accepted_at'?: string | null;
     /**
      * 
      * @type {number}
@@ -6057,13 +4272,11 @@ export interface UserProfileUpdate {
  * @enum {string}
  */
 
-export const UserTypeD25Enum = {
-    Client: 'client',
-    ServiceProvider: 'service_provider',
-    Both: 'both'
-} as const;
-
-export type UserTypeD25Enum = typeof UserTypeD25Enum[keyof typeof UserTypeD25Enum];
+export enum UserTypeD25Enum {
+    client = 'client',
+    service_provider = 'service_provider',
+    both = 'both'
+}
 
 
 /**
@@ -6072,12 +4285,6 @@ export type UserTypeD25Enum = typeof UserTypeD25Enum[keyof typeof UserTypeD25Enu
  * @interface UserUpdate
  */
 export interface UserUpdate {
-    /**
-     * 
-     * @type {string}
-     * @memberof UserUpdate
-     */
-    'name': string;
     /**
      * 
      * @type {string}
@@ -6108,12 +4315,6 @@ export interface UserUpdate {
      * @memberof UserUpdate
      */
     'last_name'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof UserUpdate
-     */
-    'timezone_difference'?: number;
 }
 /**
  * Serializer for WebSocket connection information.
@@ -6128,29 +4329,55 @@ export interface WebSocketInfo {
      */
     'websocket_url': string;
     /**
-     * Whether authentication is required
-     * @type {boolean}
-     * @memberof WebSocketInfo
-     */
-    'auth_required': boolean;
-    /**
-     * Token parameter name
+     * Temporary token for WebSocket connection
      * @type {string}
      * @memberof WebSocketInfo
      */
-    'token_param': string;
+    'temp_token': string;
     /**
-     * Connection URL format with placeholders
+     * User ID for WebSocket connection
+     * @type {number}
+     * @memberof WebSocketInfo
+     */
+    'user_id': number;
+}
+/**
+ * Serializer for webhook response.
+ * @export
+ * @interface WebhookResponse
+ */
+export interface WebhookResponse {
+    /**
+     * Webhook processing status
      * @type {string}
-     * @memberof WebSocketInfo
+     * @memberof WebhookResponse
      */
-    'connection_format': string;
+    'status': string;
     /**
-     * Available message types
-     * @type {Array<string>}
-     * @memberof WebSocketInfo
+     * Additional message
+     * @type {string}
+     * @memberof WebhookResponse
      */
-    'message_types': Array<string>;
+    'message'?: string;
+}
+/**
+ * Serializer for webhook retry response.
+ * @export
+ * @interface WebhookRetryResponse
+ */
+export interface WebhookRetryResponse {
+    /**
+     * Retry processing status
+     * @type {string}
+     * @memberof WebhookRetryResponse
+     */
+    'status': string;
+    /**
+     * Additional message
+     * @type {string}
+     * @memberof WebhookRetryResponse
+     */
+    'message'?: string;
 }
 
 /**
@@ -6248,6 +4475,24 @@ export const SchemaApiFactory = function (configuration?: Configuration, basePat
 };
 
 /**
+ * SchemaApi - interface
+ * @export
+ * @interface SchemaApi
+ */
+export interface SchemaApiInterface {
+    /**
+     * OpenApi3 schema for this API. Format can be selected via content negotiation.  - YAML: application/vnd.oai.openapi - JSON: application/vnd.oai.openapi+json
+     * @param {'json' | 'yaml'} [format] 
+     * @param {'af' | 'ar' | 'ar-dz' | 'ast' | 'az' | 'be' | 'bg' | 'bn' | 'br' | 'bs' | 'ca' | 'ckb' | 'cs' | 'cy' | 'da' | 'de' | 'dsb' | 'el' | 'en' | 'en-au' | 'en-gb' | 'eo' | 'es' | 'es-ar' | 'es-co' | 'es-mx' | 'es-ni' | 'es-ve' | 'et' | 'eu' | 'fa' | 'fi' | 'fr' | 'fy' | 'ga' | 'gd' | 'gl' | 'he' | 'hi' | 'hr' | 'hsb' | 'hu' | 'hy' | 'ia' | 'id' | 'ig' | 'io' | 'is' | 'it' | 'ja' | 'ka' | 'kab' | 'kk' | 'km' | 'kn' | 'ko' | 'ky' | 'lb' | 'lt' | 'lv' | 'mk' | 'ml' | 'mn' | 'mr' | 'ms' | 'my' | 'nb' | 'ne' | 'nl' | 'nn' | 'os' | 'pa' | 'pl' | 'pt' | 'pt-br' | 'ro' | 'ru' | 'sk' | 'sl' | 'sq' | 'sr' | 'sr-latn' | 'sv' | 'sw' | 'ta' | 'te' | 'tg' | 'th' | 'tk' | 'tr' | 'tt' | 'udm' | 'ug' | 'uk' | 'ur' | 'uz' | 'vi' | 'zh-hans' | 'zh-hant'} [lang] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof SchemaApiInterface
+     */
+    schemaRetrieve(format?: 'json' | 'yaml', lang?: 'af' | 'ar' | 'ar-dz' | 'ast' | 'az' | 'be' | 'bg' | 'bn' | 'br' | 'bs' | 'ca' | 'ckb' | 'cs' | 'cy' | 'da' | 'de' | 'dsb' | 'el' | 'en' | 'en-au' | 'en-gb' | 'eo' | 'es' | 'es-ar' | 'es-co' | 'es-mx' | 'es-ni' | 'es-ve' | 'et' | 'eu' | 'fa' | 'fi' | 'fr' | 'fy' | 'ga' | 'gd' | 'gl' | 'he' | 'hi' | 'hr' | 'hsb' | 'hu' | 'hy' | 'ia' | 'id' | 'ig' | 'io' | 'is' | 'it' | 'ja' | 'ka' | 'kab' | 'kk' | 'km' | 'kn' | 'ko' | 'ky' | 'lb' | 'lt' | 'lv' | 'mk' | 'ml' | 'mn' | 'mr' | 'ms' | 'my' | 'nb' | 'ne' | 'nl' | 'nn' | 'os' | 'pa' | 'pl' | 'pt' | 'pt-br' | 'ro' | 'ru' | 'sk' | 'sl' | 'sq' | 'sr' | 'sr-latn' | 'sv' | 'sw' | 'ta' | 'te' | 'tg' | 'th' | 'tk' | 'tr' | 'tt' | 'udm' | 'ug' | 'uk' | 'ur' | 'uz' | 'vi' | 'zh-hans' | 'zh-hant', options?: AxiosRequestConfig): AxiosPromise<{ [key: string]: any; }>;
+
+}
+
+/**
  * Request parameters for schemaRetrieve operation in SchemaApi.
  * @export
  * @interface SchemaApiSchemaRetrieveRequest
@@ -6274,7 +4519,7 @@ export interface SchemaApiSchemaRetrieveRequest {
  * @class SchemaApi
  * @extends {BaseAPI}
  */
-export class SchemaApi extends BaseAPI {
+export class SchemaApi extends BaseAPI implements SchemaApiInterface {
     /**
      * OpenApi3 schema for this API. Format can be selected via content negotiation.  - YAML: application/vnd.oai.openapi - JSON: application/vnd.oai.openapi+json
      * @param {SchemaApiSchemaRetrieveRequest} requestParameters Request parameters.
@@ -6294,312 +4539,6 @@ export class SchemaApi extends BaseAPI {
  */
 export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
-        /**
-         * 
-         * @param {UserActivityCreate} userActivityCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsActivitiesCreateCreate: async (userActivityCreate: UserActivityCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'userActivityCreate' is not null or undefined
-            assertParamExists('v1AnalyticsActivitiesCreateCreate', 'userActivityCreate', userActivityCreate)
-            const localVarPath = `/api/v1/analytics/activities/create/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(userActivityCreate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {'bid_submitted' | 'chat_message' | 'login' | 'logout' | 'order_created' | 'order_viewed' | 'payment_made' | 'profile_updated' | 'search_performed' | 'service_viewed'} [activityType] * &#x60;login&#x60; - Login * &#x60;logout&#x60; - Logout * &#x60;order_created&#x60; - Order Created * &#x60;order_viewed&#x60; - Order Viewed * &#x60;bid_submitted&#x60; - Bid Submitted * &#x60;chat_message&#x60; - Chat Message * &#x60;payment_made&#x60; - Payment Made * &#x60;profile_updated&#x60; - Profile Updated * &#x60;search_performed&#x60; - Search Performed * &#x60;service_viewed&#x60; - Service Viewed
-         * @param {string} [ipAddress] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
-         * @param {number} [user] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsActivitiesList: async (activityType?: 'bid_submitted' | 'chat_message' | 'login' | 'logout' | 'order_created' | 'order_viewed' | 'payment_made' | 'profile_updated' | 'search_performed' | 'service_viewed', ipAddress?: string, ordering?: string, page?: number, pageSize?: number, search?: string, user?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/analytics/activities/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (activityType !== undefined) {
-                localVarQueryParameter['activity_type'] = activityType;
-            }
-
-            if (ipAddress !== undefined) {
-                localVarQueryParameter['ip_address'] = ipAddress;
-            }
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-            if (search !== undefined) {
-                localVarQueryParameter['search'] = search;
-            }
-
-            if (user !== undefined) {
-                localVarQueryParameter['user'] = user;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {BusinessMetricsCreate} businessMetricsCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsBusinessCreateCreate: async (businessMetricsCreate: BusinessMetricsCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'businessMetricsCreate' is not null or undefined
-            assertParamExists('v1AnalyticsBusinessCreateCreate', 'businessMetricsCreate', businessMetricsCreate)
-            const localVarPath = `/api/v1/analytics/business/create/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(businessMetricsCreate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} [date] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsBusinessList: async (date?: string, ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/analytics/business/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (date !== undefined) {
-                localVarQueryParameter['date'] = (date as any instanceof Date) ?
-                    (date as any).toISOString().substr(0,10) :
-                    date;
-            }
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {ServiceCategoryAnalyticsCreate} serviceCategoryAnalyticsCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsCategoriesCreateCreate: async (serviceCategoryAnalyticsCreate: ServiceCategoryAnalyticsCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'serviceCategoryAnalyticsCreate' is not null or undefined
-            assertParamExists('v1AnalyticsCategoriesCreateCreate', 'serviceCategoryAnalyticsCreate', serviceCategoryAnalyticsCreate)
-            const localVarPath = `/api/v1/analytics/categories/create/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(serviceCategoryAnalyticsCreate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {number} [category] 
-         * @param {string} [date] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsCategoriesList: async (category?: number, date?: string, ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/analytics/categories/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (category !== undefined) {
-                localVarQueryParameter['category'] = category;
-            }
-
-            if (date !== undefined) {
-                localVarQueryParameter['date'] = (date as any instanceof Date) ?
-                    (date as any).toISOString().substr(0,10) :
-                    date;
-            }
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
         /**
          * Get dashboard overview data.
          * @param {*} [options] Override http request option.
@@ -6622,163 +4561,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
             // authentication tokenAuth required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {OrderAnalyticsCreate} orderAnalyticsCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsOrdersCreateCreate: async (orderAnalyticsCreate: OrderAnalyticsCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'orderAnalyticsCreate' is not null or undefined
-            assertParamExists('v1AnalyticsOrdersCreateCreate', 'orderAnalyticsCreate', orderAnalyticsCreate)
-            const localVarPath = `/api/v1/analytics/orders/create/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(orderAnalyticsCreate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} [date] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsOrdersList: async (date?: string, ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/analytics/orders/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (date !== undefined) {
-                localVarQueryParameter['date'] = (date as any instanceof Date) ?
-                    (date as any).toISOString().substr(0,10) :
-                    date;
-            }
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} [date] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {'daily' | 'hourly' | 'monthly' | 'weekly'} [timePeriod] * &#x60;hourly&#x60; - Hourly * &#x60;daily&#x60; - Daily * &#x60;weekly&#x60; - Weekly * &#x60;monthly&#x60; - Monthly
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsPerformanceList: async (date?: string, ordering?: string, page?: number, pageSize?: number, timePeriod?: 'daily' | 'hourly' | 'monthly' | 'weekly', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/analytics/performance/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (date !== undefined) {
-                localVarQueryParameter['date'] = (date as any instanceof Date) ?
-                    (date as any).toISOString().substr(0,10) :
-                    date;
-            }
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-            if (timePeriod !== undefined) {
-                localVarQueryParameter['time_period'] = timePeriod;
-            }
 
 
     
@@ -6872,552 +4654,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {ChatAttachmentCreate} chatAttachmentCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatAttachmentsCreateCreate: async (chatAttachmentCreate: ChatAttachmentCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'chatAttachmentCreate' is not null or undefined
-            assertParamExists('v1ChatAttachmentsCreateCreate', 'chatAttachmentCreate', chatAttachmentCreate)
-            const localVarPath = `/api/v1/chat/attachments/create/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(chatAttachmentCreate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatAttachmentsDestroy: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatAttachmentsDestroy', 'id', id)
-            const localVarPath = `/api/v1/chat/attachments/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatAttachmentsList: async (ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/chat/attachments/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatAttachmentsRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatAttachmentsRetrieve', 'id', id)
-            const localVarPath = `/api/v1/chat/attachments/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {MessageCreate} messageCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatMessagesCreateCreate: async (messageCreate: MessageCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'messageCreate' is not null or undefined
-            assertParamExists('v1ChatMessagesCreateCreate', 'messageCreate', messageCreate)
-            const localVarPath = `/api/v1/chat/messages/create/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(messageCreate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatMessagesDestroy: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatMessagesDestroy', 'id', id)
-            const localVarPath = `/api/v1/chat/messages/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatMessagesList: async (ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/chat/messages/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {PatchedMessageUpdate} [patchedMessageUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatMessagesPartialUpdate: async (id: number, patchedMessageUpdate?: PatchedMessageUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatMessagesPartialUpdate', 'id', id)
-            const localVarPath = `/api/v1/chat/messages/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedMessageUpdate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatMessagesRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatMessagesRetrieve', 'id', id)
-            const localVarPath = `/api/v1/chat/messages/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {MessageUpdate} messageUpdate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatMessagesUpdate: async (id: number, messageUpdate: MessageUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatMessagesUpdate', 'id', id)
-            // verify required parameter 'messageUpdate' is not null or undefined
-            assertParamExists('v1ChatMessagesUpdate', 'messageUpdate', messageUpdate)
-            const localVarPath = `/api/v1/chat/messages/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(messageUpdate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {ChatParticipantCreate} chatParticipantCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatParticipantsCreateCreate: async (chatParticipantCreate: ChatParticipantCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'chatParticipantCreate' is not null or undefined
-            assertParamExists('v1ChatParticipantsCreateCreate', 'chatParticipantCreate', chatParticipantCreate)
-            const localVarPath = `/api/v1/chat/participants/create/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(chatParticipantCreate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatParticipantsList: async (ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/chat/participants/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {ChatRoomCreate} chatRoomCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsCreateCreate: async (chatRoomCreate: ChatRoomCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'chatRoomCreate' is not null or undefined
-            assertParamExists('v1ChatRoomsCreateCreate', 'chatRoomCreate', chatRoomCreate)
-            const localVarPath = `/api/v1/chat/rooms/create/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(chatRoomCreate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Mobile-optimized view for chat conversation list.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -7425,8 +4662,8 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatRoomsList: async (ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/chat/rooms/`;
+        v1ChatConversationsList: async (ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/chat/conversations/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -7471,57 +4708,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {PatchedChatRoomUpdate} [patchedChatRoomUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsPartialUpdate: async (id: number, patchedChatRoomUpdate?: PatchedChatRoomUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatRoomsPartialUpdate', 'id', id)
-            const localVarPath = `/api/v1/chat/rooms/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedChatRoomUpdate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Mobile-optimized view for chat conversation details with messages.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatRoomsRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatConversationsRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatRoomsRetrieve', 'id', id)
-            const localVarPath = `/api/v1/chat/rooms/{id}/`
+            assertParamExists('v1ChatConversationsRetrieve', 'id', id)
+            const localVarPath = `/api/v1/chat/conversations/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7551,16 +4746,18 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Send a message to a chat room.
          * @param {number} id 
-         * @param {ChatRoomUpdate} [chatRoomUpdate] 
+         * @param {ChatSendMessage} chatSendMessage 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatRoomsUpdate: async (id: number, chatRoomUpdate?: ChatRoomUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatConversationsSendCreate: async (id: number, chatSendMessage: ChatSendMessage, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatRoomsUpdate', 'id', id)
-            const localVarPath = `/api/v1/chat/rooms/{id}/`
+            assertParamExists('v1ChatConversationsSendCreate', 'id', id)
+            // verify required parameter 'chatSendMessage' is not null or undefined
+            assertParamExists('v1ChatConversationsSendCreate', 'chatSendMessage', chatSendMessage)
+            const localVarPath = `/api/v1/chat/conversations/{id}/send/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7569,7 +4766,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -7585,7 +4782,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(chatRoomUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(chatSendMessage, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7593,7 +4790,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Get WebSocket connection information for the current user.
+         * Get WebSocket connection info for the user.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -7627,7 +4824,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -7691,7 +4888,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {boolean} [isActive] 
          * @param {boolean} [isDefault] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -7755,7 +4952,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [country] 
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -7824,7 +5021,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {boolean} [featured] 
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -7888,7 +5085,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} [category] 
          * @param {boolean} [featured] 
          * @param {boolean} [isActive] 
@@ -7957,7 +5154,76 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * List support FAQ items.
+         * @param {'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist'} [category] * &#x60;general&#x60; - General * &#x60;specialist&#x60; - Specialist * &#x60;reviews&#x60; - Reviews * &#x60;account&#x60; - Account * &#x60;search&#x60; - Найти * &#x60;safety&#x60; - Safety
+         * @param {boolean} [isActive] 
+         * @param {boolean} [isPopular] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSupportFaqList: async (category?: 'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist', isActive?: boolean, isPopular?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/core/support/faq/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (category !== undefined) {
+                localVarQueryParameter['category'] = category;
+            }
+
+            if (isActive !== undefined) {
+                localVarQueryParameter['is_active'] = isActive;
+            }
+
+            if (isPopular !== undefined) {
+                localVarQueryParameter['is_popular'] = isPopular;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [category] 
          * @param {boolean} [isPublic] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -8021,7 +5287,41 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Get notification counts for current user.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1NotificationsCountRetrieve: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/notifications/count/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Create new notifications (admin only).
          * @param {NotificationCreate} notificationCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8061,7 +5361,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * List notifications for the current user.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -8115,7 +5415,47 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mark all notifications as read for current user.
+         * @param {Notification} notification 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1NotificationsMarkAllReadCreate: async (notification: Notification, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'notification' is not null or undefined
+            assertParamExists('v1NotificationsMarkAllReadCreate', 'notification', notification)
+            const localVarPath = `/api/v1/notifications/mark-all-read/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(notification, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Retrieve and update individual notifications.
          * @param {number} id 
          * @param {PatchedNotificationUpdate} [patchedNotificationUpdate] 
          * @param {*} [options] Override http request option.
@@ -8157,7 +5497,61 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Get recent notifications (last 7 days).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1NotificationsRecentList: async (ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/notifications/recent/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Retrieve and update individual notifications.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8195,159 +5589,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
-         * @param {PatchedNotificationSettingUpdate} [patchedNotificationSettingUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsSettingsPartialUpdate: async (patchedNotificationSettingUpdate?: PatchedNotificationSettingUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/notifications/settings/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedNotificationSettingUpdate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsSettingsRetrieve: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/notifications/settings/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {NotificationSettingUpdate} [notificationSettingUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsSettingsUpdate: async (notificationSettingUpdate?: NotificationSettingUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/notifications/settings/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(notificationSettingUpdate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {NotificationTemplateCreate} notificationTemplateCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsTemplatesCreateCreate: async (notificationTemplateCreate: NotificationTemplateCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'notificationTemplateCreate' is not null or undefined
-            assertParamExists('v1NotificationsTemplatesCreateCreate', 'notificationTemplateCreate', notificationTemplateCreate)
-            const localVarPath = `/api/v1/notifications/templates/create/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(notificationTemplateCreate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {boolean} [isActive] 
-         * @param {'bid_received' | 'chat_message' | 'order_update' | 'payment_failed' | 'payment_success' | 'promotional' | 'system_alert'} [notificationType] * &#x60;order_update&#x60; - Order Update * &#x60;bid_received&#x60; - Bid Received * &#x60;payment_success&#x60; - Payment Success * &#x60;payment_failed&#x60; - Payment Failed * &#x60;chat_message&#x60; - Chat Message * &#x60;system_alert&#x60; - System Alert * &#x60;promotional&#x60; - Promotional
+         * Get unread notifications for current user.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -8355,8 +5597,8 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsTemplatesList: async (isActive?: boolean, notificationType?: 'bid_received' | 'chat_message' | 'order_update' | 'payment_failed' | 'payment_success' | 'promotional' | 'system_alert', ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/notifications/templates/`;
+        v1NotificationsUnreadList: async (ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/notifications/unread/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -8372,14 +5614,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
             // authentication tokenAuth required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (isActive !== undefined) {
-                localVarQueryParameter['is_active'] = isActive;
-            }
-
-            if (notificationType !== undefined) {
-                localVarQueryParameter['notification_type'] = notificationType;
-            }
 
             if (ordering !== undefined) {
                 localVarQueryParameter['ordering'] = ordering;
@@ -8409,131 +5643,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
-         * @param {number} id 
-         * @param {PatchedNotificationTemplateUpdate} [patchedNotificationTemplateUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsTemplatesPartialUpdate: async (id: number, patchedNotificationTemplateUpdate?: PatchedNotificationTemplateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1NotificationsTemplatesPartialUpdate', 'id', id)
-            const localVarPath = `/api/v1/notifications/templates/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedNotificationTemplateUpdate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsTemplatesRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1NotificationsTemplatesRetrieve', 'id', id)
-            const localVarPath = `/api/v1/notifications/templates/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {NotificationTemplateUpdate} notificationTemplateUpdate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsTemplatesUpdate: async (id: number, notificationTemplateUpdate: NotificationTemplateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1NotificationsTemplatesUpdate', 'id', id)
-            // verify required parameter 'notificationTemplateUpdate' is not null or undefined
-            assertParamExists('v1NotificationsTemplatesUpdate', 'notificationTemplateUpdate', notificationTemplateUpdate)
-            const localVarPath = `/api/v1/notifications/templates/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(notificationTemplateUpdate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
+         * Retrieve and update individual notifications.
          * @param {number} id 
          * @param {NotificationUpdate} [notificationUpdate] 
          * @param {*} [options] Override http request option.
@@ -8575,16 +5685,17 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * List all order assignments (admin view).
+         * @param {number} [order] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
+         * @param {number} [provider] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1OrdersAddonsList: async (ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/orders/addons/`;
+        v1OrdersAssignmentsList: async (order?: number, ordering?: string, page?: number, pageSize?: number, provider?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/orders/assignments/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -8601,6 +5712,10 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             // authentication tokenAuth required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            if (order !== undefined) {
+                localVarQueryParameter['order'] = order;
+            }
+
             if (ordering !== undefined) {
                 localVarQueryParameter['ordering'] = ordering;
             }
@@ -8613,8 +5728,8 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
                 localVarQueryParameter['page_size'] = pageSize;
             }
 
-            if (search !== undefined) {
-                localVarQueryParameter['search'] = search;
+            if (provider !== undefined) {
+                localVarQueryParameter['provider'] = provider;
             }
 
 
@@ -8629,17 +5744,183 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} orderId 
-         * @param {BidCreate} bidCreate 
+         * View and update order assignment details.
+         * @param {number} id 
+         * @param {PatchedOrderAssignment} [patchedOrderAssignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1OrdersBidsCreate: async (orderId: number, bidCreate: BidCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1OrdersAssignmentsPartialUpdate: async (id: number, patchedOrderAssignment?: PatchedOrderAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1OrdersAssignmentsPartialUpdate', 'id', id)
+            const localVarPath = `/api/v1/orders/assignments/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedOrderAssignment, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * View and update order assignment details.
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersAssignmentsRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1OrdersAssignmentsRetrieve', 'id', id)
+            const localVarPath = `/api/v1/orders/assignments/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * View and update order assignment details.
+         * @param {number} id 
+         * @param {OrderAssignment} orderAssignment 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersAssignmentsUpdate: async (id: number, orderAssignment: OrderAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1OrdersAssignmentsUpdate', 'id', id)
+            // verify required parameter 'orderAssignment' is not null or undefined
+            assertParamExists('v1OrdersAssignmentsUpdate', 'orderAssignment', orderAssignment)
+            const localVarPath = `/api/v1/orders/assignments/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(orderAssignment, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Accept a bid and create order assignment.
+         * @param {number} bidId 
+         * @param {BidAction} [bidAction] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsAcceptCreate: async (bidId: number, bidAction?: BidAction, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'bidId' is not null or undefined
+            assertParamExists('v1OrdersBidsAcceptCreate', 'bidId', bidId)
+            const localVarPath = `/api/v1/orders/bids/{bid_id}/accept/`
+                .replace(`{${"bid_id"}}`, encodeURIComponent(String(bidId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(bidAction, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} orderId 
+         * @param {BidCreateUpdate} bidCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsCreate: async (orderId: number, bidCreateUpdate: BidCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'orderId' is not null or undefined
             assertParamExists('v1OrdersBidsCreate', 'orderId', orderId)
-            // verify required parameter 'bidCreate' is not null or undefined
-            assertParamExists('v1OrdersBidsCreate', 'bidCreate', bidCreate)
+            // verify required parameter 'bidCreateUpdate' is not null or undefined
+            assertParamExists('v1OrdersBidsCreate', 'bidCreateUpdate', bidCreateUpdate)
             const localVarPath = `/api/v1/orders/{order_id}/bids/`
                 .replace(`{${"order_id"}}`, encodeURIComponent(String(orderId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -8665,7 +5946,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(bidCreate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(bidCreateUpdate, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8674,13 +5955,54 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Mixin to provide standardized exception handling for DRF views.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1OrdersBidsList: async (ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1OrdersBidsDestroy: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1OrdersBidsDestroy', 'id', id)
+            const localVarPath = `/api/v1/orders/bids/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * List all bids (admin view).
+         * @param {boolean} [isNegotiable] 
+         * @param {number} [order] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {'accepted' | 'pending' | 'rejected' | 'withdrawn'} [status] * &#x60;pending&#x60; - Pending * &#x60;accepted&#x60; - Accepted * &#x60;rejected&#x60; - Rejected * &#x60;withdrawn&#x60; - Withdrawn
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsList: async (isNegotiable?: boolean, order?: number, ordering?: string, page?: number, pageSize?: number, status?: 'accepted' | 'pending' | 'rejected' | 'withdrawn', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/orders/bids/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -8698,6 +6020,14 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             // authentication tokenAuth required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            if (isNegotiable !== undefined) {
+                localVarQueryParameter['is_negotiable'] = isNegotiable;
+            }
+
+            if (order !== undefined) {
+                localVarQueryParameter['order'] = order;
+            }
+
             if (ordering !== undefined) {
                 localVarQueryParameter['ordering'] = ordering;
             }
@@ -8710,11 +6040,223 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
                 localVarQueryParameter['page_size'] = pageSize;
             }
 
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {PatchedBidCreateUpdate} [patchedBidCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsPartialUpdate: async (id: number, patchedBidCreateUpdate?: PatchedBidCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1OrdersBidsPartialUpdate', 'id', id)
+            const localVarPath = `/api/v1/orders/bids/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedBidCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Reject a bid.
+         * @param {number} bidId 
+         * @param {BidAction} [bidAction] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsRejectCreate: async (bidId: number, bidAction?: BidAction, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'bidId' is not null or undefined
+            assertParamExists('v1OrdersBidsRejectCreate', 'bidId', bidId)
+            const localVarPath = `/api/v1/orders/bids/{bid_id}/reject/`
+                .replace(`{${"bid_id"}}`, encodeURIComponent(String(bidId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(bidAction, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1OrdersBidsRetrieve', 'id', id)
+            const localVarPath = `/api/v1/orders/bids/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {BidCreateUpdate} bidCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsUpdate: async (id: number, bidCreateUpdate: BidCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1OrdersBidsUpdate', 'id', id)
+            // verify required parameter 'bidCreateUpdate' is not null or undefined
+            assertParamExists('v1OrdersBidsUpdate', 'bidCreateUpdate', bidCreateUpdate)
+            const localVarPath = `/api/v1/orders/bids/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(bidCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Withdraw a bid (by provider).
+         * @param {number} bidId 
+         * @param {BidAction} [bidAction] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsWithdrawCreate: async (bidId: number, bidAction?: BidAction, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'bidId' is not null or undefined
+            assertParamExists('v1OrdersBidsWithdrawCreate', 'bidId', bidId)
+            const localVarPath = `/api/v1/orders/bids/{bid_id}/withdraw/`
+                .replace(`{${"bid_id"}}`, encodeURIComponent(String(bidId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(bidAction, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8762,230 +6304,18 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} orderId 
-         * @param {OrderDisputeCreate} orderDisputeCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1OrdersDisputesCreate: async (orderId: number, orderDisputeCreate: OrderDisputeCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'orderId' is not null or undefined
-            assertParamExists('v1OrdersDisputesCreate', 'orderId', orderId)
-            // verify required parameter 'orderDisputeCreate' is not null or undefined
-            assertParamExists('v1OrdersDisputesCreate', 'orderDisputeCreate', orderDisputeCreate)
-            const localVarPath = `/api/v1/orders/{order_id}/disputes/`
-                .replace(`{${"order_id"}}`, encodeURIComponent(String(orderId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(orderDisputeCreate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1OrdersDisputesList: async (ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/orders/disputes/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {PatchedOrderDisputeUpdate} [patchedOrderDisputeUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1OrdersDisputesPartialUpdate: async (id: number, patchedOrderDisputeUpdate?: PatchedOrderDisputeUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1OrdersDisputesPartialUpdate', 'id', id)
-            const localVarPath = `/api/v1/orders/disputes/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedOrderDisputeUpdate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1OrdersDisputesRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1OrdersDisputesRetrieve', 'id', id)
-            const localVarPath = `/api/v1/orders/disputes/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {OrderDisputeUpdate} [orderDisputeUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1OrdersDisputesUpdate: async (id: number, orderDisputeUpdate?: OrderDisputeUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1OrdersDisputesUpdate', 'id', id)
-            const localVarPath = `/api/v1/orders/disputes/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(orderDisputeUpdate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * List all orders (admin view).
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
          * @param {string} [search] A search term.
+         * @param {number} [serviceSubcategory] 
+         * @param {'assigned' | 'bidding' | 'cancelled' | 'completed' | 'disputed' | 'draft' | 'in_progress' | 'published'} [status] * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;bidding&#x60; - Bidding * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled * &#x60;disputed&#x60; - Disputed
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1OrdersList: async (ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1OrdersList: async (ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategory?: number, status?: 'assigned' | 'bidding' | 'cancelled' | 'completed' | 'disputed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/orders/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9017,6 +6347,268 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
             if (search !== undefined) {
                 localVarQueryParameter['search'] = search;
+            }
+
+            if (serviceSubcategory !== undefined) {
+                localVarQueryParameter['service_subcategory'] = serviceSubcategory;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            if (urgency !== undefined) {
+                localVarQueryParameter['urgency'] = urgency;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get current user\'s assignments (as service provider).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersMyAssignmentsList: async (ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/orders/my-assignments/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get current user\'s bids (as service provider).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersMyBidsList: async (ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/orders/my-bids/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get current user\'s orders (as client).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersMyList: async (ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/orders/my/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get assignments for current user\'s orders (as client).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersMyOrdersAssignmentsList: async (ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/orders/my-orders/assignments/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get bids for current user\'s orders (as client).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersMyOrdersBidsList: async (ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/orders/my-orders/bids/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
             }
 
 
@@ -9066,55 +6658,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(patchedOrderUpdate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1OrdersPhotosList: async (ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/orders/photos/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9204,7 +6747,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PaymentCreate} paymentCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9244,7 +6787,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {InvoiceCreate} invoiceCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9284,7 +6827,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -9333,7 +6876,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9371,7 +6914,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -9425,7 +6968,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PaymentMethodCreate} paymentMethodCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9465,7 +7008,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9503,7 +7046,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -9552,7 +7095,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {PatchedPaymentMethodUpdate} [patchedPaymentMethodUpdate] 
          * @param {*} [options] Override http request option.
@@ -9594,7 +7137,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9632,7 +7175,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {PaymentMethodUpdate} [paymentMethodUpdate] 
          * @param {*} [options] Override http request option.
@@ -9674,7 +7217,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {PatchedPaymentCreate} [patchedPaymentCreate] 
          * @param {*} [options] Override http request option.
@@ -9716,7 +7259,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9754,7 +7297,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {PaymentCreate} paymentCreate 
          * @param {*} [options] Override http request option.
@@ -9798,7 +7341,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * List webhook events - function-based version.
+         * List webhook events.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -9832,14 +7375,17 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Retry processing a webhook event - function-based version.
+         * Retry processing a webhook event.
          * @param {number} eventId 
+         * @param {WebhookRetryResponse} webhookRetryResponse 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1PaymentsWebhooksEventsRetryCreate: async (eventId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1PaymentsWebhooksEventsRetryCreate: async (eventId: number, webhookRetryResponse: WebhookRetryResponse, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'eventId' is not null or undefined
             assertParamExists('v1PaymentsWebhooksEventsRetryCreate', 'eventId', eventId)
+            // verify required parameter 'webhookRetryResponse' is not null or undefined
+            assertParamExists('v1PaymentsWebhooksEventsRetryCreate', 'webhookRetryResponse', webhookRetryResponse)
             const localVarPath = `/api/v1/payments/webhooks/events/{event_id}/retry/`
                 .replace(`{${"event_id"}}`, encodeURIComponent(String(eventId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -9860,9 +7406,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(webhookRetryResponse, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9870,11 +7419,14 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Simple Stripe webhook handler - function-based version.
+         * API view for Stripe webhook handling.
+         * @param {WebhookResponse} webhookResponse 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1PaymentsWebhooksStripeDrfCreate: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1PaymentsWebhooksStripeDrfCreate: async (webhookResponse: WebhookResponse, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'webhookResponse' is not null or undefined
+            assertParamExists('v1PaymentsWebhooksStripeDrfCreate', 'webhookResponse', webhookResponse)
             const localVarPath = `/api/v1/payments/webhooks/stripe/drf/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9894,9 +7446,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(webhookResponse, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9905,13 +7460,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Upload profile image
-         * @param {UserUpdate} userUpdate 
+         * @param {UserUpdate} [userUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfileCreate: async (userUpdate: UserUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'userUpdate' is not null or undefined
-            assertParamExists('v1ProfileCreate', 'userUpdate', userUpdate)
+        v1ProfileCreate: async (userUpdate?: UserUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/profile/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9937,40 +7490,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(userUpdate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Reset profile image to default by removing uploaded photo.  This clears the stored ImageField `photo`. The `photo_url` (e.g., Firebase avatar) remains unchanged. Frontend should use `photo_url` as fallback.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ProfileDestroy: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/profile/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10051,13 +7570,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * User profile view with image upload
-         * @param {UserUpdate} userUpdate 
+         * @param {UserUpdate} [userUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfileUpdate: async (userUpdate: UserUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'userUpdate' is not null or undefined
-            assertParamExists('v1ProfileUpdate', 'userUpdate', userUpdate)
+        v1ProfileUpdate: async (userUpdate?: UserUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/profile/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -10512,21 +8029,10 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Simple global search across all content types.
-         * @param {string} [city] Filter by city
-         * @param {number} [maxBudget] Maximum budget
-         * @param {number} [minBudget] Minimum budget
-         * @param {number} [minRating] Minimum rating for providers
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [q] Search query
-         * @param {number} [serviceCategory] Filter by service category ID
-         * @param {'all' | 'orders' | 'providers' | 'services'} [type] Type of search to perform  * &#x60;all&#x60; - All * &#x60;orders&#x60; - Orders * &#x60;providers&#x60; - Providers * &#x60;services&#x60; - Services
-         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] Filter by urgency level  * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1SearchGlobalList: async (city?: string, maxBudget?: number, minBudget?: number, minRating?: number, ordering?: string, page?: number, pageSize?: number, q?: string, serviceCategory?: number, type?: 'all' | 'orders' | 'providers' | 'services', urgency?: 'high' | 'low' | 'medium' | 'urgent', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1SearchGlobalRetrieve: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/search/global/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -10543,50 +8049,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
             // authentication tokenAuth required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (city !== undefined) {
-                localVarQueryParameter['city'] = city;
-            }
-
-            if (maxBudget !== undefined) {
-                localVarQueryParameter['max_budget'] = maxBudget;
-            }
-
-            if (minBudget !== undefined) {
-                localVarQueryParameter['min_budget'] = minBudget;
-            }
-
-            if (minRating !== undefined) {
-                localVarQueryParameter['min_rating'] = minRating;
-            }
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-            if (q !== undefined) {
-                localVarQueryParameter['q'] = q;
-            }
-
-            if (serviceCategory !== undefined) {
-                localVarQueryParameter['service_category'] = serviceCategory;
-            }
-
-            if (type !== undefined) {
-                localVarQueryParameter['type'] = type;
-            }
-
-            if (urgency !== undefined) {
-                localVarQueryParameter['urgency'] = urgency;
-            }
 
 
     
@@ -10743,7 +8205,45 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {ClientUpdate} [clientUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersClientCreateCreate: async (clientUpdate?: ClientUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/users/client/create/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(clientUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PatchedClientUpdate} [patchedClientUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -10781,7 +8281,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -10815,7 +8315,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {ClientUpdate} [clientUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -10853,11 +8353,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Create or update client profile
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {ClientUpdate} [clientUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersClientUpdateCreate: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersClientUpdateCreate: async (clientUpdate?: ClientUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/users/client/update/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -10877,9 +8378,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(clientUpdate, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10887,7 +8391,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [createdAt] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -11017,7 +8521,79 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {AdvancedProfile} [advancedProfile] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProfileAdvancedCreate: async (advancedProfile?: AdvancedProfile, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/users/profile/advanced/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(advancedProfile, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProfileAdvancedRetrieve: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/users/profile/advanced/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PatchedUserProfileUpdate} [patchedUserProfileUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11055,7 +8631,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11089,7 +8665,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {UserProfileUpdate} [userProfileUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11127,12 +8703,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Create or update user profile
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersProfileUpdateCreate: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/users/profile/update/`;
+        v1UsersProviderCreateCreate: async (serviceProviderUpdate?: ServiceProviderUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/users/provider/create/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -11151,9 +8728,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceProviderUpdate, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11161,7 +8741,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PatchedServiceProviderUpdate} [patchedServiceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11199,7 +8779,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11233,7 +8813,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11271,11 +8851,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Create or update service provider profile
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersProviderUpdateCreate: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersProviderUpdateCreate: async (serviceProviderUpdate?: ServiceProviderUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/users/provider/update/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11285,6 +8866,89 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             }
 
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceProviderUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {PatchedServiceProviderUpdate} [patchedServiceProviderUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProvidersDetailsPartialUpdate: async (id: number, patchedServiceProviderUpdate?: PatchedServiceProviderUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1UsersProvidersDetailsPartialUpdate', 'id', id)
+            const localVarPath = `/api/v1/users/providers/{id}/details/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedServiceProviderUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProvidersDetailsRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1UsersProvidersDetailsRetrieve', 'id', id)
+            const localVarPath = `/api/v1/users/providers/{id}/details/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -11305,18 +8969,59 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProvidersDetailsUpdate: async (id: number, serviceProviderUpdate?: ServiceProviderUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1UsersProvidersDetailsUpdate', 'id', id)
+            const localVarPath = `/api/v1/users/providers/{id}/details/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceProviderUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Featured service providers for mobile app.
          * @param {boolean} [isAvailable] 
          * @param {boolean} [isVerifiedProvider] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersProvidersList: async (isAvailable?: boolean, isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/users/providers/`;
+        v1UsersProvidersFeaturedList: async (isAvailable?: boolean, isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/users/providers/featured/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -11353,8 +9058,112 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
                 localVarQueryParameter['page_size'] = pageSize;
             }
 
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * List all available service providers with search and filtering.
+         * @param {boolean} [isVerifiedProvider] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProvidersList: async (isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/users/providers/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (isVerifiedProvider !== undefined) {
+                localVarQueryParameter['is_verified_provider'] = isVerifiedProvider;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
             if (search !== undefined) {
                 localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Task history for users (orders they created or worked on).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersTaskHistoryList: async (ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/users/task-history/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
             }
 
 
@@ -11379,122 +9188,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = V1ApiAxiosParamCreator(configuration)
     return {
         /**
-         * 
-         * @param {UserActivityCreate} userActivityCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1AnalyticsActivitiesCreateCreate(userActivityCreate: UserActivityCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserActivityCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AnalyticsActivitiesCreateCreate(userActivityCreate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {'bid_submitted' | 'chat_message' | 'login' | 'logout' | 'order_created' | 'order_viewed' | 'payment_made' | 'profile_updated' | 'search_performed' | 'service_viewed'} [activityType] * &#x60;login&#x60; - Login * &#x60;logout&#x60; - Logout * &#x60;order_created&#x60; - Order Created * &#x60;order_viewed&#x60; - Order Viewed * &#x60;bid_submitted&#x60; - Bid Submitted * &#x60;chat_message&#x60; - Chat Message * &#x60;payment_made&#x60; - Payment Made * &#x60;profile_updated&#x60; - Profile Updated * &#x60;search_performed&#x60; - Search Performed * &#x60;service_viewed&#x60; - Service Viewed
-         * @param {string} [ipAddress] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
-         * @param {number} [user] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1AnalyticsActivitiesList(activityType?: 'bid_submitted' | 'chat_message' | 'login' | 'logout' | 'order_created' | 'order_viewed' | 'payment_made' | 'profile_updated' | 'search_performed' | 'service_viewed', ipAddress?: string, ordering?: string, page?: number, pageSize?: number, search?: string, user?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedUserActivityList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AnalyticsActivitiesList(activityType, ipAddress, ordering, page, pageSize, search, user, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {BusinessMetricsCreate} businessMetricsCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1AnalyticsBusinessCreateCreate(businessMetricsCreate: BusinessMetricsCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BusinessMetricsCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AnalyticsBusinessCreateCreate(businessMetricsCreate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {string} [date] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1AnalyticsBusinessList(date?: string, ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedBusinessMetricsList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AnalyticsBusinessList(date, ordering, page, pageSize, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {ServiceCategoryAnalyticsCreate} serviceCategoryAnalyticsCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1AnalyticsCategoriesCreateCreate(serviceCategoryAnalyticsCreate: ServiceCategoryAnalyticsCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceCategoryAnalyticsCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AnalyticsCategoriesCreateCreate(serviceCategoryAnalyticsCreate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {number} [category] 
-         * @param {string} [date] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1AnalyticsCategoriesList(category?: number, date?: string, ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedServiceCategoryAnalyticsList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AnalyticsCategoriesList(category, date, ordering, page, pageSize, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
          * Get dashboard overview data.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         async v1AnalyticsDashboardRetrieve(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DashboardResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1AnalyticsDashboardRetrieve(options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {OrderAnalyticsCreate} orderAnalyticsCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1AnalyticsOrdersCreateCreate(orderAnalyticsCreate: OrderAnalyticsCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderAnalyticsCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AnalyticsOrdersCreateCreate(orderAnalyticsCreate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {string} [date] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1AnalyticsOrdersList(date?: string, ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderAnalyticsList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AnalyticsOrdersList(date, ordering, page, pageSize, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {string} [date] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {'daily' | 'hourly' | 'monthly' | 'weekly'} [timePeriod] * &#x60;hourly&#x60; - Hourly * &#x60;daily&#x60; - Daily * &#x60;weekly&#x60; - Weekly * &#x60;monthly&#x60; - Monthly
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1AnalyticsPerformanceList(date?: string, ordering?: string, page?: number, pageSize?: number, timePeriod?: 'daily' | 'hourly' | 'monthly' | 'weekly', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPerformanceMetricsList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AnalyticsPerformanceList(date, ordering, page, pageSize, timePeriod, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -11518,145 +9217,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {ChatAttachmentCreate} chatAttachmentCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatAttachmentsCreateCreate(chatAttachmentCreate: ChatAttachmentCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatAttachmentCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatAttachmentsCreateCreate(chatAttachmentCreate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatAttachmentsDestroy(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatAttachmentsDestroy(id, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatAttachmentsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedChatAttachmentList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatAttachmentsList(ordering, page, pageSize, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatAttachmentsRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatAttachment>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatAttachmentsRetrieve(id, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {MessageCreate} messageCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatMessagesCreateCreate(messageCreate: MessageCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatMessagesCreateCreate(messageCreate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatMessagesDestroy(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatMessagesDestroy(id, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatMessagesList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedMessageList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatMessagesList(ordering, page, pageSize, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {PatchedMessageUpdate} [patchedMessageUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatMessagesPartialUpdate(id: number, patchedMessageUpdate?: PatchedMessageUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatMessagesPartialUpdate(id, patchedMessageUpdate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatMessagesRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Message>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatMessagesRetrieve(id, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {MessageUpdate} messageUpdate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatMessagesUpdate(id: number, messageUpdate: MessageUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatMessagesUpdate(id, messageUpdate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {ChatParticipantCreate} chatParticipantCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatParticipantsCreateCreate(chatParticipantCreate: ChatParticipantCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatParticipantCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatParticipantsCreateCreate(chatParticipantCreate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatParticipantsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedChatParticipantList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatParticipantsList(ordering, page, pageSize, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {ChatRoomCreate} chatRoomCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatRoomsCreateCreate(chatRoomCreate: ChatRoomCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoomCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsCreateCreate(chatRoomCreate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Mobile-optimized view for chat conversation list.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -11664,44 +9225,33 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatRoomsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedChatRoomList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsList(ordering, page, pageSize, search, options);
+        async v1ChatConversationsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedChatConversationList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatConversationsList(ordering, page, pageSize, search, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {PatchedChatRoomUpdate} [patchedChatRoomUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatRoomsPartialUpdate(id: number, patchedChatRoomUpdate?: PatchedChatRoomUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoomUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsPartialUpdate(id, patchedChatRoomUpdate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Mobile-optimized view for chat conversation details with messages.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatRoomsRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsRetrieve(id, options);
+        async v1ChatConversationsRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatConversationDetail>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatConversationsRetrieve(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Send a message to a chat room.
          * @param {number} id 
-         * @param {ChatRoomUpdate} [chatRoomUpdate] 
+         * @param {ChatSendMessage} chatSendMessage 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatRoomsUpdate(id: number, chatRoomUpdate?: ChatRoomUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoomUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsUpdate(id, chatRoomUpdate, options);
+        async v1ChatConversationsSendCreate(id: number, chatSendMessage: ChatSendMessage, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatSendMessage>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatConversationsSendCreate(id, chatSendMessage, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Get WebSocket connection information for the current user.
+         * Get WebSocket connection info for the user.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11710,7 +9260,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -11725,7 +9275,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {boolean} [isActive] 
          * @param {boolean} [isDefault] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -11740,7 +9290,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [country] 
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -11756,7 +9306,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {boolean} [featured] 
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -11771,7 +9321,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} [category] 
          * @param {boolean} [featured] 
          * @param {boolean} [isActive] 
@@ -11787,7 +9337,23 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * List support FAQ items.
+         * @param {'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist'} [category] * &#x60;general&#x60; - General * &#x60;specialist&#x60; - Specialist * &#x60;reviews&#x60; - Reviews * &#x60;account&#x60; - Account * &#x60;search&#x60; - Найти * &#x60;safety&#x60; - Safety
+         * @param {boolean} [isActive] 
+         * @param {boolean} [isPopular] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreSupportFaqList(category?: 'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist', isActive?: boolean, isPopular?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedSupportFAQList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSupportFaqList(category, isActive, isPopular, ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [category] 
          * @param {boolean} [isPublic] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -11802,7 +9368,16 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Get notification counts for current user.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1NotificationsCountRetrieve(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Notification>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsCountRetrieve(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Create new notifications (admin only).
          * @param {NotificationCreate} notificationCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11812,7 +9387,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * List notifications for the current user.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -11825,7 +9400,17 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mark all notifications as read for current user.
+         * @param {Notification} notification 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1NotificationsMarkAllReadCreate(notification: Notification, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Notification>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsMarkAllReadCreate(notification, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Retrieve and update individual notifications.
          * @param {number} id 
          * @param {PatchedNotificationUpdate} [patchedNotificationUpdate] 
          * @param {*} [options] Override http request option.
@@ -11836,7 +9421,20 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Get recent notifications (last 7 days).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1NotificationsRecentList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedNotificationList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsRecentList(ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Retrieve and update individual notifications.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11846,48 +9444,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
-         * @param {PatchedNotificationSettingUpdate} [patchedNotificationSettingUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1NotificationsSettingsPartialUpdate(patchedNotificationSettingUpdate?: PatchedNotificationSettingUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationSettingUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsSettingsPartialUpdate(patchedNotificationSettingUpdate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1NotificationsSettingsRetrieve(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationSetting>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsSettingsRetrieve(options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {NotificationSettingUpdate} [notificationSettingUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1NotificationsSettingsUpdate(notificationSettingUpdate?: NotificationSettingUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationSettingUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsSettingsUpdate(notificationSettingUpdate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {NotificationTemplateCreate} notificationTemplateCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1NotificationsTemplatesCreateCreate(notificationTemplateCreate: NotificationTemplateCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationTemplateCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsTemplatesCreateCreate(notificationTemplateCreate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {boolean} [isActive] 
-         * @param {'bid_received' | 'chat_message' | 'order_update' | 'payment_failed' | 'payment_success' | 'promotional' | 'system_alert'} [notificationType] * &#x60;order_update&#x60; - Order Update * &#x60;bid_received&#x60; - Bid Received * &#x60;payment_success&#x60; - Payment Success * &#x60;payment_failed&#x60; - Payment Failed * &#x60;chat_message&#x60; - Chat Message * &#x60;system_alert&#x60; - System Alert * &#x60;promotional&#x60; - Promotional
+         * Get unread notifications for current user.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -11895,44 +9452,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1NotificationsTemplatesList(isActive?: boolean, notificationType?: 'bid_received' | 'chat_message' | 'order_update' | 'payment_failed' | 'payment_success' | 'promotional' | 'system_alert', ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedNotificationTemplateList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsTemplatesList(isActive, notificationType, ordering, page, pageSize, search, options);
+        async v1NotificationsUnreadList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedNotificationList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsUnreadList(ordering, page, pageSize, search, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
-         * @param {number} id 
-         * @param {PatchedNotificationTemplateUpdate} [patchedNotificationTemplateUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1NotificationsTemplatesPartialUpdate(id: number, patchedNotificationTemplateUpdate?: PatchedNotificationTemplateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationTemplateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsTemplatesPartialUpdate(id, patchedNotificationTemplateUpdate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1NotificationsTemplatesRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationTemplate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsTemplatesRetrieve(id, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {NotificationTemplateUpdate} notificationTemplateUpdate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1NotificationsTemplatesUpdate(id: number, notificationTemplateUpdate: NotificationTemplateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationTemplateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsTemplatesUpdate(id, notificationTemplateUpdate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
+         * Retrieve and update individual notifications.
          * @param {number} id 
          * @param {NotificationUpdate} [notificationUpdate] 
          * @param {*} [options] Override http request option.
@@ -11943,39 +9468,150 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * List all order assignments (admin view).
+         * @param {number} [order] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
+         * @param {number} [provider] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1OrdersAddonsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderAddonList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersAddonsList(ordering, page, pageSize, search, options);
+        async v1OrdersAssignmentsList(order?: number, ordering?: string, page?: number, pageSize?: number, provider?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderAssignmentList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersAssignmentsList(order, ordering, page, pageSize, provider, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * View and update order assignment details.
+         * @param {number} id 
+         * @param {PatchedOrderAssignment} [patchedOrderAssignment] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1OrdersAssignmentsPartialUpdate(id: number, patchedOrderAssignment?: PatchedOrderAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderAssignment>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersAssignmentsPartialUpdate(id, patchedOrderAssignment, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * View and update order assignment details.
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1OrdersAssignmentsRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderAssignment>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersAssignmentsRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * View and update order assignment details.
+         * @param {number} id 
+         * @param {OrderAssignment} orderAssignment 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1OrdersAssignmentsUpdate(id: number, orderAssignment: OrderAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderAssignment>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersAssignmentsUpdate(id, orderAssignment, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Accept a bid and create order assignment.
+         * @param {number} bidId 
+         * @param {BidAction} [bidAction] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1OrdersBidsAcceptCreate(bidId: number, bidAction?: BidAction, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BidAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersBidsAcceptCreate(bidId, bidAction, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Mixin to provide standardized exception handling for DRF views.
          * @param {number} orderId 
-         * @param {BidCreate} bidCreate 
+         * @param {BidCreateUpdate} bidCreateUpdate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1OrdersBidsCreate(orderId: number, bidCreate: BidCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BidCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersBidsCreate(orderId, bidCreate, options);
+        async v1OrdersBidsCreate(orderId: number, bidCreateUpdate: BidCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BidCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersBidsCreate(orderId, bidCreateUpdate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Mixin to provide standardized exception handling for DRF views.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1OrdersBidsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedBidList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersBidsList(ordering, page, pageSize, options);
+        async v1OrdersBidsDestroy(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersBidsDestroy(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * List all bids (admin view).
+         * @param {boolean} [isNegotiable] 
+         * @param {number} [order] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {'accepted' | 'pending' | 'rejected' | 'withdrawn'} [status] * &#x60;pending&#x60; - Pending * &#x60;accepted&#x60; - Accepted * &#x60;rejected&#x60; - Rejected * &#x60;withdrawn&#x60; - Withdrawn
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1OrdersBidsList(isNegotiable?: boolean, order?: number, ordering?: string, page?: number, pageSize?: number, status?: 'accepted' | 'pending' | 'rejected' | 'withdrawn', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedBidList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersBidsList(isNegotiable, order, ordering, page, pageSize, status, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {PatchedBidCreateUpdate} [patchedBidCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1OrdersBidsPartialUpdate(id: number, patchedBidCreateUpdate?: PatchedBidCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BidCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersBidsPartialUpdate(id, patchedBidCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Reject a bid.
+         * @param {number} bidId 
+         * @param {BidAction} [bidAction] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1OrdersBidsRejectCreate(bidId: number, bidAction?: BidAction, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BidAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersBidsRejectCreate(bidId, bidAction, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1OrdersBidsRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Bid>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersBidsRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {BidCreateUpdate} bidCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1OrdersBidsUpdate(id: number, bidCreateUpdate: BidCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BidCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersBidsUpdate(id, bidCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Withdraw a bid (by provider).
+         * @param {number} bidId 
+         * @param {BidAction} [bidAction] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1OrdersBidsWithdrawCreate(bidId: number, bidAction?: BidAction, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BidAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersBidsWithdrawCreate(bidId, bidAction, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -11989,62 +9625,47 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} orderId 
-         * @param {OrderDisputeCreate} orderDisputeCreate 
+         * List all orders (admin view).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceSubcategory] 
+         * @param {'assigned' | 'bidding' | 'cancelled' | 'completed' | 'disputed' | 'draft' | 'in_progress' | 'published'} [status] * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;bidding&#x60; - Bidding * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled * &#x60;disputed&#x60; - Disputed
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1OrdersDisputesCreate(orderId: number, orderDisputeCreate: OrderDisputeCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderDisputeCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersDisputesCreate(orderId, orderDisputeCreate, options);
+        async v1OrdersList(ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategory?: number, status?: 'assigned' | 'bidding' | 'cancelled' | 'completed' | 'disputed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersList(ordering, page, pageSize, search, serviceSubcategory, status, urgency, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Get current user\'s assignments (as service provider).
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1OrdersDisputesList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderDisputeList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersDisputesList(ordering, page, pageSize, options);
+        async v1OrdersMyAssignmentsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderAssignmentList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersMyAssignmentsList(ordering, page, pageSize, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {PatchedOrderDisputeUpdate} [patchedOrderDisputeUpdate] 
+         * Get current user\'s bids (as service provider).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1OrdersDisputesPartialUpdate(id: number, patchedOrderDisputeUpdate?: PatchedOrderDisputeUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderDisputeUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersDisputesPartialUpdate(id, patchedOrderDisputeUpdate, options);
+        async v1OrdersMyBidsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedBidList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersMyBidsList(ordering, page, pageSize, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1OrdersDisputesRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderDispute>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersDisputesRetrieve(id, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {OrderDisputeUpdate} [orderDisputeUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1OrdersDisputesUpdate(id: number, orderDisputeUpdate?: OrderDisputeUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderDisputeUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersDisputesUpdate(id, orderDisputeUpdate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Get current user\'s orders (as client).
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -12052,8 +9673,32 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1OrdersList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersList(ordering, page, pageSize, search, options);
+        async v1OrdersMyList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersMyList(ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get assignments for current user\'s orders (as client).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1OrdersMyOrdersAssignmentsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderAssignmentList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersMyOrdersAssignmentsList(ordering, page, pageSize, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get bids for current user\'s orders (as client).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1OrdersMyOrdersBidsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedBidList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersMyOrdersBidsList(ordering, page, pageSize, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -12065,18 +9710,6 @@ export const V1ApiFp = function(configuration?: Configuration) {
          */
         async v1OrdersPartialUpdate(id: number, patchedOrderUpdate?: PatchedOrderUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderUpdate>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersPartialUpdate(id, patchedOrderUpdate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1OrdersPhotosList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderPhotoList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1OrdersPhotosList(ordering, page, pageSize, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -12101,7 +9734,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PaymentCreate} paymentCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12111,7 +9744,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {InvoiceCreate} invoiceCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12121,7 +9754,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -12133,7 +9766,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12143,7 +9776,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -12156,7 +9789,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PaymentMethodCreate} paymentMethodCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12166,7 +9799,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12176,7 +9809,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -12188,7 +9821,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {PatchedPaymentMethodUpdate} [patchedPaymentMethodUpdate] 
          * @param {*} [options] Override http request option.
@@ -12199,7 +9832,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12209,7 +9842,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {PaymentMethodUpdate} [paymentMethodUpdate] 
          * @param {*} [options] Override http request option.
@@ -12220,7 +9853,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {PatchedPaymentCreate} [patchedPaymentCreate] 
          * @param {*} [options] Override http request option.
@@ -12231,7 +9864,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12241,7 +9874,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {PaymentCreate} paymentCreate 
          * @param {*} [options] Override http request option.
@@ -12252,50 +9885,43 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * List webhook events - function-based version.
+         * List webhook events.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1PaymentsWebhooksEventsRetrieve(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async v1PaymentsWebhooksEventsRetrieve(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StripeWebhookEvent>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1PaymentsWebhooksEventsRetrieve(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Retry processing a webhook event - function-based version.
+         * Retry processing a webhook event.
          * @param {number} eventId 
+         * @param {WebhookRetryResponse} webhookRetryResponse 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1PaymentsWebhooksEventsRetryCreate(eventId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1PaymentsWebhooksEventsRetryCreate(eventId, options);
+        async v1PaymentsWebhooksEventsRetryCreate(eventId: number, webhookRetryResponse: WebhookRetryResponse, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WebhookRetryResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1PaymentsWebhooksEventsRetryCreate(eventId, webhookRetryResponse, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Simple Stripe webhook handler - function-based version.
+         * API view for Stripe webhook handling.
+         * @param {WebhookResponse} webhookResponse 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1PaymentsWebhooksStripeDrfCreate(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1PaymentsWebhooksStripeDrfCreate(options);
+        async v1PaymentsWebhooksStripeDrfCreate(webhookResponse: WebhookResponse, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WebhookResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1PaymentsWebhooksStripeDrfCreate(webhookResponse, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Upload profile image
-         * @param {UserUpdate} userUpdate 
+         * @param {UserUpdate} [userUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ProfileCreate(userUpdate: UserUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserUpdate>> {
+        async v1ProfileCreate(userUpdate?: UserUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserUpdate>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfileCreate(userUpdate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Reset profile image to default by removing uploaded photo.  This clears the stored ImageField `photo`. The `photo_url` (e.g., Firebase avatar) remains unchanged. Frontend should use `photo_url` as fallback.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ProfileDestroy(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfileDestroy(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -12319,11 +9945,11 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * User profile view with image upload
-         * @param {UserUpdate} userUpdate 
+         * @param {UserUpdate} [userUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ProfileUpdate(userUpdate: UserUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserUpdate>> {
+        async v1ProfileUpdate(userUpdate?: UserUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserUpdate>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfileUpdate(userUpdate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -12434,22 +10060,11 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * Simple global search across all content types.
-         * @param {string} [city] Filter by city
-         * @param {number} [maxBudget] Maximum budget
-         * @param {number} [minBudget] Minimum budget
-         * @param {number} [minRating] Minimum rating for providers
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [q] Search query
-         * @param {number} [serviceCategory] Filter by service category ID
-         * @param {'all' | 'orders' | 'providers' | 'services'} [type] Type of search to perform  * &#x60;all&#x60; - All * &#x60;orders&#x60; - Orders * &#x60;providers&#x60; - Providers * &#x60;services&#x60; - Services
-         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] Filter by urgency level  * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1SearchGlobalList(city?: string, maxBudget?: number, minBudget?: number, minRating?: number, ordering?: string, page?: number, pageSize?: number, q?: string, serviceCategory?: number, type?: 'all' | 'orders' | 'providers' | 'services', urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedGlobalSearchResponseList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1SearchGlobalList(city, maxBudget, minBudget, minRating, ordering, page, pageSize, q, serviceCategory, type, urgency, options);
+        async v1SearchGlobalRetrieve(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GlobalSearchResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1SearchGlobalRetrieve(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -12466,7 +10081,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1SearchOrdersList(city?: string, maxBudget?: number, minBudget?: number, ordering?: string, page?: number, pageSize?: number, q?: string, serviceCategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderSearchResponseList>> {
+        async v1SearchOrdersList(city?: string, maxBudget?: number, minBudget?: number, ordering?: string, page?: number, pageSize?: number, q?: string, serviceCategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1SearchOrdersList(city, maxBudget, minBudget, ordering, page, pageSize, q, serviceCategory, urgency, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -12481,12 +10096,22 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1SearchProvidersList(city?: string, minRating?: number, ordering?: string, page?: number, pageSize?: number, q?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedProviderSearchResponseList>> {
+        async v1SearchProvidersList(city?: string, minRating?: number, ordering?: string, page?: number, pageSize?: number, q?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedServiceProviderList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1SearchProvidersList(city, minRating, ordering, page, pageSize, q, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {ClientUpdate} [clientUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersClientCreateCreate(clientUpdate?: ClientUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ClientUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersClientCreateCreate(clientUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PatchedClientUpdate} [patchedClientUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12496,7 +10121,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -12505,7 +10130,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {ClientUpdate} [clientUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12515,16 +10140,17 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Create or update client profile
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {ClientUpdate} [clientUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersClientUpdateCreate(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersClientUpdateCreate(options);
+        async v1UsersClientUpdateCreate(clientUpdate?: ClientUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ClientUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersClientUpdateCreate(clientUpdate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [createdAt] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -12554,7 +10180,26 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {AdvancedProfile} [advancedProfile] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersProfileAdvancedCreate(advancedProfile?: AdvancedProfile, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AdvancedProfile>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProfileAdvancedCreate(advancedProfile, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersProfileAdvancedRetrieve(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AdvancedProfile>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProfileAdvancedRetrieve(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PatchedUserProfileUpdate} [patchedUserProfileUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12564,7 +10209,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -12573,7 +10218,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {UserProfileUpdate} [userProfileUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12583,16 +10228,17 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Create or update user profile
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersProfileUpdateCreate(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProfileUpdateCreate(options);
+        async v1UsersProviderCreateCreate(serviceProviderUpdate?: ServiceProviderUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceProviderUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProviderCreateCreate(serviceProviderUpdate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PatchedServiceProviderUpdate} [patchedServiceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12602,7 +10248,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -12611,7 +10257,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12621,17 +10267,63 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Create or update service provider profile
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersProviderUpdateCreate(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProviderUpdateCreate(options);
+        async v1UsersProviderUpdateCreate(serviceProviderUpdate?: ServiceProviderUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceProviderUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProviderUpdateCreate(serviceProviderUpdate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {PatchedServiceProviderUpdate} [patchedServiceProviderUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersProvidersDetailsPartialUpdate(id: number, patchedServiceProviderUpdate?: PatchedServiceProviderUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceProviderUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProvidersDetailsPartialUpdate(id, patchedServiceProviderUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersProvidersDetailsRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceProvider>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProvidersDetailsRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersProvidersDetailsUpdate(id: number, serviceProviderUpdate?: ServiceProviderUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceProviderUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProvidersDetailsUpdate(id, serviceProviderUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Featured service providers for mobile app.
          * @param {boolean} [isAvailable] 
+         * @param {boolean} [isVerifiedProvider] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersProvidersFeaturedList(isAvailable?: boolean, isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedServiceProviderList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProvidersFeaturedList(isAvailable, isVerifiedProvider, ordering, page, pageSize, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * List all available service providers with search and filtering.
          * @param {boolean} [isVerifiedProvider] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -12640,8 +10332,20 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersProvidersList(isAvailable?: boolean, isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedServiceProviderList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProvidersList(isAvailable, isVerifiedProvider, ordering, page, pageSize, search, options);
+        async v1UsersProvidersList(isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedServiceProviderList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProvidersList(isVerifiedProvider, ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Task history for users (orders they created or worked on).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersTaskHistoryList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrderList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersTaskHistoryList(ordering, page, pageSize, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -12655,113 +10359,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
     const localVarFp = V1ApiFp(configuration)
     return {
         /**
-         * 
-         * @param {UserActivityCreate} userActivityCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsActivitiesCreateCreate(userActivityCreate: UserActivityCreate, options?: any): AxiosPromise<UserActivityCreate> {
-            return localVarFp.v1AnalyticsActivitiesCreateCreate(userActivityCreate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {'bid_submitted' | 'chat_message' | 'login' | 'logout' | 'order_created' | 'order_viewed' | 'payment_made' | 'profile_updated' | 'search_performed' | 'service_viewed'} [activityType] * &#x60;login&#x60; - Login * &#x60;logout&#x60; - Logout * &#x60;order_created&#x60; - Order Created * &#x60;order_viewed&#x60; - Order Viewed * &#x60;bid_submitted&#x60; - Bid Submitted * &#x60;chat_message&#x60; - Chat Message * &#x60;payment_made&#x60; - Payment Made * &#x60;profile_updated&#x60; - Profile Updated * &#x60;search_performed&#x60; - Search Performed * &#x60;service_viewed&#x60; - Service Viewed
-         * @param {string} [ipAddress] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
-         * @param {number} [user] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsActivitiesList(activityType?: 'bid_submitted' | 'chat_message' | 'login' | 'logout' | 'order_created' | 'order_viewed' | 'payment_made' | 'profile_updated' | 'search_performed' | 'service_viewed', ipAddress?: string, ordering?: string, page?: number, pageSize?: number, search?: string, user?: number, options?: any): AxiosPromise<PaginatedUserActivityList> {
-            return localVarFp.v1AnalyticsActivitiesList(activityType, ipAddress, ordering, page, pageSize, search, user, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {BusinessMetricsCreate} businessMetricsCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsBusinessCreateCreate(businessMetricsCreate: BusinessMetricsCreate, options?: any): AxiosPromise<BusinessMetricsCreate> {
-            return localVarFp.v1AnalyticsBusinessCreateCreate(businessMetricsCreate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} [date] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsBusinessList(date?: string, ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedBusinessMetricsList> {
-            return localVarFp.v1AnalyticsBusinessList(date, ordering, page, pageSize, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {ServiceCategoryAnalyticsCreate} serviceCategoryAnalyticsCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsCategoriesCreateCreate(serviceCategoryAnalyticsCreate: ServiceCategoryAnalyticsCreate, options?: any): AxiosPromise<ServiceCategoryAnalyticsCreate> {
-            return localVarFp.v1AnalyticsCategoriesCreateCreate(serviceCategoryAnalyticsCreate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {number} [category] 
-         * @param {string} [date] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsCategoriesList(category?: number, date?: string, ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedServiceCategoryAnalyticsList> {
-            return localVarFp.v1AnalyticsCategoriesList(category, date, ordering, page, pageSize, options).then((request) => request(axios, basePath));
-        },
-        /**
          * Get dashboard overview data.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         v1AnalyticsDashboardRetrieve(options?: any): AxiosPromise<DashboardResponse> {
             return localVarFp.v1AnalyticsDashboardRetrieve(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {OrderAnalyticsCreate} orderAnalyticsCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsOrdersCreateCreate(orderAnalyticsCreate: OrderAnalyticsCreate, options?: any): AxiosPromise<OrderAnalyticsCreate> {
-            return localVarFp.v1AnalyticsOrdersCreateCreate(orderAnalyticsCreate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} [date] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsOrdersList(date?: string, ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedOrderAnalyticsList> {
-            return localVarFp.v1AnalyticsOrdersList(date, ordering, page, pageSize, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} [date] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {'daily' | 'hourly' | 'monthly' | 'weekly'} [timePeriod] * &#x60;hourly&#x60; - Hourly * &#x60;daily&#x60; - Daily * &#x60;weekly&#x60; - Weekly * &#x60;monthly&#x60; - Monthly
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AnalyticsPerformanceList(date?: string, ordering?: string, page?: number, pageSize?: number, timePeriod?: 'daily' | 'hourly' | 'monthly' | 'weekly', options?: any): AxiosPromise<PaginatedPerformanceMetricsList> {
-            return localVarFp.v1AnalyticsPerformanceList(date, ordering, page, pageSize, timePeriod, options).then((request) => request(axios, basePath));
         },
         /**
          * Authenticate user with Firebase ID token or register new user if verified.
@@ -12782,132 +10385,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1AuthLogoutCreate(logoutResponse, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {ChatAttachmentCreate} chatAttachmentCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatAttachmentsCreateCreate(chatAttachmentCreate: ChatAttachmentCreate, options?: any): AxiosPromise<ChatAttachmentCreate> {
-            return localVarFp.v1ChatAttachmentsCreateCreate(chatAttachmentCreate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatAttachmentsDestroy(id: number, options?: any): AxiosPromise<void> {
-            return localVarFp.v1ChatAttachmentsDestroy(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatAttachmentsList(ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedChatAttachmentList> {
-            return localVarFp.v1ChatAttachmentsList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatAttachmentsRetrieve(id: number, options?: any): AxiosPromise<ChatAttachment> {
-            return localVarFp.v1ChatAttachmentsRetrieve(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {MessageCreate} messageCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatMessagesCreateCreate(messageCreate: MessageCreate, options?: any): AxiosPromise<MessageCreate> {
-            return localVarFp.v1ChatMessagesCreateCreate(messageCreate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatMessagesDestroy(id: number, options?: any): AxiosPromise<void> {
-            return localVarFp.v1ChatMessagesDestroy(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatMessagesList(ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedMessageList> {
-            return localVarFp.v1ChatMessagesList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {PatchedMessageUpdate} [patchedMessageUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatMessagesPartialUpdate(id: number, patchedMessageUpdate?: PatchedMessageUpdate, options?: any): AxiosPromise<MessageUpdate> {
-            return localVarFp.v1ChatMessagesPartialUpdate(id, patchedMessageUpdate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatMessagesRetrieve(id: number, options?: any): AxiosPromise<Message> {
-            return localVarFp.v1ChatMessagesRetrieve(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {MessageUpdate} messageUpdate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatMessagesUpdate(id: number, messageUpdate: MessageUpdate, options?: any): AxiosPromise<MessageUpdate> {
-            return localVarFp.v1ChatMessagesUpdate(id, messageUpdate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {ChatParticipantCreate} chatParticipantCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatParticipantsCreateCreate(chatParticipantCreate: ChatParticipantCreate, options?: any): AxiosPromise<ChatParticipantCreate> {
-            return localVarFp.v1ChatParticipantsCreateCreate(chatParticipantCreate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatParticipantsList(ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedChatParticipantList> {
-            return localVarFp.v1ChatParticipantsList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {ChatRoomCreate} chatRoomCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsCreateCreate(chatRoomCreate: ChatRoomCreate, options?: any): AxiosPromise<ChatRoomCreate> {
-            return localVarFp.v1ChatRoomsCreateCreate(chatRoomCreate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Mobile-optimized view for chat conversation list.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -12915,40 +10393,30 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatRoomsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedChatRoomList> {
-            return localVarFp.v1ChatRoomsList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1ChatConversationsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedChatConversationList> {
+            return localVarFp.v1ChatConversationsList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {PatchedChatRoomUpdate} [patchedChatRoomUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsPartialUpdate(id: number, patchedChatRoomUpdate?: PatchedChatRoomUpdate, options?: any): AxiosPromise<ChatRoomUpdate> {
-            return localVarFp.v1ChatRoomsPartialUpdate(id, patchedChatRoomUpdate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Mobile-optimized view for chat conversation details with messages.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatRoomsRetrieve(id: number, options?: any): AxiosPromise<ChatRoom> {
-            return localVarFp.v1ChatRoomsRetrieve(id, options).then((request) => request(axios, basePath));
+        v1ChatConversationsRetrieve(id: number, options?: any): AxiosPromise<ChatConversationDetail> {
+            return localVarFp.v1ChatConversationsRetrieve(id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Send a message to a chat room.
          * @param {number} id 
-         * @param {ChatRoomUpdate} [chatRoomUpdate] 
+         * @param {ChatSendMessage} chatSendMessage 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatRoomsUpdate(id: number, chatRoomUpdate?: ChatRoomUpdate, options?: any): AxiosPromise<ChatRoomUpdate> {
-            return localVarFp.v1ChatRoomsUpdate(id, chatRoomUpdate, options).then((request) => request(axios, basePath));
+        v1ChatConversationsSendCreate(id: number, chatSendMessage: ChatSendMessage, options?: any): AxiosPromise<ChatSendMessage> {
+            return localVarFp.v1ChatConversationsSendCreate(id, chatSendMessage, options).then((request) => request(axios, basePath));
         },
         /**
-         * Get WebSocket connection information for the current user.
+         * Get WebSocket connection info for the user.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -12956,7 +10424,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ChatWebsocketInfoRetrieve(options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -12970,7 +10438,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1CoreAppVersionsList(isActive, ordering, page, pageSize, platform, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {boolean} [isActive] 
          * @param {boolean} [isDefault] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -12984,7 +10452,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1CoreLanguagesList(isActive, isDefault, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [country] 
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -12999,7 +10467,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1CoreServiceAreasList(country, isActive, ordering, page, pageSize, search, state, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {boolean} [featured] 
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -13013,7 +10481,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1CoreServiceCategoriesList(featured, isActive, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} [category] 
          * @param {boolean} [featured] 
          * @param {boolean} [isActive] 
@@ -13028,7 +10496,22 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1CoreServiceSubcategoriesList(category, featured, isActive, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * List support FAQ items.
+         * @param {'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist'} [category] * &#x60;general&#x60; - General * &#x60;specialist&#x60; - Specialist * &#x60;reviews&#x60; - Reviews * &#x60;account&#x60; - Account * &#x60;search&#x60; - Найти * &#x60;safety&#x60; - Safety
+         * @param {boolean} [isActive] 
+         * @param {boolean} [isPopular] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSupportFaqList(category?: 'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist', isActive?: boolean, isPopular?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedSupportFAQList> {
+            return localVarFp.v1CoreSupportFaqList(category, isActive, isPopular, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [category] 
          * @param {boolean} [isPublic] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -13042,7 +10525,15 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1CoreSystemSettingsList(category, isPublic, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Get notification counts for current user.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1NotificationsCountRetrieve(options?: any): AxiosPromise<Notification> {
+            return localVarFp.v1NotificationsCountRetrieve(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Create new notifications (admin only).
          * @param {NotificationCreate} notificationCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13051,7 +10542,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1NotificationsCreateCreate(notificationCreate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * List notifications for the current user.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -13063,7 +10554,16 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1NotificationsList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mark all notifications as read for current user.
+         * @param {Notification} notification 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1NotificationsMarkAllReadCreate(notification: Notification, options?: any): AxiosPromise<Notification> {
+            return localVarFp.v1NotificationsMarkAllReadCreate(notification, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Retrieve and update individual notifications.
          * @param {number} id 
          * @param {PatchedNotificationUpdate} [patchedNotificationUpdate] 
          * @param {*} [options] Override http request option.
@@ -13073,7 +10573,19 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1NotificationsPartialUpdate(id, patchedNotificationUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Get recent notifications (last 7 days).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1NotificationsRecentList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedNotificationList> {
+            return localVarFp.v1NotificationsRecentList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Retrieve and update individual notifications.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13082,44 +10594,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1NotificationsRetrieve(id, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
-         * @param {PatchedNotificationSettingUpdate} [patchedNotificationSettingUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsSettingsPartialUpdate(patchedNotificationSettingUpdate?: PatchedNotificationSettingUpdate, options?: any): AxiosPromise<NotificationSettingUpdate> {
-            return localVarFp.v1NotificationsSettingsPartialUpdate(patchedNotificationSettingUpdate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsSettingsRetrieve(options?: any): AxiosPromise<NotificationSetting> {
-            return localVarFp.v1NotificationsSettingsRetrieve(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {NotificationSettingUpdate} [notificationSettingUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsSettingsUpdate(notificationSettingUpdate?: NotificationSettingUpdate, options?: any): AxiosPromise<NotificationSettingUpdate> {
-            return localVarFp.v1NotificationsSettingsUpdate(notificationSettingUpdate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {NotificationTemplateCreate} notificationTemplateCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsTemplatesCreateCreate(notificationTemplateCreate: NotificationTemplateCreate, options?: any): AxiosPromise<NotificationTemplateCreate> {
-            return localVarFp.v1NotificationsTemplatesCreateCreate(notificationTemplateCreate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {boolean} [isActive] 
-         * @param {'bid_received' | 'chat_message' | 'order_update' | 'payment_failed' | 'payment_success' | 'promotional' | 'system_alert'} [notificationType] * &#x60;order_update&#x60; - Order Update * &#x60;bid_received&#x60; - Bid Received * &#x60;payment_success&#x60; - Payment Success * &#x60;payment_failed&#x60; - Payment Failed * &#x60;chat_message&#x60; - Chat Message * &#x60;system_alert&#x60; - System Alert * &#x60;promotional&#x60; - Promotional
+         * Get unread notifications for current user.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -13127,40 +10602,11 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsTemplatesList(isActive?: boolean, notificationType?: 'bid_received' | 'chat_message' | 'order_update' | 'payment_failed' | 'payment_success' | 'promotional' | 'system_alert', ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedNotificationTemplateList> {
-            return localVarFp.v1NotificationsTemplatesList(isActive, notificationType, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1NotificationsUnreadList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedNotificationList> {
+            return localVarFp.v1NotificationsUnreadList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
-         * @param {number} id 
-         * @param {PatchedNotificationTemplateUpdate} [patchedNotificationTemplateUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsTemplatesPartialUpdate(id: number, patchedNotificationTemplateUpdate?: PatchedNotificationTemplateUpdate, options?: any): AxiosPromise<NotificationTemplateUpdate> {
-            return localVarFp.v1NotificationsTemplatesPartialUpdate(id, patchedNotificationTemplateUpdate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsTemplatesRetrieve(id: number, options?: any): AxiosPromise<NotificationTemplate> {
-            return localVarFp.v1NotificationsTemplatesRetrieve(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {NotificationTemplateUpdate} notificationTemplateUpdate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1NotificationsTemplatesUpdate(id: number, notificationTemplateUpdate: NotificationTemplateUpdate, options?: any): AxiosPromise<NotificationTemplateUpdate> {
-            return localVarFp.v1NotificationsTemplatesUpdate(id, notificationTemplateUpdate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
+         * Retrieve and update individual notifications.
          * @param {number} id 
          * @param {NotificationUpdate} [notificationUpdate] 
          * @param {*} [options] Override http request option.
@@ -13170,37 +10616,138 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1NotificationsUpdate(id, notificationUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * List all order assignments (admin view).
+         * @param {number} [order] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
+         * @param {number} [provider] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1OrdersAddonsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedOrderAddonList> {
-            return localVarFp.v1OrdersAddonsList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1OrdersAssignmentsList(order?: number, ordering?: string, page?: number, pageSize?: number, provider?: number, options?: any): AxiosPromise<PaginatedOrderAssignmentList> {
+            return localVarFp.v1OrdersAssignmentsList(order, ordering, page, pageSize, provider, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * View and update order assignment details.
+         * @param {number} id 
+         * @param {PatchedOrderAssignment} [patchedOrderAssignment] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersAssignmentsPartialUpdate(id: number, patchedOrderAssignment?: PatchedOrderAssignment, options?: any): AxiosPromise<OrderAssignment> {
+            return localVarFp.v1OrdersAssignmentsPartialUpdate(id, patchedOrderAssignment, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * View and update order assignment details.
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersAssignmentsRetrieve(id: number, options?: any): AxiosPromise<OrderAssignment> {
+            return localVarFp.v1OrdersAssignmentsRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * View and update order assignment details.
+         * @param {number} id 
+         * @param {OrderAssignment} orderAssignment 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersAssignmentsUpdate(id: number, orderAssignment: OrderAssignment, options?: any): AxiosPromise<OrderAssignment> {
+            return localVarFp.v1OrdersAssignmentsUpdate(id, orderAssignment, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Accept a bid and create order assignment.
+         * @param {number} bidId 
+         * @param {BidAction} [bidAction] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsAcceptCreate(bidId: number, bidAction?: BidAction, options?: any): AxiosPromise<BidAction> {
+            return localVarFp.v1OrdersBidsAcceptCreate(bidId, bidAction, options).then((request) => request(axios, basePath));
         },
         /**
          * Mixin to provide standardized exception handling for DRF views.
          * @param {number} orderId 
-         * @param {BidCreate} bidCreate 
+         * @param {BidCreateUpdate} bidCreateUpdate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1OrdersBidsCreate(orderId: number, bidCreate: BidCreate, options?: any): AxiosPromise<BidCreate> {
-            return localVarFp.v1OrdersBidsCreate(orderId, bidCreate, options).then((request) => request(axios, basePath));
+        v1OrdersBidsCreate(orderId: number, bidCreateUpdate: BidCreateUpdate, options?: any): AxiosPromise<BidCreateUpdate> {
+            return localVarFp.v1OrdersBidsCreate(orderId, bidCreateUpdate, options).then((request) => request(axios, basePath));
         },
         /**
          * Mixin to provide standardized exception handling for DRF views.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1OrdersBidsList(ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedBidList> {
-            return localVarFp.v1OrdersBidsList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
+        v1OrdersBidsDestroy(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.v1OrdersBidsDestroy(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * List all bids (admin view).
+         * @param {boolean} [isNegotiable] 
+         * @param {number} [order] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {'accepted' | 'pending' | 'rejected' | 'withdrawn'} [status] * &#x60;pending&#x60; - Pending * &#x60;accepted&#x60; - Accepted * &#x60;rejected&#x60; - Rejected * &#x60;withdrawn&#x60; - Withdrawn
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsList(isNegotiable?: boolean, order?: number, ordering?: string, page?: number, pageSize?: number, status?: 'accepted' | 'pending' | 'rejected' | 'withdrawn', options?: any): AxiosPromise<PaginatedBidList> {
+            return localVarFp.v1OrdersBidsList(isNegotiable, order, ordering, page, pageSize, status, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {PatchedBidCreateUpdate} [patchedBidCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsPartialUpdate(id: number, patchedBidCreateUpdate?: PatchedBidCreateUpdate, options?: any): AxiosPromise<BidCreateUpdate> {
+            return localVarFp.v1OrdersBidsPartialUpdate(id, patchedBidCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Reject a bid.
+         * @param {number} bidId 
+         * @param {BidAction} [bidAction] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsRejectCreate(bidId: number, bidAction?: BidAction, options?: any): AxiosPromise<BidAction> {
+            return localVarFp.v1OrdersBidsRejectCreate(bidId, bidAction, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsRetrieve(id: number, options?: any): AxiosPromise<Bid> {
+            return localVarFp.v1OrdersBidsRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {BidCreateUpdate} bidCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsUpdate(id: number, bidCreateUpdate: BidCreateUpdate, options?: any): AxiosPromise<BidCreateUpdate> {
+            return localVarFp.v1OrdersBidsUpdate(id, bidCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Withdraw a bid (by provider).
+         * @param {number} bidId 
+         * @param {BidAction} [bidAction] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersBidsWithdrawCreate(bidId: number, bidAction?: BidAction, options?: any): AxiosPromise<BidAction> {
+            return localVarFp.v1OrdersBidsWithdrawCreate(bidId, bidAction, options).then((request) => request(axios, basePath));
         },
         /**
          * Mixin to provide standardized exception handling for DRF views.
@@ -13212,57 +10759,44 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1OrdersCreateCreate(orderCreate, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} orderId 
-         * @param {OrderDisputeCreate} orderDisputeCreate 
+         * List all orders (admin view).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceSubcategory] 
+         * @param {'assigned' | 'bidding' | 'cancelled' | 'completed' | 'disputed' | 'draft' | 'in_progress' | 'published'} [status] * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;bidding&#x60; - Bidding * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled * &#x60;disputed&#x60; - Disputed
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1OrdersDisputesCreate(orderId: number, orderDisputeCreate: OrderDisputeCreate, options?: any): AxiosPromise<OrderDisputeCreate> {
-            return localVarFp.v1OrdersDisputesCreate(orderId, orderDisputeCreate, options).then((request) => request(axios, basePath));
+        v1OrdersList(ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategory?: number, status?: 'assigned' | 'bidding' | 'cancelled' | 'completed' | 'disputed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: any): AxiosPromise<PaginatedOrderList> {
+            return localVarFp.v1OrdersList(ordering, page, pageSize, search, serviceSubcategory, status, urgency, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Get current user\'s assignments (as service provider).
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1OrdersDisputesList(ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedOrderDisputeList> {
-            return localVarFp.v1OrdersDisputesList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
+        v1OrdersMyAssignmentsList(ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedOrderAssignmentList> {
+            return localVarFp.v1OrdersMyAssignmentsList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {PatchedOrderDisputeUpdate} [patchedOrderDisputeUpdate] 
+         * Get current user\'s bids (as service provider).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1OrdersDisputesPartialUpdate(id: number, patchedOrderDisputeUpdate?: PatchedOrderDisputeUpdate, options?: any): AxiosPromise<OrderDisputeUpdate> {
-            return localVarFp.v1OrdersDisputesPartialUpdate(id, patchedOrderDisputeUpdate, options).then((request) => request(axios, basePath));
+        v1OrdersMyBidsList(ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedBidList> {
+            return localVarFp.v1OrdersMyBidsList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1OrdersDisputesRetrieve(id: number, options?: any): AxiosPromise<OrderDispute> {
-            return localVarFp.v1OrdersDisputesRetrieve(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {number} id 
-         * @param {OrderDisputeUpdate} [orderDisputeUpdate] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1OrdersDisputesUpdate(id: number, orderDisputeUpdate?: OrderDisputeUpdate, options?: any): AxiosPromise<OrderDisputeUpdate> {
-            return localVarFp.v1OrdersDisputesUpdate(id, orderDisputeUpdate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Get current user\'s orders (as client).
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -13270,8 +10804,30 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1OrdersList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedOrderList> {
-            return localVarFp.v1OrdersList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1OrdersMyList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedOrderList> {
+            return localVarFp.v1OrdersMyList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get assignments for current user\'s orders (as client).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersMyOrdersAssignmentsList(ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedOrderAssignmentList> {
+            return localVarFp.v1OrdersMyOrdersAssignmentsList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get bids for current user\'s orders (as client).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1OrdersMyOrdersBidsList(ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedBidList> {
+            return localVarFp.v1OrdersMyOrdersBidsList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
          * Mixin to provide standardized exception handling for DRF views.
@@ -13282,17 +10838,6 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          */
         v1OrdersPartialUpdate(id: number, patchedOrderUpdate?: PatchedOrderUpdate, options?: any): AxiosPromise<OrderUpdate> {
             return localVarFp.v1OrdersPartialUpdate(id, patchedOrderUpdate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1OrdersPhotosList(ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedOrderPhotoList> {
-            return localVarFp.v1OrdersPhotosList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
          * Mixin to provide standardized exception handling for DRF views.
@@ -13314,7 +10859,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1OrdersUpdate(id, orderUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PaymentCreate} paymentCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13323,7 +10868,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsCreateCreate(paymentCreate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {InvoiceCreate} invoiceCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13332,7 +10877,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsInvoicesCreateCreate(invoiceCreate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -13343,7 +10888,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsInvoicesList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13352,7 +10897,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsInvoicesRetrieve(id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -13364,7 +10909,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PaymentMethodCreate} paymentMethodCreate 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13373,7 +10918,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsMethodsCreateCreate(paymentMethodCreate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13382,7 +10927,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsMethodsDestroy(id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -13393,7 +10938,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsMethodsList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {PatchedPaymentMethodUpdate} [patchedPaymentMethodUpdate] 
          * @param {*} [options] Override http request option.
@@ -13403,7 +10948,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsMethodsPartialUpdate(id, patchedPaymentMethodUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13412,7 +10957,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsMethodsRetrieve(id, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {PaymentMethodUpdate} [paymentMethodUpdate] 
          * @param {*} [options] Override http request option.
@@ -13422,7 +10967,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsMethodsUpdate(id, paymentMethodUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {PatchedPaymentCreate} [patchedPaymentCreate] 
          * @param {*} [options] Override http request option.
@@ -13432,7 +10977,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsPartialUpdate(id, patchedPaymentCreate, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13441,7 +10986,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsRetrieve(id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to require specific group membership for class-based views.
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {number} id 
          * @param {PaymentCreate} paymentCreate 
          * @param {*} [options] Override http request option.
@@ -13451,46 +10996,40 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1PaymentsUpdate(id, paymentCreate, options).then((request) => request(axios, basePath));
         },
         /**
-         * List webhook events - function-based version.
+         * List webhook events.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1PaymentsWebhooksEventsRetrieve(options?: any): AxiosPromise<void> {
+        v1PaymentsWebhooksEventsRetrieve(options?: any): AxiosPromise<StripeWebhookEvent> {
             return localVarFp.v1PaymentsWebhooksEventsRetrieve(options).then((request) => request(axios, basePath));
         },
         /**
-         * Retry processing a webhook event - function-based version.
+         * Retry processing a webhook event.
          * @param {number} eventId 
+         * @param {WebhookRetryResponse} webhookRetryResponse 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1PaymentsWebhooksEventsRetryCreate(eventId: number, options?: any): AxiosPromise<void> {
-            return localVarFp.v1PaymentsWebhooksEventsRetryCreate(eventId, options).then((request) => request(axios, basePath));
+        v1PaymentsWebhooksEventsRetryCreate(eventId: number, webhookRetryResponse: WebhookRetryResponse, options?: any): AxiosPromise<WebhookRetryResponse> {
+            return localVarFp.v1PaymentsWebhooksEventsRetryCreate(eventId, webhookRetryResponse, options).then((request) => request(axios, basePath));
         },
         /**
-         * Simple Stripe webhook handler - function-based version.
+         * API view for Stripe webhook handling.
+         * @param {WebhookResponse} webhookResponse 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1PaymentsWebhooksStripeDrfCreate(options?: any): AxiosPromise<void> {
-            return localVarFp.v1PaymentsWebhooksStripeDrfCreate(options).then((request) => request(axios, basePath));
+        v1PaymentsWebhooksStripeDrfCreate(webhookResponse: WebhookResponse, options?: any): AxiosPromise<WebhookResponse> {
+            return localVarFp.v1PaymentsWebhooksStripeDrfCreate(webhookResponse, options).then((request) => request(axios, basePath));
         },
         /**
          * Upload profile image
-         * @param {UserUpdate} userUpdate 
+         * @param {UserUpdate} [userUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfileCreate(userUpdate: UserUpdate, options?: any): AxiosPromise<UserUpdate> {
+        v1ProfileCreate(userUpdate?: UserUpdate, options?: any): AxiosPromise<UserUpdate> {
             return localVarFp.v1ProfileCreate(userUpdate, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Reset profile image to default by removing uploaded photo.  This clears the stored ImageField `photo`. The `photo_url` (e.g., Firebase avatar) remains unchanged. Frontend should use `photo_url` as fallback.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ProfileDestroy(options?: any): AxiosPromise<void> {
-            return localVarFp.v1ProfileDestroy(options).then((request) => request(axios, basePath));
         },
         /**
          * User profile view with image upload
@@ -13511,11 +11050,11 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * User profile view with image upload
-         * @param {UserUpdate} userUpdate 
+         * @param {UserUpdate} [userUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfileUpdate(userUpdate: UserUpdate, options?: any): AxiosPromise<UserUpdate> {
+        v1ProfileUpdate(userUpdate?: UserUpdate, options?: any): AxiosPromise<UserUpdate> {
             return localVarFp.v1ProfileUpdate(userUpdate, options).then((request) => request(axios, basePath));
         },
         /**
@@ -13616,22 +11155,11 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * Simple global search across all content types.
-         * @param {string} [city] Filter by city
-         * @param {number} [maxBudget] Maximum budget
-         * @param {number} [minBudget] Minimum budget
-         * @param {number} [minRating] Minimum rating for providers
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [q] Search query
-         * @param {number} [serviceCategory] Filter by service category ID
-         * @param {'all' | 'orders' | 'providers' | 'services'} [type] Type of search to perform  * &#x60;all&#x60; - All * &#x60;orders&#x60; - Orders * &#x60;providers&#x60; - Providers * &#x60;services&#x60; - Services
-         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] Filter by urgency level  * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1SearchGlobalList(city?: string, maxBudget?: number, minBudget?: number, minRating?: number, ordering?: string, page?: number, pageSize?: number, q?: string, serviceCategory?: number, type?: 'all' | 'orders' | 'providers' | 'services', urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: any): AxiosPromise<PaginatedGlobalSearchResponseList> {
-            return localVarFp.v1SearchGlobalList(city, maxBudget, minBudget, minRating, ordering, page, pageSize, q, serviceCategory, type, urgency, options).then((request) => request(axios, basePath));
+        v1SearchGlobalRetrieve(options?: any): AxiosPromise<GlobalSearchResponse> {
+            return localVarFp.v1SearchGlobalRetrieve(options).then((request) => request(axios, basePath));
         },
         /**
          * Search specifically for orders (job vacancies).
@@ -13647,7 +11175,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1SearchOrdersList(city?: string, maxBudget?: number, minBudget?: number, ordering?: string, page?: number, pageSize?: number, q?: string, serviceCategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: any): AxiosPromise<PaginatedOrderSearchResponseList> {
+        v1SearchOrdersList(city?: string, maxBudget?: number, minBudget?: number, ordering?: string, page?: number, pageSize?: number, q?: string, serviceCategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: any): AxiosPromise<PaginatedOrderList> {
             return localVarFp.v1SearchOrdersList(city, maxBudget, minBudget, ordering, page, pageSize, q, serviceCategory, urgency, options).then((request) => request(axios, basePath));
         },
         /**
@@ -13661,11 +11189,20 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1SearchProvidersList(city?: string, minRating?: number, ordering?: string, page?: number, pageSize?: number, q?: string, options?: any): AxiosPromise<PaginatedProviderSearchResponseList> {
+        v1SearchProvidersList(city?: string, minRating?: number, ordering?: string, page?: number, pageSize?: number, q?: string, options?: any): AxiosPromise<PaginatedServiceProviderList> {
             return localVarFp.v1SearchProvidersList(city, minRating, ordering, page, pageSize, q, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {ClientUpdate} [clientUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersClientCreateCreate(clientUpdate?: ClientUpdate, options?: any): AxiosPromise<ClientUpdate> {
+            return localVarFp.v1UsersClientCreateCreate(clientUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PatchedClientUpdate} [patchedClientUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13674,7 +11211,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1UsersClientPartialUpdate(patchedClientUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -13682,7 +11219,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1UsersClientRetrieve(options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {ClientUpdate} [clientUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13691,15 +11228,16 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1UsersClientUpdate(clientUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * Create or update client profile
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {ClientUpdate} [clientUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersClientUpdateCreate(options?: any): AxiosPromise<void> {
-            return localVarFp.v1UsersClientUpdateCreate(options).then((request) => request(axios, basePath));
+        v1UsersClientUpdateCreate(clientUpdate?: ClientUpdate, options?: any): AxiosPromise<ClientUpdate> {
+            return localVarFp.v1UsersClientUpdateCreate(clientUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {string} [createdAt] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -13727,7 +11265,24 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1UsersList(blocked, isActive, ordering, page, pageSize, search, userType, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {AdvancedProfile} [advancedProfile] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProfileAdvancedCreate(advancedProfile?: AdvancedProfile, options?: any): AxiosPromise<AdvancedProfile> {
+            return localVarFp.v1UsersProfileAdvancedCreate(advancedProfile, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProfileAdvancedRetrieve(options?: any): AxiosPromise<AdvancedProfile> {
+            return localVarFp.v1UsersProfileAdvancedRetrieve(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PatchedUserProfileUpdate} [patchedUserProfileUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13736,7 +11291,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1UsersProfilePartialUpdate(patchedUserProfileUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -13744,7 +11299,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1UsersProfileRetrieve(options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {UserProfileUpdate} [userProfileUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13753,15 +11308,16 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1UsersProfileUpdate(userProfileUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * Create or update user profile
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersProfileUpdateCreate(options?: any): AxiosPromise<void> {
-            return localVarFp.v1UsersProfileUpdateCreate(options).then((request) => request(axios, basePath));
+        v1UsersProviderCreateCreate(serviceProviderUpdate?: ServiceProviderUpdate, options?: any): AxiosPromise<ServiceProviderUpdate> {
+            return localVarFp.v1UsersProviderCreateCreate(serviceProviderUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {PatchedServiceProviderUpdate} [patchedServiceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13770,7 +11326,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1UsersProviderPartialUpdate(patchedServiceProviderUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -13778,7 +11334,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1UsersProviderRetrieve(options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
          * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13787,16 +11343,58 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1UsersProviderUpdate(serviceProviderUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * Create or update service provider profile
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersProviderUpdateCreate(options?: any): AxiosPromise<void> {
-            return localVarFp.v1UsersProviderUpdateCreate(options).then((request) => request(axios, basePath));
+        v1UsersProviderUpdateCreate(serviceProviderUpdate?: ServiceProviderUpdate, options?: any): AxiosPromise<ServiceProviderUpdate> {
+            return localVarFp.v1UsersProviderUpdateCreate(serviceProviderUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {PatchedServiceProviderUpdate} [patchedServiceProviderUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProvidersDetailsPartialUpdate(id: number, patchedServiceProviderUpdate?: PatchedServiceProviderUpdate, options?: any): AxiosPromise<ServiceProviderUpdate> {
+            return localVarFp.v1UsersProvidersDetailsPartialUpdate(id, patchedServiceProviderUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProvidersDetailsRetrieve(id: number, options?: any): AxiosPromise<ServiceProvider> {
+            return localVarFp.v1UsersProvidersDetailsRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Mixin to provide standardized exception handling for DRF views.
+         * @param {number} id 
+         * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProvidersDetailsUpdate(id: number, serviceProviderUpdate?: ServiceProviderUpdate, options?: any): AxiosPromise<ServiceProviderUpdate> {
+            return localVarFp.v1UsersProvidersDetailsUpdate(id, serviceProviderUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Featured service providers for mobile app.
          * @param {boolean} [isAvailable] 
+         * @param {boolean} [isVerifiedProvider] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProvidersFeaturedList(isAvailable?: boolean, isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedServiceProviderList> {
+            return localVarFp.v1UsersProvidersFeaturedList(isAvailable, isVerifiedProvider, ordering, page, pageSize, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * List all available service providers with search and filtering.
          * @param {boolean} [isVerifiedProvider] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -13805,276 +11403,1088 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersProvidersList(isAvailable?: boolean, isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedServiceProviderList> {
-            return localVarFp.v1UsersProvidersList(isAvailable, isVerifiedProvider, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1UsersProvidersList(isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedServiceProviderList> {
+            return localVarFp.v1UsersProvidersList(isVerifiedProvider, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Task history for users (orders they created or worked on).
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersTaskHistoryList(ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedOrderList> {
+            return localVarFp.v1UsersTaskHistoryList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
- * Request parameters for v1AnalyticsActivitiesCreateCreate operation in V1Api.
+ * V1Api - interface
  * @export
- * @interface V1ApiV1AnalyticsActivitiesCreateCreateRequest
+ * @interface V1Api
  */
-export interface V1ApiV1AnalyticsActivitiesCreateCreateRequest {
+export interface V1ApiInterface {
     /**
-     * 
-     * @type {UserActivityCreate}
-     * @memberof V1ApiV1AnalyticsActivitiesCreateCreate
+     * Get dashboard overview data.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly userActivityCreate: UserActivityCreate
-}
-
-/**
- * Request parameters for v1AnalyticsActivitiesList operation in V1Api.
- * @export
- * @interface V1ApiV1AnalyticsActivitiesListRequest
- */
-export interface V1ApiV1AnalyticsActivitiesListRequest {
-    /**
-     * * &#x60;login&#x60; - Login * &#x60;logout&#x60; - Logout * &#x60;order_created&#x60; - Order Created * &#x60;order_viewed&#x60; - Order Viewed * &#x60;bid_submitted&#x60; - Bid Submitted * &#x60;chat_message&#x60; - Chat Message * &#x60;payment_made&#x60; - Payment Made * &#x60;profile_updated&#x60; - Profile Updated * &#x60;search_performed&#x60; - Search Performed * &#x60;service_viewed&#x60; - Service Viewed
-     * @type {'bid_submitted' | 'chat_message' | 'login' | 'logout' | 'order_created' | 'order_viewed' | 'payment_made' | 'profile_updated' | 'search_performed' | 'service_viewed'}
-     * @memberof V1ApiV1AnalyticsActivitiesList
-     */
-    readonly activityType?: 'bid_submitted' | 'chat_message' | 'login' | 'logout' | 'order_created' | 'order_viewed' | 'payment_made' | 'profile_updated' | 'search_performed' | 'service_viewed'
+    v1AnalyticsDashboardRetrieve(options?: AxiosRequestConfig): AxiosPromise<DashboardResponse>;
 
     /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1AnalyticsActivitiesList
+     * Authenticate user with Firebase ID token or register new user if verified.
+     * @param {FireBaseAuth} fireBaseAuth 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly ipAddress?: string
+    v1AuthFirebaseCreate(fireBaseAuth: FireBaseAuth, options?: AxiosRequestConfig): AxiosPromise<FireBaseAuth>;
 
     /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1AnalyticsActivitiesList
+     * User logout view - enhanced version of api_users LogOutView
+     * @param {LogoutResponse} logoutResponse 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly ordering?: string
+    v1AuthLogoutCreate(logoutResponse: LogoutResponse, options?: AxiosRequestConfig): AxiosPromise<LogoutResponse>;
 
     /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1AnalyticsActivitiesList
+     * Mobile-optimized view for chat conversation list.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly page?: number
+    v1ChatConversationsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedChatConversationList>;
 
     /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1AnalyticsActivitiesList
+     * Mobile-optimized view for chat conversation details with messages.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly pageSize?: number
+    v1ChatConversationsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<ChatConversationDetail>;
 
     /**
-     * A search term.
-     * @type {string}
-     * @memberof V1ApiV1AnalyticsActivitiesList
+     * Send a message to a chat room.
+     * @param {number} id 
+     * @param {ChatSendMessage} chatSendMessage 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly search?: string
+    v1ChatConversationsSendCreate(id: number, chatSendMessage: ChatSendMessage, options?: AxiosRequestConfig): AxiosPromise<ChatSendMessage>;
 
     /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1AnalyticsActivitiesList
+     * Get WebSocket connection info for the user.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly user?: number
-}
-
-/**
- * Request parameters for v1AnalyticsBusinessCreateCreate operation in V1Api.
- * @export
- * @interface V1ApiV1AnalyticsBusinessCreateCreateRequest
- */
-export interface V1ApiV1AnalyticsBusinessCreateCreateRequest {
-    /**
-     * 
-     * @type {BusinessMetricsCreate}
-     * @memberof V1ApiV1AnalyticsBusinessCreateCreate
-     */
-    readonly businessMetricsCreate: BusinessMetricsCreate
-}
-
-/**
- * Request parameters for v1AnalyticsBusinessList operation in V1Api.
- * @export
- * @interface V1ApiV1AnalyticsBusinessListRequest
- */
-export interface V1ApiV1AnalyticsBusinessListRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1AnalyticsBusinessList
-     */
-    readonly date?: string
+    v1ChatWebsocketInfoRetrieve(options?: AxiosRequestConfig): AxiosPromise<WebSocketInfo>;
 
     /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1AnalyticsBusinessList
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {boolean} [isActive] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {'all' | 'android' | 'ios' | 'web'} [platform] * &#x60;android&#x60; - Android * &#x60;ios&#x60; - iOS * &#x60;web&#x60; - Web * &#x60;all&#x60; - All Platforms
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly ordering?: string
+    v1CoreAppVersionsList(isActive?: boolean, ordering?: string, page?: number, pageSize?: number, platform?: 'all' | 'android' | 'ios' | 'web', search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedAppVersionList>;
 
     /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1AnalyticsBusinessList
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {boolean} [isActive] 
+     * @param {boolean} [isDefault] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly page?: number
+    v1CoreLanguagesList(isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedLanguageList>;
 
     /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1AnalyticsBusinessList
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {string} [country] 
+     * @param {boolean} [isActive] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {string} [state] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly pageSize?: number
-}
-
-/**
- * Request parameters for v1AnalyticsCategoriesCreateCreate operation in V1Api.
- * @export
- * @interface V1ApiV1AnalyticsCategoriesCreateCreateRequest
- */
-export interface V1ApiV1AnalyticsCategoriesCreateCreateRequest {
-    /**
-     * 
-     * @type {ServiceCategoryAnalyticsCreate}
-     * @memberof V1ApiV1AnalyticsCategoriesCreateCreate
-     */
-    readonly serviceCategoryAnalyticsCreate: ServiceCategoryAnalyticsCreate
-}
-
-/**
- * Request parameters for v1AnalyticsCategoriesList operation in V1Api.
- * @export
- * @interface V1ApiV1AnalyticsCategoriesListRequest
- */
-export interface V1ApiV1AnalyticsCategoriesListRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1AnalyticsCategoriesList
-     */
-    readonly category?: number
+    v1CoreServiceAreasList(country?: string, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, state?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceAreaList>;
 
     /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1AnalyticsCategoriesList
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {boolean} [featured] 
+     * @param {boolean} [isActive] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly date?: string
+    v1CoreServiceCategoriesList(featured?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceCategoryList>;
 
     /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1AnalyticsCategoriesList
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} [category] 
+     * @param {boolean} [featured] 
+     * @param {boolean} [isActive] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly ordering?: string
+    v1CoreServiceSubcategoriesList(category?: number, featured?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceSubcategoryList>;
 
     /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1AnalyticsCategoriesList
+     * List support FAQ items.
+     * @param {'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist'} [category] * &#x60;general&#x60; - General * &#x60;specialist&#x60; - Specialist * &#x60;reviews&#x60; - Reviews * &#x60;account&#x60; - Account * &#x60;search&#x60; - Найти * &#x60;safety&#x60; - Safety
+     * @param {boolean} [isActive] 
+     * @param {boolean} [isPopular] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly page?: number
+    v1CoreSupportFaqList(category?: 'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist', isActive?: boolean, isPopular?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedSupportFAQList>;
 
     /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1AnalyticsCategoriesList
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {string} [category] 
+     * @param {boolean} [isPublic] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly pageSize?: number
-}
-
-/**
- * Request parameters for v1AnalyticsOrdersCreateCreate operation in V1Api.
- * @export
- * @interface V1ApiV1AnalyticsOrdersCreateCreateRequest
- */
-export interface V1ApiV1AnalyticsOrdersCreateCreateRequest {
-    /**
-     * 
-     * @type {OrderAnalyticsCreate}
-     * @memberof V1ApiV1AnalyticsOrdersCreateCreate
-     */
-    readonly orderAnalyticsCreate: OrderAnalyticsCreate
-}
-
-/**
- * Request parameters for v1AnalyticsOrdersList operation in V1Api.
- * @export
- * @interface V1ApiV1AnalyticsOrdersListRequest
- */
-export interface V1ApiV1AnalyticsOrdersListRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1AnalyticsOrdersList
-     */
-    readonly date?: string
+    v1CoreSystemSettingsList(category?: string, isPublic?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedSystemSettingsList>;
 
     /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1AnalyticsOrdersList
+     * Get notification counts for current user.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly ordering?: string
+    v1NotificationsCountRetrieve(options?: AxiosRequestConfig): AxiosPromise<Notification>;
 
     /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1AnalyticsOrdersList
+     * Create new notifications (admin only).
+     * @param {NotificationCreate} notificationCreate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly page?: number
+    v1NotificationsCreateCreate(notificationCreate: NotificationCreate, options?: AxiosRequestConfig): AxiosPromise<NotificationCreate>;
 
     /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1AnalyticsOrdersList
+     * List notifications for the current user.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly pageSize?: number
-}
-
-/**
- * Request parameters for v1AnalyticsPerformanceList operation in V1Api.
- * @export
- * @interface V1ApiV1AnalyticsPerformanceListRequest
- */
-export interface V1ApiV1AnalyticsPerformanceListRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1AnalyticsPerformanceList
-     */
-    readonly date?: string
+    v1NotificationsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedNotificationList>;
 
     /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1AnalyticsPerformanceList
+     * Mark all notifications as read for current user.
+     * @param {Notification} notification 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly ordering?: string
+    v1NotificationsMarkAllReadCreate(notification: Notification, options?: AxiosRequestConfig): AxiosPromise<Notification>;
 
     /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1AnalyticsPerformanceList
+     * Retrieve and update individual notifications.
+     * @param {number} id 
+     * @param {PatchedNotificationUpdate} [patchedNotificationUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly page?: number
+    v1NotificationsPartialUpdate(id: number, patchedNotificationUpdate?: PatchedNotificationUpdate, options?: AxiosRequestConfig): AxiosPromise<NotificationUpdate>;
 
     /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1AnalyticsPerformanceList
+     * Get recent notifications (last 7 days).
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly pageSize?: number
+    v1NotificationsRecentList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedNotificationList>;
 
     /**
-     * * &#x60;hourly&#x60; - Hourly * &#x60;daily&#x60; - Daily * &#x60;weekly&#x60; - Weekly * &#x60;monthly&#x60; - Monthly
-     * @type {'daily' | 'hourly' | 'monthly' | 'weekly'}
-     * @memberof V1ApiV1AnalyticsPerformanceList
+     * Retrieve and update individual notifications.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
      */
-    readonly timePeriod?: 'daily' | 'hourly' | 'monthly' | 'weekly'
+    v1NotificationsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<Notification>;
+
+    /**
+     * Get unread notifications for current user.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1NotificationsUnreadList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedNotificationList>;
+
+    /**
+     * Retrieve and update individual notifications.
+     * @param {number} id 
+     * @param {NotificationUpdate} [notificationUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1NotificationsUpdate(id: number, notificationUpdate?: NotificationUpdate, options?: AxiosRequestConfig): AxiosPromise<NotificationUpdate>;
+
+    /**
+     * List all order assignments (admin view).
+     * @param {number} [order] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {number} [provider] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersAssignmentsList(order?: number, ordering?: string, page?: number, pageSize?: number, provider?: number, options?: AxiosRequestConfig): AxiosPromise<PaginatedOrderAssignmentList>;
+
+    /**
+     * View and update order assignment details.
+     * @param {number} id 
+     * @param {PatchedOrderAssignment} [patchedOrderAssignment] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersAssignmentsPartialUpdate(id: number, patchedOrderAssignment?: PatchedOrderAssignment, options?: AxiosRequestConfig): AxiosPromise<OrderAssignment>;
+
+    /**
+     * View and update order assignment details.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersAssignmentsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<OrderAssignment>;
+
+    /**
+     * View and update order assignment details.
+     * @param {number} id 
+     * @param {OrderAssignment} orderAssignment 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersAssignmentsUpdate(id: number, orderAssignment: OrderAssignment, options?: AxiosRequestConfig): AxiosPromise<OrderAssignment>;
+
+    /**
+     * Accept a bid and create order assignment.
+     * @param {number} bidId 
+     * @param {BidAction} [bidAction] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersBidsAcceptCreate(bidId: number, bidAction?: BidAction, options?: AxiosRequestConfig): AxiosPromise<BidAction>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} orderId 
+     * @param {BidCreateUpdate} bidCreateUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersBidsCreate(orderId: number, bidCreateUpdate: BidCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<BidCreateUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersBidsDestroy(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * List all bids (admin view).
+     * @param {boolean} [isNegotiable] 
+     * @param {number} [order] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {'accepted' | 'pending' | 'rejected' | 'withdrawn'} [status] * &#x60;pending&#x60; - Pending * &#x60;accepted&#x60; - Accepted * &#x60;rejected&#x60; - Rejected * &#x60;withdrawn&#x60; - Withdrawn
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersBidsList(isNegotiable?: boolean, order?: number, ordering?: string, page?: number, pageSize?: number, status?: 'accepted' | 'pending' | 'rejected' | 'withdrawn', options?: AxiosRequestConfig): AxiosPromise<PaginatedBidList>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {PatchedBidCreateUpdate} [patchedBidCreateUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersBidsPartialUpdate(id: number, patchedBidCreateUpdate?: PatchedBidCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<BidCreateUpdate>;
+
+    /**
+     * Reject a bid.
+     * @param {number} bidId 
+     * @param {BidAction} [bidAction] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersBidsRejectCreate(bidId: number, bidAction?: BidAction, options?: AxiosRequestConfig): AxiosPromise<BidAction>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersBidsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<Bid>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {BidCreateUpdate} bidCreateUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersBidsUpdate(id: number, bidCreateUpdate: BidCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<BidCreateUpdate>;
+
+    /**
+     * Withdraw a bid (by provider).
+     * @param {number} bidId 
+     * @param {BidAction} [bidAction] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersBidsWithdrawCreate(bidId: number, bidAction?: BidAction, options?: AxiosRequestConfig): AxiosPromise<BidAction>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {OrderCreate} orderCreate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersCreateCreate(orderCreate: OrderCreate, options?: AxiosRequestConfig): AxiosPromise<OrderCreate>;
+
+    /**
+     * List all orders (admin view).
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {number} [serviceSubcategory] 
+     * @param {'assigned' | 'bidding' | 'cancelled' | 'completed' | 'disputed' | 'draft' | 'in_progress' | 'published'} [status] * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;bidding&#x60; - Bidding * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled * &#x60;disputed&#x60; - Disputed
+     * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersList(ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategory?: number, status?: 'assigned' | 'bidding' | 'cancelled' | 'completed' | 'disputed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): AxiosPromise<PaginatedOrderList>;
+
+    /**
+     * Get current user\'s assignments (as service provider).
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersMyAssignmentsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): AxiosPromise<PaginatedOrderAssignmentList>;
+
+    /**
+     * Get current user\'s bids (as service provider).
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersMyBidsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): AxiosPromise<PaginatedBidList>;
+
+    /**
+     * Get current user\'s orders (as client).
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersMyList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedOrderList>;
+
+    /**
+     * Get assignments for current user\'s orders (as client).
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersMyOrdersAssignmentsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): AxiosPromise<PaginatedOrderAssignmentList>;
+
+    /**
+     * Get bids for current user\'s orders (as client).
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersMyOrdersBidsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): AxiosPromise<PaginatedBidList>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {PatchedOrderUpdate} [patchedOrderUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersPartialUpdate(id: number, patchedOrderUpdate?: PatchedOrderUpdate, options?: AxiosRequestConfig): AxiosPromise<OrderUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<Order>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {OrderUpdate} orderUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1OrdersUpdate(id: number, orderUpdate: OrderUpdate, options?: AxiosRequestConfig): AxiosPromise<OrderUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {PaymentCreate} paymentCreate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsCreateCreate(paymentCreate: PaymentCreate, options?: AxiosRequestConfig): AxiosPromise<PaymentCreate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {InvoiceCreate} invoiceCreate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsInvoicesCreateCreate(invoiceCreate: InvoiceCreate, options?: AxiosRequestConfig): AxiosPromise<InvoiceCreate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsInvoicesList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): AxiosPromise<PaginatedInvoiceList>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsInvoicesRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<Invoice>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedPaymentList>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {PaymentMethodCreate} paymentMethodCreate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsMethodsCreateCreate(paymentMethodCreate: PaymentMethodCreate, options?: AxiosRequestConfig): AxiosPromise<PaymentMethodCreate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsMethodsDestroy(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsMethodsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): AxiosPromise<PaginatedPaymentMethodList>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {PatchedPaymentMethodUpdate} [patchedPaymentMethodUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsMethodsPartialUpdate(id: number, patchedPaymentMethodUpdate?: PatchedPaymentMethodUpdate, options?: AxiosRequestConfig): AxiosPromise<PaymentMethodUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsMethodsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<PaymentMethod>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {PaymentMethodUpdate} [paymentMethodUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsMethodsUpdate(id: number, paymentMethodUpdate?: PaymentMethodUpdate, options?: AxiosRequestConfig): AxiosPromise<PaymentMethodUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {PatchedPaymentCreate} [patchedPaymentCreate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsPartialUpdate(id: number, patchedPaymentCreate?: PatchedPaymentCreate, options?: AxiosRequestConfig): AxiosPromise<PaymentCreate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<Payment>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {PaymentCreate} paymentCreate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsUpdate(id: number, paymentCreate: PaymentCreate, options?: AxiosRequestConfig): AxiosPromise<PaymentCreate>;
+
+    /**
+     * List webhook events.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsWebhooksEventsRetrieve(options?: AxiosRequestConfig): AxiosPromise<StripeWebhookEvent>;
+
+    /**
+     * Retry processing a webhook event.
+     * @param {number} eventId 
+     * @param {WebhookRetryResponse} webhookRetryResponse 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsWebhooksEventsRetryCreate(eventId: number, webhookRetryResponse: WebhookRetryResponse, options?: AxiosRequestConfig): AxiosPromise<WebhookRetryResponse>;
+
+    /**
+     * API view for Stripe webhook handling.
+     * @param {WebhookResponse} webhookResponse 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1PaymentsWebhooksStripeDrfCreate(webhookResponse: WebhookResponse, options?: AxiosRequestConfig): AxiosPromise<WebhookResponse>;
+
+    /**
+     * Upload profile image
+     * @param {UserUpdate} [userUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ProfileCreate(userUpdate?: UserUpdate, options?: AxiosRequestConfig): AxiosPromise<UserUpdate>;
+
+    /**
+     * User profile view with image upload
+     * @param {PatchedUserUpdate} [patchedUserUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ProfilePartialUpdate(patchedUserUpdate?: PatchedUserUpdate, options?: AxiosRequestConfig): AxiosPromise<UserUpdate>;
+
+    /**
+     * User profile view with image upload
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ProfileRetrieve(options?: AxiosRequestConfig): AxiosPromise<UserProfile>;
+
+    /**
+     * User profile view with image upload
+     * @param {UserUpdate} [userUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ProfileUpdate(userUpdate?: UserUpdate, options?: AxiosRequestConfig): AxiosPromise<UserUpdate>;
+
+    /**
+     * Get review analytics.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsAnalyticsRetrieve(options?: AxiosRequestConfig): AxiosPromise<ReviewAnalytics>;
+
+    /**
+     * List and create reviews.
+     * @param {ReviewCreate} reviewCreate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsCreate(reviewCreate: ReviewCreate, options?: AxiosRequestConfig): AxiosPromise<ReviewCreate>;
+
+    /**
+     * Retrieve, update, and delete specific review.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsDestroy(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * List and create reviews.
+     * @param {boolean} [isVerified] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [overallRating] 
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsList(isVerified?: boolean, ordering?: string, overallRating?: number, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedReviewList>;
+
+    /**
+     * Get reviews for a specific order.
+     * @param {number} orderId 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsOrderList(orderId: number, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedReviewList>;
+
+    /**
+     * Retrieve, update, and delete specific review.
+     * @param {number} id 
+     * @param {PatchedReviewUpdate} [patchedReviewUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsPartialUpdate(id: number, patchedReviewUpdate?: PatchedReviewUpdate, options?: AxiosRequestConfig): AxiosPromise<ReviewUpdate>;
+
+    /**
+     * Get reviews for a specific service provider.
+     * @param {number} providerId 
+     * @param {boolean} [isVerified] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [overallRating] 
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsProviderList(providerId: number, isVerified?: boolean, ordering?: string, overallRating?: number, page?: number, pageSize?: number, options?: AxiosRequestConfig): AxiosPromise<PaginatedReviewList>;
+
+    /**
+     * Retrieve, update, and delete specific review.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<Review>;
+
+    /**
+     * Retrieve, update, and delete specific review.
+     * @param {number} id 
+     * @param {ReviewUpdate} reviewUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsUpdate(id: number, reviewUpdate: ReviewUpdate, options?: AxiosRequestConfig): AxiosPromise<ReviewUpdate>;
+
+    /**
+     * Simple global search across all content types.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1SearchGlobalRetrieve(options?: AxiosRequestConfig): AxiosPromise<GlobalSearchResponse>;
+
+    /**
+     * Search specifically for orders (job vacancies).
+     * @param {string} [city] Filter by city
+     * @param {number} [maxBudget] Maximum budget
+     * @param {number} [minBudget] Minimum budget
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [q] Search query
+     * @param {number} [serviceCategory] Filter by service category ID
+     * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] Filter by urgency level  * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1SearchOrdersList(city?: string, maxBudget?: number, minBudget?: number, ordering?: string, page?: number, pageSize?: number, q?: string, serviceCategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): AxiosPromise<PaginatedOrderList>;
+
+    /**
+     * Search specifically for service providers.
+     * @param {string} [city] Filter by city
+     * @param {number} [minRating] Minimum rating
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [q] Search query
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1SearchProvidersList(city?: string, minRating?: number, ordering?: string, page?: number, pageSize?: number, q?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceProviderList>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {ClientUpdate} [clientUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersClientCreateCreate(clientUpdate?: ClientUpdate, options?: AxiosRequestConfig): AxiosPromise<ClientUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {PatchedClientUpdate} [patchedClientUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersClientPartialUpdate(patchedClientUpdate?: PatchedClientUpdate, options?: AxiosRequestConfig): AxiosPromise<ClientUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersClientRetrieve(options?: AxiosRequestConfig): AxiosPromise<Client>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {ClientUpdate} [clientUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersClientUpdate(clientUpdate?: ClientUpdate, options?: AxiosRequestConfig): AxiosPromise<ClientUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {ClientUpdate} [clientUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersClientUpdateCreate(clientUpdate?: ClientUpdate, options?: AxiosRequestConfig): AxiosPromise<ClientUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {string} [createdAt] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersClientsList(createdAt?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedClientList>;
+
+    /**
+     * List all users - not in api_users, useful for admin
+     * @param {boolean} [blocked] 
+     * @param {boolean} [isActive] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {'free' | 'paid' | 'premium_paid'} [userType] * &#x60;free&#x60; - Бесплатный * &#x60;paid&#x60; - Оплаченный * &#x60;premium_paid&#x60; - Премиум оплаченный
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersList(blocked?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, userType?: 'free' | 'paid' | 'premium_paid', options?: AxiosRequestConfig): AxiosPromise<PaginatedUserListList>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {AdvancedProfile} [advancedProfile] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProfileAdvancedCreate(advancedProfile?: AdvancedProfile, options?: AxiosRequestConfig): AxiosPromise<AdvancedProfile>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProfileAdvancedRetrieve(options?: AxiosRequestConfig): AxiosPromise<AdvancedProfile>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {PatchedUserProfileUpdate} [patchedUserProfileUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProfilePartialUpdate(patchedUserProfileUpdate?: PatchedUserProfileUpdate, options?: AxiosRequestConfig): AxiosPromise<UserProfileUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProfileRetrieve(options?: AxiosRequestConfig): AxiosPromise<UserProfileDetail>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {UserProfileUpdate} [userProfileUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProfileUpdate(userProfileUpdate?: UserProfileUpdate, options?: AxiosRequestConfig): AxiosPromise<UserProfileUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProviderCreateCreate(serviceProviderUpdate?: ServiceProviderUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceProviderUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {PatchedServiceProviderUpdate} [patchedServiceProviderUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProviderPartialUpdate(patchedServiceProviderUpdate?: PatchedServiceProviderUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceProviderUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProviderRetrieve(options?: AxiosRequestConfig): AxiosPromise<ServiceProvider>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProviderUpdate(serviceProviderUpdate?: ServiceProviderUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceProviderUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProviderUpdateCreate(serviceProviderUpdate?: ServiceProviderUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceProviderUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {PatchedServiceProviderUpdate} [patchedServiceProviderUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProvidersDetailsPartialUpdate(id: number, patchedServiceProviderUpdate?: PatchedServiceProviderUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceProviderUpdate>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProvidersDetailsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<ServiceProvider>;
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {number} id 
+     * @param {ServiceProviderUpdate} [serviceProviderUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProvidersDetailsUpdate(id: number, serviceProviderUpdate?: ServiceProviderUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceProviderUpdate>;
+
+    /**
+     * Featured service providers for mobile app.
+     * @param {boolean} [isAvailable] 
+     * @param {boolean} [isVerifiedProvider] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProvidersFeaturedList(isAvailable?: boolean, isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceProviderList>;
+
+    /**
+     * List all available service providers with search and filtering.
+     * @param {boolean} [isVerifiedProvider] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProvidersList(isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceProviderList>;
+
+    /**
+     * Task history for users (orders they created or worked on).
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersTaskHistoryList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): AxiosPromise<PaginatedOrderList>;
+
 }
 
 /**
@@ -14106,332 +12516,73 @@ export interface V1ApiV1AuthLogoutCreateRequest {
 }
 
 /**
- * Request parameters for v1ChatAttachmentsCreateCreate operation in V1Api.
+ * Request parameters for v1ChatConversationsList operation in V1Api.
  * @export
- * @interface V1ApiV1ChatAttachmentsCreateCreateRequest
+ * @interface V1ApiV1ChatConversationsListRequest
  */
-export interface V1ApiV1ChatAttachmentsCreateCreateRequest {
-    /**
-     * 
-     * @type {ChatAttachmentCreate}
-     * @memberof V1ApiV1ChatAttachmentsCreateCreate
-     */
-    readonly chatAttachmentCreate: ChatAttachmentCreate
-}
-
-/**
- * Request parameters for v1ChatAttachmentsDestroy operation in V1Api.
- * @export
- * @interface V1ApiV1ChatAttachmentsDestroyRequest
- */
-export interface V1ApiV1ChatAttachmentsDestroyRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1ChatAttachmentsDestroy
-     */
-    readonly id: number
-}
-
-/**
- * Request parameters for v1ChatAttachmentsList operation in V1Api.
- * @export
- * @interface V1ApiV1ChatAttachmentsListRequest
- */
-export interface V1ApiV1ChatAttachmentsListRequest {
+export interface V1ApiV1ChatConversationsListRequest {
     /**
      * Which field to use when ordering the results.
      * @type {string}
-     * @memberof V1ApiV1ChatAttachmentsList
+     * @memberof V1ApiV1ChatConversationsList
      */
     readonly ordering?: string
 
     /**
      * A page number within the paginated result set.
      * @type {number}
-     * @memberof V1ApiV1ChatAttachmentsList
+     * @memberof V1ApiV1ChatConversationsList
      */
     readonly page?: number
 
     /**
      * Number of results to return per page.
      * @type {number}
-     * @memberof V1ApiV1ChatAttachmentsList
-     */
-    readonly pageSize?: number
-}
-
-/**
- * Request parameters for v1ChatAttachmentsRetrieve operation in V1Api.
- * @export
- * @interface V1ApiV1ChatAttachmentsRetrieveRequest
- */
-export interface V1ApiV1ChatAttachmentsRetrieveRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1ChatAttachmentsRetrieve
-     */
-    readonly id: number
-}
-
-/**
- * Request parameters for v1ChatMessagesCreateCreate operation in V1Api.
- * @export
- * @interface V1ApiV1ChatMessagesCreateCreateRequest
- */
-export interface V1ApiV1ChatMessagesCreateCreateRequest {
-    /**
-     * 
-     * @type {MessageCreate}
-     * @memberof V1ApiV1ChatMessagesCreateCreate
-     */
-    readonly messageCreate: MessageCreate
-}
-
-/**
- * Request parameters for v1ChatMessagesDestroy operation in V1Api.
- * @export
- * @interface V1ApiV1ChatMessagesDestroyRequest
- */
-export interface V1ApiV1ChatMessagesDestroyRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1ChatMessagesDestroy
-     */
-    readonly id: number
-}
-
-/**
- * Request parameters for v1ChatMessagesList operation in V1Api.
- * @export
- * @interface V1ApiV1ChatMessagesListRequest
- */
-export interface V1ApiV1ChatMessagesListRequest {
-    /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1ChatMessagesList
-     */
-    readonly ordering?: string
-
-    /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1ChatMessagesList
-     */
-    readonly page?: number
-
-    /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1ChatMessagesList
-     */
-    readonly pageSize?: number
-}
-
-/**
- * Request parameters for v1ChatMessagesPartialUpdate operation in V1Api.
- * @export
- * @interface V1ApiV1ChatMessagesPartialUpdateRequest
- */
-export interface V1ApiV1ChatMessagesPartialUpdateRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1ChatMessagesPartialUpdate
-     */
-    readonly id: number
-
-    /**
-     * 
-     * @type {PatchedMessageUpdate}
-     * @memberof V1ApiV1ChatMessagesPartialUpdate
-     */
-    readonly patchedMessageUpdate?: PatchedMessageUpdate
-}
-
-/**
- * Request parameters for v1ChatMessagesRetrieve operation in V1Api.
- * @export
- * @interface V1ApiV1ChatMessagesRetrieveRequest
- */
-export interface V1ApiV1ChatMessagesRetrieveRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1ChatMessagesRetrieve
-     */
-    readonly id: number
-}
-
-/**
- * Request parameters for v1ChatMessagesUpdate operation in V1Api.
- * @export
- * @interface V1ApiV1ChatMessagesUpdateRequest
- */
-export interface V1ApiV1ChatMessagesUpdateRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1ChatMessagesUpdate
-     */
-    readonly id: number
-
-    /**
-     * 
-     * @type {MessageUpdate}
-     * @memberof V1ApiV1ChatMessagesUpdate
-     */
-    readonly messageUpdate: MessageUpdate
-}
-
-/**
- * Request parameters for v1ChatParticipantsCreateCreate operation in V1Api.
- * @export
- * @interface V1ApiV1ChatParticipantsCreateCreateRequest
- */
-export interface V1ApiV1ChatParticipantsCreateCreateRequest {
-    /**
-     * 
-     * @type {ChatParticipantCreate}
-     * @memberof V1ApiV1ChatParticipantsCreateCreate
-     */
-    readonly chatParticipantCreate: ChatParticipantCreate
-}
-
-/**
- * Request parameters for v1ChatParticipantsList operation in V1Api.
- * @export
- * @interface V1ApiV1ChatParticipantsListRequest
- */
-export interface V1ApiV1ChatParticipantsListRequest {
-    /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1ChatParticipantsList
-     */
-    readonly ordering?: string
-
-    /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1ChatParticipantsList
-     */
-    readonly page?: number
-
-    /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1ChatParticipantsList
-     */
-    readonly pageSize?: number
-}
-
-/**
- * Request parameters for v1ChatRoomsCreateCreate operation in V1Api.
- * @export
- * @interface V1ApiV1ChatRoomsCreateCreateRequest
- */
-export interface V1ApiV1ChatRoomsCreateCreateRequest {
-    /**
-     * 
-     * @type {ChatRoomCreate}
-     * @memberof V1ApiV1ChatRoomsCreateCreate
-     */
-    readonly chatRoomCreate: ChatRoomCreate
-}
-
-/**
- * Request parameters for v1ChatRoomsList operation in V1Api.
- * @export
- * @interface V1ApiV1ChatRoomsListRequest
- */
-export interface V1ApiV1ChatRoomsListRequest {
-    /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1ChatRoomsList
-     */
-    readonly ordering?: string
-
-    /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1ChatRoomsList
-     */
-    readonly page?: number
-
-    /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1ChatRoomsList
+     * @memberof V1ApiV1ChatConversationsList
      */
     readonly pageSize?: number
 
     /**
      * A search term.
      * @type {string}
-     * @memberof V1ApiV1ChatRoomsList
+     * @memberof V1ApiV1ChatConversationsList
      */
     readonly search?: string
 }
 
 /**
- * Request parameters for v1ChatRoomsPartialUpdate operation in V1Api.
+ * Request parameters for v1ChatConversationsRetrieve operation in V1Api.
  * @export
- * @interface V1ApiV1ChatRoomsPartialUpdateRequest
+ * @interface V1ApiV1ChatConversationsRetrieveRequest
  */
-export interface V1ApiV1ChatRoomsPartialUpdateRequest {
+export interface V1ApiV1ChatConversationsRetrieveRequest {
     /**
      * 
      * @type {number}
-     * @memberof V1ApiV1ChatRoomsPartialUpdate
-     */
-    readonly id: number
-
-    /**
-     * 
-     * @type {PatchedChatRoomUpdate}
-     * @memberof V1ApiV1ChatRoomsPartialUpdate
-     */
-    readonly patchedChatRoomUpdate?: PatchedChatRoomUpdate
-}
-
-/**
- * Request parameters for v1ChatRoomsRetrieve operation in V1Api.
- * @export
- * @interface V1ApiV1ChatRoomsRetrieveRequest
- */
-export interface V1ApiV1ChatRoomsRetrieveRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1ChatRoomsRetrieve
+     * @memberof V1ApiV1ChatConversationsRetrieve
      */
     readonly id: number
 }
 
 /**
- * Request parameters for v1ChatRoomsUpdate operation in V1Api.
+ * Request parameters for v1ChatConversationsSendCreate operation in V1Api.
  * @export
- * @interface V1ApiV1ChatRoomsUpdateRequest
+ * @interface V1ApiV1ChatConversationsSendCreateRequest
  */
-export interface V1ApiV1ChatRoomsUpdateRequest {
+export interface V1ApiV1ChatConversationsSendCreateRequest {
     /**
      * 
      * @type {number}
-     * @memberof V1ApiV1ChatRoomsUpdate
+     * @memberof V1ApiV1ChatConversationsSendCreate
      */
     readonly id: number
 
     /**
      * 
-     * @type {ChatRoomUpdate}
-     * @memberof V1ApiV1ChatRoomsUpdate
+     * @type {ChatSendMessage}
+     * @memberof V1ApiV1ChatConversationsSendCreate
      */
-    readonly chatRoomUpdate?: ChatRoomUpdate
+    readonly chatSendMessage: ChatSendMessage
 }
 
 /**
@@ -14694,6 +12845,62 @@ export interface V1ApiV1CoreServiceSubcategoriesListRequest {
 }
 
 /**
+ * Request parameters for v1CoreSupportFaqList operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreSupportFaqListRequest
+ */
+export interface V1ApiV1CoreSupportFaqListRequest {
+    /**
+     * * &#x60;general&#x60; - General * &#x60;specialist&#x60; - Specialist * &#x60;reviews&#x60; - Reviews * &#x60;account&#x60; - Account * &#x60;search&#x60; - Найти * &#x60;safety&#x60; - Safety
+     * @type {'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist'}
+     * @memberof V1ApiV1CoreSupportFaqList
+     */
+    readonly category?: 'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist'
+
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1CoreSupportFaqList
+     */
+    readonly isActive?: boolean
+
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1CoreSupportFaqList
+     */
+    readonly isPopular?: boolean
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1CoreSupportFaqList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1CoreSupportFaqList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1CoreSupportFaqList
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1CoreSupportFaqList
+     */
+    readonly search?: string
+}
+
+/**
  * Request parameters for v1CoreSystemSettingsList operation in V1Api.
  * @export
  * @interface V1ApiV1CoreSystemSettingsListRequest
@@ -14792,6 +12999,20 @@ export interface V1ApiV1NotificationsListRequest {
 }
 
 /**
+ * Request parameters for v1NotificationsMarkAllReadCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1NotificationsMarkAllReadCreateRequest
+ */
+export interface V1ApiV1NotificationsMarkAllReadCreateRequest {
+    /**
+     * 
+     * @type {Notification}
+     * @memberof V1ApiV1NotificationsMarkAllReadCreate
+     */
+    readonly notification: Notification
+}
+
+/**
  * Request parameters for v1NotificationsPartialUpdate operation in V1Api.
  * @export
  * @interface V1ApiV1NotificationsPartialUpdateRequest
@@ -14813,6 +13034,41 @@ export interface V1ApiV1NotificationsPartialUpdateRequest {
 }
 
 /**
+ * Request parameters for v1NotificationsRecentList operation in V1Api.
+ * @export
+ * @interface V1ApiV1NotificationsRecentListRequest
+ */
+export interface V1ApiV1NotificationsRecentListRequest {
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1NotificationsRecentList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1NotificationsRecentList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1NotificationsRecentList
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1NotificationsRecentList
+     */
+    readonly search?: string
+}
+
+/**
  * Request parameters for v1NotificationsRetrieve operation in V1Api.
  * @export
  * @interface V1ApiV1NotificationsRetrieveRequest
@@ -14827,150 +13083,38 @@ export interface V1ApiV1NotificationsRetrieveRequest {
 }
 
 /**
- * Request parameters for v1NotificationsSettingsPartialUpdate operation in V1Api.
+ * Request parameters for v1NotificationsUnreadList operation in V1Api.
  * @export
- * @interface V1ApiV1NotificationsSettingsPartialUpdateRequest
+ * @interface V1ApiV1NotificationsUnreadListRequest
  */
-export interface V1ApiV1NotificationsSettingsPartialUpdateRequest {
-    /**
-     * 
-     * @type {PatchedNotificationSettingUpdate}
-     * @memberof V1ApiV1NotificationsSettingsPartialUpdate
-     */
-    readonly patchedNotificationSettingUpdate?: PatchedNotificationSettingUpdate
-}
-
-/**
- * Request parameters for v1NotificationsSettingsUpdate operation in V1Api.
- * @export
- * @interface V1ApiV1NotificationsSettingsUpdateRequest
- */
-export interface V1ApiV1NotificationsSettingsUpdateRequest {
-    /**
-     * 
-     * @type {NotificationSettingUpdate}
-     * @memberof V1ApiV1NotificationsSettingsUpdate
-     */
-    readonly notificationSettingUpdate?: NotificationSettingUpdate
-}
-
-/**
- * Request parameters for v1NotificationsTemplatesCreateCreate operation in V1Api.
- * @export
- * @interface V1ApiV1NotificationsTemplatesCreateCreateRequest
- */
-export interface V1ApiV1NotificationsTemplatesCreateCreateRequest {
-    /**
-     * 
-     * @type {NotificationTemplateCreate}
-     * @memberof V1ApiV1NotificationsTemplatesCreateCreate
-     */
-    readonly notificationTemplateCreate: NotificationTemplateCreate
-}
-
-/**
- * Request parameters for v1NotificationsTemplatesList operation in V1Api.
- * @export
- * @interface V1ApiV1NotificationsTemplatesListRequest
- */
-export interface V1ApiV1NotificationsTemplatesListRequest {
-    /**
-     * 
-     * @type {boolean}
-     * @memberof V1ApiV1NotificationsTemplatesList
-     */
-    readonly isActive?: boolean
-
-    /**
-     * * &#x60;order_update&#x60; - Order Update * &#x60;bid_received&#x60; - Bid Received * &#x60;payment_success&#x60; - Payment Success * &#x60;payment_failed&#x60; - Payment Failed * &#x60;chat_message&#x60; - Chat Message * &#x60;system_alert&#x60; - System Alert * &#x60;promotional&#x60; - Promotional
-     * @type {'bid_received' | 'chat_message' | 'order_update' | 'payment_failed' | 'payment_success' | 'promotional' | 'system_alert'}
-     * @memberof V1ApiV1NotificationsTemplatesList
-     */
-    readonly notificationType?: 'bid_received' | 'chat_message' | 'order_update' | 'payment_failed' | 'payment_success' | 'promotional' | 'system_alert'
-
+export interface V1ApiV1NotificationsUnreadListRequest {
     /**
      * Which field to use when ordering the results.
      * @type {string}
-     * @memberof V1ApiV1NotificationsTemplatesList
+     * @memberof V1ApiV1NotificationsUnreadList
      */
     readonly ordering?: string
 
     /**
      * A page number within the paginated result set.
      * @type {number}
-     * @memberof V1ApiV1NotificationsTemplatesList
+     * @memberof V1ApiV1NotificationsUnreadList
      */
     readonly page?: number
 
     /**
      * Number of results to return per page.
      * @type {number}
-     * @memberof V1ApiV1NotificationsTemplatesList
+     * @memberof V1ApiV1NotificationsUnreadList
      */
     readonly pageSize?: number
 
     /**
      * A search term.
      * @type {string}
-     * @memberof V1ApiV1NotificationsTemplatesList
+     * @memberof V1ApiV1NotificationsUnreadList
      */
     readonly search?: string
-}
-
-/**
- * Request parameters for v1NotificationsTemplatesPartialUpdate operation in V1Api.
- * @export
- * @interface V1ApiV1NotificationsTemplatesPartialUpdateRequest
- */
-export interface V1ApiV1NotificationsTemplatesPartialUpdateRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1NotificationsTemplatesPartialUpdate
-     */
-    readonly id: number
-
-    /**
-     * 
-     * @type {PatchedNotificationTemplateUpdate}
-     * @memberof V1ApiV1NotificationsTemplatesPartialUpdate
-     */
-    readonly patchedNotificationTemplateUpdate?: PatchedNotificationTemplateUpdate
-}
-
-/**
- * Request parameters for v1NotificationsTemplatesRetrieve operation in V1Api.
- * @export
- * @interface V1ApiV1NotificationsTemplatesRetrieveRequest
- */
-export interface V1ApiV1NotificationsTemplatesRetrieveRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1NotificationsTemplatesRetrieve
-     */
-    readonly id: number
-}
-
-/**
- * Request parameters for v1NotificationsTemplatesUpdate operation in V1Api.
- * @export
- * @interface V1ApiV1NotificationsTemplatesUpdateRequest
- */
-export interface V1ApiV1NotificationsTemplatesUpdateRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1NotificationsTemplatesUpdate
-     */
-    readonly id: number
-
-    /**
-     * 
-     * @type {NotificationTemplateUpdate}
-     * @memberof V1ApiV1NotificationsTemplatesUpdate
-     */
-    readonly notificationTemplateUpdate: NotificationTemplateUpdate
 }
 
 /**
@@ -14995,38 +13139,122 @@ export interface V1ApiV1NotificationsUpdateRequest {
 }
 
 /**
- * Request parameters for v1OrdersAddonsList operation in V1Api.
+ * Request parameters for v1OrdersAssignmentsList operation in V1Api.
  * @export
- * @interface V1ApiV1OrdersAddonsListRequest
+ * @interface V1ApiV1OrdersAssignmentsListRequest
  */
-export interface V1ApiV1OrdersAddonsListRequest {
+export interface V1ApiV1OrdersAssignmentsListRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersAssignmentsList
+     */
+    readonly order?: number
+
     /**
      * Which field to use when ordering the results.
      * @type {string}
-     * @memberof V1ApiV1OrdersAddonsList
+     * @memberof V1ApiV1OrdersAssignmentsList
      */
     readonly ordering?: string
 
     /**
      * A page number within the paginated result set.
      * @type {number}
-     * @memberof V1ApiV1OrdersAddonsList
+     * @memberof V1ApiV1OrdersAssignmentsList
      */
     readonly page?: number
 
     /**
      * Number of results to return per page.
      * @type {number}
-     * @memberof V1ApiV1OrdersAddonsList
+     * @memberof V1ApiV1OrdersAssignmentsList
      */
     readonly pageSize?: number
 
     /**
-     * A search term.
-     * @type {string}
-     * @memberof V1ApiV1OrdersAddonsList
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersAssignmentsList
      */
-    readonly search?: string
+    readonly provider?: number
+}
+
+/**
+ * Request parameters for v1OrdersAssignmentsPartialUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersAssignmentsPartialUpdateRequest
+ */
+export interface V1ApiV1OrdersAssignmentsPartialUpdateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersAssignmentsPartialUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {PatchedOrderAssignment}
+     * @memberof V1ApiV1OrdersAssignmentsPartialUpdate
+     */
+    readonly patchedOrderAssignment?: PatchedOrderAssignment
+}
+
+/**
+ * Request parameters for v1OrdersAssignmentsRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersAssignmentsRetrieveRequest
+ */
+export interface V1ApiV1OrdersAssignmentsRetrieveRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersAssignmentsRetrieve
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for v1OrdersAssignmentsUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersAssignmentsUpdateRequest
+ */
+export interface V1ApiV1OrdersAssignmentsUpdateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersAssignmentsUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {OrderAssignment}
+     * @memberof V1ApiV1OrdersAssignmentsUpdate
+     */
+    readonly orderAssignment: OrderAssignment
+}
+
+/**
+ * Request parameters for v1OrdersBidsAcceptCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersBidsAcceptCreateRequest
+ */
+export interface V1ApiV1OrdersBidsAcceptCreateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersBidsAcceptCreate
+     */
+    readonly bidId: number
+
+    /**
+     * 
+     * @type {BidAction}
+     * @memberof V1ApiV1OrdersBidsAcceptCreate
+     */
+    readonly bidAction?: BidAction
 }
 
 /**
@@ -15044,10 +13272,24 @@ export interface V1ApiV1OrdersBidsCreateRequest {
 
     /**
      * 
-     * @type {BidCreate}
+     * @type {BidCreateUpdate}
      * @memberof V1ApiV1OrdersBidsCreate
      */
-    readonly bidCreate: BidCreate
+    readonly bidCreateUpdate: BidCreateUpdate
+}
+
+/**
+ * Request parameters for v1OrdersBidsDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersBidsDestroyRequest
+ */
+export interface V1ApiV1OrdersBidsDestroyRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersBidsDestroy
+     */
+    readonly id: number
 }
 
 /**
@@ -15056,6 +13298,20 @@ export interface V1ApiV1OrdersBidsCreateRequest {
  * @interface V1ApiV1OrdersBidsListRequest
  */
 export interface V1ApiV1OrdersBidsListRequest {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1OrdersBidsList
+     */
+    readonly isNegotiable?: boolean
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersBidsList
+     */
+    readonly order?: number
+
     /**
      * Which field to use when ordering the results.
      * @type {string}
@@ -15076,6 +13332,111 @@ export interface V1ApiV1OrdersBidsListRequest {
      * @memberof V1ApiV1OrdersBidsList
      */
     readonly pageSize?: number
+
+    /**
+     * * &#x60;pending&#x60; - Pending * &#x60;accepted&#x60; - Accepted * &#x60;rejected&#x60; - Rejected * &#x60;withdrawn&#x60; - Withdrawn
+     * @type {'accepted' | 'pending' | 'rejected' | 'withdrawn'}
+     * @memberof V1ApiV1OrdersBidsList
+     */
+    readonly status?: 'accepted' | 'pending' | 'rejected' | 'withdrawn'
+}
+
+/**
+ * Request parameters for v1OrdersBidsPartialUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersBidsPartialUpdateRequest
+ */
+export interface V1ApiV1OrdersBidsPartialUpdateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersBidsPartialUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {PatchedBidCreateUpdate}
+     * @memberof V1ApiV1OrdersBidsPartialUpdate
+     */
+    readonly patchedBidCreateUpdate?: PatchedBidCreateUpdate
+}
+
+/**
+ * Request parameters for v1OrdersBidsRejectCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersBidsRejectCreateRequest
+ */
+export interface V1ApiV1OrdersBidsRejectCreateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersBidsRejectCreate
+     */
+    readonly bidId: number
+
+    /**
+     * 
+     * @type {BidAction}
+     * @memberof V1ApiV1OrdersBidsRejectCreate
+     */
+    readonly bidAction?: BidAction
+}
+
+/**
+ * Request parameters for v1OrdersBidsRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersBidsRetrieveRequest
+ */
+export interface V1ApiV1OrdersBidsRetrieveRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersBidsRetrieve
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for v1OrdersBidsUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersBidsUpdateRequest
+ */
+export interface V1ApiV1OrdersBidsUpdateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersBidsUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {BidCreateUpdate}
+     * @memberof V1ApiV1OrdersBidsUpdate
+     */
+    readonly bidCreateUpdate: BidCreateUpdate
+}
+
+/**
+ * Request parameters for v1OrdersBidsWithdrawCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersBidsWithdrawCreateRequest
+ */
+export interface V1ApiV1OrdersBidsWithdrawCreateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersBidsWithdrawCreate
+     */
+    readonly bidId: number
+
+    /**
+     * 
+     * @type {BidAction}
+     * @memberof V1ApiV1OrdersBidsWithdrawCreate
+     */
+    readonly bidAction?: BidAction
 }
 
 /**
@@ -15090,111 +13451,6 @@ export interface V1ApiV1OrdersCreateCreateRequest {
      * @memberof V1ApiV1OrdersCreateCreate
      */
     readonly orderCreate: OrderCreate
-}
-
-/**
- * Request parameters for v1OrdersDisputesCreate operation in V1Api.
- * @export
- * @interface V1ApiV1OrdersDisputesCreateRequest
- */
-export interface V1ApiV1OrdersDisputesCreateRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1OrdersDisputesCreate
-     */
-    readonly orderId: number
-
-    /**
-     * 
-     * @type {OrderDisputeCreate}
-     * @memberof V1ApiV1OrdersDisputesCreate
-     */
-    readonly orderDisputeCreate: OrderDisputeCreate
-}
-
-/**
- * Request parameters for v1OrdersDisputesList operation in V1Api.
- * @export
- * @interface V1ApiV1OrdersDisputesListRequest
- */
-export interface V1ApiV1OrdersDisputesListRequest {
-    /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1OrdersDisputesList
-     */
-    readonly ordering?: string
-
-    /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1OrdersDisputesList
-     */
-    readonly page?: number
-
-    /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1OrdersDisputesList
-     */
-    readonly pageSize?: number
-}
-
-/**
- * Request parameters for v1OrdersDisputesPartialUpdate operation in V1Api.
- * @export
- * @interface V1ApiV1OrdersDisputesPartialUpdateRequest
- */
-export interface V1ApiV1OrdersDisputesPartialUpdateRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1OrdersDisputesPartialUpdate
-     */
-    readonly id: number
-
-    /**
-     * 
-     * @type {PatchedOrderDisputeUpdate}
-     * @memberof V1ApiV1OrdersDisputesPartialUpdate
-     */
-    readonly patchedOrderDisputeUpdate?: PatchedOrderDisputeUpdate
-}
-
-/**
- * Request parameters for v1OrdersDisputesRetrieve operation in V1Api.
- * @export
- * @interface V1ApiV1OrdersDisputesRetrieveRequest
- */
-export interface V1ApiV1OrdersDisputesRetrieveRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1OrdersDisputesRetrieve
-     */
-    readonly id: number
-}
-
-/**
- * Request parameters for v1OrdersDisputesUpdate operation in V1Api.
- * @export
- * @interface V1ApiV1OrdersDisputesUpdateRequest
- */
-export interface V1ApiV1OrdersDisputesUpdateRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1OrdersDisputesUpdate
-     */
-    readonly id: number
-
-    /**
-     * 
-     * @type {OrderDisputeUpdate}
-     * @memberof V1ApiV1OrdersDisputesUpdate
-     */
-    readonly orderDisputeUpdate?: OrderDisputeUpdate
 }
 
 /**
@@ -15230,6 +13486,174 @@ export interface V1ApiV1OrdersListRequest {
      * @memberof V1ApiV1OrdersList
      */
     readonly search?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1OrdersList
+     */
+    readonly serviceSubcategory?: number
+
+    /**
+     * * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;bidding&#x60; - Bidding * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled * &#x60;disputed&#x60; - Disputed
+     * @type {'assigned' | 'bidding' | 'cancelled' | 'completed' | 'disputed' | 'draft' | 'in_progress' | 'published'}
+     * @memberof V1ApiV1OrdersList
+     */
+    readonly status?: 'assigned' | 'bidding' | 'cancelled' | 'completed' | 'disputed' | 'draft' | 'in_progress' | 'published'
+
+    /**
+     * * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+     * @type {'high' | 'low' | 'medium' | 'urgent'}
+     * @memberof V1ApiV1OrdersList
+     */
+    readonly urgency?: 'high' | 'low' | 'medium' | 'urgent'
+}
+
+/**
+ * Request parameters for v1OrdersMyAssignmentsList operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersMyAssignmentsListRequest
+ */
+export interface V1ApiV1OrdersMyAssignmentsListRequest {
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1OrdersMyAssignmentsList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1OrdersMyAssignmentsList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1OrdersMyAssignmentsList
+     */
+    readonly pageSize?: number
+}
+
+/**
+ * Request parameters for v1OrdersMyBidsList operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersMyBidsListRequest
+ */
+export interface V1ApiV1OrdersMyBidsListRequest {
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1OrdersMyBidsList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1OrdersMyBidsList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1OrdersMyBidsList
+     */
+    readonly pageSize?: number
+}
+
+/**
+ * Request parameters for v1OrdersMyList operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersMyListRequest
+ */
+export interface V1ApiV1OrdersMyListRequest {
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1OrdersMyList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1OrdersMyList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1OrdersMyList
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1OrdersMyList
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for v1OrdersMyOrdersAssignmentsList operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersMyOrdersAssignmentsListRequest
+ */
+export interface V1ApiV1OrdersMyOrdersAssignmentsListRequest {
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1OrdersMyOrdersAssignmentsList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1OrdersMyOrdersAssignmentsList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1OrdersMyOrdersAssignmentsList
+     */
+    readonly pageSize?: number
+}
+
+/**
+ * Request parameters for v1OrdersMyOrdersBidsList operation in V1Api.
+ * @export
+ * @interface V1ApiV1OrdersMyOrdersBidsListRequest
+ */
+export interface V1ApiV1OrdersMyOrdersBidsListRequest {
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1OrdersMyOrdersBidsList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1OrdersMyOrdersBidsList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1OrdersMyOrdersBidsList
+     */
+    readonly pageSize?: number
 }
 
 /**
@@ -15251,34 +13675,6 @@ export interface V1ApiV1OrdersPartialUpdateRequest {
      * @memberof V1ApiV1OrdersPartialUpdate
      */
     readonly patchedOrderUpdate?: PatchedOrderUpdate
-}
-
-/**
- * Request parameters for v1OrdersPhotosList operation in V1Api.
- * @export
- * @interface V1ApiV1OrdersPhotosListRequest
- */
-export interface V1ApiV1OrdersPhotosListRequest {
-    /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1OrdersPhotosList
-     */
-    readonly ordering?: string
-
-    /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1OrdersPhotosList
-     */
-    readonly page?: number
-
-    /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1OrdersPhotosList
-     */
-    readonly pageSize?: number
 }
 
 /**
@@ -15601,6 +13997,27 @@ export interface V1ApiV1PaymentsWebhooksEventsRetryCreateRequest {
      * @memberof V1ApiV1PaymentsWebhooksEventsRetryCreate
      */
     readonly eventId: number
+
+    /**
+     * 
+     * @type {WebhookRetryResponse}
+     * @memberof V1ApiV1PaymentsWebhooksEventsRetryCreate
+     */
+    readonly webhookRetryResponse: WebhookRetryResponse
+}
+
+/**
+ * Request parameters for v1PaymentsWebhooksStripeDrfCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1PaymentsWebhooksStripeDrfCreateRequest
+ */
+export interface V1ApiV1PaymentsWebhooksStripeDrfCreateRequest {
+    /**
+     * 
+     * @type {WebhookResponse}
+     * @memberof V1ApiV1PaymentsWebhooksStripeDrfCreate
+     */
+    readonly webhookResponse: WebhookResponse
 }
 
 /**
@@ -15614,7 +14031,7 @@ export interface V1ApiV1ProfileCreateRequest {
      * @type {UserUpdate}
      * @memberof V1ApiV1ProfileCreate
      */
-    readonly userUpdate: UserUpdate
+    readonly userUpdate?: UserUpdate
 }
 
 /**
@@ -15642,7 +14059,7 @@ export interface V1ApiV1ProfileUpdateRequest {
      * @type {UserUpdate}
      * @memberof V1ApiV1ProfileUpdate
      */
-    readonly userUpdate: UserUpdate
+    readonly userUpdate?: UserUpdate
 }
 
 /**
@@ -15870,90 +14287,6 @@ export interface V1ApiV1ReviewsUpdateRequest {
 }
 
 /**
- * Request parameters for v1SearchGlobalList operation in V1Api.
- * @export
- * @interface V1ApiV1SearchGlobalListRequest
- */
-export interface V1ApiV1SearchGlobalListRequest {
-    /**
-     * Filter by city
-     * @type {string}
-     * @memberof V1ApiV1SearchGlobalList
-     */
-    readonly city?: string
-
-    /**
-     * Maximum budget
-     * @type {number}
-     * @memberof V1ApiV1SearchGlobalList
-     */
-    readonly maxBudget?: number
-
-    /**
-     * Minimum budget
-     * @type {number}
-     * @memberof V1ApiV1SearchGlobalList
-     */
-    readonly minBudget?: number
-
-    /**
-     * Minimum rating for providers
-     * @type {number}
-     * @memberof V1ApiV1SearchGlobalList
-     */
-    readonly minRating?: number
-
-    /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1SearchGlobalList
-     */
-    readonly ordering?: string
-
-    /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1SearchGlobalList
-     */
-    readonly page?: number
-
-    /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1SearchGlobalList
-     */
-    readonly pageSize?: number
-
-    /**
-     * Search query
-     * @type {string}
-     * @memberof V1ApiV1SearchGlobalList
-     */
-    readonly q?: string
-
-    /**
-     * Filter by service category ID
-     * @type {number}
-     * @memberof V1ApiV1SearchGlobalList
-     */
-    readonly serviceCategory?: number
-
-    /**
-     * Type of search to perform  * &#x60;all&#x60; - All * &#x60;orders&#x60; - Orders * &#x60;providers&#x60; - Providers * &#x60;services&#x60; - Services
-     * @type {'all' | 'orders' | 'providers' | 'services'}
-     * @memberof V1ApiV1SearchGlobalList
-     */
-    readonly type?: 'all' | 'orders' | 'providers' | 'services'
-
-    /**
-     * Filter by urgency level  * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
-     * @type {'high' | 'low' | 'medium' | 'urgent'}
-     * @memberof V1ApiV1SearchGlobalList
-     */
-    readonly urgency?: 'high' | 'low' | 'medium' | 'urgent'
-}
-
-/**
  * Request parameters for v1SearchOrdersList operation in V1Api.
  * @export
  * @interface V1ApiV1SearchOrdersListRequest
@@ -16073,6 +14406,20 @@ export interface V1ApiV1SearchProvidersListRequest {
 }
 
 /**
+ * Request parameters for v1UsersClientCreateCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersClientCreateCreateRequest
+ */
+export interface V1ApiV1UsersClientCreateCreateRequest {
+    /**
+     * 
+     * @type {ClientUpdate}
+     * @memberof V1ApiV1UsersClientCreateCreate
+     */
+    readonly clientUpdate?: ClientUpdate
+}
+
+/**
  * Request parameters for v1UsersClientPartialUpdate operation in V1Api.
  * @export
  * @interface V1ApiV1UsersClientPartialUpdateRequest
@@ -16096,6 +14443,20 @@ export interface V1ApiV1UsersClientUpdateRequest {
      * 
      * @type {ClientUpdate}
      * @memberof V1ApiV1UsersClientUpdate
+     */
+    readonly clientUpdate?: ClientUpdate
+}
+
+/**
+ * Request parameters for v1UsersClientUpdateCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersClientUpdateCreateRequest
+ */
+export interface V1ApiV1UsersClientUpdateCreateRequest {
+    /**
+     * 
+     * @type {ClientUpdate}
+     * @memberof V1ApiV1UsersClientUpdateCreate
      */
     readonly clientUpdate?: ClientUpdate
 }
@@ -16199,6 +14560,20 @@ export interface V1ApiV1UsersListRequest {
 }
 
 /**
+ * Request parameters for v1UsersProfileAdvancedCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersProfileAdvancedCreateRequest
+ */
+export interface V1ApiV1UsersProfileAdvancedCreateRequest {
+    /**
+     * 
+     * @type {AdvancedProfile}
+     * @memberof V1ApiV1UsersProfileAdvancedCreate
+     */
+    readonly advancedProfile?: AdvancedProfile
+}
+
+/**
  * Request parameters for v1UsersProfilePartialUpdate operation in V1Api.
  * @export
  * @interface V1ApiV1UsersProfilePartialUpdateRequest
@@ -16224,6 +14599,20 @@ export interface V1ApiV1UsersProfileUpdateRequest {
      * @memberof V1ApiV1UsersProfileUpdate
      */
     readonly userProfileUpdate?: UserProfileUpdate
+}
+
+/**
+ * Request parameters for v1UsersProviderCreateCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersProviderCreateCreateRequest
+ */
+export interface V1ApiV1UsersProviderCreateCreateRequest {
+    /**
+     * 
+     * @type {ServiceProviderUpdate}
+     * @memberof V1ApiV1UsersProviderCreateCreate
+     */
+    readonly serviceProviderUpdate?: ServiceProviderUpdate
 }
 
 /**
@@ -16255,18 +14644,123 @@ export interface V1ApiV1UsersProviderUpdateRequest {
 }
 
 /**
+ * Request parameters for v1UsersProviderUpdateCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersProviderUpdateCreateRequest
+ */
+export interface V1ApiV1UsersProviderUpdateCreateRequest {
+    /**
+     * 
+     * @type {ServiceProviderUpdate}
+     * @memberof V1ApiV1UsersProviderUpdateCreate
+     */
+    readonly serviceProviderUpdate?: ServiceProviderUpdate
+}
+
+/**
+ * Request parameters for v1UsersProvidersDetailsPartialUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersProvidersDetailsPartialUpdateRequest
+ */
+export interface V1ApiV1UsersProvidersDetailsPartialUpdateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1UsersProvidersDetailsPartialUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {PatchedServiceProviderUpdate}
+     * @memberof V1ApiV1UsersProvidersDetailsPartialUpdate
+     */
+    readonly patchedServiceProviderUpdate?: PatchedServiceProviderUpdate
+}
+
+/**
+ * Request parameters for v1UsersProvidersDetailsRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersProvidersDetailsRetrieveRequest
+ */
+export interface V1ApiV1UsersProvidersDetailsRetrieveRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1UsersProvidersDetailsRetrieve
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for v1UsersProvidersDetailsUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersProvidersDetailsUpdateRequest
+ */
+export interface V1ApiV1UsersProvidersDetailsUpdateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1UsersProvidersDetailsUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {ServiceProviderUpdate}
+     * @memberof V1ApiV1UsersProvidersDetailsUpdate
+     */
+    readonly serviceProviderUpdate?: ServiceProviderUpdate
+}
+
+/**
+ * Request parameters for v1UsersProvidersFeaturedList operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersProvidersFeaturedListRequest
+ */
+export interface V1ApiV1UsersProvidersFeaturedListRequest {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1UsersProvidersFeaturedList
+     */
+    readonly isAvailable?: boolean
+
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1UsersProvidersFeaturedList
+     */
+    readonly isVerifiedProvider?: boolean
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1UsersProvidersFeaturedList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1UsersProvidersFeaturedList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1UsersProvidersFeaturedList
+     */
+    readonly pageSize?: number
+}
+
+/**
  * Request parameters for v1UsersProvidersList operation in V1Api.
  * @export
  * @interface V1ApiV1UsersProvidersListRequest
  */
 export interface V1ApiV1UsersProvidersListRequest {
-    /**
-     * 
-     * @type {boolean}
-     * @memberof V1ApiV1UsersProvidersList
-     */
-    readonly isAvailable?: boolean
-
     /**
      * 
      * @type {boolean}
@@ -16304,78 +14798,40 @@ export interface V1ApiV1UsersProvidersListRequest {
 }
 
 /**
+ * Request parameters for v1UsersTaskHistoryList operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersTaskHistoryListRequest
+ */
+export interface V1ApiV1UsersTaskHistoryListRequest {
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1UsersTaskHistoryList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1UsersTaskHistoryList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1UsersTaskHistoryList
+     */
+    readonly pageSize?: number
+}
+
+/**
  * V1Api - object-oriented interface
  * @export
  * @class V1Api
  * @extends {BaseAPI}
  */
-export class V1Api extends BaseAPI {
-    /**
-     * 
-     * @param {V1ApiV1AnalyticsActivitiesCreateCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1AnalyticsActivitiesCreateCreate(requestParameters: V1ApiV1AnalyticsActivitiesCreateCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AnalyticsActivitiesCreateCreate(requestParameters.userActivityCreate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1AnalyticsActivitiesListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1AnalyticsActivitiesList(requestParameters: V1ApiV1AnalyticsActivitiesListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AnalyticsActivitiesList(requestParameters.activityType, requestParameters.ipAddress, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, requestParameters.user, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1AnalyticsBusinessCreateCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1AnalyticsBusinessCreateCreate(requestParameters: V1ApiV1AnalyticsBusinessCreateCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AnalyticsBusinessCreateCreate(requestParameters.businessMetricsCreate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1AnalyticsBusinessListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1AnalyticsBusinessList(requestParameters: V1ApiV1AnalyticsBusinessListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AnalyticsBusinessList(requestParameters.date, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1AnalyticsCategoriesCreateCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1AnalyticsCategoriesCreateCreate(requestParameters: V1ApiV1AnalyticsCategoriesCreateCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AnalyticsCategoriesCreateCreate(requestParameters.serviceCategoryAnalyticsCreate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1AnalyticsCategoriesListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1AnalyticsCategoriesList(requestParameters: V1ApiV1AnalyticsCategoriesListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AnalyticsCategoriesList(requestParameters.category, requestParameters.date, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
-    }
-
+export class V1Api extends BaseAPI implements V1ApiInterface {
     /**
      * Get dashboard overview data.
      * @param {*} [options] Override http request option.
@@ -16384,39 +14840,6 @@ export class V1Api extends BaseAPI {
      */
     public v1AnalyticsDashboardRetrieve(options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1AnalyticsDashboardRetrieve(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1AnalyticsOrdersCreateCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1AnalyticsOrdersCreateCreate(requestParameters: V1ApiV1AnalyticsOrdersCreateCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AnalyticsOrdersCreateCreate(requestParameters.orderAnalyticsCreate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1AnalyticsOrdersListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1AnalyticsOrdersList(requestParameters: V1ApiV1AnalyticsOrdersListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AnalyticsOrdersList(requestParameters.date, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1AnalyticsPerformanceListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1AnalyticsPerformanceList(requestParameters: V1ApiV1AnalyticsPerformanceListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AnalyticsPerformanceList(requestParameters.date, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.timePeriod, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -16442,194 +14865,40 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatAttachmentsCreateCreateRequest} requestParameters Request parameters.
+     * Mobile-optimized view for chat conversation list.
+     * @param {V1ApiV1ChatConversationsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1ChatAttachmentsCreateCreate(requestParameters: V1ApiV1ChatAttachmentsCreateCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatAttachmentsCreateCreate(requestParameters.chatAttachmentCreate, options).then((request) => request(this.axios, this.basePath));
+    public v1ChatConversationsList(requestParameters: V1ApiV1ChatConversationsListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatConversationsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatAttachmentsDestroyRequest} requestParameters Request parameters.
+     * Mobile-optimized view for chat conversation details with messages.
+     * @param {V1ApiV1ChatConversationsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1ChatAttachmentsDestroy(requestParameters: V1ApiV1ChatAttachmentsDestroyRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatAttachmentsDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    public v1ChatConversationsRetrieve(requestParameters: V1ApiV1ChatConversationsRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatConversationsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * 
-     * @param {V1ApiV1ChatAttachmentsListRequest} requestParameters Request parameters.
+     * Send a message to a chat room.
+     * @param {V1ApiV1ChatConversationsSendCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1ChatAttachmentsList(requestParameters: V1ApiV1ChatAttachmentsListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatAttachmentsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
+    public v1ChatConversationsSendCreate(requestParameters: V1ApiV1ChatConversationsSendCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatConversationsSendCreate(requestParameters.id, requestParameters.chatSendMessage, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatAttachmentsRetrieveRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatAttachmentsRetrieve(requestParameters: V1ApiV1ChatAttachmentsRetrieveRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatAttachmentsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatMessagesCreateCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatMessagesCreateCreate(requestParameters: V1ApiV1ChatMessagesCreateCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatMessagesCreateCreate(requestParameters.messageCreate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatMessagesDestroyRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatMessagesDestroy(requestParameters: V1ApiV1ChatMessagesDestroyRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatMessagesDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1ChatMessagesListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatMessagesList(requestParameters: V1ApiV1ChatMessagesListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatMessagesList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatMessagesPartialUpdateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatMessagesPartialUpdate(requestParameters: V1ApiV1ChatMessagesPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatMessagesPartialUpdate(requestParameters.id, requestParameters.patchedMessageUpdate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatMessagesRetrieveRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatMessagesRetrieve(requestParameters: V1ApiV1ChatMessagesRetrieveRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatMessagesRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatMessagesUpdateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatMessagesUpdate(requestParameters: V1ApiV1ChatMessagesUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatMessagesUpdate(requestParameters.id, requestParameters.messageUpdate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatParticipantsCreateCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatParticipantsCreateCreate(requestParameters: V1ApiV1ChatParticipantsCreateCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatParticipantsCreateCreate(requestParameters.chatParticipantCreate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1ChatParticipantsListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatParticipantsList(requestParameters: V1ApiV1ChatParticipantsListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatParticipantsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatRoomsCreateCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatRoomsCreateCreate(requestParameters: V1ApiV1ChatRoomsCreateCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatRoomsCreateCreate(requestParameters.chatRoomCreate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatRoomsListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatRoomsList(requestParameters: V1ApiV1ChatRoomsListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatRoomsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatRoomsPartialUpdateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatRoomsPartialUpdate(requestParameters: V1ApiV1ChatRoomsPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatRoomsPartialUpdate(requestParameters.id, requestParameters.patchedChatRoomUpdate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatRoomsRetrieveRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatRoomsRetrieve(requestParameters: V1ApiV1ChatRoomsRetrieveRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatRoomsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1ChatRoomsUpdateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatRoomsUpdate(requestParameters: V1ApiV1ChatRoomsUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatRoomsUpdate(requestParameters.id, requestParameters.chatRoomUpdate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Get WebSocket connection information for the current user.
+     * Get WebSocket connection info for the user.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
@@ -16639,7 +14908,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1CoreAppVersionsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16650,7 +14919,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1CoreLanguagesListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16661,7 +14930,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1CoreServiceAreasListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16672,7 +14941,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1CoreServiceCategoriesListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16683,7 +14952,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1CoreServiceSubcategoriesListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16694,7 +14963,18 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * List support FAQ items.
+     * @param {V1ApiV1CoreSupportFaqListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreSupportFaqList(requestParameters: V1ApiV1CoreSupportFaqListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreSupportFaqList(requestParameters.category, requestParameters.isActive, requestParameters.isPopular, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1CoreSystemSettingsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16705,7 +14985,17 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Get notification counts for current user.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1NotificationsCountRetrieve(options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1NotificationsCountRetrieve(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Create new notifications (admin only).
      * @param {V1ApiV1NotificationsCreateCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16716,7 +15006,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * List notifications for the current user.
      * @param {V1ApiV1NotificationsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16727,7 +15017,18 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mark all notifications as read for current user.
+     * @param {V1ApiV1NotificationsMarkAllReadCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1NotificationsMarkAllReadCreate(requestParameters: V1ApiV1NotificationsMarkAllReadCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1NotificationsMarkAllReadCreate(requestParameters.notification, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Retrieve and update individual notifications.
      * @param {V1ApiV1NotificationsPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16738,7 +15039,18 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Get recent notifications (last 7 days).
+     * @param {V1ApiV1NotificationsRecentListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1NotificationsRecentList(requestParameters: V1ApiV1NotificationsRecentListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1NotificationsRecentList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Retrieve and update individual notifications.
      * @param {V1ApiV1NotificationsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16749,94 +15061,18 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
-     * @param {V1ApiV1NotificationsSettingsPartialUpdateRequest} requestParameters Request parameters.
+     * Get unread notifications for current user.
+     * @param {V1ApiV1NotificationsUnreadListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1NotificationsSettingsPartialUpdate(requestParameters: V1ApiV1NotificationsSettingsPartialUpdateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsSettingsPartialUpdate(requestParameters.patchedNotificationSettingUpdate, options).then((request) => request(this.axios, this.basePath));
+    public v1NotificationsUnreadList(requestParameters: V1ApiV1NotificationsUnreadListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1NotificationsUnreadList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1NotificationsSettingsRetrieve(options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsSettingsRetrieve(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1NotificationsSettingsUpdateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1NotificationsSettingsUpdate(requestParameters: V1ApiV1NotificationsSettingsUpdateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsSettingsUpdate(requestParameters.notificationSettingUpdate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1NotificationsTemplatesCreateCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1NotificationsTemplatesCreateCreate(requestParameters: V1ApiV1NotificationsTemplatesCreateCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsTemplatesCreateCreate(requestParameters.notificationTemplateCreate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1NotificationsTemplatesListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1NotificationsTemplatesList(requestParameters: V1ApiV1NotificationsTemplatesListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsTemplatesList(requestParameters.isActive, requestParameters.notificationType, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1NotificationsTemplatesPartialUpdateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1NotificationsTemplatesPartialUpdate(requestParameters: V1ApiV1NotificationsTemplatesPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsTemplatesPartialUpdate(requestParameters.id, requestParameters.patchedNotificationTemplateUpdate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1NotificationsTemplatesRetrieveRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1NotificationsTemplatesRetrieve(requestParameters: V1ApiV1NotificationsTemplatesRetrieveRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsTemplatesRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {V1ApiV1NotificationsTemplatesUpdateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1NotificationsTemplatesUpdate(requestParameters: V1ApiV1NotificationsTemplatesUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsTemplatesUpdate(requestParameters.id, requestParameters.notificationTemplateUpdate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
+     * Retrieve and update individual notifications.
      * @param {V1ApiV1NotificationsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -16847,14 +15083,58 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1OrdersAddonsListRequest} requestParameters Request parameters.
+     * List all order assignments (admin view).
+     * @param {V1ApiV1OrdersAssignmentsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1OrdersAddonsList(requestParameters: V1ApiV1OrdersAddonsListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1OrdersAddonsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    public v1OrdersAssignmentsList(requestParameters: V1ApiV1OrdersAssignmentsListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersAssignmentsList(requestParameters.order, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.provider, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * View and update order assignment details.
+     * @param {V1ApiV1OrdersAssignmentsPartialUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersAssignmentsPartialUpdate(requestParameters: V1ApiV1OrdersAssignmentsPartialUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersAssignmentsPartialUpdate(requestParameters.id, requestParameters.patchedOrderAssignment, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * View and update order assignment details.
+     * @param {V1ApiV1OrdersAssignmentsRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersAssignmentsRetrieve(requestParameters: V1ApiV1OrdersAssignmentsRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersAssignmentsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * View and update order assignment details.
+     * @param {V1ApiV1OrdersAssignmentsUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersAssignmentsUpdate(requestParameters: V1ApiV1OrdersAssignmentsUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersAssignmentsUpdate(requestParameters.id, requestParameters.orderAssignment, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Accept a bid and create order assignment.
+     * @param {V1ApiV1OrdersBidsAcceptCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersBidsAcceptCreate(requestParameters: V1ApiV1OrdersBidsAcceptCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersBidsAcceptCreate(requestParameters.bidId, requestParameters.bidAction, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -16865,18 +15145,84 @@ export class V1Api extends BaseAPI {
      * @memberof V1Api
      */
     public v1OrdersBidsCreate(requestParameters: V1ApiV1OrdersBidsCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1OrdersBidsCreate(requestParameters.orderId, requestParameters.bidCreate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1OrdersBidsCreate(requestParameters.orderId, requestParameters.bidCreateUpdate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Mixin to provide standardized exception handling for DRF views.
+     * @param {V1ApiV1OrdersBidsDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersBidsDestroy(requestParameters: V1ApiV1OrdersBidsDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersBidsDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * List all bids (admin view).
      * @param {V1ApiV1OrdersBidsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
     public v1OrdersBidsList(requestParameters: V1ApiV1OrdersBidsListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1OrdersBidsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1OrdersBidsList(requestParameters.isNegotiable, requestParameters.order, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.status, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {V1ApiV1OrdersBidsPartialUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersBidsPartialUpdate(requestParameters: V1ApiV1OrdersBidsPartialUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersBidsPartialUpdate(requestParameters.id, requestParameters.patchedBidCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Reject a bid.
+     * @param {V1ApiV1OrdersBidsRejectCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersBidsRejectCreate(requestParameters: V1ApiV1OrdersBidsRejectCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersBidsRejectCreate(requestParameters.bidId, requestParameters.bidAction, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {V1ApiV1OrdersBidsRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersBidsRetrieve(requestParameters: V1ApiV1OrdersBidsRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersBidsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {V1ApiV1OrdersBidsUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersBidsUpdate(requestParameters: V1ApiV1OrdersBidsUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersBidsUpdate(requestParameters.id, requestParameters.bidCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Withdraw a bid (by provider).
+     * @param {V1ApiV1OrdersBidsWithdrawCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersBidsWithdrawCreate(requestParameters: V1ApiV1OrdersBidsWithdrawCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersBidsWithdrawCreate(requestParameters.bidId, requestParameters.bidAction, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -16891,69 +15237,69 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1OrdersDisputesCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1OrdersDisputesCreate(requestParameters: V1ApiV1OrdersDisputesCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1OrdersDisputesCreate(requestParameters.orderId, requestParameters.orderDisputeCreate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1OrdersDisputesListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1OrdersDisputesList(requestParameters: V1ApiV1OrdersDisputesListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1OrdersDisputesList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1OrdersDisputesPartialUpdateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1OrdersDisputesPartialUpdate(requestParameters: V1ApiV1OrdersDisputesPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1OrdersDisputesPartialUpdate(requestParameters.id, requestParameters.patchedOrderDisputeUpdate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1OrdersDisputesRetrieveRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1OrdersDisputesRetrieve(requestParameters: V1ApiV1OrdersDisputesRetrieveRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1OrdersDisputesRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1OrdersDisputesUpdateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1OrdersDisputesUpdate(requestParameters: V1ApiV1OrdersDisputesUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1OrdersDisputesUpdate(requestParameters.id, requestParameters.orderDisputeUpdate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * List all orders (admin view).
      * @param {V1ApiV1OrdersListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
     public v1OrdersList(requestParameters: V1ApiV1OrdersListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1OrdersList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1OrdersList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, requestParameters.serviceSubcategory, requestParameters.status, requestParameters.urgency, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get current user\'s assignments (as service provider).
+     * @param {V1ApiV1OrdersMyAssignmentsListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersMyAssignmentsList(requestParameters: V1ApiV1OrdersMyAssignmentsListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersMyAssignmentsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get current user\'s bids (as service provider).
+     * @param {V1ApiV1OrdersMyBidsListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersMyBidsList(requestParameters: V1ApiV1OrdersMyBidsListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersMyBidsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get current user\'s orders (as client).
+     * @param {V1ApiV1OrdersMyListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersMyList(requestParameters: V1ApiV1OrdersMyListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersMyList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get assignments for current user\'s orders (as client).
+     * @param {V1ApiV1OrdersMyOrdersAssignmentsListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersMyOrdersAssignmentsList(requestParameters: V1ApiV1OrdersMyOrdersAssignmentsListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersMyOrdersAssignmentsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get bids for current user\'s orders (as client).
+     * @param {V1ApiV1OrdersMyOrdersBidsListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1OrdersMyOrdersBidsList(requestParameters: V1ApiV1OrdersMyOrdersBidsListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1OrdersMyOrdersBidsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -16965,17 +15311,6 @@ export class V1Api extends BaseAPI {
      */
     public v1OrdersPartialUpdate(requestParameters: V1ApiV1OrdersPartialUpdateRequest, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1OrdersPartialUpdate(requestParameters.id, requestParameters.patchedOrderUpdate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1OrdersPhotosListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1OrdersPhotosList(requestParameters: V1ApiV1OrdersPhotosListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1OrdersPhotosList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -17001,7 +15336,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Mixin to require specific group membership for class-based views.
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsCreateCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17012,7 +15347,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsInvoicesCreateCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17023,7 +15358,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsInvoicesListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17034,7 +15369,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsInvoicesRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17045,7 +15380,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Mixin to require specific group membership for class-based views.
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17056,7 +15391,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsMethodsCreateCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17067,7 +15402,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsMethodsDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17078,7 +15413,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Mixin to require specific group membership for class-based views.
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsMethodsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17089,7 +15424,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsMethodsPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17100,7 +15435,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsMethodsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17111,7 +15446,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsMethodsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17122,7 +15457,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Mixin to require specific group membership for class-based views.
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17133,7 +15468,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Mixin to require specific group membership for class-based views.
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17144,7 +15479,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Mixin to require specific group membership for class-based views.
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1PaymentsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17155,7 +15490,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * List webhook events - function-based version.
+     * List webhook events.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
@@ -17165,24 +15500,25 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Retry processing a webhook event - function-based version.
+     * Retry processing a webhook event.
      * @param {V1ApiV1PaymentsWebhooksEventsRetryCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
     public v1PaymentsWebhooksEventsRetryCreate(requestParameters: V1ApiV1PaymentsWebhooksEventsRetryCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1PaymentsWebhooksEventsRetryCreate(requestParameters.eventId, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1PaymentsWebhooksEventsRetryCreate(requestParameters.eventId, requestParameters.webhookRetryResponse, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Simple Stripe webhook handler - function-based version.
+     * API view for Stripe webhook handling.
+     * @param {V1ApiV1PaymentsWebhooksStripeDrfCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1PaymentsWebhooksStripeDrfCreate(options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1PaymentsWebhooksStripeDrfCreate(options).then((request) => request(this.axios, this.basePath));
+    public v1PaymentsWebhooksStripeDrfCreate(requestParameters: V1ApiV1PaymentsWebhooksStripeDrfCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1PaymentsWebhooksStripeDrfCreate(requestParameters.webhookResponse, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -17192,18 +15528,8 @@ export class V1Api extends BaseAPI {
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1ProfileCreate(requestParameters: V1ApiV1ProfileCreateRequest, options?: AxiosRequestConfig) {
+    public v1ProfileCreate(requestParameters: V1ApiV1ProfileCreateRequest = {}, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1ProfileCreate(requestParameters.userUpdate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Reset profile image to default by removing uploaded photo.  This clears the stored ImageField `photo`. The `photo_url` (e.g., Firebase avatar) remains unchanged. Frontend should use `photo_url` as fallback.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ProfileDestroy(options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ProfileDestroy(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -17234,7 +15560,7 @@ export class V1Api extends BaseAPI {
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1ProfileUpdate(requestParameters: V1ApiV1ProfileUpdateRequest, options?: AxiosRequestConfig) {
+    public v1ProfileUpdate(requestParameters: V1ApiV1ProfileUpdateRequest = {}, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1ProfileUpdate(requestParameters.userUpdate, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -17338,13 +15664,12 @@ export class V1Api extends BaseAPI {
 
     /**
      * Simple global search across all content types.
-     * @param {V1ApiV1SearchGlobalListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1SearchGlobalList(requestParameters: V1ApiV1SearchGlobalListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1SearchGlobalList(requestParameters.city, requestParameters.maxBudget, requestParameters.minBudget, requestParameters.minRating, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.q, requestParameters.serviceCategory, requestParameters.type, requestParameters.urgency, options).then((request) => request(this.axios, this.basePath));
+    public v1SearchGlobalRetrieve(options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1SearchGlobalRetrieve(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -17370,7 +15695,18 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {V1ApiV1UsersClientCreateCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersClientCreateCreate(requestParameters: V1ApiV1UsersClientCreateCreateRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersClientCreateCreate(requestParameters.clientUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1UsersClientPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17381,7 +15717,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
@@ -17391,7 +15727,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1UsersClientUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17402,17 +15738,18 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Create or update client profile
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {V1ApiV1UsersClientUpdateCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1UsersClientUpdateCreate(options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersClientUpdateCreate(options).then((request) => request(this.axios, this.basePath));
+    public v1UsersClientUpdateCreate(requestParameters: V1ApiV1UsersClientUpdateCreateRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersClientUpdateCreate(requestParameters.clientUpdate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1UsersClientsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17434,7 +15771,28 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {V1ApiV1UsersProfileAdvancedCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersProfileAdvancedCreate(requestParameters: V1ApiV1UsersProfileAdvancedCreateRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersProfileAdvancedCreate(requestParameters.advancedProfile, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersProfileAdvancedRetrieve(options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersProfileAdvancedRetrieve(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1UsersProfilePartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17445,7 +15803,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
@@ -17455,7 +15813,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1UsersProfileUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17466,17 +15824,18 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Create or update user profile
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {V1ApiV1UsersProviderCreateCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1UsersProfileUpdateCreate(options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersProfileUpdateCreate(options).then((request) => request(this.axios, this.basePath));
+    public v1UsersProviderCreateCreate(requestParameters: V1ApiV1UsersProviderCreateCreateRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersProviderCreateCreate(requestParameters.serviceProviderUpdate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1UsersProviderPartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17487,7 +15846,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
@@ -17497,7 +15856,7 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
      * @param {V1ApiV1UsersProviderUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -17508,24 +15867,80 @@ export class V1Api extends BaseAPI {
     }
 
     /**
-     * Create or update service provider profile
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {V1ApiV1UsersProviderUpdateCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1UsersProviderUpdateCreate(options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersProviderUpdateCreate(options).then((request) => request(this.axios, this.basePath));
+    public v1UsersProviderUpdateCreate(requestParameters: V1ApiV1UsersProviderUpdateCreateRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersProviderUpdateCreate(requestParameters.serviceProviderUpdate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * 
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {V1ApiV1UsersProvidersDetailsPartialUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersProvidersDetailsPartialUpdate(requestParameters: V1ApiV1UsersProvidersDetailsPartialUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersProvidersDetailsPartialUpdate(requestParameters.id, requestParameters.patchedServiceProviderUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {V1ApiV1UsersProvidersDetailsRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersProvidersDetailsRetrieve(requestParameters: V1ApiV1UsersProvidersDetailsRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersProvidersDetailsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Mixin to provide standardized exception handling for DRF views.
+     * @param {V1ApiV1UsersProvidersDetailsUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersProvidersDetailsUpdate(requestParameters: V1ApiV1UsersProvidersDetailsUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersProvidersDetailsUpdate(requestParameters.id, requestParameters.serviceProviderUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Featured service providers for mobile app.
+     * @param {V1ApiV1UsersProvidersFeaturedListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersProvidersFeaturedList(requestParameters: V1ApiV1UsersProvidersFeaturedListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersProvidersFeaturedList(requestParameters.isAvailable, requestParameters.isVerifiedProvider, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * List all available service providers with search and filtering.
      * @param {V1ApiV1UsersProvidersListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
     public v1UsersProvidersList(requestParameters: V1ApiV1UsersProvidersListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersProvidersList(requestParameters.isAvailable, requestParameters.isVerifiedProvider, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersProvidersList(requestParameters.isVerifiedProvider, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Task history for users (orders they created or worked on).
+     * @param {V1ApiV1UsersTaskHistoryListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersTaskHistoryList(requestParameters: V1ApiV1UsersTaskHistoryListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersTaskHistoryList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

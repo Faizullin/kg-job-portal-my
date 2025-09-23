@@ -45,7 +45,7 @@ class UserActivity(AbstractTimestampedModel):
         ]
     
     def __str__(self):
-        return f"{self.user.name} - {self.get_activity_type_display()}... [#{self.id}]"
+        return f"{self.user.username} - {self.get_activity_type_display()}... [#{self.id}]"
 
 
 class OrderAnalytics(AbstractTimestampedModel):

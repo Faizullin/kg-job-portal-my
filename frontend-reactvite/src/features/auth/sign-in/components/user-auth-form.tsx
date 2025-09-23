@@ -7,6 +7,7 @@ import { Loader2, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/auth-store";
 import { AuthClient } from "@/lib/auth/auth-client";
+import { getUserFriendlyErrorMessage } from "@/lib/auth/error-handler";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -58,14 +59,14 @@ export function UserAuthForm({
       const result = await AuthClient.signInWithEmailPassword(data.email, data.password);
 
       if (result.success) {
-        toast.success(result.message);
+        toast.success(result.message || 'Welcome!');
         const targetPath = redirectTo || "/";
         navigate({ to: targetPath, replace: true });
       } else {
-        toast.error(result.error);
+        toast.error(getUserFriendlyErrorMessage(result.error).message);
       }
-    } catch {
-      toast.error("An unexpected error occurred");
+    } catch (error) {
+      toast.error(getUserFriendlyErrorMessage(error).message);
     } finally {
       setIsLoading(false);
     }
@@ -78,14 +79,14 @@ export function UserAuthForm({
       const result = await AuthClient.signInWithGoogle();
 
       if (result.success) {
-        toast.success(result.message);
+        toast.success(result.message || 'Welcome!');
         const targetPath = redirectTo || "/";
         navigate({ to: targetPath, replace: true });
       } else {
-        toast.error(result.error);
+        toast.error(getUserFriendlyErrorMessage(result.error).message);
       }
-    } catch {
-      toast.error("An unexpected error occurred");
+    } catch (error) {
+      toast.error(getUserFriendlyErrorMessage(error).message);
     } finally {
       setIsLoading(false);
     }
@@ -105,7 +106,7 @@ export function UserAuthForm({
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="name@example.com" {...field} />
+                <Input placeholder="name@example.com" autoComplete="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -118,7 +119,7 @@ export function UserAuthForm({
             <FormItem className="relative">
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <PasswordInput placeholder="********" {...field} />
+                <PasswordInput placeholder="********" autoComplete="current-password" {...field} />
               </FormControl>
               <FormMessage />
               <Link

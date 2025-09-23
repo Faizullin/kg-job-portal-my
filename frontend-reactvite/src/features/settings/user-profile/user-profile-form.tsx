@@ -20,7 +20,6 @@ const userProfileSchema = z.object({
   state: z.string().optional(),
   country: z.string().optional(),
   postal_code: z.string().optional(),
-  user_type: z.enum(["client", "service_provider", "both"]).optional(),
 });
 
 type UserProfileFormData = z.infer<typeof userProfileSchema>;
@@ -48,7 +47,6 @@ export function UserProfileForm() {
       state: "",
       country: "",
       postal_code: "",
-      user_type: "client",
     },
   });
 
@@ -62,7 +60,6 @@ export function UserProfileForm() {
         state: profileData.state || "",
         country: profileData.country || "",
         postal_code: profileData.postal_code || "",
-        user_type: profileData.user_type || "client",
       });
     }
   }, [profileData, form]);
@@ -103,20 +100,6 @@ export function UserProfileForm() {
             <CardDescription>Extended profile details</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="user_type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>User Type</FormLabel>
-                  <FormControl>
-                    <Input placeholder="client | service_provider | both" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <FormField
               control={form.control}
               name="bio"

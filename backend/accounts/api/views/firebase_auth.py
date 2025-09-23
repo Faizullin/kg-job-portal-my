@@ -1,12 +1,11 @@
 from django.db import IntegrityError
-from django.conf import settings
 from firebase_admin import auth
 from firebase_admin.auth import InvalidIdTokenError
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from job_portal.apps.users.models import UserProfile
 from utils.helpers import get_client_ip
 from ..serializers import FireBaseAuthSerializer, FirebaseAuthResponseSerializer, UserProfileSerializer
 from ...models import UserModel
@@ -110,30 +109,26 @@ class FirebaseAuthView(APIView):
             else:
                 username = display_name.replace(' ', '_').lower() if display_name else f'user_{firebase_user.uid[:8]}'
 
-            # Ensure username is unique
+            # Ensure username is unique 
             base_username = username
             counter = 1
             while UserModel.objects.filter(username=username).exists():
                 username = f"{base_username}_{counter}"
                 counter += 1
-
+            print(f"username: {username}")
             # Create new user
             user_profile = UserModel.objects.create(
                 firebase_user_id=firebase_user.uid,
                 username=username,
                 email=email,
-                name=display_name,
                 photo_url=photo_url,
                 is_active=True,
-                user_type='free',  # Default user type
+                user_type='free',
             )
-
-            # Automatically create UserProfile for job portal
-            from job_portal.apps.users.models import UserProfile
             UserProfile.objects.create(
                 user=user_profile,
                 user_type='client',  # Default to client
-                is_verified=False,
+                is_verified=True,   # Automatically verified
             )
 
             return user_profile

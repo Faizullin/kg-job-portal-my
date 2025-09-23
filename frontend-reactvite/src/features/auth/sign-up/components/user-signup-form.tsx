@@ -1,13 +1,4 @@
-import { useState } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "@tanstack/react-router";
-import { Loader2, UserPlus } from "lucide-react";
-import { toast } from "sonner";
-import { useAuthStore } from "@/stores/auth-store";
-import { AuthClient } from "@/lib/auth/auth-client";
-import { cn } from "@/lib/utils";
+import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,7 +9,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/password-input";
+import { AuthClient } from "@/lib/auth/auth-client";
+import { getUserFriendlyErrorMessage } from "@/lib/auth/error-handler";
+import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/stores/auth-store";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "@tanstack/react-router";
+import { Loader2, UserPlus } from "lucide-react";
+import { toast } from "sonner";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const formSchema = z.object({
   fullName: z
@@ -75,14 +76,14 @@ export function UserSignUpForm({
       );
 
       if (result.success) {
-        toast.success(result.message);
+        toast.success(result.message || 'Account created successfully!');
         const targetPath = redirectTo || "/";
         navigate({ to: targetPath, replace: true });
       } else {
-        toast.error(result.error);
+        toast.error(getUserFriendlyErrorMessage(result.error).message);
       }
-    } catch {
-      toast.error("An unexpected error occurred");
+    } catch (error) {
+      toast.error(getUserFriendlyErrorMessage(error).message);
     } finally {
       setIsLoading(false);
     }
@@ -95,14 +96,14 @@ export function UserSignUpForm({
       const result = await AuthClient.signInWithGoogle();
 
       if (result.success) {
-        toast.success(result.message);
+        toast.success(result.message || 'Welcome!');
         const targetPath = redirectTo || "/";
         navigate({ to: targetPath, replace: true });
       } else {
-        toast.error(result.error);
+        toast.error(getUserFriendlyErrorMessage(result.error).message);
       }
-    } catch {
-      toast.error("An unexpected error occurred");
+    } catch (error) {
+      toast.error(getUserFriendlyErrorMessage(error).message);
     } finally {
       setIsLoading(false);
     }

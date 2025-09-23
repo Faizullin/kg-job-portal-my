@@ -22,7 +22,7 @@ class BidSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSeria
     
     def get_provider_name(self, obj):
         if obj.provider and obj.provider.user_profile and obj.provider.user_profile.user:
-            return obj.provider.user_profile.user.name
+            return obj.provider.user_profile.user.username
         return "Unknown Provider"
 
 
@@ -42,7 +42,7 @@ class OrderSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSer
     
     def get_client_name(self, obj):
         if obj.client and obj.client.user_profile and obj.client.user_profile.user:
-            return obj.client.user_profile.user.name
+            return obj.client.user_profile.user.username
         return "Unknown Client"
 
 
@@ -94,7 +94,7 @@ class OrderAssignmentSerializer(AbstractTimestampedModelSerializer):
     
     def get_provider_name(self, obj):
         if obj.provider and obj.provider.user_profile and obj.provider.user_profile.user:
-            return obj.provider.user_profile.user.name
+            return obj.provider.user_profile.user.username
         return "Unknown Provider"
 
 

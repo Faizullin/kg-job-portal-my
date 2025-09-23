@@ -44,8 +44,8 @@ class ProfileImageResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ('id', 'photo', 'photo_url', 'name')
-        read_only_fields = ('id', 'name')
+        fields = ('id', 'photo', 'photo_url')
+        read_only_fields = ('id',)
 
     def get_photo_url(self, obj):
         """Get the full URL for the profile photo"""

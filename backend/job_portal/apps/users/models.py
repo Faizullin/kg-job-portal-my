@@ -50,7 +50,7 @@ class UserProfile(AbstractSoftDeleteModel, AbstractTimestampedModel):
         verbose_name_plural = _("User Profiles")
 
     def __str__(self):
-        return f"{self.user.name} - {self.get_user_type_display()} [#{self.id}]"
+        return f"{self.user.username} - {self.get_user_type_display()} [#{self.id}]"
 
 
 class ServiceProviderProfile(AbstractSoftDeleteModel, AbstractTimestampedModel):
@@ -87,7 +87,7 @@ class ServiceProviderProfile(AbstractSoftDeleteModel, AbstractTimestampedModel):
         verbose_name_plural = _("Service Provider Profiles")
 
     def __str__(self):
-        return f"{self.user_profile.user.name} - Service Provider [#{self.id}]"
+        return f"{self.user_profile.user.username} - Service Provider [#{self.id}]"
 
 
 
@@ -112,6 +112,6 @@ class ClientProfile(AbstractSoftDeleteModel, AbstractTimestampedModel):
         verbose_name_plural = _("Client Profiles")
 
     def __str__(self):
-        return f"{self.user_profile.user.name} - Client [#{self.id}]"
+        return f"{self.user_profile.user.username} - Client [#{self.id}]"
 
 

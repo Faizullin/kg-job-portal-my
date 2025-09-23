@@ -11,7 +11,10 @@
           "inputSpec": "http://localhost:8000/api/schema/",
           "additionalProperties": {
             "supportsES6": true,
-            "useSingleRequestParameter": true
+            "useSingleRequestParameter": true,
+            "withInterfaces": true,
+            "stringEnums": true,
+            "enumPropertyNaming": "original"
           }
         }
       }

@@ -75,7 +75,6 @@ class UserModel(AbstractUser, AbstractSoftDeleteModel):
     firebase_user_id = models.CharField(max_length=200, null=True, blank=True)
 
     # user data
-    name = models.CharField(max_length=255, verbose_name='Имя')
     email = models.EmailField(max_length=255, unique=True, verbose_name='Email')
     description = models.TextField(blank=True, null=True, verbose_name='Описание')
     photo = models.ImageField(upload_to='user_photos/', blank=True, null=True, verbose_name='Фото')

@@ -1,7 +1,14 @@
 import { useAuthStore } from "@/stores/auth-store";
 import myApi from "../api/my-api";
 import { getUserFriendlyErrorMessage } from "./error-handler";
-import { logout as firebaseLogout, signInWithEmail, signInWithGoogle, signUpWithEmail } from "./firebase";
+import { getFirebaseAuth, getGoogleProvider } from "./firebase";
+import {
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
 
 /**
  * AuthClient - Centralized authentication management
@@ -13,10 +20,7 @@ export class AuthClient {
    */
   static async signInWithEmailPassword(email: string, password: string) {
     try {
-      // Firebase authentication
-      const firebaseUser = await signInWithEmail(email, password);
-
-      // Backend authentication
+      const firebaseUser = await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
       await this.authenticateWithBackend(firebaseUser.user);
 
       return {
@@ -37,10 +41,7 @@ export class AuthClient {
    */
   static async signUpWithEmailPassword(email: string, password: string) {
     try {
-      // Firebase authentication
-      const firebaseUser = await signUpWithEmail(email, password);
-
-      // Backend authentication
+      const firebaseUser = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
       await this.authenticateWithBackend(firebaseUser.user);
 
       return {
@@ -61,10 +62,7 @@ export class AuthClient {
    */
   static async signInWithGoogle() {
     try {
-      // Firebase authentication
-      const result = await signInWithGoogle();
-
-      // Backend authentication
+      const result = await signInWithPopup(getFirebaseAuth(), getGoogleProvider());
       await this.authenticateWithBackend(result.user);
 
       return {
@@ -81,17 +79,31 @@ export class AuthClient {
   }
 
   /**
+   * Send password reset email
+   */
+  static async sendPasswordResetEmail(email: string) {
+    try {
+      await sendPasswordResetEmail(getFirebaseAuth(), email);
+      
+      return {
+        success: true,
+        message: `Password reset email sent to ${email}. Please check your inbox.`,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: getUserFriendlyErrorMessage(error),
+      };
+    }
+  }
+
+  /**
    * Sign out user
    */
   static async signOut() {
     try {
-      // Firebase logout
-      await firebaseLogout();
-
-      // Clear backend auth data
+      await signOut(getFirebaseAuth());
       myApi.clearAuthData();
-
-      // Reset auth store
       const { auth } = useAuthStore.getState();
       auth.reset();
 
@@ -100,7 +112,6 @@ export class AuthClient {
         message: "Signed out successfully",
       };
     } catch (error: any) {
-      // Even if Firebase logout fails, clear local state
       myApi.clearAuthData();
       const { auth } = useAuthStore.getState();
       auth.reset();

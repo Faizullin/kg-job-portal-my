@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 
 class SoftDeleteManager(models.Manager):
@@ -30,7 +31,6 @@ class SoftDeleteManager(models.Manager):
     
     def bulk_restore(self, pks):
         """Restore multiple soft-deleted objects by primary keys."""
-        from django.utils import timezone
         return self.all_with_deleted().filter(pk__in=pks, is_deleted=True).update(
             is_deleted=False,
             deleted_at=None,
@@ -39,7 +39,6 @@ class SoftDeleteManager(models.Manager):
     
     def bulk_soft_delete(self, pks):
         """Soft delete multiple objects by primary keys."""
-        from django.utils import timezone
         return self.filter(pk__in=pks).update(
             is_deleted=True,
             deleted_at=timezone.now()
@@ -72,7 +71,6 @@ class CascadingSoftDeleteManager(SoftDeleteManager):
             obj: The object to soft delete
             cascade_fields: List of field names to cascade soft delete to
         """
-        from django.utils import timezone
         
         # Soft delete the main object
         obj.deleted_at = timezone.now()
@@ -85,7 +83,6 @@ class CascadingSoftDeleteManager(SoftDeleteManager):
     
     def _cascade_to_related_objects(self, obj, cascade_fields):
         """Cascade soft delete to related objects."""
-        from django.utils import timezone
         
         for field_name in cascade_fields:
             if hasattr(obj, field_name):
@@ -187,14 +184,12 @@ class AbstractSoftDeleteModel(models.Model):
 
     def delete(self, using=None, keep_parents=False):
         """Override delete to implement soft delete."""
-        from django.utils import timezone
         self.deleted_at = timezone.now()
         self.is_deleted = True
         self.save(update_fields=['deleted_at', 'is_deleted'])
 
     def restore(self, strict=True):
         """Restore a soft-deleted object."""
-        from django.utils import timezone
         if strict and not self.is_deleted:
             raise ValueError("Object is not deleted")
         self.deleted_at = None

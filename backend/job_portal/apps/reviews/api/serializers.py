@@ -7,7 +7,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     """Serializer for reading review data."""
     reviewer_name = serializers.CharField(source='reviewer.name', read_only=True)
     reviewer_email = serializers.EmailField(source='reviewer.email', read_only=True)
-    provider_name = serializers.CharField(source='provider.user_profile.user.name', read_only=True)
+    provider_name = serializers.CharField(source='provider.user_profile.user.username', read_only=True)
     provider_email = serializers.EmailField(source='provider.user_profile.user.email', read_only=True)
     order_id = serializers.IntegerField(source='order.id', read_only=True)
     order_title = serializers.CharField(source='order.title', read_only=True)

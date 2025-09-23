@@ -37,4 +37,4 @@ class UserNotification(AbstractTimestampedModel):
         ordering = ['-created_at']
     
     def __str__(self):
-        return f"{self.user.name} - {self.title}... [#{self.id}]"
+        return f"{self.user.username} - {self.title}... [#{self.id}]"
