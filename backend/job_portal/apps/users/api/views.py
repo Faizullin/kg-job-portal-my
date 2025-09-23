@@ -21,6 +21,34 @@ from .serializers import (
     AdvancedProfileSerializer,
     AdvancedProfileUpdateSerializer,
 )
+from django.contrib.auth.models import Group, Permission
+from utils.permissions import HasClientProfile, HasServiceProviderProfile
+
+
+def assign_client_permissions(user):
+    """Assign client-specific permissions to user."""
+    client_group, created = Group.objects.get_or_create(name='client')
+    user.groups.add(client_group)
+    
+    # Assign basic client permissions
+    permissions = Permission.objects.filter(
+        codename__in=['add_order', 'view_order', 'change_order', 'view_bid', 'add_payment', 'view_payment']
+    )
+    for perm in permissions:
+        user.user_permissions.add(perm)
+
+
+def assign_service_provider_permissions(user):
+    """Assign service provider-specific permissions to user."""
+    provider_group, created = Group.objects.get_or_create(name='service_provider')
+    user.groups.add(provider_group)
+    
+    # Assign basic service provider permissions
+    permissions = Permission.objects.filter(
+        codename__in=['view_order', 'add_bid', 'view_bid', 'change_bid', 'view_payment']
+    )
+    for perm in permissions:
+        user.user_permissions.add(perm)
 
 
 class UserProfileDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
@@ -77,7 +105,7 @@ class ServiceProviderFeaturedApiView(StandardizedViewMixin, generics.ListAPIView
 
 class ServiceProviderDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = ServiceProviderUpdateSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasServiceProviderProfile]
     
     def get_object(self):
         return get_object_or_404(
@@ -107,7 +135,7 @@ class ClientApiView(StandardizedViewMixin, generics.ListAPIView):
 
 class ClientDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
     serializer_class = ClientUpdateSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasClientProfile]
     
     def get_object(self):
         return get_object_or_404(
@@ -128,7 +156,6 @@ class ClientProfileCreateView(StandardizedViewMixin, APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        # Check if user has job portal profile
         try:
             user_profile = UserProfile.objects.get(user=request.user)
         except UserProfile.DoesNotExist:
@@ -136,7 +163,6 @@ class ClientProfileCreateView(StandardizedViewMixin, APIView):
                 'error': 'User must have a job portal profile first'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Check if user already has a client profile
         if ClientProfile.objects.filter(user_profile=user_profile).exists():
             return Response({
                 'error': 'User already has a client profile'
@@ -144,7 +170,6 @@ class ClientProfileCreateView(StandardizedViewMixin, APIView):
         
         serializer = ClientUpdateSerializer(data=request.data)
         if serializer.is_valid():
-            # Extract many-to-many fields
             validated_data = serializer.validated_data.copy()
             preferred_services = validated_data.pop('preferred_services', None)
             
@@ -153,9 +178,15 @@ class ClientProfileCreateView(StandardizedViewMixin, APIView):
                 **validated_data
             )
             
-            # Set many-to-many fields if provided
             if preferred_services is not None:
                 client_profile.preferred_services.set(preferred_services)
+            
+            # Automatically assign client permissions
+            assign_client_permissions(request.user)
+            
+            # Update user type in profile
+            user_profile.user_type = 'client'
+            user_profile.save()
             
             return Response({
                 'message': 'Client profile created successfully',
@@ -198,7 +229,6 @@ class ServiceProviderProfileCreateView(StandardizedViewMixin, APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        # Check if user has job portal profile
         try:
             user_profile = UserProfile.objects.get(user=request.user)
         except UserProfile.DoesNotExist:
@@ -206,7 +236,6 @@ class ServiceProviderProfileCreateView(StandardizedViewMixin, APIView):
                 'error': 'User must have a job portal profile first'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Check if user already has a service provider profile
         if ServiceProviderProfile.objects.filter(user_profile=user_profile).exists():
             return Response({
                 'error': 'User already has a service provider profile'
@@ -214,7 +243,6 @@ class ServiceProviderProfileCreateView(StandardizedViewMixin, APIView):
         
         serializer = ServiceProviderUpdateSerializer(data=request.data)
         if serializer.is_valid():
-            # Extract many-to-many fields
             validated_data = serializer.validated_data.copy()
             service_areas = validated_data.pop('service_areas', None)
             services_offered = validated_data.pop('services_offered', None)
@@ -224,11 +252,17 @@ class ServiceProviderProfileCreateView(StandardizedViewMixin, APIView):
                 **validated_data
             )
             
-            # Set many-to-many fields if provided
             if service_areas is not None:
                 provider_profile.service_areas.set(service_areas)
             if services_offered is not None:
                 provider_profile.services_offered.set(services_offered)
+            
+            # Automatically assign service provider permissions
+            assign_service_provider_permissions(request.user)
+            
+            # Update user type in profile
+            user_profile.user_type = 'service_provider'
+            user_profile.save()
             
             return Response({
                 'message': 'Service provider profile created successfully',
