@@ -36,9 +36,16 @@ export function AppSidebar() {
     const currentUser = AuthClient.getCurrentUser();
     const role = currentUser?.user_role || "client";
     const isProvider = /provider/i.test(role);
+    const isAdmin = currentUser?.is_staff || currentUser?.is_superuser || false;
 
     const isAllowedUrl = (url: string) => {
       if (!url) return true;
+      
+      // Core URLs - only show for admin users
+      if (url.startsWith("/core")) {
+        return isAdmin;
+      }
+      
       if (isProvider) {
         // Providers: allow search and bids; hide orders and tasks by default
         if (url === "/orders" || url === "/tasks") return false;

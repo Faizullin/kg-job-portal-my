@@ -10,7 +10,6 @@ def HasSpecificPermission(required_permissions):
 
     class PermissionClass(permissions.BasePermission):
         def has_permission(self, request, view):
-            print("required_permissions", required_permissions)
             if not request.user or not request.user.is_authenticated:
                 return False
 

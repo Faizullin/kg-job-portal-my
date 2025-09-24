@@ -1,19 +1,24 @@
-from rest_framework import generics
+from rest_framework import viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from utils.exceptions import StandardizedViewMixin
 from utils.permissions import HasSpecificPermission
 from utils.pagination import CustomPagination
-from ..models import Language, ServiceCategory, ServiceSubcategory, ServiceArea, SystemSettings, AppVersion, SupportFAQ
+from ..models import Language, ServiceCategory, ServiceSubcategory, ServiceArea, SystemSettings, SupportFAQ
 from .serializers import (
     LanguageSerializer, ServiceCategorySerializer, ServiceSubcategorySerializer,
-    ServiceAreaSerializer, SystemSettingsSerializer, AppVersionSerializer,
-    SupportFAQSerializer
+    ServiceAreaSerializer, SystemSettingsSerializer, SupportFAQSerializer, 
+    ServiceCategoryCreateUpdateSerializer, ServiceSubcategoryCreateUpdateSerializer, 
+    ServiceAreaCreateUpdateSerializer, SystemSettingsCreateUpdateSerializer,
+    SupportFAQCreateUpdateSerializer
 )
 
 
-class LanguageApiView(StandardizedViewMixin, generics.ListAPIView):
+# Unified ViewSets - Single class per model with all functionality
+class LanguageViewSet(StandardizedViewMixin, viewsets.ReadOnlyModelViewSet):
+    """Languages - Read-only (managed via admin/fixtures)."""
+    queryset = Language.objects.all()
     serializer_class = LanguageSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -22,14 +27,11 @@ class LanguageApiView(StandardizedViewMixin, generics.ListAPIView):
     ordering_fields = ['name', 'code', 'created_at']
     ordering = ['name']
     pagination_class = CustomPagination
-    
-    def get_queryset(self):
-        return Language.objects.all()
 
 
-class ServiceCategoryApiView(StandardizedViewMixin, generics.ListAPIView):
-    serializer_class = ServiceCategorySerializer
-    permission_classes = [IsAuthenticated]
+class ServiceCategoryViewSet(StandardizedViewMixin, viewsets.ModelViewSet):
+    """Service Categories - Full CRUD with authenticated access."""
+    queryset = ServiceCategory.objects.all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_active', 'featured']
     search_fields = ['name', 'description', 'slug']
@@ -37,13 +39,28 @@ class ServiceCategoryApiView(StandardizedViewMixin, generics.ListAPIView):
     ordering = ['sort_order', 'name']
     pagination_class = CustomPagination
     
-    def get_queryset(self):
-        return ServiceCategory.objects.all()
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return ServiceCategorySerializer
+        else:
+            return ServiceCategoryCreateUpdateSerializer
+    
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [IsAuthenticated()]
+        elif self.action == 'create':
+            return [IsAuthenticated(), HasSpecificPermission(['core.add_servicecategory'])()]
+        elif self.action in ['update', 'partial_update']:
+            return [IsAuthenticated(), HasSpecificPermission(['core.change_servicecategory'])()]
+        elif self.action == 'destroy':
+            return [IsAuthenticated(), HasSpecificPermission(['core.delete_servicecategory'])()]
+        else:
+            return [IsAuthenticated()]
 
 
-class ServiceSubcategoryApiView(StandardizedViewMixin, generics.ListAPIView):
-    serializer_class = ServiceSubcategorySerializer
-    permission_classes = [IsAuthenticated]
+class ServiceSubcategoryViewSet(StandardizedViewMixin, viewsets.ModelViewSet):
+    """Service Subcategories - Full CRUD with authenticated access."""
+    queryset = ServiceSubcategory.objects.all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_active', 'category', 'featured']
     search_fields = ['name', 'description']
@@ -51,13 +68,28 @@ class ServiceSubcategoryApiView(StandardizedViewMixin, generics.ListAPIView):
     ordering = ['category', 'sort_order']
     pagination_class = CustomPagination
     
-    def get_queryset(self):
-        return ServiceSubcategory.objects.all()
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return ServiceSubcategorySerializer
+        else:
+            return ServiceSubcategoryCreateUpdateSerializer
+    
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [IsAuthenticated()]
+        elif self.action == 'create':
+            return [IsAuthenticated(), HasSpecificPermission(['core.add_servicesubcategory'])()]
+        elif self.action in ['update', 'partial_update']:
+            return [IsAuthenticated(), HasSpecificPermission(['core.change_servicesubcategory'])()]
+        elif self.action == 'destroy':
+            return [IsAuthenticated(), HasSpecificPermission(['core.delete_servicesubcategory'])()]
+        else:
+            return [IsAuthenticated()]
 
 
-class ServiceAreaApiView(StandardizedViewMixin, generics.ListAPIView):
-    serializer_class = ServiceAreaSerializer
-    permission_classes = [IsAuthenticated]
+class ServiceAreaViewSet(StandardizedViewMixin, viewsets.ModelViewSet):
+    """Service Areas - Full CRUD with authenticated access."""
+    queryset = ServiceArea.objects.all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_active', 'country', 'state']
     search_fields = ['name', 'city', 'state', 'country']
@@ -65,13 +97,27 @@ class ServiceAreaApiView(StandardizedViewMixin, generics.ListAPIView):
     ordering = ['country', 'state', 'city']
     pagination_class = CustomPagination
     
-    def get_queryset(self):
-        return ServiceArea.objects.all()
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return ServiceAreaSerializer
+        else:
+            return ServiceAreaCreateUpdateSerializer
+    
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [IsAuthenticated()]
+        elif self.action == 'create':
+            return [IsAuthenticated(), HasSpecificPermission(['core.add_servicearea'])()]
+        elif self.action in ['update', 'partial_update']:
+            return [IsAuthenticated(), HasSpecificPermission(['core.change_servicearea'])()]
+        elif self.action == 'destroy':
+            return [IsAuthenticated(), HasSpecificPermission(['core.delete_servicearea'])()]
+        else:
+            return [IsAuthenticated()]
 
 
-class SystemSettingsApiView(StandardizedViewMixin, generics.ListAPIView):
-    serializer_class = SystemSettingsSerializer
-    permission_classes = [HasSpecificPermission(['core.add_systemsettings'])]
+class SystemSettingsViewSet(StandardizedViewMixin, viewsets.ModelViewSet):
+    """System Settings - Admin-only CRUD."""
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_public', 'category']
     search_fields = ['key', 'description']
@@ -82,27 +128,31 @@ class SystemSettingsApiView(StandardizedViewMixin, generics.ListAPIView):
     def get_queryset(self):
         if self.request.user.is_staff:
             return SystemSettings.objects.all()
-        return SystemSettings.objects.filter(is_public=True)
-
-
-class AppVersionApiView(StandardizedViewMixin, generics.ListAPIView):
-    serializer_class = AppVersionSerializer
-    permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['is_active', 'platform']
-    search_fields = ['version', 'release_notes']
-    ordering_fields = ['version', 'build_number', 'release_date', 'created_at']
-    ordering = ['-build_number']
-    pagination_class = CustomPagination
+        else:
+            return SystemSettings.objects.filter(is_public=True)
     
-    def get_queryset(self):
-        return AppVersion.objects.all()
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return SystemSettingsSerializer
+        else:
+            return SystemSettingsCreateUpdateSerializer
+    
+    def get_permissions(self):
+        if self.action == 'list':
+            return [IsAuthenticated()]
+        elif self.action == 'create':
+            return [IsAuthenticated(), HasSpecificPermission(['core.add_systemsettings'])()]
+        elif self.action in ['update', 'partial_update']:
+            return [IsAuthenticated(), HasSpecificPermission(['core.change_systemsettings'])()]
+        elif self.action == 'destroy':
+            return [IsAuthenticated(), HasSpecificPermission(['core.delete_systemsettings'])()]
+        else:
+            return [IsAuthenticated()]
 
 
-class SupportFAQApiView(StandardizedViewMixin, generics.ListAPIView):
-    """List support FAQ items."""
-    serializer_class = SupportFAQSerializer
-    permission_classes = [AllowAny]
+class SupportFAQViewSet(StandardizedViewMixin, viewsets.ModelViewSet):
+    """Support FAQ - Authenticated read, Admin write."""
+    queryset = SupportFAQ.objects.all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['category', 'is_popular', 'is_active']
     search_fields = ['question', 'answer']
@@ -110,7 +160,22 @@ class SupportFAQApiView(StandardizedViewMixin, generics.ListAPIView):
     ordering = ['sort_order', 'question']
     pagination_class = CustomPagination
     
-    def get_queryset(self):
-        return SupportFAQ.objects.filter(is_active=True)
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return SupportFAQSerializer
+        else:
+            return SupportFAQCreateUpdateSerializer
+    
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [IsAuthenticated()]
+        elif self.action == 'create':
+            return [IsAuthenticated(), HasSpecificPermission(['core.add_supportfaq'])()]
+        elif self.action in ['update', 'partial_update']:
+            return [IsAuthenticated(), HasSpecificPermission(['core.change_supportfaq'])()]
+        elif self.action == 'destroy':
+            return [IsAuthenticated(), HasSpecificPermission(['core.delete_supportfaq'])()]
+        else:
+            return [IsAuthenticated()]
 
 

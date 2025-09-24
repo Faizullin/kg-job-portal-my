@@ -25,6 +25,9 @@ import {
   User,
   ShoppingBag,
   MessageCircle,
+  Shield,
+  Layers,
+  MapPin,
 } from "lucide-react";
 import { type SidebarData } from "../types";
 
@@ -173,6 +176,41 @@ export const sidebarData: SidebarData = {
               icon: Construction,
             },
           ],
+        },
+      ],
+    },
+    {
+      title: "Core Management",
+      items: [
+        {
+          title: "Dashboard",
+          url: "/core",
+          icon: Shield,
+        },
+        {
+          title: "Categories",
+          url: "/core/categories",
+          icon: Building2,
+        },
+        {
+          title: "Subcategories",
+          url: "/core/subcategories",
+          icon: Layers,
+        },
+        {
+          title: "Areas",
+          url: "/core/areas",
+          icon: MapPin,
+        },
+        {
+          title: "Settings",
+          url: "/core/settings",
+          icon: Settings,
+        },
+        {
+          title: "FAQ",
+          url: "/core/faq",
+          icon: HelpCircle,
         },
       ],
     },

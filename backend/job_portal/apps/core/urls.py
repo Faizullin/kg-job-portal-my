@@ -1,19 +1,22 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .api.views import (
-    LanguageApiView, ServiceCategoryApiView, ServiceSubcategoryApiView,
-    ServiceAreaApiView, SystemSettingsApiView, AppVersionApiView, SupportFAQApiView
+    LanguageViewSet, ServiceCategoryViewSet, ServiceSubcategoryViewSet, 
+    ServiceAreaViewSet, SystemSettingsViewSet, SupportFAQViewSet
 )
 
 app_name = 'core'
 
+# Single router handles ALL endpoints
+router = DefaultRouter()
+router.register(r'languages', LanguageViewSet, basename='language')
+router.register(r'service-categories', ServiceCategoryViewSet, basename='servicecategory')
+router.register(r'service-subcategories', ServiceSubcategoryViewSet, basename='servicesubcategory')
+router.register(r'service-areas', ServiceAreaViewSet, basename='servicearea')
+router.register(r'system-settings', SystemSettingsViewSet, basename='systemsettings')
+router.register(r'support/faq', SupportFAQViewSet, basename='supportfaq')
+
 urlpatterns = [
-    path('api/v1/core/languages/', LanguageApiView.as_view(), name='languages'),
-    path('api/v1/core/service-categories/', ServiceCategoryApiView.as_view(), name='service-categories'),
-    path('api/v1/core/service-subcategories/', ServiceSubcategoryApiView.as_view(), name='service-subcategories'),
-    path('api/v1/core/service-areas/', ServiceAreaApiView.as_view(), name='service-areas'),
-    path('api/v1/core/system-settings/', SystemSettingsApiView.as_view(), name='system-settings'),
-    path('api/v1/core/app-versions/', AppVersionApiView.as_view(), name='app-versions'),
-    
-    # Support
-    path('api/v1/core/support/faq/', SupportFAQApiView.as_view(), name='support-faq'),
+    # All endpoints handled by router
+    path('api/v1/core/', include(router.urls)),
 ]

@@ -59,18 +59,6 @@ class SystemSettingsSerializer(AbstractTimestampedModelSerializer, AbstractChoic
         return self.get_choice_display(obj, 'setting_type')
 
 
-class AppVersionSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin):
-    platform_display = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = AppVersion
-        fields = ['id', 'version', 'build_number', 'platform', 'is_active', 'is_forced_update', 'release_date', 'download_url', 'platform_display']
-    
-    @extend_schema_field(serializers.CharField())
-    def get_platform_display(self, obj):
-        return self.get_choice_display(obj, 'platform')
-
-
 class SupportFAQSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin):
     """Serializer for support FAQ items."""
     category_display = serializers.SerializerMethodField()
@@ -82,5 +70,85 @@ class SupportFAQSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFie
     @extend_schema_field(serializers.CharField())
     def get_category_display(self, obj):
         return self.get_choice_display(obj, 'category')
+
+
+# CRUD Serializers for Create/Update operations
+class ServiceCategoryCreateUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for creating and updating service categories."""
+    
+    class Meta:
+        model = ServiceCategory
+        fields = [
+            'name', 'description', 'icon', 'color', 'is_active', 'sort_order',
+            'banner_image', 'featured', 'commission_rate', 'min_price', 'max_price',
+            'estimated_duration_min', 'estimated_duration_max', 'meta_title',
+            'meta_description', 'keywords', 'slug', 'requires_license',
+            'requires_insurance', 'requires_background_check'
+        ]
+        extra_kwargs = {
+            'slug': {'required': False},  # Auto-generated if not provided
+        }
+
+
+class ServiceSubcategoryCreateUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for creating and updating service subcategories."""
+    
+    class Meta:
+        model = ServiceSubcategory
+        fields = [
+            'category', 'name', 'description', 'icon', 'is_active', 'sort_order',
+            'image', 'featured', 'base_price', 'price_range_min', 'price_range_max',
+            'estimated_duration', 'complexity_level', 'safety_requirements',
+            'slug', 'meta_title', 'meta_description'
+        ]
+        extra_kwargs = {
+            'slug': {'required': False},  # Auto-generated if not provided
+        }
+
+
+class ServiceAreaCreateUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for creating and updating service areas."""
+    
+    class Meta:
+        model = ServiceArea
+        fields = [
+            'name', 'city', 'state', 'country', 'latitude', 'longitude',
+            'postal_codes', 'is_active', 'service_categories', 'base_price_multiplier',
+            'travel_fee'
+        ]
+
+
+class SystemSettingsCreateUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for creating and updating system settings."""
+    
+    class Meta:
+        model = SystemSettings
+        fields = [
+            'key', 'value', 'description', 'is_public', 'setting_type',
+            'validation_regex', 'min_value', 'max_value', 'requires_admin',
+            'category'
+        ]
+
+
+class AppVersionCreateUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for creating and updating app versions."""
+    
+    class Meta:
+        model = AppVersion
+        fields = [
+            'version', 'build_number', 'release_notes', 'is_forced_update',
+            'is_active', 'platform', 'download_url', 'file_size', 'checksum',
+            'min_os_version', 'max_os_version', 'device_requirements'
+        ]
+
+
+class SupportFAQCreateUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for creating and updating support FAQ items."""
+    
+    class Meta:
+        model = SupportFAQ
+        fields = [
+            'question', 'answer', 'category', 'sort_order', 'is_popular', 'is_active'
+        ]
 
 

@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "format:check": "prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "generate-api:dev": "npx openapi-generator-cli generate && node ./scripts/format-openapi-types.js"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
