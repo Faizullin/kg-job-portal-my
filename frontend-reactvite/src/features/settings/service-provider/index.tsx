@@ -9,7 +9,7 @@ const loadProviderProfileQueryKey = "provider-profile";
 export function SettingsServiceProvider() {
   const submitMutation = useMutation({
     mutationFn: async () => {
-      await myApi.v1UsersProviderUpdateCreate();
+      await myApi.v1UsersProviderCreateCreate();
     },
     onSuccess: () => {
       window.location.reload();

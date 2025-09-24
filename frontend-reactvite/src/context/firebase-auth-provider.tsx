@@ -1,7 +1,8 @@
 import type { UserProfile } from "@/lib/api/axios-client/api";
 import myApi from "@/lib/api/my-api";
+import { useAuthStore } from "@/stores/auth-store";
 import { useQuery } from "@tanstack/react-query";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect } from "react";
 
 type UserContextValue = { user: UserProfile | null; isLoading: boolean };
 const UserContext = createContext<UserContextValue>({ user: null, isLoading: false });
@@ -14,6 +15,14 @@ export function FirebaseAuthProvider({ children }: { children: React.ReactNode }
     select: (res) => res.data,
     staleTime: 5 * 60 * 1000,
   });
+  const { auth } = useAuthStore();
+
+  const setUser = auth.setUser;
+  useEffect(() => {
+    if (data) {
+      setUser(data);
+    }
+  }, [data, setUser]);
 
   return (
     <UserContext.Provider value={{ user: data ?? null, isLoading }}>

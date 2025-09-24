@@ -97,6 +97,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     return columns.filter((column) => column.enableColumnFilter);
   }, [columns, enableAdvancedFilter]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [filterValues, setFilterValues] = React.useState<Record<string, string | string[] | null>>({});
 
   const debouncedSetFilterValues = useDebouncedCallback(

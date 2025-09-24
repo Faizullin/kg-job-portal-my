@@ -38,7 +38,7 @@ class ServiceAreaSerializer(AbstractTimestampedModelSerializer):
     
     class Meta:
         model = ServiceArea
-        fields = ['id', 'name', 'city', 'state', 'country', 'latitude', 'longitude', 'is_active', 'base_price_multiplier', 'travel_fee', 'coordinates']
+        fields = ['id', 'name', 'city', 'state', 'country', 'latitude', 'longitude', 'is_active', 'base_price_multiplier', 'travel_fee', 'coordinates', 'service_categories']
     
     @extend_schema_field(serializers.CharField())
     def get_coordinates(self, obj):
@@ -99,7 +99,7 @@ class ServiceSubcategoryCreateUpdateSerializer(serializers.ModelSerializer):
             'category', 'name', 'description', 'icon', 'is_active', 'sort_order',
             'image', 'featured', 'base_price', 'price_range_min', 'price_range_max',
             'estimated_duration', 'complexity_level', 'safety_requirements',
-            'slug', 'meta_title', 'meta_description'
+            'slug', 'meta_title', 'meta_description',
         ]
         extra_kwargs = {
             'slug': {'required': False},  # Auto-generated if not provided

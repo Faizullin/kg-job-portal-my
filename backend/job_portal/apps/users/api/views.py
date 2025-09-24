@@ -185,7 +185,6 @@ class ClientProfileCreateView(StandardizedViewMixin, APIView):
             assign_client_permissions(request.user)
             
             # Update user type in profile
-            user_profile.user_type = 'client'
             user_profile.save()
             
             return Response({
@@ -242,33 +241,36 @@ class ServiceProviderProfileCreateView(StandardizedViewMixin, APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         serializer = ServiceProviderUpdateSerializer(data=request.data)
-        if serializer.is_valid():
-            validated_data = serializer.validated_data.copy()
-            service_areas = validated_data.pop('service_areas', None)
-            services_offered = validated_data.pop('services_offered', None)
-            
-            provider_profile = ServiceProviderProfile.objects.create(
-                user_profile=user_profile,
-                **validated_data
-            )
-            
-            if service_areas is not None:
-                provider_profile.service_areas.set(service_areas)
-            if services_offered is not None:
-                provider_profile.services_offered.set(services_offered)
-            
-            # Automatically assign service provider permissions
-            assign_service_provider_permissions(request.user)
-            
-            # Update user type in profile
-            user_profile.user_type = 'service_provider'
-            user_profile.save()
-            
-            return Response({
-                'message': 'Service provider profile created successfully',
-                'provider_profile': ServiceProviderUpdateSerializer(provider_profile).data
-            }, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data.copy()
+        service_areas = validated_data.pop('service_areas', None)
+        services_offered = validated_data.pop('services_offered', None)
+        print("provider_profile.0")
+        
+        provider_profile = ServiceProviderProfile.objects.create(
+            user_profile=user_profile,
+            **validated_data
+        )
+        print("provider_profile.1")
+        
+        if service_areas is not None:
+            provider_profile.service_areas.set(service_areas)
+        if services_offered is not None:
+            provider_profile.services_offered.set(services_offered)
+
+        print("provider_profile.2")
+        
+        # Automatically assign service provider permissions
+        assign_service_provider_permissions(request.user)
+        
+        # Update user type in profile
+        user_profile.save()
+        print("provider_profile.4")
+        
+        return Response({
+            'message': 'Service provider profile created successfully',
+            'provider_profile': ServiceProviderUpdateSerializer(provider_profile).data
+        }, status=status.HTTP_201_CREATED) 
 
 
 class ServiceProviderProfileUpdateView(StandardizedViewMixin, APIView):
@@ -280,15 +282,23 @@ class ServiceProviderProfileUpdateView(StandardizedViewMixin, APIView):
         if serializer.is_valid():
             user_profile = request.user.job_portal_profile
             
+            # Check if ServiceProviderProfile exists
+            try:
+                provider_profile = ServiceProviderProfile.objects.get(user_profile=user_profile)
+            except ServiceProviderProfile.DoesNotExist:
+                return Response({
+                    'error': 'Service provider profile does not exist. Please create one first.'
+                }, status=status.HTTP_404_NOT_FOUND)
+            
             # Extract many-to-many fields
             validated_data = serializer.validated_data.copy()
             service_areas = validated_data.pop('service_areas', None)
             services_offered = validated_data.pop('services_offered', None)
             
-            provider_profile, created = ServiceProviderProfile.objects.update_or_create(
-                user_profile=user_profile,
-                defaults=validated_data
-            )
+            # Update existing profile
+            for field, value in validated_data.items():
+                setattr(provider_profile, field, value)
+            provider_profile.save()
             
             # Set many-to-many fields if provided
             if service_areas is not None:

@@ -6,9 +6,8 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { useLayout } from "@/context/layout-provider";
-import { AuthClient } from "@/lib/auth/auth-client";
+import { useAuthStore } from "@/stores/auth-store";
 import { useMemo } from "react";
-// import { AppTitle } from './app-title'
 import { sidebarData } from "./data/sidebar-data";
 import { NavGroup } from "./nav-group";
 import { NavUser } from "./nav-user";
@@ -16,36 +15,36 @@ import { type SidebarData } from "./types";
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout();
+  const { auth } = useAuthStore();
 
   // Memoize user data to prevent unnecessary re-computations
   const user = useMemo(() => {
-    const backendUser = AuthClient.getCurrentUser();
-    const firebaseUser = AuthClient.getCurrentFirebaseUser();
+    const backendUser = auth.user;
 
     return backendUser
       ? {
         name: backendUser.username || backendUser.email.split("@")[0] || "User",
         email: backendUser.email,
-        avatar: firebaseUser?.photoURL || "/avatars/default.jpg",
+        avatar: backendUser.photo_url || "/avatars/default.jpg",
       }
       : sidebarData.user;
-  }, []); // Empty dependency array since AuthClient methods are stable
+  }, [auth.user]);
 
   // Role-aware filtering of nav groups
   const navGroups = useMemo(() => {
-    const currentUser = AuthClient.getCurrentUser();
-    const role = currentUser?.user_role || "client";
-    const isProvider = /provider/i.test(role);
-    const isAdmin = currentUser?.is_staff || currentUser?.is_superuser || false;
+    const currentUser = auth.user;
+    const roles = (currentUser?.groups || []) as string[];
+    const isProvider = roles.includes("provider");
+    const hasAdminAccess = currentUser?.is_staff || currentUser?.is_superuser || false;
 
     const isAllowedUrl = (url: string) => {
       if (!url) return true;
-      
+
       // Core URLs - only show for admin users
       if (url.startsWith("/core")) {
-        return isAdmin;
+        return hasAdminAccess;
       }
-      
+
       if (isProvider) {
         // Providers: allow search and bids; hide orders and tasks by default
         if (url === "/orders" || url === "/tasks") return false;
@@ -75,7 +74,7 @@ export function AppSidebar() {
         return items.length ? { ...group, items } : null;
       })
       .filter(Boolean) as typeof sidebarData.navGroups;
-  }, []);
+  }, [auth.user]);
 
   // // Memoize teams data to prevent unnecessary re-renders
   // const teams = useMemo(() => sidebarData.teams, []);

@@ -12,23 +12,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useDialogControl } from "@/hooks/use-dialog-control";
-import { AuthClient } from "@/lib/auth/auth-client";
+import { useAuthStore } from "@/stores/auth-store";
 import { Link } from "@tanstack/react-router";
 import { useMemo } from "react";
+import { User, Briefcase } from "lucide-react";
 
 export function ProfileDropdown() {
   const control = useDialogControl();
+  const { auth } = useAuthStore();
 
   // Memoize user data to prevent unnecessary re-computations
   const user = useMemo(() => {
-    const backendUser = AuthClient.getCurrentUser();
-    const firebaseUser = AuthClient.getCurrentFirebaseUser();
+    const backendUser = auth.user;  
 
     return backendUser
       ? {
         name: backendUser.username || backendUser.email.split("@")[0] || "User",
         email: backendUser.email,
-        avatar: firebaseUser?.photoURL || "/avatars/default.jpg",
+        avatar: backendUser.photo_url || "/avatars/default.jpg",
         initials: (backendUser.username || backendUser.email.split("@")[0] || "U").substring(0, 2).toUpperCase(),
       }
       : {
@@ -37,7 +38,65 @@ export function ProfileDropdown() {
         avatar: "/avatars/default.jpg",
         initials: "U",
       };
-  }, []); // Empty dependency array since AuthClient methods are stable
+  }, [auth.user]); 
+
+  // Profile switching logic
+  const handleProfileToggle = () => {
+    if (auth.currentProfile === 'client') {
+      auth.setCurrentProfile('service_provider');
+    } else if (auth.currentProfile === 'service_provider') {
+      auth.setCurrentProfile('client');
+    } else {
+      // If no profile is selected, default to client if available, otherwise service provider
+      auth.setCurrentProfile(hasClientGroup ? 'client' : 'service_provider');
+    }
+  };
+
+  const getCurrentProfileLabel = () => {
+    switch (auth.currentProfile) {
+      case 'client':
+        return 'Client';
+      case 'service_provider':
+        return 'Service Provider';
+      default:
+        return 'Select Profile';
+    }
+  };
+
+  const getButtonText = () => {
+    switch (auth.currentProfile) {
+      case 'client':
+        return 'Switch to Service Provider';
+      case 'service_provider':
+        return 'Switch to Client';
+      default:
+        return hasClientGroup ? 'Activate Client' : 'Activate Service Provider';
+    }
+  };
+
+  const getButtonIcon = () => {
+    switch (auth.currentProfile) {
+      case 'client':
+        return <Briefcase className="h-4 w-4 mr-2" />;
+      case 'service_provider':
+        return <User className="h-4 w-4 mr-2" />;
+      default:
+        return hasClientGroup ? <User className="h-4 w-4 mr-2" /> : <Briefcase className="h-4 w-4 mr-2" />;
+    }
+  };
+
+  // Check user groups for profile availability
+  const hasClientGroup = useMemo(() => {
+    if (!auth.user?.groups) return false;
+    return auth.user.groups.includes('client') || auth.user.groups.includes('Client');
+  }, [auth.user?.groups]);
+
+  const hasServiceProviderGroup = useMemo(() => {
+    if (!auth.user?.groups) return false;
+    return auth.user.groups.includes('service_provider') || 
+           auth.user.groups.includes('Service Provider') ||
+           auth.user.groups.includes('serviceprovider');
+  }, [auth.user?.groups]);
 
   return (
     <>
@@ -59,6 +118,28 @@ export function ProfileDropdown() {
               </p>
             </div>
           </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          
+          {/* Profile Switching Section */}
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Current Profile: {getCurrentProfileLabel()}
+            </DropdownMenuLabel>
+            
+            <div className="px-2 py-1.5">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full justify-start"
+                onClick={handleProfileToggle}
+                disabled={!hasClientGroup && !hasServiceProviderGroup}
+              >
+                {getButtonIcon()}
+                {getButtonText()}
+              </Button>
+            </div>
+          </DropdownMenuGroup>
+          
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>

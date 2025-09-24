@@ -1,379 +1,383 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ConfigDrawer } from "@/components/config-drawer";
+import { DataTable } from "@/components/data-table/data-table";
+import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
+import { useDataTable } from "@/components/data-table/use-data-table";
+import { DeleteConfirmNiceDialog } from "@/components/dialogs/delete-confirm-dialog";
+import { Header } from "@/components/layout/header";
+import { Main } from "@/components/layout/main";
+import NiceModal from "@/components/nice-modal/modal-context";
+import { ProfileDropdown } from "@/components/profile-dropdown";
+import { Search } from "@/components/search";
+import { ThemeSwitch } from "@/components/theme-switch";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import { 
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Edit, Trash2, Eye } from "lucide-react";
-import { AuthClient } from "@/lib/auth/auth-client";
-
-interface ServiceSubcategory {
-  id: number;
-  name: string;
-  description: string;
-  category: number;
-  category_name: string;
-  is_active: boolean;
-  featured: boolean;
-  sort_order: number;
-  created_at: string;
-  updated_at: string;
-}
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useDialogControl } from "@/hooks/use-dialog-control";
+import type { ServiceSubcategory } from "@/lib/api/axios-client/api";
+import myApi from "@/lib/api/my-api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { type ColumnDef } from "@tanstack/react-table";
+import {
+  Calendar,
+  Edit,
+  Eye,
+  MoreHorizontal,
+  Plus,
+  Search as SearchIcon,
+  Star,
+  Trash2
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { ServiceSubcategoryCreateEditDialog, type ServiceSubcategoryFormData } from "./components/service-subcategory-create-edit-dialog";
 
 export function ServiceSubcategoriesManagement() {
-  const [subcategories, setSubcategories] = useState<ServiceSubcategory[]>([]);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingSubcategory, setEditingSubcategory] = useState<ServiceSubcategory | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Check permissions
-  const user = AuthClient.getCurrentUser();
-  const canCreate = user?.permissions?.includes('core.add_servicesubcategory') || user?.is_superuser;
-  const canEdit = user?.permissions?.includes('core.change_servicesubcategory') || user?.is_superuser;
-  const canDelete = user?.permissions?.includes('core.delete_servicesubcategory') || user?.is_superuser;
-
-  // Mock data - replace with actual API calls
-  const mockSubcategories: ServiceSubcategory[] = [
-    {
-      id: 1,
-      name: "Deep Cleaning",
-      description: "Thorough deep cleaning service",
-      category: 1,
-      category_name: "Home Cleaning",
-      is_active: true,
-      featured: true,
-      sort_order: 1,
-      created_at: "2024-01-15T10:00:00Z",
-      updated_at: "2024-01-15T10:00:00Z",
-    },
-    {
-      id: 2,
-      name: "Regular Cleaning",
-      description: "Standard weekly cleaning service",
-      category: 1,
-      category_name: "Home Cleaning",
-      is_active: true,
-      featured: false,
-      sort_order: 2,
-      created_at: "2024-01-15T10:00:00Z",
-      updated_at: "2024-01-15T10:00:00Z",
-    },
-    {
-      id: 3,
-      name: "Pipe Repair",
-      description: "Fix leaking pipes and connections",
-      category: 2,
-      category_name: "Plumbing",
-      is_active: true,
-      featured: false,
-      sort_order: 1,
-      created_at: "2024-01-15T10:00:00Z",
-      updated_at: "2024-01-15T10:00:00Z",
-    },
-  ];
-
-  const filteredSubcategories = mockSubcategories.filter(subcategory =>
-    subcategory.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    subcategory.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    subcategory.category_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleCreate = () => {
-    setIsCreateDialogOpen(true);
-  };
-
-  const handleEdit = (subcategory: ServiceSubcategory) => {
-    setEditingSubcategory(subcategory);
-    setIsEditDialogOpen(true);
-  };
-
-  const handleDelete = (id: number) => {
-    if (confirm("Are you sure you want to delete this subcategory?")) {
-      // Implement delete logic
-      console.log("Delete subcategory:", id);
-    }
-  };
-
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-8">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Service Subcategories</h1>
-            <p className="text-gray-600 mt-2">
-              Manage specific services within categories
-            </p>
-          </div>
-          {canCreate && (
-            <Button onClick={handleCreate}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Subcategory
-            </Button>
-          )}
+    <>
+      <Header fixed>
+        <Search />
+        <div className="ms-auto flex items-center space-x-4">
+          <ThemeSwitch />
+          <ConfigDrawer />
+          <ProfileDropdown />
         </div>
-      </div>
-
-      {/* Search and Filters */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Search & Filter</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <Input
-                placeholder="Search subcategories..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Subcategories Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Subcategories ({filteredSubcategories.length})</CardTitle>
-          <CardDescription>
-            Manage all service subcategories in the system
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Featured</TableHead>
-                <TableHead>Sort Order</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredSubcategories.map((subcategory) => (
-                <TableRow key={subcategory.id}>
-                  <TableCell className="font-medium">
-                    {subcategory.name}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{subcategory.category_name}</Badge>
-                  </TableCell>
-                  <TableCell className="max-w-xs truncate">
-                    {subcategory.description}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={subcategory.is_active ? "default" : "secondary"}>
-                      {subcategory.is_active ? "Active" : "Inactive"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={subcategory.featured ? "default" : "outline"}>
-                      {subcategory.featured ? "Featured" : "Regular"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{subcategory.sort_order}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      {canEdit && (
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleEdit(subcategory)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                      )}
-                      {canDelete && (
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleDelete(subcategory.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* Create Dialog */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Create Service Subcategory</DialogTitle>
-            <DialogDescription>
-              Add a new service subcategory to the system
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Subcategory name" />
-              </div>
-              <div>
-                <Label htmlFor="category">Category</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">Home Cleaning</SelectItem>
-                    <SelectItem value="2">Plumbing</SelectItem>
-                    <SelectItem value="3">Electrical</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea id="description" placeholder="Subcategory description" />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="sort_order">Sort Order</Label>
-                <Input id="sort_order" type="number" placeholder="1" />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch id="featured" />
-                <Label htmlFor="featured">Featured Subcategory</Label>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <Switch id="is_active" defaultChecked />
-              <Label htmlFor="is_active">Active</Label>
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setIsCreateDialogOpen(false)}>
-              Create Subcategory
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Edit Service Subcategory</DialogTitle>
-            <DialogDescription>
-              Update the service subcategory information
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-name">Name</Label>
-                <Input 
-                  id="edit-name" 
-                  defaultValue={editingSubcategory?.name}
-                  placeholder="Subcategory name" 
-                />
-              </div>
-              <div>
-                <Label htmlFor="edit-category">Category</Label>
-                <Select defaultValue={editingSubcategory?.category.toString()}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">Home Cleaning</SelectItem>
-                    <SelectItem value="2">Plumbing</SelectItem>
-                    <SelectItem value="3">Electrical</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div>
-              <Label htmlFor="edit-description">Description</Label>
-              <Textarea 
-                id="edit-description" 
-                defaultValue={editingSubcategory?.description}
-                placeholder="Subcategory description" 
-              />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-sort_order">Sort Order</Label>
-                <Input 
-                  id="edit-sort_order" 
-                  type="number" 
-                  defaultValue={editingSubcategory?.sort_order}
-                  placeholder="1" 
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch 
-                  id="edit-featured" 
-                  defaultChecked={editingSubcategory?.featured}
-                />
-                <Label htmlFor="edit-featured">Featured Subcategory</Label>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <Switch 
-                id="edit-is_active" 
-                defaultChecked={editingSubcategory?.is_active}
-              />
-              <Label htmlFor="edit-is_active">Active</Label>
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setIsEditDialogOpen(false)}>
-              Update Subcategory
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+      </Header>
+      <Main>
+        <RenderTable />
+      </Main>
+    </>
   );
 }
+
+const loadServiceSubcategoriesQueryKey = 'service-subcategories'
+
+const RenderTable = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [parsedData, setParsedData] = useState<Array<ServiceSubcategory>>([]);
+  const [parsedPagination, setParsedPagination] = useState({
+    pageCount: 1,
+  });
+
+  const subcategoryDialog = useDialogControl<ServiceSubcategoryFormData>();
+  const queryClient = useQueryClient();
+
+  const loadServiceSubcategoriesQuery = useQuery({
+    queryKey: [loadServiceSubcategoriesQueryKey, debouncedSearchQuery],
+    queryFn: () => myApi.v1CoreServiceSubcategoriesList({
+      search: debouncedSearchQuery || undefined,
+      page: 1,
+      pageSize: 10,
+    }).then(r => r.data),
+    staleTime: 0,
+  });
+
+  useEffect(() => {
+    if (!loadServiceSubcategoriesQuery.data) return;
+    const parsed = loadServiceSubcategoriesQuery.data.results || [];
+    setParsedData(parsed);
+    setParsedPagination({
+      pageCount: Math.ceil(
+        loadServiceSubcategoriesQuery.data.count / 10,
+      ),
+    });
+  }, [loadServiceSubcategoriesQuery.data]);
+
+  const totalCount = parsedData.length;
+
+  // Dialog handlers
+  const handleCreateSubcategory = useCallback(() => {
+    subcategoryDialog.show(undefined); // Explicitly pass undefined to ensure create mode
+  }, [subcategoryDialog]);
+
+  const handleEdit = useCallback((subcategory: ServiceSubcategory) => {
+    subcategoryDialog.show({
+      id: subcategory.id,
+      name: subcategory.name,
+      description: subcategory.description || "",
+      category: subcategory.category,
+      is_active: subcategory.is_active ?? true,
+      featured: subcategory.featured ?? false,
+      sort_order: subcategory.sort_order || 1,
+    });
+  }, [subcategoryDialog]);
+
+  const handleDelete = useCallback((subcategory: ServiceSubcategory) => {
+    NiceModal.show(DeleteConfirmNiceDialog, {
+      title: "Delete Service Subcategory",
+      description: `Are you sure you want to delete "${subcategory.name}"? This action cannot be undone.`,
+      onConfirm: () => deleteMutation.mutate(subcategory.id),
+    });
+  }, []);
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => myApi.v1CoreServiceSubcategoriesDestroy({ id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [loadServiceSubcategoriesQueryKey] });
+      toast.success("Service subcategory deleted successfully!");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to delete service subcategory");
+    },
+  });
+
+  const getStatusColor = useCallback((isActive: boolean) => {
+    return isActive ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" : "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
+  }, []);
+
+  const getFeaturedColor = useCallback((featured: boolean) => {
+    return featured ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400" : "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
+  }, []);
+
+  const columns = useMemo<ColumnDef<ServiceSubcategory, any>[]>(() => [
+    {
+      accessorKey: "id",
+      header: "ID",
+      cell: ({ row }) => (
+        <a className="font-mono text-sm" href="#" onClick={(e) => {
+          e.preventDefault();
+          handleEdit(row.original);
+        }}>
+          #{row.getValue("id")}
+        </a>
+      ),
+      meta: {
+        variant: "number",
+        label: "ID",
+        className: ""
+      }
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("name")}</div>
+      ),
+      meta: {
+        variant: "text",
+        label: "Name",
+        className: ""
+      }
+    },
+    {
+      accessorKey: "category",
+      header: "Category",
+      cell: ({ row }) => {
+        const category = row.getValue("category") as number;
+        return (
+          <Badge variant="outline">Category #{category}</Badge>
+        );
+      },
+      meta: {
+        variant: "text",
+        label: "Category",
+        className: ""
+      }
+    },
+    {
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }) => {
+        const description = row.getValue("description") as string;
+        return (
+          <div className="max-w-xs truncate text-sm text-muted-foreground">
+            {description || "No description"}
+          </div>
+        );
+      },
+      meta: {
+        variant: "text",
+        label: "Description",
+        className: ""
+      }
+    },
+    {
+      accessorKey: "is_active",
+      header: "Status",
+      cell: ({ row }) => {
+        const isActive = row.getValue("is_active") as boolean;
+        return (
+          <Badge className={getStatusColor(isActive)}>
+            {isActive ? "Active" : "Inactive"}
+          </Badge>
+        );
+      },
+      meta: {
+        variant: "select",
+        label: "Status",
+        options: [
+          { label: "Active", value: "true" },
+          { label: "Inactive", value: "false" },
+        ],
+        className: ""
+      }
+    },
+    {
+      accessorKey: "featured",
+      header: "Featured",
+      cell: ({ row }) => {
+        const featured = row.getValue("featured") as boolean;
+        return (
+          <Badge className={getFeaturedColor(featured)}>
+            {featured ? (
+              <>
+                <Star className="h-3 w-3 mr-1" />
+                Featured
+              </>
+            ) : (
+              "Regular"
+            )}
+          </Badge>
+        );
+      },
+      meta: {
+        variant: "select",
+        label: "Featured",
+        options: [
+          { label: "Featured", value: "true" },
+          { label: "Regular", value: "false" },
+        ],
+        className: ""
+      }
+    },
+    {
+      accessorKey: "sort_order",
+      header: "Sort Order",
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">{row.getValue("sort_order")}</div>
+      ),
+      meta: {
+        label: "Sort Order",
+        variant: "number",
+      }
+    },
+    {
+      accessorKey: "created_at",
+      header: "Created",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <Calendar className="h-3 w-3" />
+          <span>{new Date(row.getValue("created_at")).toLocaleDateString()}</span>
+        </div>
+      ),
+      meta: {
+        label: "Created",
+        variant: "date",
+      }
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const subcategory = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start">
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Details
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => handleEdit(subcategory)}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start text-red-600" onClick={() => handleDelete(subcategory)}>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ], [getStatusColor, getFeaturedColor, handleEdit, handleDelete]);
+
+  const { table } = useDataTable({
+    data: parsedData,
+    columns,
+    pageCount: parsedPagination.pageCount,
+    enableGlobalFilter: true,
+    initialState: {
+      sorting: [{ id: "id", desc: true }],
+    },
+  });
+
+  if (loadServiceSubcategoriesQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (loadServiceSubcategoriesQuery.error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600">Error loading service subcategories</p>
+        <Button onClick={() => loadServiceSubcategoriesQuery.refetch()} className="mt-2">
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-lg font-semibold">Service Subcategories</h3>
+            <p className="text-sm text-muted-foreground">
+              {totalCount} subcategor{totalCount !== 1 ? 'ies' : 'y'} found
+            </p>
+          </div>
+          <Button onClick={handleCreateSubcategory} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Add Subcategory
+          </Button>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1 max-w-sm">
+              <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search subcategories..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className="pl-8 h-8"
+              />
+            </div>
+          </div>
+        </div>
+        <DataTable table={table}>
+          <DataTableToolbar table={table} />
+        </DataTable>
+      </div>
+
+      {/* Dialog */}
+      <ServiceSubcategoryCreateEditDialog
+        control={subcategoryDialog}
+      />
+    </div>
+  );
+};

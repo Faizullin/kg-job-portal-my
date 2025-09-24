@@ -1,33 +1,22 @@
 import {
-  Construction,
-  LayoutDashboard,
-  Monitor,
-  Bug,
-  FileX,
-  HelpCircle,
-  Lock,
+  BarChart3,
   Bell,
-  Palette,
-  ServerOff,
-  Settings,
-  Wrench,
-  UserCog,
-  UserX,
-  Users,
-  ShieldCheck,
   Briefcase,
   Building2,
-  FileText,
-  Search,
   CreditCard,
-  Star,
-  BarChart3,
-  User,
-  ShoppingBag,
+  FileText,
+  HelpCircle,
+  LayoutDashboard,
   MessageCircle,
+  Monitor,
+  Palette,
+  Search,
+  Settings,
   Shield,
-  Layers,
-  MapPin,
+  ShoppingBag,
+  Star,
+  User,
+  UserCog
 } from "lucide-react";
 import { type SidebarData } from "../types";
 
@@ -122,95 +111,37 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: "Pages",
-      items: [
-        {
-          title: "Auth",
-          icon: ShieldCheck,
-          items: [
-            {
-              title: "Sign In",
-              url: "/sign-in",
-            },
-            {
-              title: "Sign In (2 Col)",
-              url: "/sign-in-2",
-            },
-            {
-              title: "Forgot Password",
-              url: "/forgot-password",
-            },
-            {
-              title: "OTP",
-              url: "/otp",
-            },
-          ],
-        },
-        {
-          title: "Errors",
-          icon: Bug,
-          items: [
-            {
-              title: "Unauthorized",
-              url: "/errors/unauthorized",
-              icon: Lock,
-            },
-            {
-              title: "Forbidden",
-              url: "/errors/forbidden",
-              icon: UserX,
-            },
-            {
-              title: "Not Found",
-              url: "/errors/not-found",
-              icon: FileX,
-            },
-            {
-              title: "Internal Server Error",
-              url: "/errors/internal-server-error",
-              icon: ServerOff,
-            },
-            {
-              title: "Maintenance Error",
-              url: "/errors/maintenance-error",
-              icon: Construction,
-            },
-          ],
-        },
-      ],
-    },
-    {
       title: "Core Management",
       items: [
         {
-          title: "Dashboard",
-          url: "/core",
+          title: "Core",
           icon: Shield,
-        },
-        {
-          title: "Categories",
-          url: "/core/categories",
-          icon: Building2,
-        },
-        {
-          title: "Subcategories",
-          url: "/core/subcategories",
-          icon: Layers,
-        },
-        {
-          title: "Areas",
-          url: "/core/areas",
-          icon: MapPin,
-        },
-        {
-          title: "Settings",
-          url: "/core/settings",
-          icon: Settings,
-        },
-        {
-          title: "FAQ",
-          url: "/core/faq",
-          icon: HelpCircle,
+          items: [
+            {
+              title: "Dashboard",
+              url: "/core",
+            },
+            {
+              title: "Categories",
+              url: "/core/service-categories",
+            },
+            {
+              title: "Subcategories",
+              url: "/core/service-subcategories",
+            },
+            {
+              title: "Areas",
+              url: "/core/service-areas",
+            },
+            {
+              title: "Settings",
+              url: "/core/settings",
+            },
+            {
+              title: "FAQ",
+              url: "/core/faq",
+            },
+          ],
         },
       ],
     },

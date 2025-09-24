@@ -2,7 +2,7 @@ import type { AxiosInstance } from "axios";
 import globalAxios from "axios";
 import type { User } from "firebase/auth";
 import { getFirebaseAuth } from "../auth/firebase";
-import { V1Api } from "./axios-client/api";
+import { V1Api, type UserProfile } from "./axios-client/api";
 import type { Configuration } from "./axios-client/configuration";
 
 const BASE_PATH = import.meta.env.VITE_BACKEND_API_URL;
@@ -10,18 +10,10 @@ const BASE_PATH = import.meta.env.VITE_BACKEND_API_URL;
 // Auth data interface
 interface AuthData {
     token: string;
-    user: {
-        id: number;
-        username: string;
-        email: string;
-        name: string;
-        user_role: string;
-        groups: string[];
-        permissions: string[];
-        is_active: boolean;
-        is_staff: boolean;
-        is_superuser: boolean;
-    } | null;
+    user: UserProfile | null;
+    currentProfile?: 'client' | 'service_provider' | null;
+    clientProfile?: any | null;
+    serviceProviderProfile?: any | null;
 }
 
 // LocalStorage key for auth data
@@ -157,15 +149,16 @@ class MyApi extends V1Api {
                 token: response.data.token,
                 user: {
                     id: response.data.user?.id || 0,
-                    username: response.data.user?.username || firebaseUser.displayName || "",
+                    username: response.data.user?.username || "",
                     email: response.data.user?.email || firebaseUser.email || "",
-                    name: response.data.user?.name || firebaseUser.displayName || "",
-                    user_role: response.data.user?.user_role || "client",
                     groups: response.data.user?.groups || [],
                     permissions: response.data.user?.permissions || [],
                     is_active: response.data.user?.is_active || false,
                     is_staff: response.data.user?.is_staff || false,
                     is_superuser: response.data.user?.is_superuser || false,
+                    date_joined: response.data.user?.date_joined,
+                    last_login: response.data.user?.last_login,
+                    photo_url: response.data.user?.photo_url || "",
                 },
             };
             this.setAuthToStorage(authData);
@@ -220,6 +213,31 @@ class MyApi extends V1Api {
     public isAuthenticated = (): boolean => {
         const authData = this.getAuthFromStorage();
         return !!(authData?.token && authData?.user);
+    };
+
+    // Profile management methods
+    public setCurrentProfile = (profile: 'client' | 'service_provider' | null): void => {
+        const authData = this.getAuthFromStorage();
+        if (authData) {
+            authData.currentProfile = profile;
+            this.setAuthToStorage(authData);
+        }
+    };
+
+    public setClientProfile = (profile: any | null): void => {
+        const authData = this.getAuthFromStorage();
+        if (authData) {
+            authData.clientProfile = profile;
+            this.setAuthToStorage(authData);
+        }
+    };
+
+    public setServiceProviderProfile = (profile: any | null): void => {
+        const authData = this.getAuthFromStorage();
+        if (authData) {
+            authData.serviceProviderProfile = profile;
+            this.setAuthToStorage(authData);
+        }
     };
 }
 

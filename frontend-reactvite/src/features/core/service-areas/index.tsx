@@ -1,268 +1,342 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ConfigDrawer } from "@/components/config-drawer";
+import { DataTable } from "@/components/data-table/data-table";
+import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
+import { useDataTable } from "@/components/data-table/use-data-table";
+import { DeleteConfirmNiceDialog } from "@/components/dialogs/delete-confirm-dialog";
+import { Header } from "@/components/layout/header";
+import { Main } from "@/components/layout/main";
+import NiceModal from "@/components/nice-modal/modal-context";
+import { ProfileDropdown } from "@/components/profile-dropdown";
+import { Search } from "@/components/search";
+import { ThemeSwitch } from "@/components/theme-switch";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import { 
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Plus, Edit, Trash2, Eye } from "lucide-react";
-import { AuthClient } from "@/lib/auth/auth-client";
-
-interface ServiceArea {
-  id: number;
-  name: string;
-  city: string;
-  state: string;
-  country: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useDialogControl } from "@/hooks/use-dialog-control";
+import type { ServiceArea } from "@/lib/api/axios-client/api";
+import myApi from "@/lib/api/my-api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { type ColumnDef } from "@tanstack/react-table";
+import {
+  Calendar,
+  Edit,
+  Eye,
+  MoreHorizontal,
+  Plus,
+  Search as SearchIcon,
+  Trash2
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { ServiceAreaCreateEditDialog, type ServiceAreaFormData } from "./components/service-area-create-edit-dialog";
 
 export function ServiceAreasManagement() {
-  const [areas, setAreas] = useState<ServiceArea[]>([]);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingArea, setEditingArea] = useState<ServiceArea | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // Check permissions
-  const user = AuthClient.getCurrentUser();
-  const canCreate = user?.permissions?.includes('core.add_servicearea') || user?.is_superuser;
-  const canEdit = user?.permissions?.includes('core.change_servicearea') || user?.is_superuser;
-  const canDelete = user?.permissions?.includes('core.delete_servicearea') || user?.is_superuser;
-
-  // Mock data
-  const mockAreas: ServiceArea[] = [
-    {
-      id: 1,
-      name: "Downtown",
-      city: "New York",
-      state: "NY",
-      country: "USA",
-      is_active: true,
-      created_at: "2024-01-15T10:00:00Z",
-      updated_at: "2024-01-15T10:00:00Z",
-    },
-    {
-      id: 2,
-      name: "Manhattan",
-      city: "New York",
-      state: "NY", 
-      country: "USA",
-      is_active: true,
-      created_at: "2024-01-15T10:00:00Z",
-      updated_at: "2024-01-15T10:00:00Z",
-    },
-  ];
-
-  const filteredAreas = mockAreas.filter(area =>
-    area.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    area.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    area.state.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleCreate = () => setIsCreateDialogOpen(true);
-  const handleEdit = (area: ServiceArea) => {
-    setEditingArea(area);
-    setIsEditDialogOpen(true);
-  };
-  const handleDelete = (id: number) => {
-    if (confirm("Are you sure you want to delete this area?")) {
-      console.log("Delete area:", id);
-    }
-  };
-
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-8">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Service Areas</h1>
-            <p className="text-gray-600 mt-2">Manage geographic service areas</p>
-          </div>
-          {canCreate && (
-            <Button onClick={handleCreate}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Area
-            </Button>
-          )}
+    <>
+      <Header fixed>
+        <Search />
+        <div className="ms-auto flex items-center space-x-4">
+          <ThemeSwitch />
+          <ConfigDrawer />
+          <ProfileDropdown />
         </div>
-      </div>
-
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Search & Filter</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Input
-            placeholder="Search areas..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Service Areas ({filteredAreas.length})</CardTitle>
-          <CardDescription>Manage all service areas in the system</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>City</TableHead>
-                <TableHead>State</TableHead>
-                <TableHead>Country</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredAreas.map((area) => (
-                <TableRow key={area.id}>
-                  <TableCell className="font-medium">{area.name}</TableCell>
-                  <TableCell>{area.city}</TableCell>
-                  <TableCell>{area.state}</TableCell>
-                  <TableCell>{area.country}</TableCell>
-                  <TableCell>
-                    <Badge variant={area.is_active ? "default" : "secondary"}>
-                      {area.is_active ? "Active" : "Inactive"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      {canEdit && (
-                        <Button variant="outline" size="sm" onClick={() => handleEdit(area)}>
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                      )}
-                      {canDelete && (
-                        <Button variant="outline" size="sm" onClick={() => handleDelete(area.id)}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* Create Dialog */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create Service Area</DialogTitle>
-            <DialogDescription>Add a new service area to the system</DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Area name" />
-              </div>
-              <div>
-                <Label htmlFor="city">City</Label>
-                <Input id="city" placeholder="City name" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="state">State</Label>
-                <Input id="state" placeholder="State" />
-              </div>
-              <div>
-                <Label htmlFor="country">Country</Label>
-                <Input id="country" placeholder="Country" />
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Switch id="is_active" defaultChecked />
-              <Label htmlFor="is_active">Active</Label>
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setIsCreateDialogOpen(false)}>
-              Create Area
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Service Area</DialogTitle>
-            <DialogDescription>Update the service area information</DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-name">Name</Label>
-                <Input id="edit-name" defaultValue={editingArea?.name} placeholder="Area name" />
-              </div>
-              <div>
-                <Label htmlFor="edit-city">City</Label>
-                <Input id="edit-city" defaultValue={editingArea?.city} placeholder="City name" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-state">State</Label>
-                <Input id="edit-state" defaultValue={editingArea?.state} placeholder="State" />
-              </div>
-              <div>
-                <Label htmlFor="edit-country">Country</Label>
-                <Input id="edit-country" defaultValue={editingArea?.country} placeholder="Country" />
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Switch id="edit-is_active" defaultChecked={editingArea?.is_active} />
-              <Label htmlFor="edit-is_active">Active</Label>
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setIsEditDialogOpen(false)}>
-              Update Area
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+      </Header>
+      <Main>
+        <RenderTable />
+      </Main>
+    </>
   );
 }
+
+const loadServiceAreasQueryKey = 'service-areas'
+
+const RenderTable = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [parsedData, setParsedData] = useState<Array<ServiceArea>>([]);
+  const [parsedPagination, setParsedPagination] = useState({
+    pageCount: 1,
+  });
+
+  const areaDialog = useDialogControl<ServiceAreaFormData>();
+  const queryClient = useQueryClient();
+
+  const loadServiceAreasQuery = useQuery({
+    queryKey: [loadServiceAreasQueryKey, debouncedSearchQuery],
+    queryFn: () => myApi.v1CoreServiceAreasList({
+      search: debouncedSearchQuery || undefined,
+      page: 1,
+      pageSize: 10,
+    }).then(r => r.data),
+    staleTime: 0,
+  });
+
+  useEffect(() => {
+    if (!loadServiceAreasQuery.data) return;
+    const parsed = loadServiceAreasQuery.data.results || [];
+    setParsedData(parsed);
+    setParsedPagination({
+      pageCount: Math.ceil(
+        loadServiceAreasQuery.data.count / 10,
+      ),
+    });
+  }, [loadServiceAreasQuery.data]);
+
+  const totalCount = parsedData.length;
+
+  // Dialog handlers
+  const handleCreateArea = useCallback(() => {
+    areaDialog.show(undefined); // Explicitly pass undefined to ensure create mode
+  }, [areaDialog]);
+
+  const handleEdit = useCallback((area: ServiceArea) => {
+    areaDialog.show({
+      id: area.id,
+      name: area.name,
+      city: area.city,
+      state: area.state,
+      country: area.country,
+      is_active: area.is_active ?? true,
+    });
+  }, [areaDialog]);
+
+  const handleDelete = useCallback((area: ServiceArea) => {
+    NiceModal.show(DeleteConfirmNiceDialog, {
+      title: "Delete Service Area",
+      description: `Are you sure you want to delete "${area.name}"? This action cannot be undone.`,
+      onConfirm: () => deleteMutation.mutate(area.id),
+    });
+  }, []);
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => myApi.v1CoreServiceAreasDestroy({ id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [loadServiceAreasQueryKey] });
+      toast.success("Service area deleted successfully!");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to delete service area");
+    },
+  });
+
+  const getStatusColor = useCallback((isActive: boolean) => {
+    return isActive ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" : "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
+  }, []);
+
+  const columns = useMemo<ColumnDef<ServiceArea, any>[]>(() => [
+    {
+      accessorKey: "id",
+      header: "ID",
+      cell: ({ row }) => (
+        <a className="font-mono text-sm" href="#" onClick={(e) => {
+          e.preventDefault();
+          handleEdit(row.original);
+        }}>
+          #{row.getValue("id")}
+        </a>
+      ),
+      meta: {
+        variant: "number",
+        label: "ID",
+        className: ""
+      }
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("name")}</div>
+      ),
+      meta: {
+        variant: "text",
+        label: "Name",
+        className: ""
+      }
+    },
+    {
+      accessorKey: "city",
+      header: "City",
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">{row.getValue("city")}</div>
+      ),
+      meta: {
+        variant: "text",
+        label: "City",
+        className: ""
+      }
+    },
+    {
+      accessorKey: "state",
+      header: "State",
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">{row.getValue("state")}</div>
+      ),
+      meta: {
+        variant: "text",
+        label: "State",
+        className: ""
+      }
+    },
+    {
+      accessorKey: "country",
+      header: "Country",
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">{row.getValue("country")}</div>
+      ),
+      meta: {
+        variant: "text",
+        label: "Country",
+        className: ""
+      }
+    },
+    {
+      accessorKey: "is_active",
+      header: "Status",
+      cell: ({ row }) => {
+        const isActive = row.getValue("is_active") as boolean;
+        return (
+          <Badge className={getStatusColor(isActive)}>
+            {isActive ? "Active" : "Inactive"}
+          </Badge>
+        );
+      },
+      meta: {
+        variant: "select",
+        label: "Status",
+        options: [
+          { label: "Active", value: "true" },
+          { label: "Inactive", value: "false" },
+        ],
+        className: ""
+      }
+    },
+    {
+      accessorKey: "created_at",
+      header: "Created",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <Calendar className="h-3 w-3" />
+          <span>{new Date(row.getValue("created_at")).toLocaleDateString()}</span>
+        </div>
+      ),
+      meta: {
+        label: "Created",
+        variant: "date",
+      }
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const area = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start">
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Details
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => handleEdit(area)}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start text-red-600" onClick={() => handleDelete(area)}>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ], [getStatusColor, handleEdit, handleDelete]);
+
+  const { table } = useDataTable({
+    data: parsedData,
+    columns,
+    pageCount: parsedPagination.pageCount,
+    enableGlobalFilter: true,
+    initialState: {
+      sorting: [{ id: "id", desc: true }],
+    },
+  });
+
+  if (loadServiceAreasQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (loadServiceAreasQuery.error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600">Error loading service areas</p>
+        <Button onClick={() => loadServiceAreasQuery.refetch()} className="mt-2">
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-lg font-semibold">Service Areas</h3>
+            <p className="text-sm text-muted-foreground">
+              {totalCount} area{totalCount !== 1 ? 's' : ''} found
+            </p>
+          </div>
+          <Button onClick={handleCreateArea} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Add Area
+          </Button>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1 max-w-sm">
+              <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search areas..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className="pl-8 h-8"
+              />
+            </div>
+          </div>
+        </div>
+        <DataTable table={table}>
+          <DataTableToolbar table={table} />
+        </DataTable>
+      </div>
+
+      {/* Dialog */}
+      <ServiceAreaCreateEditDialog
+        control={areaDialog}
+      />
+    </div>
+  );
+};

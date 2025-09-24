@@ -1,215 +1,291 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ConfigDrawer } from "@/components/config-drawer";
+import { DataTable } from "@/components/data-table/data-table";
+import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
+import { useDataTable } from "@/components/data-table/use-data-table";
+import { Header } from "@/components/layout/header";
+import { Main } from "@/components/layout/main";
+import { ProfileDropdown } from "@/components/profile-dropdown";
+import { Search } from "@/components/search";
+import { ThemeSwitch } from "@/components/theme-switch";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import { 
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Edit, Eye } from "lucide-react";
-import { AuthClient } from "@/lib/auth/auth-client";
-
-interface SystemSetting {
-  id: number;
-  key: string;
-  value: string;
-  description: string;
-  setting_type: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useDialogControl } from "@/hooks/use-dialog-control";
+import type { SystemSettings } from "@/lib/api/axios-client/api";
+import myApi from "@/lib/api/my-api";
+import { useQuery } from "@tanstack/react-query";
+import { type ColumnDef } from "@tanstack/react-table";
+import {
+  Calendar,
+  Edit,
+  Eye,
+  MoreHorizontal,
+  Search as SearchIcon,
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { SystemSettingsEditDialog, type SystemSettingsFormData } from "./components/system-settings-edit-dialog";
 
 export function SystemSettingsManagement() {
-  const [settings, setSettings] = useState<SystemSetting[]>([]);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingSetting, setEditingSetting] = useState<SystemSetting | null>(null);
-
-  // Check permissions
-  const user = AuthClient.getCurrentUser();
-  const canEdit = user?.permissions?.includes('core.change_systemsettings') || user?.is_superuser;
-
-  // Mock data
-  const mockSettings: SystemSetting[] = [
-    {
-      id: 1,
-      key: "site_name",
-      value: "KG Job Portal",
-      description: "The name of the website",
-      setting_type: "string",
-      is_active: true,
-      created_at: "2024-01-15T10:00:00Z",
-      updated_at: "2024-01-15T10:00:00Z",
-    },
-    {
-      id: 2,
-      key: "default_commission_rate",
-      value: "10.0",
-      description: "Default commission rate for services",
-      setting_type: "float",
-      is_active: true,
-      created_at: "2024-01-15T10:00:00Z",
-      updated_at: "2024-01-15T10:00:00Z",
-    },
-    {
-      id: 3,
-      key: "max_file_upload_size",
-      value: "10485760",
-      description: "Maximum file upload size in bytes (10MB)",
-      setting_type: "integer",
-      is_active: true,
-      created_at: "2024-01-15T10:00:00Z",
-      updated_at: "2024-01-15T10:00:00Z",
-    },
-  ];
-
-  const handleEdit = (setting: SystemSetting) => {
-    setEditingSetting(setting);
-    setIsEditDialogOpen(true);
-  };
-
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">System Settings</h1>
-          <p className="text-gray-600 mt-2">
-            Configure system-wide settings and parameters
-          </p>
+    <>
+      <Header fixed>
+        <Search />
+        <div className="ms-auto flex items-center space-x-4">
+          <ThemeSwitch />
+          <ConfigDrawer />
+          <ProfileDropdown />
         </div>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>System Settings ({mockSettings.length})</CardTitle>
-          <CardDescription>
-            Manage all system configuration settings
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Key</TableHead>
-                <TableHead>Value</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {mockSettings.map((setting) => (
-                <TableRow key={setting.id}>
-                  <TableCell className="font-medium">{setting.key}</TableCell>
-                  <TableCell className="max-w-xs truncate">{setting.value}</TableCell>
-                  <TableCell className="max-w-xs truncate">{setting.description}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{setting.setting_type}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={setting.is_active ? "default" : "secondary"}>
-                      {setting.is_active ? "Active" : "Inactive"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      {canEdit && (
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleEdit(setting)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Edit System Setting</DialogTitle>
-            <DialogDescription>
-              Update the system setting value
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <div>
-              <Label htmlFor="edit-key">Key</Label>
-              <Input 
-                id="edit-key" 
-                defaultValue={editingSetting?.key}
-                disabled
-                className="bg-gray-50"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="edit-description">Description</Label>
-              <Textarea 
-                id="edit-description" 
-                defaultValue={editingSetting?.description}
-                disabled
-                className="bg-gray-50"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="edit-value">Value</Label>
-              <Input 
-                id="edit-value" 
-                defaultValue={editingSetting?.value}
-                placeholder="Enter new value"
-              />
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <Switch 
-                id="edit-is_active" 
-                defaultChecked={editingSetting?.is_active}
-              />
-              <Label htmlFor="edit-is_active">Active</Label>
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setIsEditDialogOpen(false)}>
-              Update Setting
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+      </Header>
+      <Main>
+        <RenderTable />
+      </Main>
+    </>
   );
 }
+
+const loadSystemSettingsQueryKey = 'system-settings'
+
+const RenderTable = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [parsedData, setParsedData] = useState<Array<SystemSettings>>([]);
+  const [parsedPagination, setParsedPagination] = useState({
+    pageCount: 1,
+  });
+
+  const settingsDialog = useDialogControl<SystemSettingsFormData>();
+
+  const loadSystemSettingsQuery = useQuery({
+    queryKey: [loadSystemSettingsQueryKey, debouncedSearchQuery],
+    queryFn: () => myApi.v1CoreSystemSettingsList({
+      search: debouncedSearchQuery || undefined,
+      page: 1,
+      pageSize: 10,
+    }).then(r => r.data),
+    staleTime: 0,
+  });
+
+  useEffect(() => {
+    if (!loadSystemSettingsQuery.data) return;
+    const parsed = loadSystemSettingsQuery.data.results || [];
+    setParsedData(parsed);
+    setParsedPagination({
+      pageCount: Math.ceil(
+        loadSystemSettingsQuery.data.count / 10,
+      ),
+    });
+  }, [loadSystemSettingsQuery.data]);
+
+  const totalCount = parsedData.length;
+
+  // Dialog handlers
+  const handleEdit = useCallback((setting: SystemSettings) => {
+    settingsDialog.show({
+      id: setting.id,
+      key: setting.key,
+      value: setting.value,
+      description: setting.description || "",
+      setting_type: setting.setting_type,
+      is_active: setting.is_active ?? true,
+    });
+  }, [settingsDialog]);
+
+  const getStatusColor = useCallback((isActive: boolean) => {
+    return isActive ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" : "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
+  }, []);
+
+  const getTypeColor = useCallback((type: string) => {
+    const colors: Record<string, string> = {
+      string: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
+      integer: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400",
+      float: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
+      boolean: "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400",
+      json: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-400",
+    };
+    return colors[type] || "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
+  }, []);
+
+  const columns = useMemo<ColumnDef<SystemSettings, any>[]>(() => [
+    {
+      accessorKey: "id",
+      header: "ID",
+      cell: ({ row }) => (
+        <a className="font-mono text-sm" href="#" onClick={(e) => {
+          e.preventDefault();
+          handleEdit(row.original);
+        }}>
+          #{row.getValue("id")}
+        </a>
+      ),
+    },
+    {
+      accessorKey: "key",
+      header: "Key",
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("key")}</div>
+      ),
+    },
+    {
+      accessorKey: "value",
+      header: "Value",
+      cell: ({ row }) => {
+        const value = row.getValue("value") as string;
+        return (
+          <div className="max-w-xs truncate text-sm text-muted-foreground">
+            {value}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }) => {
+        const description = row.getValue("description") as string;
+        return (
+          <div className="max-w-xs truncate text-sm text-muted-foreground">
+            {description || "No description"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "setting_type",
+      header: "Type",
+      cell: ({ row }) => {
+        const type = row.getValue("setting_type") as string;
+        return (
+          <Badge className={getTypeColor(type)}>
+            {type}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "is_active",
+      header: "Status",
+      cell: ({ row }) => {
+        const isActive = row.getValue("is_active") as boolean;
+        return (
+          <Badge className={getStatusColor(isActive)}>
+            {isActive ? "Active" : "Inactive"}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "created_at",
+      header: "Created",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <Calendar className="h-3 w-3" />
+          <span>{new Date(row.getValue("created_at")).toLocaleDateString()}</span>
+        </div>
+      ),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const setting = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start">
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Details
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => handleEdit(setting)}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ], [getStatusColor, getTypeColor, handleEdit]);
+
+  const { table } = useDataTable({
+    data: parsedData,
+    columns,
+    pageCount: parsedPagination.pageCount,
+    enableGlobalFilter: true,
+    initialState: {
+      sorting: [{ id: "id", desc: true }],
+    },
+  });
+
+  if (loadSystemSettingsQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (loadSystemSettingsQuery.error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600">Error loading system settings</p>
+        <Button onClick={() => loadSystemSettingsQuery.refetch()} className="mt-2">
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-lg font-semibold">System Settings</h3>
+            <p className="text-sm text-muted-foreground">
+              {totalCount} setting{totalCount !== 1 ? 's' : ''} found
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1 max-w-sm">
+              <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search settings..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className="pl-8 h-8"
+              />
+            </div>
+          </div>
+        </div>
+        <DataTable table={table}>
+          <DataTableToolbar table={table} />
+        </DataTable>
+      </div>
+
+      {/* Dialog */}
+      <SystemSettingsEditDialog
+        control={settingsDialog}
+      />
+    </div>
+  );
+};

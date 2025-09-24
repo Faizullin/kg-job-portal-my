@@ -21,8 +21,7 @@ export function useDialogControl<T = any>(initialData: T | null = null): DialogC
 
   const hide = useCallback(() => {
     setIsVisible(false);
-    // Optionally clear data when hiding
-    // setData(null);
+    setData(null);
   }, []);
 
   const toggle = useCallback(() => {

@@ -38,14 +38,31 @@ import { OrderCreateEditDialog, type OrderFormData } from "./components/order-cr
 
 
 export function Orders() {
+  return (
+    <>
+      <Header fixed>
+        <Search />
+        <div className="ms-auto flex items-center space-x-4">
+          <ThemeSwitch />
+          <ConfigDrawer />
+          <ProfileDropdown />
+        </div>
+      </Header>
+
+      <Main>
+        <RenderTable />
+      </Main>
+    </>
+  );
+}
+
+const loadOrdersQueryKey = 'orders'
+
+const RenderTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Dialog controls
   const orderDialog = useDialogControl<OrderFormData>();
-
-  // Load orders with TanStack Query
-  const ordersQuery = useQuery({
-    queryKey: ['orders', searchQuery],
+  const loadOrdersQuery = useQuery({
+    queryKey: [loadOrdersQueryKey, searchQuery],
     queryFn: () => myApi.v1OrdersList({
       search: searchQuery || undefined,
       page: 1,
@@ -54,9 +71,8 @@ export function Orders() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const orders = ordersQuery.data?.results || [];
+  const orders = loadOrdersQuery.data?.results || [];
 
-  // Dialog handlers
   const handleCreateOrder = useCallback(() => {
     orderDialog.show();
   }, [orderDialog]);
@@ -94,7 +110,6 @@ export function Orders() {
 
   const totalCount = orders.length;
 
-  // Define columns with useMemo
   const columns = useMemo<ColumnDef<Order, any>[]>(() => [
     {
       accessorKey: "title",
@@ -221,117 +236,78 @@ export function Orders() {
     pageCount: Math.ceil(totalCount / 10),
   });
 
-  // Loading state
-  if (ordersQuery.isLoading) {
+  if (loadOrdersQuery.isLoading) {
     return (
-      <>
-        <Header fixed>
-          <Search />
-          <div className="ms-auto flex items-center space-x-4">
-            <ThemeSwitch />
-            <ConfigDrawer />
-            <ProfileDropdown />
-          </div>
-        </Header>
-
-        <Main>
-          <div className="flex items-center justify-center h-64">
-            <div className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Loading orders...</span>
-            </div>
-          </div>
-        </Main>
-      </>
+      <div className="flex items-center justify-center h-64">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <span>Loading orders...</span>
+        </div>
+      </div>
     );
   }
 
-  // Error state
-  if (ordersQuery.error) {
+  if (loadOrdersQuery.error) {
     return (
-      <>
-        <Header fixed>
-          <Search />
-          <div className="ms-auto flex items-center space-x-4">
-            <ThemeSwitch />
-            <ConfigDrawer />
-            <ProfileDropdown />
-          </div>
-        </Header>
-
-        <Main>
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <p className="text-destructive">Failed to load orders</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                {ordersQuery.error instanceof Error ? ordersQuery.error.message : "An error occurred"}
-              </p>
-            </div>
-          </div>
-        </Main>
-      </>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <p className="text-destructive">Failed to load orders</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            {loadOrdersQuery.error instanceof Error ? loadOrdersQuery.error.message : "An error occurred"}
+          </p>
+        </div>
+      </div>
     );
   }
 
   return (
     <>
-      <Header fixed>
-        <Search />
-        <div className="ms-auto flex items-center space-x-4">
-          <ThemeSwitch />
-          <ConfigDrawer />
-          <ProfileDropdown />
+      <div className="mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Orders</h2>
+          <p className="text-muted-foreground">
+            Manage and track your service orders 
+          </p>
         </div>
-      </Header>
-
-      <Main>
-        <div className="mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">Orders</h2>
-            <p className="text-muted-foreground">
-              Manage and track your service orders
-            </p>
-          </div>
-        </div>
-        <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-lg font-semibold">All Orders</h3>
-                <p className="text-sm text-muted-foreground">
-                  {totalCount} order{totalCount !== 1 ? 's' : ''} found
-                </p>
-              </div>
-              <Button onClick={handleCreateOrder} className="gap-2">
-                <Plus className="h-4 w-4" />
-                Create New Order
-              </Button>
+      </div>
+      <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-lg font-semibold">All Orders</h3>
+              <p className="text-sm text-muted-foreground">
+                {totalCount} order{totalCount !== 1 ? 's' : ''} found
+              </p>
             </div>
-
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1 max-w-sm">
-                  <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search orders..."
-                    value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                    className="pl-8 h-8"
-                  />
-                </div>
-              </div>
-              <DataTable table={table}>
-                <DataTableToolbar table={table} />
-              </DataTable>
-            </div>
-
-            {/* Dialogs */}
-            <OrderCreateEditDialog
-              control={orderDialog}
-            />
+            <Button onClick={handleCreateOrder} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Create New Order
+            </Button>
           </div>
+
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1 max-w-sm">
+                <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search orders..."
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  className="pl-8 h-8"
+                />
+              </div>
+            </div>
+            <DataTable table={table}>
+              <DataTableToolbar table={table} />
+            </DataTable>
+          </div>
+
+          {/* Dialogs */}
+          <OrderCreateEditDialog
+            control={orderDialog}
+          />
         </div>
-      </Main>
+      </div>
     </>
   );
 }

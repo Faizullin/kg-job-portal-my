@@ -267,67 +267,6 @@ export interface AdvancedProfileUserData {
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface AppVersion
- */
-export interface AppVersion {
-    /**
-     * 
-     * @type {number}
-     * @memberof AppVersion
-     */
-    'id': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof AppVersion
-     */
-    'version': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof AppVersion
-     */
-    'build_number': number;
-    /**
-     * 
-     * @type {PlatformEnum}
-     * @memberof AppVersion
-     */
-    'platform'?: PlatformEnum;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof AppVersion
-     */
-    'is_active'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof AppVersion
-     */
-    'is_forced_update'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof AppVersion
-     */
-    'release_date': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AppVersion
-     */
-    'download_url'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AppVersion
-     */
-    'platform_display': string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
  * @interface Bid
  */
 export interface Bid {
@@ -1594,37 +1533,6 @@ export interface OrderUpdate {
 /**
  * 
  * @export
- * @interface PaginatedAppVersionList
- */
-export interface PaginatedAppVersionList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedAppVersionList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedAppVersionList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedAppVersionList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<AppVersion>}
-     * @memberof PaginatedAppVersionList
-     */
-    'results'?: Array<AppVersion>;
-}
-/**
- * 
- * @export
  * @interface PaginatedBidList
  */
 export interface PaginatedBidList {
@@ -2507,6 +2415,206 @@ export interface PatchedReviewUpdate {
     'comment'?: string;
 }
 /**
+ * Serializer for creating and updating service areas.
+ * @export
+ * @interface PatchedServiceAreaCreateUpdate
+ */
+export interface PatchedServiceAreaCreateUpdate {
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceAreaCreateUpdate
+     */
+    'name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceAreaCreateUpdate
+     */
+    'city'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceAreaCreateUpdate
+     */
+    'state'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceAreaCreateUpdate
+     */
+    'country'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceAreaCreateUpdate
+     */
+    'latitude'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceAreaCreateUpdate
+     */
+    'longitude'?: string | null;
+    /**
+     * 
+     * @type {any}
+     * @memberof PatchedServiceAreaCreateUpdate
+     */
+    'postal_codes'?: any;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedServiceAreaCreateUpdate
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof PatchedServiceAreaCreateUpdate
+     */
+    'service_categories'?: Array<number>;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceAreaCreateUpdate
+     */
+    'base_price_multiplier'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceAreaCreateUpdate
+     */
+    'travel_fee'?: string;
+}
+/**
+ * Serializer for creating and updating service categories.
+ * @export
+ * @interface PatchedServiceCategoryCreateUpdate
+ */
+export interface PatchedServiceCategoryCreateUpdate {
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'icon'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'color'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'banner_image'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'featured'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'commission_rate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'min_price'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'max_price'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'estimated_duration_min'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'estimated_duration_max'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'meta_title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'meta_description'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'keywords'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'slug'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'requires_license'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'requires_insurance'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedServiceCategoryCreateUpdate
+     */
+    'requires_background_check'?: boolean;
+}
+/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface PatchedServiceProviderUpdate
@@ -2560,6 +2668,225 @@ export interface PatchedServiceProviderUpdate {
      * @memberof PatchedServiceProviderUpdate
      */
     'is_available'?: boolean;
+}
+/**
+ * Serializer for creating and updating service subcategories.
+ * @export
+ * @interface PatchedServiceSubcategoryCreateUpdate
+ */
+export interface PatchedServiceSubcategoryCreateUpdate {
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'category'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'icon'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'image'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'featured'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'base_price'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'price_range_min'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'price_range_max'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'estimated_duration'?: number | null;
+    /**
+     * 
+     * @type {ComplexityLevelEnum}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'complexity_level'?: ComplexityLevelEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'safety_requirements'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'slug'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'meta_title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedServiceSubcategoryCreateUpdate
+     */
+    'meta_description'?: string;
+}
+/**
+ * Serializer for creating and updating support FAQ items.
+ * @export
+ * @interface PatchedSupportFAQCreateUpdate
+ */
+export interface PatchedSupportFAQCreateUpdate {
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSupportFAQCreateUpdate
+     */
+    'question'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSupportFAQCreateUpdate
+     */
+    'answer'?: string;
+    /**
+     * 
+     * @type {CategoryEnum}
+     * @memberof PatchedSupportFAQCreateUpdate
+     */
+    'category'?: CategoryEnum;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedSupportFAQCreateUpdate
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedSupportFAQCreateUpdate
+     */
+    'is_popular'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedSupportFAQCreateUpdate
+     */
+    'is_active'?: boolean;
+}
+/**
+ * Serializer for creating and updating system settings.
+ * @export
+ * @interface PatchedSystemSettingsCreateUpdate
+ */
+export interface PatchedSystemSettingsCreateUpdate {
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSystemSettingsCreateUpdate
+     */
+    'key'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSystemSettingsCreateUpdate
+     */
+    'value'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSystemSettingsCreateUpdate
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedSystemSettingsCreateUpdate
+     */
+    'is_public'?: boolean;
+    /**
+     * 
+     * @type {SettingTypeEnum}
+     * @memberof PatchedSystemSettingsCreateUpdate
+     */
+    'setting_type'?: SettingTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSystemSettingsCreateUpdate
+     */
+    'validation_regex'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSystemSettingsCreateUpdate
+     */
+    'min_value'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSystemSettingsCreateUpdate
+     */
+    'max_value'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedSystemSettingsCreateUpdate
+     */
+    'requires_admin'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSystemSettingsCreateUpdate
+     */
+    'category'?: string;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -2994,20 +3321,6 @@ export enum PaymentStatusEnum {
 
 
 /**
- * * `android` - Android * `ios` - iOS * `web` - Web * `all` - All Platforms
- * @export
- * @enum {string}
- */
-
-export enum PlatformEnum {
-    android = 'android',
-    ios = 'ios',
-    web = 'web',
-    all = 'all'
-}
-
-
-/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface PreferredServiceSubcategory
@@ -3354,6 +3667,85 @@ export interface ServiceArea {
      * @memberof ServiceArea
      */
     'coordinates': string;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof ServiceArea
+     */
+    'service_categories': Array<number>;
+}
+/**
+ * Serializer for creating and updating service areas.
+ * @export
+ * @interface ServiceAreaCreateUpdate
+ */
+export interface ServiceAreaCreateUpdate {
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdate
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdate
+     */
+    'city': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdate
+     */
+    'state': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdate
+     */
+    'country': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdate
+     */
+    'latitude'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdate
+     */
+    'longitude'?: string | null;
+    /**
+     * 
+     * @type {any}
+     * @memberof ServiceAreaCreateUpdate
+     */
+    'postal_codes'?: any;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceAreaCreateUpdate
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof ServiceAreaCreateUpdate
+     */
+    'service_categories': Array<number>;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdate
+     */
+    'base_price_multiplier'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdate
+     */
+    'travel_fee'?: string;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -3433,6 +3825,133 @@ export interface ServiceCategory {
      * @memberof ServiceCategory
      */
     'subcategories': Array<ServiceSubcategory>;
+}
+/**
+ * Serializer for creating and updating service categories.
+ * @export
+ * @interface ServiceCategoryCreateUpdate
+ */
+export interface ServiceCategoryCreateUpdate {
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'description': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'icon'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'color'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'banner_image'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'featured'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'commission_rate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'min_price'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'max_price'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'estimated_duration_min'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'estimated_duration_max'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'meta_title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'meta_description'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'keywords'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'slug'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'requires_license'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'requires_insurance'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceCategoryCreateUpdate
+     */
+    'requires_background_check'?: boolean;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -3660,6 +4179,115 @@ export interface ServiceSubcategory {
     'complexity_level_display': string;
 }
 /**
+ * Serializer for creating and updating service subcategories.
+ * @export
+ * @interface ServiceSubcategoryCreateUpdate
+ */
+export interface ServiceSubcategoryCreateUpdate {
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'category': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'description': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'icon'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'image'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'featured'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'base_price'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'price_range_min'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'price_range_max'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'estimated_duration'?: number | null;
+    /**
+     * 
+     * @type {ComplexityLevelEnum}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'complexity_level'?: ComplexityLevelEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'safety_requirements'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'slug'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'meta_title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'meta_description'?: string;
+}
+/**
  * * `string` - String * `integer` - Целое * `boolean` - Boolean * `json` - JSON * `file` - Файл
  * @export
  * @enum {string}
@@ -3815,6 +4443,49 @@ export interface SupportFAQ {
     'created_at': string;
 }
 /**
+ * Serializer for creating and updating support FAQ items.
+ * @export
+ * @interface SupportFAQCreateUpdate
+ */
+export interface SupportFAQCreateUpdate {
+    /**
+     * 
+     * @type {string}
+     * @memberof SupportFAQCreateUpdate
+     */
+    'question': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SupportFAQCreateUpdate
+     */
+    'answer': string;
+    /**
+     * 
+     * @type {CategoryEnum}
+     * @memberof SupportFAQCreateUpdate
+     */
+    'category'?: CategoryEnum;
+    /**
+     * 
+     * @type {number}
+     * @memberof SupportFAQCreateUpdate
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SupportFAQCreateUpdate
+     */
+    'is_popular'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SupportFAQCreateUpdate
+     */
+    'is_active'?: boolean;
+}
+/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface SystemSettings
@@ -3868,6 +4539,73 @@ export interface SystemSettings {
      * @memberof SystemSettings
      */
     'setting_type_display': string;
+}
+/**
+ * Serializer for creating and updating system settings.
+ * @export
+ * @interface SystemSettingsCreateUpdate
+ */
+export interface SystemSettingsCreateUpdate {
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdate
+     */
+    'key': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdate
+     */
+    'value': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdate
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SystemSettingsCreateUpdate
+     */
+    'is_public'?: boolean;
+    /**
+     * 
+     * @type {SettingTypeEnum}
+     * @memberof SystemSettingsCreateUpdate
+     */
+    'setting_type'?: SettingTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdate
+     */
+    'validation_regex'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdate
+     */
+    'min_value'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdate
+     */
+    'max_value'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SystemSettingsCreateUpdate
+     */
+    'requires_admin'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdate
+     */
+    'category'?: string;
 }
 /**
  * * `low` - Low * `medium` - Medium * `high` - High * `urgent` - Urgent
@@ -4824,71 +5562,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {boolean} [isActive] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {'all' | 'android' | 'ios' | 'web'} [platform] * &#x60;android&#x60; - Android * &#x60;ios&#x60; - iOS * &#x60;web&#x60; - Web * &#x60;all&#x60; - All Platforms
-         * @param {string} [search] A search term.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1CoreAppVersionsList: async (isActive?: boolean, ordering?: string, page?: number, pageSize?: number, platform?: 'all' | 'android' | 'ios' | 'web', search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/core/app-versions/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (isActive !== undefined) {
-                localVarQueryParameter['is_active'] = isActive;
-            }
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-            if (platform !== undefined) {
-                localVarQueryParameter['platform'] = platform;
-            }
-
-            if (search !== undefined) {
-                localVarQueryParameter['search'] = search;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Languages - Read-only (managed via admin/fixtures).
          * @param {boolean} [isActive] 
          * @param {boolean} [isDefault] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -4952,7 +5626,123 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Languages - Read-only (managed via admin/fixtures).
+         * @param {number} id A unique integer value identifying this Language.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreLanguagesRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreLanguagesRetrieve', 'id', id)
+            const localVarPath = `/api/v1/core/languages/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceAreasCreate: async (serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'serviceAreaCreateUpdate' is not null or undefined
+            assertParamExists('v1CoreServiceAreasCreate', 'serviceAreaCreateUpdate', serviceAreaCreateUpdate)
+            const localVarPath = `/api/v1/core/service-areas/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceAreaCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Area.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceAreasDestroy: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreServiceAreasDestroy', 'id', id)
+            const localVarPath = `/api/v1/core/service-areas/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
          * @param {string} [country] 
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -5021,7 +5811,209 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Area.
+         * @param {PatchedServiceAreaCreateUpdate} [patchedServiceAreaCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceAreasPartialUpdate: async (id: number, patchedServiceAreaCreateUpdate?: PatchedServiceAreaCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreServiceAreasPartialUpdate', 'id', id)
+            const localVarPath = `/api/v1/core/service-areas/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedServiceAreaCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Area.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceAreasRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreServiceAreasRetrieve', 'id', id)
+            const localVarPath = `/api/v1/core/service-areas/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Area.
+         * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceAreasUpdate: async (id: number, serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreServiceAreasUpdate', 'id', id)
+            // verify required parameter 'serviceAreaCreateUpdate' is not null or undefined
+            assertParamExists('v1CoreServiceAreasUpdate', 'serviceAreaCreateUpdate', serviceAreaCreateUpdate)
+            const localVarPath = `/api/v1/core/service-areas/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceAreaCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceCategoriesCreate: async (serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'serviceCategoryCreateUpdate' is not null or undefined
+            assertParamExists('v1CoreServiceCategoriesCreate', 'serviceCategoryCreateUpdate', serviceCategoryCreateUpdate)
+            const localVarPath = `/api/v1/core/service-categories/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceCategoryCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Category.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceCategoriesDestroy: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreServiceCategoriesDestroy', 'id', id)
+            const localVarPath = `/api/v1/core/service-categories/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
          * @param {boolean} [featured] 
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -5085,7 +6077,209 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Category.
+         * @param {PatchedServiceCategoryCreateUpdate} [patchedServiceCategoryCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceCategoriesPartialUpdate: async (id: number, patchedServiceCategoryCreateUpdate?: PatchedServiceCategoryCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreServiceCategoriesPartialUpdate', 'id', id)
+            const localVarPath = `/api/v1/core/service-categories/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedServiceCategoryCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Category.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceCategoriesRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreServiceCategoriesRetrieve', 'id', id)
+            const localVarPath = `/api/v1/core/service-categories/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Category.
+         * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceCategoriesUpdate: async (id: number, serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreServiceCategoriesUpdate', 'id', id)
+            // verify required parameter 'serviceCategoryCreateUpdate' is not null or undefined
+            assertParamExists('v1CoreServiceCategoriesUpdate', 'serviceCategoryCreateUpdate', serviceCategoryCreateUpdate)
+            const localVarPath = `/api/v1/core/service-categories/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceCategoryCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceSubcategoriesCreate: async (serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'serviceSubcategoryCreateUpdate' is not null or undefined
+            assertParamExists('v1CoreServiceSubcategoriesCreate', 'serviceSubcategoryCreateUpdate', serviceSubcategoryCreateUpdate)
+            const localVarPath = `/api/v1/core/service-subcategories/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceSubcategoryCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Subcategory.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceSubcategoriesDestroy: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreServiceSubcategoriesDestroy', 'id', id)
+            const localVarPath = `/api/v1/core/service-subcategories/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
          * @param {number} [category] 
          * @param {boolean} [featured] 
          * @param {boolean} [isActive] 
@@ -5154,7 +6348,209 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * List support FAQ items.
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Subcategory.
+         * @param {PatchedServiceSubcategoryCreateUpdate} [patchedServiceSubcategoryCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceSubcategoriesPartialUpdate: async (id: number, patchedServiceSubcategoryCreateUpdate?: PatchedServiceSubcategoryCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreServiceSubcategoriesPartialUpdate', 'id', id)
+            const localVarPath = `/api/v1/core/service-subcategories/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedServiceSubcategoryCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Subcategory.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceSubcategoriesRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreServiceSubcategoriesRetrieve', 'id', id)
+            const localVarPath = `/api/v1/core/service-subcategories/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Subcategory.
+         * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceSubcategoriesUpdate: async (id: number, serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreServiceSubcategoriesUpdate', 'id', id)
+            // verify required parameter 'serviceSubcategoryCreateUpdate' is not null or undefined
+            assertParamExists('v1CoreServiceSubcategoriesUpdate', 'serviceSubcategoryCreateUpdate', serviceSubcategoryCreateUpdate)
+            const localVarPath = `/api/v1/core/service-subcategories/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceSubcategoryCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSupportFaqCreate: async (supportFAQCreateUpdate: SupportFAQCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'supportFAQCreateUpdate' is not null or undefined
+            assertParamExists('v1CoreSupportFaqCreate', 'supportFAQCreateUpdate', supportFAQCreateUpdate)
+            const localVarPath = `/api/v1/core/support/faq/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(supportFAQCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {number} id A unique integer value identifying this Support FAQ.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSupportFaqDestroy: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreSupportFaqDestroy', 'id', id)
+            const localVarPath = `/api/v1/core/support/faq/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
          * @param {'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist'} [category] * &#x60;general&#x60; - General * &#x60;specialist&#x60; - Specialist * &#x60;reviews&#x60; - Reviews * &#x60;account&#x60; - Account * &#x60;search&#x60; - Найти * &#x60;safety&#x60; - Safety
          * @param {boolean} [isActive] 
          * @param {boolean} [isPopular] 
@@ -5223,7 +6619,209 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {number} id A unique integer value identifying this Support FAQ.
+         * @param {PatchedSupportFAQCreateUpdate} [patchedSupportFAQCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSupportFaqPartialUpdate: async (id: number, patchedSupportFAQCreateUpdate?: PatchedSupportFAQCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreSupportFaqPartialUpdate', 'id', id)
+            const localVarPath = `/api/v1/core/support/faq/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedSupportFAQCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {number} id A unique integer value identifying this Support FAQ.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSupportFaqRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreSupportFaqRetrieve', 'id', id)
+            const localVarPath = `/api/v1/core/support/faq/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {number} id A unique integer value identifying this Support FAQ.
+         * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSupportFaqUpdate: async (id: number, supportFAQCreateUpdate: SupportFAQCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreSupportFaqUpdate', 'id', id)
+            // verify required parameter 'supportFAQCreateUpdate' is not null or undefined
+            assertParamExists('v1CoreSupportFaqUpdate', 'supportFAQCreateUpdate', supportFAQCreateUpdate)
+            const localVarPath = `/api/v1/core/support/faq/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(supportFAQCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSystemSettingsCreate: async (systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'systemSettingsCreateUpdate' is not null or undefined
+            assertParamExists('v1CoreSystemSettingsCreate', 'systemSettingsCreateUpdate', systemSettingsCreateUpdate)
+            const localVarPath = `/api/v1/core/system-settings/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(systemSettingsCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {number} id A unique integer value identifying this System Setting.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSystemSettingsDestroy: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreSystemSettingsDestroy', 'id', id)
+            const localVarPath = `/api/v1/core/system-settings/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * System Settings - Admin-only CRUD.
          * @param {string} [category] 
          * @param {boolean} [isPublic] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -5280,6 +6878,130 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {number} id A unique integer value identifying this System Setting.
+         * @param {PatchedSystemSettingsCreateUpdate} [patchedSystemSettingsCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSystemSettingsPartialUpdate: async (id: number, patchedSystemSettingsCreateUpdate?: PatchedSystemSettingsCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreSystemSettingsPartialUpdate', 'id', id)
+            const localVarPath = `/api/v1/core/system-settings/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedSystemSettingsCreateUpdate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {number} id A unique integer value identifying this System Setting.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSystemSettingsRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreSystemSettingsRetrieve', 'id', id)
+            const localVarPath = `/api/v1/core/system-settings/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {number} id A unique integer value identifying this System Setting.
+         * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSystemSettingsUpdate: async (id: number, systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1CoreSystemSettingsUpdate', 'id', id)
+            // verify required parameter 'systemSettingsCreateUpdate' is not null or undefined
+            assertParamExists('v1CoreSystemSettingsUpdate', 'systemSettingsCreateUpdate', systemSettingsCreateUpdate)
+            const localVarPath = `/api/v1/core/system-settings/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(systemSettingsCreateUpdate, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9260,22 +10982,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {boolean} [isActive] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {'all' | 'android' | 'ios' | 'web'} [platform] * &#x60;android&#x60; - Android * &#x60;ios&#x60; - iOS * &#x60;web&#x60; - Web * &#x60;all&#x60; - All Platforms
-         * @param {string} [search] A search term.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1CoreAppVersionsList(isActive?: boolean, ordering?: string, page?: number, pageSize?: number, platform?: 'all' | 'android' | 'ios' | 'web', search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedAppVersionList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreAppVersionsList(isActive, ordering, page, pageSize, platform, search, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Languages - Read-only (managed via admin/fixtures).
          * @param {boolean} [isActive] 
          * @param {boolean} [isDefault] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -9290,7 +10997,37 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Languages - Read-only (managed via admin/fixtures).
+         * @param {number} id A unique integer value identifying this Language.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreLanguagesRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Language>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreLanguagesRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceAreasCreate(serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAreaCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasCreate(serviceAreaCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Area.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceAreasDestroy(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasDestroy(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
          * @param {string} [country] 
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -9306,7 +11043,59 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Area.
+         * @param {PatchedServiceAreaCreateUpdate} [patchedServiceAreaCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceAreasPartialUpdate(id: number, patchedServiceAreaCreateUpdate?: PatchedServiceAreaCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAreaCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasPartialUpdate(id, patchedServiceAreaCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Area.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceAreasRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceArea>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Area.
+         * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceAreasUpdate(id: number, serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAreaCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasUpdate(id, serviceAreaCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceCategoryCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Category.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceCategoriesDestroy(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceCategoriesDestroy(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
          * @param {boolean} [featured] 
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -9321,7 +11110,59 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Category.
+         * @param {PatchedServiceCategoryCreateUpdate} [patchedServiceCategoryCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceCategoriesPartialUpdate(id: number, patchedServiceCategoryCreateUpdate?: PatchedServiceCategoryCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceCategoryCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceCategoriesPartialUpdate(id, patchedServiceCategoryCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Category.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceCategoriesRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceCategory>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceCategoriesRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Category.
+         * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceCategoriesUpdate(id: number, serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceCategoryCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceCategoriesUpdate(id, serviceCategoryCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceSubcategoryCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Subcategory.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceSubcategoriesDestroy(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesDestroy(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
          * @param {number} [category] 
          * @param {boolean} [featured] 
          * @param {boolean} [isActive] 
@@ -9337,7 +11178,59 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * List support FAQ items.
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Subcategory.
+         * @param {PatchedServiceSubcategoryCreateUpdate} [patchedServiceSubcategoryCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceSubcategoriesPartialUpdate(id: number, patchedServiceSubcategoryCreateUpdate?: PatchedServiceSubcategoryCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceSubcategoryCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesPartialUpdate(id, patchedServiceSubcategoryCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Subcategory.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceSubcategoriesRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceSubcategory>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Subcategory.
+         * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreServiceSubcategoriesUpdate(id: number, serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceSubcategoryCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesUpdate(id, serviceSubcategoryCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreSupportFaqCreate(supportFAQCreateUpdate: SupportFAQCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SupportFAQCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSupportFaqCreate(supportFAQCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {number} id A unique integer value identifying this Support FAQ.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreSupportFaqDestroy(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSupportFaqDestroy(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
          * @param {'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist'} [category] * &#x60;general&#x60; - General * &#x60;specialist&#x60; - Specialist * &#x60;reviews&#x60; - Reviews * &#x60;account&#x60; - Account * &#x60;search&#x60; - Найти * &#x60;safety&#x60; - Safety
          * @param {boolean} [isActive] 
          * @param {boolean} [isPopular] 
@@ -9353,7 +11246,59 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {number} id A unique integer value identifying this Support FAQ.
+         * @param {PatchedSupportFAQCreateUpdate} [patchedSupportFAQCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreSupportFaqPartialUpdate(id: number, patchedSupportFAQCreateUpdate?: PatchedSupportFAQCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SupportFAQCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSupportFaqPartialUpdate(id, patchedSupportFAQCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {number} id A unique integer value identifying this Support FAQ.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreSupportFaqRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SupportFAQ>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSupportFaqRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {number} id A unique integer value identifying this Support FAQ.
+         * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreSupportFaqUpdate(id: number, supportFAQCreateUpdate: SupportFAQCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SupportFAQCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSupportFaqUpdate(id, supportFAQCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreSystemSettingsCreate(systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SystemSettingsCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSystemSettingsCreate(systemSettingsCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {number} id A unique integer value identifying this System Setting.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreSystemSettingsDestroy(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSystemSettingsDestroy(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * System Settings - Admin-only CRUD.
          * @param {string} [category] 
          * @param {boolean} [isPublic] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -9365,6 +11310,38 @@ export const V1ApiFp = function(configuration?: Configuration) {
          */
         async v1CoreSystemSettingsList(category?: string, isPublic?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedSystemSettingsList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSystemSettingsList(category, isPublic, ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {number} id A unique integer value identifying this System Setting.
+         * @param {PatchedSystemSettingsCreateUpdate} [patchedSystemSettingsCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreSystemSettingsPartialUpdate(id: number, patchedSystemSettingsCreateUpdate?: PatchedSystemSettingsCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SystemSettingsCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSystemSettingsPartialUpdate(id, patchedSystemSettingsCreateUpdate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {number} id A unique integer value identifying this System Setting.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreSystemSettingsRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SystemSettings>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSystemSettingsRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {number} id A unique integer value identifying this System Setting.
+         * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1CoreSystemSettingsUpdate(id: number, systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SystemSettingsCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSystemSettingsUpdate(id, systemSettingsCreateUpdate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -10424,21 +12401,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ChatWebsocketInfoRetrieve(options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
-         * @param {boolean} [isActive] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {'all' | 'android' | 'ios' | 'web'} [platform] * &#x60;android&#x60; - Android * &#x60;ios&#x60; - iOS * &#x60;web&#x60; - Web * &#x60;all&#x60; - All Platforms
-         * @param {string} [search] A search term.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1CoreAppVersionsList(isActive?: boolean, ordering?: string, page?: number, pageSize?: number, platform?: 'all' | 'android' | 'ios' | 'web', search?: string, options?: any): AxiosPromise<PaginatedAppVersionList> {
-            return localVarFp.v1CoreAppVersionsList(isActive, ordering, page, pageSize, platform, search, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Languages - Read-only (managed via admin/fixtures).
          * @param {boolean} [isActive] 
          * @param {boolean} [isDefault] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -10452,7 +12415,34 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1CoreLanguagesList(isActive, isDefault, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Languages - Read-only (managed via admin/fixtures).
+         * @param {number} id A unique integer value identifying this Language.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreLanguagesRetrieve(id: number, options?: any): AxiosPromise<Language> {
+            return localVarFp.v1CoreLanguagesRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceAreasCreate(serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options?: any): AxiosPromise<ServiceAreaCreateUpdate> {
+            return localVarFp.v1CoreServiceAreasCreate(serviceAreaCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Area.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceAreasDestroy(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.v1CoreServiceAreasDestroy(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
          * @param {string} [country] 
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -10467,7 +12457,54 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1CoreServiceAreasList(country, isActive, ordering, page, pageSize, search, state, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Area.
+         * @param {PatchedServiceAreaCreateUpdate} [patchedServiceAreaCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceAreasPartialUpdate(id: number, patchedServiceAreaCreateUpdate?: PatchedServiceAreaCreateUpdate, options?: any): AxiosPromise<ServiceAreaCreateUpdate> {
+            return localVarFp.v1CoreServiceAreasPartialUpdate(id, patchedServiceAreaCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Area.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceAreasRetrieve(id: number, options?: any): AxiosPromise<ServiceArea> {
+            return localVarFp.v1CoreServiceAreasRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Areas - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Area.
+         * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceAreasUpdate(id: number, serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options?: any): AxiosPromise<ServiceAreaCreateUpdate> {
+            return localVarFp.v1CoreServiceAreasUpdate(id, serviceAreaCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options?: any): AxiosPromise<ServiceCategoryCreateUpdate> {
+            return localVarFp.v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Category.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceCategoriesDestroy(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.v1CoreServiceCategoriesDestroy(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
          * @param {boolean} [featured] 
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -10481,7 +12518,54 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1CoreServiceCategoriesList(featured, isActive, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Category.
+         * @param {PatchedServiceCategoryCreateUpdate} [patchedServiceCategoryCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceCategoriesPartialUpdate(id: number, patchedServiceCategoryCreateUpdate?: PatchedServiceCategoryCreateUpdate, options?: any): AxiosPromise<ServiceCategoryCreateUpdate> {
+            return localVarFp.v1CoreServiceCategoriesPartialUpdate(id, patchedServiceCategoryCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Category.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceCategoriesRetrieve(id: number, options?: any): AxiosPromise<ServiceCategory> {
+            return localVarFp.v1CoreServiceCategoriesRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Categories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Category.
+         * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceCategoriesUpdate(id: number, serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options?: any): AxiosPromise<ServiceCategoryCreateUpdate> {
+            return localVarFp.v1CoreServiceCategoriesUpdate(id, serviceCategoryCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options?: any): AxiosPromise<ServiceSubcategoryCreateUpdate> {
+            return localVarFp.v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Subcategory.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceSubcategoriesDestroy(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.v1CoreServiceSubcategoriesDestroy(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
          * @param {number} [category] 
          * @param {boolean} [featured] 
          * @param {boolean} [isActive] 
@@ -10496,7 +12580,54 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1CoreServiceSubcategoriesList(category, featured, isActive, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * List support FAQ items.
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Subcategory.
+         * @param {PatchedServiceSubcategoryCreateUpdate} [patchedServiceSubcategoryCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceSubcategoriesPartialUpdate(id: number, patchedServiceSubcategoryCreateUpdate?: PatchedServiceSubcategoryCreateUpdate, options?: any): AxiosPromise<ServiceSubcategoryCreateUpdate> {
+            return localVarFp.v1CoreServiceSubcategoriesPartialUpdate(id, patchedServiceSubcategoryCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Subcategory.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceSubcategoriesRetrieve(id: number, options?: any): AxiosPromise<ServiceSubcategory> {
+            return localVarFp.v1CoreServiceSubcategoriesRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Service Subcategories - Full CRUD with authenticated access.
+         * @param {number} id A unique integer value identifying this Service Subcategory.
+         * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreServiceSubcategoriesUpdate(id: number, serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options?: any): AxiosPromise<ServiceSubcategoryCreateUpdate> {
+            return localVarFp.v1CoreServiceSubcategoriesUpdate(id, serviceSubcategoryCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSupportFaqCreate(supportFAQCreateUpdate: SupportFAQCreateUpdate, options?: any): AxiosPromise<SupportFAQCreateUpdate> {
+            return localVarFp.v1CoreSupportFaqCreate(supportFAQCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {number} id A unique integer value identifying this Support FAQ.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSupportFaqDestroy(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.v1CoreSupportFaqDestroy(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
          * @param {'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist'} [category] * &#x60;general&#x60; - General * &#x60;specialist&#x60; - Specialist * &#x60;reviews&#x60; - Reviews * &#x60;account&#x60; - Account * &#x60;search&#x60; - Найти * &#x60;safety&#x60; - Safety
          * @param {boolean} [isActive] 
          * @param {boolean} [isPopular] 
@@ -10511,7 +12642,54 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1CoreSupportFaqList(category, isActive, isPopular, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to provide standardized exception handling for DRF views.
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {number} id A unique integer value identifying this Support FAQ.
+         * @param {PatchedSupportFAQCreateUpdate} [patchedSupportFAQCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSupportFaqPartialUpdate(id: number, patchedSupportFAQCreateUpdate?: PatchedSupportFAQCreateUpdate, options?: any): AxiosPromise<SupportFAQCreateUpdate> {
+            return localVarFp.v1CoreSupportFaqPartialUpdate(id, patchedSupportFAQCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {number} id A unique integer value identifying this Support FAQ.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSupportFaqRetrieve(id: number, options?: any): AxiosPromise<SupportFAQ> {
+            return localVarFp.v1CoreSupportFaqRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Support FAQ - Authenticated read, Admin write.
+         * @param {number} id A unique integer value identifying this Support FAQ.
+         * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSupportFaqUpdate(id: number, supportFAQCreateUpdate: SupportFAQCreateUpdate, options?: any): AxiosPromise<SupportFAQCreateUpdate> {
+            return localVarFp.v1CoreSupportFaqUpdate(id, supportFAQCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSystemSettingsCreate(systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: any): AxiosPromise<SystemSettingsCreateUpdate> {
+            return localVarFp.v1CoreSystemSettingsCreate(systemSettingsCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {number} id A unique integer value identifying this System Setting.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSystemSettingsDestroy(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.v1CoreSystemSettingsDestroy(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * System Settings - Admin-only CRUD.
          * @param {string} [category] 
          * @param {boolean} [isPublic] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -10523,6 +12701,35 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          */
         v1CoreSystemSettingsList(category?: string, isPublic?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedSystemSettingsList> {
             return localVarFp.v1CoreSystemSettingsList(category, isPublic, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {number} id A unique integer value identifying this System Setting.
+         * @param {PatchedSystemSettingsCreateUpdate} [patchedSystemSettingsCreateUpdate] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSystemSettingsPartialUpdate(id: number, patchedSystemSettingsCreateUpdate?: PatchedSystemSettingsCreateUpdate, options?: any): AxiosPromise<SystemSettingsCreateUpdate> {
+            return localVarFp.v1CoreSystemSettingsPartialUpdate(id, patchedSystemSettingsCreateUpdate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {number} id A unique integer value identifying this System Setting.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSystemSettingsRetrieve(id: number, options?: any): AxiosPromise<SystemSettings> {
+            return localVarFp.v1CoreSystemSettingsRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * System Settings - Admin-only CRUD.
+         * @param {number} id A unique integer value identifying this System Setting.
+         * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1CoreSystemSettingsUpdate(id: number, systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: any): AxiosPromise<SystemSettingsCreateUpdate> {
+            return localVarFp.v1CoreSystemSettingsUpdate(id, systemSettingsCreateUpdate, options).then((request) => request(axios, basePath));
         },
         /**
          * Get notification counts for current user.
@@ -11492,21 +13699,7 @@ export interface V1ApiInterface {
     v1ChatWebsocketInfoRetrieve(options?: AxiosRequestConfig): AxiosPromise<WebSocketInfo>;
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {boolean} [isActive] 
-     * @param {string} [ordering] Which field to use when ordering the results.
-     * @param {number} [page] A page number within the paginated result set.
-     * @param {number} [pageSize] Number of results to return per page.
-     * @param {'all' | 'android' | 'ios' | 'web'} [platform] * &#x60;android&#x60; - Android * &#x60;ios&#x60; - iOS * &#x60;web&#x60; - Web * &#x60;all&#x60; - All Platforms
-     * @param {string} [search] A search term.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1CoreAppVersionsList(isActive?: boolean, ordering?: string, page?: number, pageSize?: number, platform?: 'all' | 'android' | 'ios' | 'web', search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedAppVersionList>;
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * Languages - Read-only (managed via admin/fixtures).
      * @param {boolean} [isActive] 
      * @param {boolean} [isDefault] 
      * @param {string} [ordering] Which field to use when ordering the results.
@@ -11520,7 +13713,34 @@ export interface V1ApiInterface {
     v1CoreLanguagesList(isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedLanguageList>;
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * Languages - Read-only (managed via admin/fixtures).
+     * @param {number} id A unique integer value identifying this Language.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreLanguagesRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<Language>;
+
+    /**
+     * Service Areas - Full CRUD with authenticated access.
+     * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceAreasCreate(serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceAreaCreateUpdate>;
+
+    /**
+     * Service Areas - Full CRUD with authenticated access.
+     * @param {number} id A unique integer value identifying this Service Area.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceAreasDestroy(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Service Areas - Full CRUD with authenticated access.
      * @param {string} [country] 
      * @param {boolean} [isActive] 
      * @param {string} [ordering] Which field to use when ordering the results.
@@ -11535,7 +13755,54 @@ export interface V1ApiInterface {
     v1CoreServiceAreasList(country?: string, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, state?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceAreaList>;
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * Service Areas - Full CRUD with authenticated access.
+     * @param {number} id A unique integer value identifying this Service Area.
+     * @param {PatchedServiceAreaCreateUpdate} [patchedServiceAreaCreateUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceAreasPartialUpdate(id: number, patchedServiceAreaCreateUpdate?: PatchedServiceAreaCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceAreaCreateUpdate>;
+
+    /**
+     * Service Areas - Full CRUD with authenticated access.
+     * @param {number} id A unique integer value identifying this Service Area.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceAreasRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<ServiceArea>;
+
+    /**
+     * Service Areas - Full CRUD with authenticated access.
+     * @param {number} id A unique integer value identifying this Service Area.
+     * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceAreasUpdate(id: number, serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceAreaCreateUpdate>;
+
+    /**
+     * Service Categories - Full CRUD with authenticated access.
+     * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceCategoryCreateUpdate>;
+
+    /**
+     * Service Categories - Full CRUD with authenticated access.
+     * @param {number} id A unique integer value identifying this Service Category.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceCategoriesDestroy(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Service Categories - Full CRUD with authenticated access.
      * @param {boolean} [featured] 
      * @param {boolean} [isActive] 
      * @param {string} [ordering] Which field to use when ordering the results.
@@ -11549,7 +13816,54 @@ export interface V1ApiInterface {
     v1CoreServiceCategoriesList(featured?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceCategoryList>;
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * Service Categories - Full CRUD with authenticated access.
+     * @param {number} id A unique integer value identifying this Service Category.
+     * @param {PatchedServiceCategoryCreateUpdate} [patchedServiceCategoryCreateUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceCategoriesPartialUpdate(id: number, patchedServiceCategoryCreateUpdate?: PatchedServiceCategoryCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceCategoryCreateUpdate>;
+
+    /**
+     * Service Categories - Full CRUD with authenticated access.
+     * @param {number} id A unique integer value identifying this Service Category.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceCategoriesRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<ServiceCategory>;
+
+    /**
+     * Service Categories - Full CRUD with authenticated access.
+     * @param {number} id A unique integer value identifying this Service Category.
+     * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceCategoriesUpdate(id: number, serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceCategoryCreateUpdate>;
+
+    /**
+     * Service Subcategories - Full CRUD with authenticated access.
+     * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceSubcategoryCreateUpdate>;
+
+    /**
+     * Service Subcategories - Full CRUD with authenticated access.
+     * @param {number} id A unique integer value identifying this Service Subcategory.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceSubcategoriesDestroy(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Service Subcategories - Full CRUD with authenticated access.
      * @param {number} [category] 
      * @param {boolean} [featured] 
      * @param {boolean} [isActive] 
@@ -11564,7 +13878,54 @@ export interface V1ApiInterface {
     v1CoreServiceSubcategoriesList(category?: number, featured?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceSubcategoryList>;
 
     /**
-     * List support FAQ items.
+     * Service Subcategories - Full CRUD with authenticated access.
+     * @param {number} id A unique integer value identifying this Service Subcategory.
+     * @param {PatchedServiceSubcategoryCreateUpdate} [patchedServiceSubcategoryCreateUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceSubcategoriesPartialUpdate(id: number, patchedServiceSubcategoryCreateUpdate?: PatchedServiceSubcategoryCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceSubcategoryCreateUpdate>;
+
+    /**
+     * Service Subcategories - Full CRUD with authenticated access.
+     * @param {number} id A unique integer value identifying this Service Subcategory.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceSubcategoriesRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<ServiceSubcategory>;
+
+    /**
+     * Service Subcategories - Full CRUD with authenticated access.
+     * @param {number} id A unique integer value identifying this Service Subcategory.
+     * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreServiceSubcategoriesUpdate(id: number, serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceSubcategoryCreateUpdate>;
+
+    /**
+     * Support FAQ - Authenticated read, Admin write.
+     * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreSupportFaqCreate(supportFAQCreateUpdate: SupportFAQCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SupportFAQCreateUpdate>;
+
+    /**
+     * Support FAQ - Authenticated read, Admin write.
+     * @param {number} id A unique integer value identifying this Support FAQ.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreSupportFaqDestroy(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Support FAQ - Authenticated read, Admin write.
      * @param {'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist'} [category] * &#x60;general&#x60; - General * &#x60;specialist&#x60; - Specialist * &#x60;reviews&#x60; - Reviews * &#x60;account&#x60; - Account * &#x60;search&#x60; - Найти * &#x60;safety&#x60; - Safety
      * @param {boolean} [isActive] 
      * @param {boolean} [isPopular] 
@@ -11579,7 +13940,54 @@ export interface V1ApiInterface {
     v1CoreSupportFaqList(category?: 'account' | 'general' | 'reviews' | 'safety' | 'search' | 'specialist', isActive?: boolean, isPopular?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedSupportFAQList>;
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * Support FAQ - Authenticated read, Admin write.
+     * @param {number} id A unique integer value identifying this Support FAQ.
+     * @param {PatchedSupportFAQCreateUpdate} [patchedSupportFAQCreateUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreSupportFaqPartialUpdate(id: number, patchedSupportFAQCreateUpdate?: PatchedSupportFAQCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SupportFAQCreateUpdate>;
+
+    /**
+     * Support FAQ - Authenticated read, Admin write.
+     * @param {number} id A unique integer value identifying this Support FAQ.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreSupportFaqRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<SupportFAQ>;
+
+    /**
+     * Support FAQ - Authenticated read, Admin write.
+     * @param {number} id A unique integer value identifying this Support FAQ.
+     * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreSupportFaqUpdate(id: number, supportFAQCreateUpdate: SupportFAQCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SupportFAQCreateUpdate>;
+
+    /**
+     * System Settings - Admin-only CRUD.
+     * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreSystemSettingsCreate(systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SystemSettingsCreateUpdate>;
+
+    /**
+     * System Settings - Admin-only CRUD.
+     * @param {number} id A unique integer value identifying this System Setting.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreSystemSettingsDestroy(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * System Settings - Admin-only CRUD.
      * @param {string} [category] 
      * @param {boolean} [isPublic] 
      * @param {string} [ordering] Which field to use when ordering the results.
@@ -11591,6 +13999,35 @@ export interface V1ApiInterface {
      * @memberof V1ApiInterface
      */
     v1CoreSystemSettingsList(category?: string, isPublic?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedSystemSettingsList>;
+
+    /**
+     * System Settings - Admin-only CRUD.
+     * @param {number} id A unique integer value identifying this System Setting.
+     * @param {PatchedSystemSettingsCreateUpdate} [patchedSystemSettingsCreateUpdate] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreSystemSettingsPartialUpdate(id: number, patchedSystemSettingsCreateUpdate?: PatchedSystemSettingsCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SystemSettingsCreateUpdate>;
+
+    /**
+     * System Settings - Admin-only CRUD.
+     * @param {number} id A unique integer value identifying this System Setting.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreSystemSettingsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<SystemSettings>;
+
+    /**
+     * System Settings - Admin-only CRUD.
+     * @param {number} id A unique integer value identifying this System Setting.
+     * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1CoreSystemSettingsUpdate(id: number, systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SystemSettingsCreateUpdate>;
 
     /**
      * Get notification counts for current user.
@@ -12586,55 +15023,6 @@ export interface V1ApiV1ChatConversationsSendCreateRequest {
 }
 
 /**
- * Request parameters for v1CoreAppVersionsList operation in V1Api.
- * @export
- * @interface V1ApiV1CoreAppVersionsListRequest
- */
-export interface V1ApiV1CoreAppVersionsListRequest {
-    /**
-     * 
-     * @type {boolean}
-     * @memberof V1ApiV1CoreAppVersionsList
-     */
-    readonly isActive?: boolean
-
-    /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1CoreAppVersionsList
-     */
-    readonly ordering?: string
-
-    /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1CoreAppVersionsList
-     */
-    readonly page?: number
-
-    /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1CoreAppVersionsList
-     */
-    readonly pageSize?: number
-
-    /**
-     * * &#x60;android&#x60; - Android * &#x60;ios&#x60; - iOS * &#x60;web&#x60; - Web * &#x60;all&#x60; - All Platforms
-     * @type {'all' | 'android' | 'ios' | 'web'}
-     * @memberof V1ApiV1CoreAppVersionsList
-     */
-    readonly platform?: 'all' | 'android' | 'ios' | 'web'
-
-    /**
-     * A search term.
-     * @type {string}
-     * @memberof V1ApiV1CoreAppVersionsList
-     */
-    readonly search?: string
-}
-
-/**
  * Request parameters for v1CoreLanguagesList operation in V1Api.
  * @export
  * @interface V1ApiV1CoreLanguagesListRequest
@@ -12681,6 +15069,48 @@ export interface V1ApiV1CoreLanguagesListRequest {
      * @memberof V1ApiV1CoreLanguagesList
      */
     readonly search?: string
+}
+
+/**
+ * Request parameters for v1CoreLanguagesRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreLanguagesRetrieveRequest
+ */
+export interface V1ApiV1CoreLanguagesRetrieveRequest {
+    /**
+     * A unique integer value identifying this Language.
+     * @type {number}
+     * @memberof V1ApiV1CoreLanguagesRetrieve
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for v1CoreServiceAreasCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceAreasCreateRequest
+ */
+export interface V1ApiV1CoreServiceAreasCreateRequest {
+    /**
+     * 
+     * @type {ServiceAreaCreateUpdate}
+     * @memberof V1ApiV1CoreServiceAreasCreate
+     */
+    readonly serviceAreaCreateUpdate: ServiceAreaCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreServiceAreasDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceAreasDestroyRequest
+ */
+export interface V1ApiV1CoreServiceAreasDestroyRequest {
+    /**
+     * A unique integer value identifying this Service Area.
+     * @type {number}
+     * @memberof V1ApiV1CoreServiceAreasDestroy
+     */
+    readonly id: number
 }
 
 /**
@@ -12740,6 +15170,90 @@ export interface V1ApiV1CoreServiceAreasListRequest {
 }
 
 /**
+ * Request parameters for v1CoreServiceAreasPartialUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceAreasPartialUpdateRequest
+ */
+export interface V1ApiV1CoreServiceAreasPartialUpdateRequest {
+    /**
+     * A unique integer value identifying this Service Area.
+     * @type {number}
+     * @memberof V1ApiV1CoreServiceAreasPartialUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {PatchedServiceAreaCreateUpdate}
+     * @memberof V1ApiV1CoreServiceAreasPartialUpdate
+     */
+    readonly patchedServiceAreaCreateUpdate?: PatchedServiceAreaCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreServiceAreasRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceAreasRetrieveRequest
+ */
+export interface V1ApiV1CoreServiceAreasRetrieveRequest {
+    /**
+     * A unique integer value identifying this Service Area.
+     * @type {number}
+     * @memberof V1ApiV1CoreServiceAreasRetrieve
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for v1CoreServiceAreasUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceAreasUpdateRequest
+ */
+export interface V1ApiV1CoreServiceAreasUpdateRequest {
+    /**
+     * A unique integer value identifying this Service Area.
+     * @type {number}
+     * @memberof V1ApiV1CoreServiceAreasUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {ServiceAreaCreateUpdate}
+     * @memberof V1ApiV1CoreServiceAreasUpdate
+     */
+    readonly serviceAreaCreateUpdate: ServiceAreaCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreServiceCategoriesCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceCategoriesCreateRequest
+ */
+export interface V1ApiV1CoreServiceCategoriesCreateRequest {
+    /**
+     * 
+     * @type {ServiceCategoryCreateUpdate}
+     * @memberof V1ApiV1CoreServiceCategoriesCreate
+     */
+    readonly serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreServiceCategoriesDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceCategoriesDestroyRequest
+ */
+export interface V1ApiV1CoreServiceCategoriesDestroyRequest {
+    /**
+     * A unique integer value identifying this Service Category.
+     * @type {number}
+     * @memberof V1ApiV1CoreServiceCategoriesDestroy
+     */
+    readonly id: number
+}
+
+/**
  * Request parameters for v1CoreServiceCategoriesList operation in V1Api.
  * @export
  * @interface V1ApiV1CoreServiceCategoriesListRequest
@@ -12786,6 +15300,90 @@ export interface V1ApiV1CoreServiceCategoriesListRequest {
      * @memberof V1ApiV1CoreServiceCategoriesList
      */
     readonly search?: string
+}
+
+/**
+ * Request parameters for v1CoreServiceCategoriesPartialUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceCategoriesPartialUpdateRequest
+ */
+export interface V1ApiV1CoreServiceCategoriesPartialUpdateRequest {
+    /**
+     * A unique integer value identifying this Service Category.
+     * @type {number}
+     * @memberof V1ApiV1CoreServiceCategoriesPartialUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {PatchedServiceCategoryCreateUpdate}
+     * @memberof V1ApiV1CoreServiceCategoriesPartialUpdate
+     */
+    readonly patchedServiceCategoryCreateUpdate?: PatchedServiceCategoryCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreServiceCategoriesRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceCategoriesRetrieveRequest
+ */
+export interface V1ApiV1CoreServiceCategoriesRetrieveRequest {
+    /**
+     * A unique integer value identifying this Service Category.
+     * @type {number}
+     * @memberof V1ApiV1CoreServiceCategoriesRetrieve
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for v1CoreServiceCategoriesUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceCategoriesUpdateRequest
+ */
+export interface V1ApiV1CoreServiceCategoriesUpdateRequest {
+    /**
+     * A unique integer value identifying this Service Category.
+     * @type {number}
+     * @memberof V1ApiV1CoreServiceCategoriesUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {ServiceCategoryCreateUpdate}
+     * @memberof V1ApiV1CoreServiceCategoriesUpdate
+     */
+    readonly serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreServiceSubcategoriesCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceSubcategoriesCreateRequest
+ */
+export interface V1ApiV1CoreServiceSubcategoriesCreateRequest {
+    /**
+     * 
+     * @type {ServiceSubcategoryCreateUpdate}
+     * @memberof V1ApiV1CoreServiceSubcategoriesCreate
+     */
+    readonly serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreServiceSubcategoriesDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceSubcategoriesDestroyRequest
+ */
+export interface V1ApiV1CoreServiceSubcategoriesDestroyRequest {
+    /**
+     * A unique integer value identifying this Service Subcategory.
+     * @type {number}
+     * @memberof V1ApiV1CoreServiceSubcategoriesDestroy
+     */
+    readonly id: number
 }
 
 /**
@@ -12845,6 +15443,90 @@ export interface V1ApiV1CoreServiceSubcategoriesListRequest {
 }
 
 /**
+ * Request parameters for v1CoreServiceSubcategoriesPartialUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceSubcategoriesPartialUpdateRequest
+ */
+export interface V1ApiV1CoreServiceSubcategoriesPartialUpdateRequest {
+    /**
+     * A unique integer value identifying this Service Subcategory.
+     * @type {number}
+     * @memberof V1ApiV1CoreServiceSubcategoriesPartialUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {PatchedServiceSubcategoryCreateUpdate}
+     * @memberof V1ApiV1CoreServiceSubcategoriesPartialUpdate
+     */
+    readonly patchedServiceSubcategoryCreateUpdate?: PatchedServiceSubcategoryCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreServiceSubcategoriesRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceSubcategoriesRetrieveRequest
+ */
+export interface V1ApiV1CoreServiceSubcategoriesRetrieveRequest {
+    /**
+     * A unique integer value identifying this Service Subcategory.
+     * @type {number}
+     * @memberof V1ApiV1CoreServiceSubcategoriesRetrieve
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for v1CoreServiceSubcategoriesUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreServiceSubcategoriesUpdateRequest
+ */
+export interface V1ApiV1CoreServiceSubcategoriesUpdateRequest {
+    /**
+     * A unique integer value identifying this Service Subcategory.
+     * @type {number}
+     * @memberof V1ApiV1CoreServiceSubcategoriesUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {ServiceSubcategoryCreateUpdate}
+     * @memberof V1ApiV1CoreServiceSubcategoriesUpdate
+     */
+    readonly serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreSupportFaqCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreSupportFaqCreateRequest
+ */
+export interface V1ApiV1CoreSupportFaqCreateRequest {
+    /**
+     * 
+     * @type {SupportFAQCreateUpdate}
+     * @memberof V1ApiV1CoreSupportFaqCreate
+     */
+    readonly supportFAQCreateUpdate: SupportFAQCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreSupportFaqDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreSupportFaqDestroyRequest
+ */
+export interface V1ApiV1CoreSupportFaqDestroyRequest {
+    /**
+     * A unique integer value identifying this Support FAQ.
+     * @type {number}
+     * @memberof V1ApiV1CoreSupportFaqDestroy
+     */
+    readonly id: number
+}
+
+/**
  * Request parameters for v1CoreSupportFaqList operation in V1Api.
  * @export
  * @interface V1ApiV1CoreSupportFaqListRequest
@@ -12901,6 +15583,90 @@ export interface V1ApiV1CoreSupportFaqListRequest {
 }
 
 /**
+ * Request parameters for v1CoreSupportFaqPartialUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreSupportFaqPartialUpdateRequest
+ */
+export interface V1ApiV1CoreSupportFaqPartialUpdateRequest {
+    /**
+     * A unique integer value identifying this Support FAQ.
+     * @type {number}
+     * @memberof V1ApiV1CoreSupportFaqPartialUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {PatchedSupportFAQCreateUpdate}
+     * @memberof V1ApiV1CoreSupportFaqPartialUpdate
+     */
+    readonly patchedSupportFAQCreateUpdate?: PatchedSupportFAQCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreSupportFaqRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreSupportFaqRetrieveRequest
+ */
+export interface V1ApiV1CoreSupportFaqRetrieveRequest {
+    /**
+     * A unique integer value identifying this Support FAQ.
+     * @type {number}
+     * @memberof V1ApiV1CoreSupportFaqRetrieve
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for v1CoreSupportFaqUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreSupportFaqUpdateRequest
+ */
+export interface V1ApiV1CoreSupportFaqUpdateRequest {
+    /**
+     * A unique integer value identifying this Support FAQ.
+     * @type {number}
+     * @memberof V1ApiV1CoreSupportFaqUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {SupportFAQCreateUpdate}
+     * @memberof V1ApiV1CoreSupportFaqUpdate
+     */
+    readonly supportFAQCreateUpdate: SupportFAQCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreSystemSettingsCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreSystemSettingsCreateRequest
+ */
+export interface V1ApiV1CoreSystemSettingsCreateRequest {
+    /**
+     * 
+     * @type {SystemSettingsCreateUpdate}
+     * @memberof V1ApiV1CoreSystemSettingsCreate
+     */
+    readonly systemSettingsCreateUpdate: SystemSettingsCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreSystemSettingsDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreSystemSettingsDestroyRequest
+ */
+export interface V1ApiV1CoreSystemSettingsDestroyRequest {
+    /**
+     * A unique integer value identifying this System Setting.
+     * @type {number}
+     * @memberof V1ApiV1CoreSystemSettingsDestroy
+     */
+    readonly id: number
+}
+
+/**
  * Request parameters for v1CoreSystemSettingsList operation in V1Api.
  * @export
  * @interface V1ApiV1CoreSystemSettingsListRequest
@@ -12947,6 +15713,62 @@ export interface V1ApiV1CoreSystemSettingsListRequest {
      * @memberof V1ApiV1CoreSystemSettingsList
      */
     readonly search?: string
+}
+
+/**
+ * Request parameters for v1CoreSystemSettingsPartialUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreSystemSettingsPartialUpdateRequest
+ */
+export interface V1ApiV1CoreSystemSettingsPartialUpdateRequest {
+    /**
+     * A unique integer value identifying this System Setting.
+     * @type {number}
+     * @memberof V1ApiV1CoreSystemSettingsPartialUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {PatchedSystemSettingsCreateUpdate}
+     * @memberof V1ApiV1CoreSystemSettingsPartialUpdate
+     */
+    readonly patchedSystemSettingsCreateUpdate?: PatchedSystemSettingsCreateUpdate
+}
+
+/**
+ * Request parameters for v1CoreSystemSettingsRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreSystemSettingsRetrieveRequest
+ */
+export interface V1ApiV1CoreSystemSettingsRetrieveRequest {
+    /**
+     * A unique integer value identifying this System Setting.
+     * @type {number}
+     * @memberof V1ApiV1CoreSystemSettingsRetrieve
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for v1CoreSystemSettingsUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1CoreSystemSettingsUpdateRequest
+ */
+export interface V1ApiV1CoreSystemSettingsUpdateRequest {
+    /**
+     * A unique integer value identifying this System Setting.
+     * @type {number}
+     * @memberof V1ApiV1CoreSystemSettingsUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {SystemSettingsCreateUpdate}
+     * @memberof V1ApiV1CoreSystemSettingsUpdate
+     */
+    readonly systemSettingsCreateUpdate: SystemSettingsCreateUpdate
 }
 
 /**
@@ -14908,18 +17730,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
-     * @param {V1ApiV1CoreAppVersionsListRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1CoreAppVersionsList(requestParameters: V1ApiV1CoreAppVersionsListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreAppVersionsList(requestParameters.isActive, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.platform, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * Languages - Read-only (managed via admin/fixtures).
      * @param {V1ApiV1CoreLanguagesListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -14930,7 +17741,40 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * Languages - Read-only (managed via admin/fixtures).
+     * @param {V1ApiV1CoreLanguagesRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreLanguagesRetrieve(requestParameters: V1ApiV1CoreLanguagesRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreLanguagesRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Areas - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceAreasCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceAreasCreate(requestParameters: V1ApiV1CoreServiceAreasCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceAreasCreate(requestParameters.serviceAreaCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Areas - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceAreasDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceAreasDestroy(requestParameters: V1ApiV1CoreServiceAreasDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceAreasDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Areas - Full CRUD with authenticated access.
      * @param {V1ApiV1CoreServiceAreasListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -14941,7 +17785,62 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * Service Areas - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceAreasPartialUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceAreasPartialUpdate(requestParameters: V1ApiV1CoreServiceAreasPartialUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceAreasPartialUpdate(requestParameters.id, requestParameters.patchedServiceAreaCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Areas - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceAreasRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceAreasRetrieve(requestParameters: V1ApiV1CoreServiceAreasRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceAreasRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Areas - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceAreasUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceAreasUpdate(requestParameters: V1ApiV1CoreServiceAreasUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceAreasUpdate(requestParameters.id, requestParameters.serviceAreaCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Categories - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceCategoriesCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceCategoriesCreate(requestParameters: V1ApiV1CoreServiceCategoriesCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceCategoriesCreate(requestParameters.serviceCategoryCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Categories - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceCategoriesDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceCategoriesDestroy(requestParameters: V1ApiV1CoreServiceCategoriesDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceCategoriesDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Categories - Full CRUD with authenticated access.
      * @param {V1ApiV1CoreServiceCategoriesListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -14952,7 +17851,62 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * Service Categories - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceCategoriesPartialUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceCategoriesPartialUpdate(requestParameters: V1ApiV1CoreServiceCategoriesPartialUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceCategoriesPartialUpdate(requestParameters.id, requestParameters.patchedServiceCategoryCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Categories - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceCategoriesRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceCategoriesRetrieve(requestParameters: V1ApiV1CoreServiceCategoriesRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceCategoriesRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Categories - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceCategoriesUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceCategoriesUpdate(requestParameters: V1ApiV1CoreServiceCategoriesUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceCategoriesUpdate(requestParameters.id, requestParameters.serviceCategoryCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Subcategories - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceSubcategoriesCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceSubcategoriesCreate(requestParameters: V1ApiV1CoreServiceSubcategoriesCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesCreate(requestParameters.serviceSubcategoryCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Subcategories - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceSubcategoriesDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceSubcategoriesDestroy(requestParameters: V1ApiV1CoreServiceSubcategoriesDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Subcategories - Full CRUD with authenticated access.
      * @param {V1ApiV1CoreServiceSubcategoriesListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -14963,7 +17917,62 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * List support FAQ items.
+     * Service Subcategories - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceSubcategoriesPartialUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceSubcategoriesPartialUpdate(requestParameters: V1ApiV1CoreServiceSubcategoriesPartialUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesPartialUpdate(requestParameters.id, requestParameters.patchedServiceSubcategoryCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Subcategories - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceSubcategoriesRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceSubcategoriesRetrieve(requestParameters: V1ApiV1CoreServiceSubcategoriesRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Service Subcategories - Full CRUD with authenticated access.
+     * @param {V1ApiV1CoreServiceSubcategoriesUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreServiceSubcategoriesUpdate(requestParameters: V1ApiV1CoreServiceSubcategoriesUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesUpdate(requestParameters.id, requestParameters.serviceSubcategoryCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Support FAQ - Authenticated read, Admin write.
+     * @param {V1ApiV1CoreSupportFaqCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreSupportFaqCreate(requestParameters: V1ApiV1CoreSupportFaqCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreSupportFaqCreate(requestParameters.supportFAQCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Support FAQ - Authenticated read, Admin write.
+     * @param {V1ApiV1CoreSupportFaqDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreSupportFaqDestroy(requestParameters: V1ApiV1CoreSupportFaqDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreSupportFaqDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Support FAQ - Authenticated read, Admin write.
      * @param {V1ApiV1CoreSupportFaqListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -14974,7 +17983,62 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Mixin to provide standardized exception handling for DRF views.
+     * Support FAQ - Authenticated read, Admin write.
+     * @param {V1ApiV1CoreSupportFaqPartialUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreSupportFaqPartialUpdate(requestParameters: V1ApiV1CoreSupportFaqPartialUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreSupportFaqPartialUpdate(requestParameters.id, requestParameters.patchedSupportFAQCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Support FAQ - Authenticated read, Admin write.
+     * @param {V1ApiV1CoreSupportFaqRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreSupportFaqRetrieve(requestParameters: V1ApiV1CoreSupportFaqRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreSupportFaqRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Support FAQ - Authenticated read, Admin write.
+     * @param {V1ApiV1CoreSupportFaqUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreSupportFaqUpdate(requestParameters: V1ApiV1CoreSupportFaqUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreSupportFaqUpdate(requestParameters.id, requestParameters.supportFAQCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * System Settings - Admin-only CRUD.
+     * @param {V1ApiV1CoreSystemSettingsCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreSystemSettingsCreate(requestParameters: V1ApiV1CoreSystemSettingsCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreSystemSettingsCreate(requestParameters.systemSettingsCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * System Settings - Admin-only CRUD.
+     * @param {V1ApiV1CoreSystemSettingsDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreSystemSettingsDestroy(requestParameters: V1ApiV1CoreSystemSettingsDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreSystemSettingsDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * System Settings - Admin-only CRUD.
      * @param {V1ApiV1CoreSystemSettingsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -14982,6 +18046,39 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      */
     public v1CoreSystemSettingsList(requestParameters: V1ApiV1CoreSystemSettingsListRequest = {}, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1CoreSystemSettingsList(requestParameters.category, requestParameters.isPublic, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * System Settings - Admin-only CRUD.
+     * @param {V1ApiV1CoreSystemSettingsPartialUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreSystemSettingsPartialUpdate(requestParameters: V1ApiV1CoreSystemSettingsPartialUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreSystemSettingsPartialUpdate(requestParameters.id, requestParameters.patchedSystemSettingsCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * System Settings - Admin-only CRUD.
+     * @param {V1ApiV1CoreSystemSettingsRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreSystemSettingsRetrieve(requestParameters: V1ApiV1CoreSystemSettingsRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreSystemSettingsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * System Settings - Admin-only CRUD.
+     * @param {V1ApiV1CoreSystemSettingsUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1CoreSystemSettingsUpdate(requestParameters: V1ApiV1CoreSystemSettingsUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1CoreSystemSettingsUpdate(requestParameters.id, requestParameters.systemSettingsCreateUpdate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

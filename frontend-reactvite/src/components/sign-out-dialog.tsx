@@ -1,7 +1,7 @@
-import { useNavigate, useLocation } from "@tanstack/react-router";
-import { AuthClient } from "@/lib/auth/auth-client";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { useDialogControl } from "@/hooks/use-dialog-control";
+import { AuthClient } from "@/lib/auth/auth-client";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 
 interface SignOutDialogProps {
   control: ReturnType<typeof useDialogControl<any>>;
@@ -15,7 +15,7 @@ export function SignOutDialog({ control, onCancel }: SignOutDialogProps) {
   const handleSignOut = async () => {
     try {
       const result = await AuthClient.signOut();
-      
+
       if (result.success) {
         // Preserve current location for redirect after sign-in
         const currentPath = location.href;
@@ -59,3 +59,5 @@ export function SignOutDialog({ control, onCancel }: SignOutDialogProps) {
     />
   );
 }
+
+

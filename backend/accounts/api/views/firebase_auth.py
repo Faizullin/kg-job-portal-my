@@ -9,6 +9,8 @@ from job_portal.apps.users.models import UserProfile
 from utils.helpers import get_client_ip
 from ..serializers import FireBaseAuthSerializer, FirebaseAuthResponseSerializer, UserProfileSerializer
 from ...models import UserModel
+import uuid
+from django.utils.text import slugify
 
 
 
@@ -115,9 +117,10 @@ class FirebaseAuthView(APIView):
             while UserModel.objects.filter(username=username).exists():
                 username = f"{base_username}_{counter}"
                 counter += 1
-            print(f"username: {username}")
-            # Create new user
-            user_profile = UserModel.objects.create(
+
+            # Generate secure password in format: {slugified(username)}.password@{uuid}
+            secure_password = self._generate_secure_password(username)
+            user_obj = UserModel.objects.create_user(
                 firebase_user_id=firebase_user.uid,
                 username=username,
                 email=email,
@@ -125,13 +128,15 @@ class FirebaseAuthView(APIView):
                 is_active=True,
                 user_type='free',
             )
+            user_obj.set_password(secure_password)
+            user_obj.save()
             UserProfile.objects.create(
-                user=user_profile,
+                user=user_obj,
                 user_type='client',  # Default to client
                 is_verified=True,   # Automatically verified
             )
 
-            return user_profile
+            return user_obj
 
         except IntegrityError as e:
             # Handle case where user might already exist (race condition)
@@ -142,3 +147,10 @@ class FirebaseAuthView(APIView):
 
     def _get_client_ip(self, request):
         return get_client_ip(request)
+
+    def _generate_secure_password(self, username):
+        """Generate a secure password for the user."""
+        slugified_username = slugify(username)[:15]
+        unique_uuid = str(uuid.uuid4())[:8] 
+        secure_password = f"{slugified_username}.password@{unique_uuid}"
+        return secure_password  

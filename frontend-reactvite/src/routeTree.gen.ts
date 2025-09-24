@@ -43,6 +43,11 @@ import { Route as AuthenticatedServiceProvidersProviderIdRouteImport } from './r
 import { Route as AuthenticatedPaymentsInvoicesRouteImport } from './routes/_authenticated/payments/invoices'
 import { Route as AuthenticatedOrdersOrderIdRouteImport } from './routes/_authenticated/orders/$orderId'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedCoreSystemSettingsRouteImport } from './routes/_authenticated/core/system-settings'
+import { Route as AuthenticatedCoreSupportFaqRouteImport } from './routes/_authenticated/core/support-faq'
+import { Route as AuthenticatedCoreServiceSubcategoriesRouteImport } from './routes/_authenticated/core/service-subcategories'
+import { Route as AuthenticatedCoreServiceCategoriesRouteImport } from './routes/_authenticated/core/service-categories'
+import { Route as AuthenticatedCoreServiceAreasRouteImport } from './routes/_authenticated/core/service-areas'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -232,6 +237,36 @@ const AuthenticatedErrorsErrorRoute =
     path: '/errors/$error',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCoreSystemSettingsRoute =
+  AuthenticatedCoreSystemSettingsRouteImport.update({
+    id: '/core/system-settings',
+    path: '/core/system-settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCoreSupportFaqRoute =
+  AuthenticatedCoreSupportFaqRouteImport.update({
+    id: '/core/support-faq',
+    path: '/core/support-faq',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCoreServiceSubcategoriesRoute =
+  AuthenticatedCoreServiceSubcategoriesRouteImport.update({
+    id: '/core/service-subcategories',
+    path: '/core/service-subcategories',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCoreServiceCategoriesRoute =
+  AuthenticatedCoreServiceCategoriesRouteImport.update({
+    id: '/core/service-categories',
+    path: '/core/service-categories',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCoreServiceAreasRoute =
+  AuthenticatedCoreServiceAreasRouteImport.update({
+    id: '/core/service-areas',
+    path: '/core/service-areas',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
@@ -245,6 +280,11 @@ export interface FileRoutesByFullPath {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
+  '/core/service-areas': typeof AuthenticatedCoreServiceAreasRoute
+  '/core/service-categories': typeof AuthenticatedCoreServiceCategoriesRoute
+  '/core/service-subcategories': typeof AuthenticatedCoreServiceSubcategoriesRoute
+  '/core/support-faq': typeof AuthenticatedCoreSupportFaqRoute
+  '/core/system-settings': typeof AuthenticatedCoreSystemSettingsRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
   '/payments/invoices': typeof AuthenticatedPaymentsInvoicesRoute
@@ -280,6 +320,11 @@ export interface FileRoutesByTo {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
+  '/core/service-areas': typeof AuthenticatedCoreServiceAreasRoute
+  '/core/service-categories': typeof AuthenticatedCoreServiceCategoriesRoute
+  '/core/service-subcategories': typeof AuthenticatedCoreServiceSubcategoriesRoute
+  '/core/support-faq': typeof AuthenticatedCoreSupportFaqRoute
+  '/core/system-settings': typeof AuthenticatedCoreSystemSettingsRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
   '/payments/invoices': typeof AuthenticatedPaymentsInvoicesRoute
@@ -317,6 +362,11 @@ export interface FileRoutesById {
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/core/service-areas': typeof AuthenticatedCoreServiceAreasRoute
+  '/_authenticated/core/service-categories': typeof AuthenticatedCoreServiceCategoriesRoute
+  '/_authenticated/core/service-subcategories': typeof AuthenticatedCoreServiceSubcategoriesRoute
+  '/_authenticated/core/support-faq': typeof AuthenticatedCoreSupportFaqRoute
+  '/_authenticated/core/system-settings': typeof AuthenticatedCoreSystemSettingsRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
   '/_authenticated/payments/invoices': typeof AuthenticatedPaymentsInvoicesRoute
@@ -354,6 +404,11 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/'
+    | '/core/service-areas'
+    | '/core/service-categories'
+    | '/core/service-subcategories'
+    | '/core/support-faq'
+    | '/core/system-settings'
     | '/errors/$error'
     | '/orders/$orderId'
     | '/payments/invoices'
@@ -389,6 +444,11 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/'
+    | '/core/service-areas'
+    | '/core/service-categories'
+    | '/core/service-subcategories'
+    | '/core/support-faq'
+    | '/core/system-settings'
     | '/errors/$error'
     | '/orders/$orderId'
     | '/payments/invoices'
@@ -425,6 +485,11 @@ export interface FileRouteTypes {
     | '/(errors)/500'
     | '/(errors)/503'
     | '/_authenticated/'
+    | '/_authenticated/core/service-areas'
+    | '/_authenticated/core/service-categories'
+    | '/_authenticated/core/service-subcategories'
+    | '/_authenticated/core/support-faq'
+    | '/_authenticated/core/system-settings'
     | '/_authenticated/errors/$error'
     | '/_authenticated/orders/$orderId'
     | '/_authenticated/payments/invoices'
@@ -702,6 +767,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/core/system-settings': {
+      id: '/_authenticated/core/system-settings'
+      path: '/core/system-settings'
+      fullPath: '/core/system-settings'
+      preLoaderRoute: typeof AuthenticatedCoreSystemSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/core/support-faq': {
+      id: '/_authenticated/core/support-faq'
+      path: '/core/support-faq'
+      fullPath: '/core/support-faq'
+      preLoaderRoute: typeof AuthenticatedCoreSupportFaqRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/core/service-subcategories': {
+      id: '/_authenticated/core/service-subcategories'
+      path: '/core/service-subcategories'
+      fullPath: '/core/service-subcategories'
+      preLoaderRoute: typeof AuthenticatedCoreServiceSubcategoriesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/core/service-categories': {
+      id: '/_authenticated/core/service-categories'
+      path: '/core/service-categories'
+      fullPath: '/core/service-categories'
+      preLoaderRoute: typeof AuthenticatedCoreServiceCategoriesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/core/service-areas': {
+      id: '/_authenticated/core/service-areas'
+      path: '/core/service-areas'
+      fullPath: '/core/service-areas'
+      preLoaderRoute: typeof AuthenticatedCoreServiceAreasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -738,6 +838,11 @@ const AuthenticatedSettingsRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedCoreServiceAreasRoute: typeof AuthenticatedCoreServiceAreasRoute
+  AuthenticatedCoreServiceCategoriesRoute: typeof AuthenticatedCoreServiceCategoriesRoute
+  AuthenticatedCoreServiceSubcategoriesRoute: typeof AuthenticatedCoreServiceSubcategoriesRoute
+  AuthenticatedCoreSupportFaqRoute: typeof AuthenticatedCoreSupportFaqRoute
+  AuthenticatedCoreSystemSettingsRoute: typeof AuthenticatedCoreSystemSettingsRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedOrdersOrderIdRoute: typeof AuthenticatedOrdersOrderIdRoute
   AuthenticatedPaymentsInvoicesRoute: typeof AuthenticatedPaymentsInvoicesRoute
@@ -758,6 +863,13 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedCoreServiceAreasRoute: AuthenticatedCoreServiceAreasRoute,
+  AuthenticatedCoreServiceCategoriesRoute:
+    AuthenticatedCoreServiceCategoriesRoute,
+  AuthenticatedCoreServiceSubcategoriesRoute:
+    AuthenticatedCoreServiceSubcategoriesRoute,
+  AuthenticatedCoreSupportFaqRoute: AuthenticatedCoreSupportFaqRoute,
+  AuthenticatedCoreSystemSettingsRoute: AuthenticatedCoreSystemSettingsRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedOrdersOrderIdRoute: AuthenticatedOrdersOrderIdRoute,
   AuthenticatedPaymentsInvoicesRoute: AuthenticatedPaymentsInvoicesRoute,
