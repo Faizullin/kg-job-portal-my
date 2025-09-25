@@ -16,7 +16,7 @@ class MessageSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldS
         model = ChatMessage
         fields = [
             'id', 'chat_room', 'sender', 'sender_name', 'content', 'message_type',
-            'message_type_display', 'attachment_url', 'attachment_name', 'attachment_size',
+            'message_type_display', 'attachment', 'attachment_name', 'attachment_size',
             'is_read', 'read_at', 'created_at'
         ]
     
@@ -176,8 +176,8 @@ class ChatSendMessageSerializer(serializers.Serializer):
     """Serializer for sending messages via mobile API."""
     message = serializers.CharField(max_length=1000, help_text='Message content')
     message_type = serializers.ChoiceField(
-        choices=[('text', 'Text'), ('image', 'Image')],
+        choices=[('text', 'Text'), ('image', 'Image'), ('file', 'File')],
         default='text',
         help_text='Message type'
     )
-    attachment_url = serializers.URLField(required=False, allow_blank=True, help_text='Attachment URL for images')
+    attachment = serializers.FileField(required=False, allow_null=True, help_text='File attachment')

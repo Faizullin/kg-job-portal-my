@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Language, ServiceCategory, ServiceSubcategory, ServiceArea, SystemSettings, AppVersion
+from .models import Language, ServiceCategory, ServiceSubcategory, ServiceArea, SystemSettings, AppVersion, SupportFAQ
 
 
 @admin.register(Language)
@@ -186,5 +186,29 @@ class AppVersionAdmin(admin.ModelAdmin):
             return f"{size_kb:.0f} KB"
         return '-'
     file_size_display.short_description = 'File Size'
+
+
+@admin.register(SupportFAQ)
+class SupportFAQAdmin(admin.ModelAdmin):
+    list_display = ['question', 'category', 'is_popular', 'is_active', 'sort_order', 'view_count', 'created_at']
+    list_filter = ['category', 'is_popular', 'is_active', 'created_at']
+    search_fields = ['question', 'answer']
+    ordering = ['sort_order', 'question']
+    list_editable = ['is_popular', 'is_active', 'sort_order']
+    
+    fieldsets = (
+        ('FAQ Content', {
+            'fields': ('question', 'answer', 'category')
+        }),
+        ('Display Options', {
+            'fields': ('sort_order', 'is_popular', 'is_active')
+        }),
+        ('Analytics', {
+            'fields': ('view_count',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    readonly_fields = ['view_count']
 
 

@@ -59,7 +59,7 @@ class ChatMessageAdmin(admin.ModelAdmin):
             'fields': ('chat_room', 'sender', 'content', 'message_type')
         }),
         ('Attachments', {
-            'fields': ('attachment_url', 'attachment_name', 'attachment_size')
+            'fields': ('attachment', 'attachment_name', 'attachment_size')
         }),
         ('Status', {
             'fields': ('is_read', 'read_at')
@@ -80,7 +80,7 @@ class ChatMessageAdmin(admin.ModelAdmin):
     content_preview.short_description = 'Content'
     
     def attachment_info(self, obj):
-        if obj.attachment_url:
+        if obj.attachment:
             return f"{obj.attachment_name} ({obj.attachment_size} bytes)" if obj.attachment_size else obj.attachment_name
         return 'No attachment'
     attachment_info.short_description = 'Attachment'

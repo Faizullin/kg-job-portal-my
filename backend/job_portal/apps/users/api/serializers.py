@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from utils.serializers import AbstractTimestampedModelSerializer
-from ..models import UserProfile, ServiceProviderProfile, ClientProfile
+from ..models import (
+    UserProfile, ServiceProviderProfile, ClientProfile, 
+    MasterSkill, ServiceProviderSkill, PortfolioItem, Certificate,
+    Profession, ProviderStatistics
+)
 from accounts.api.serializers.user_serializers import UserProfileSerializer, UserUpdateSerializer
 from job_portal.apps.core.models import ServiceSubcategory
 
@@ -9,21 +13,24 @@ class ServiceProviderSerializer(AbstractTimestampedModelSerializer):
         model = ServiceProviderProfile
         fields = (
             'id', 'user_profile',
-            'business_name', 'business_description',
+            'business_name', 'business_description', 'profession',
             'service_areas', 'services_offered',
             'works_remotely', 'accepts_clients_at_location', 'travels_to_clients',
-            'is_available',
-            'average_rating', 'total_reviews',
-            'is_verified_provider',
+            'is_available', 'hourly_rate', 'response_time_hours',
+            'work_experience_start_year', 'education_institution', 'education_years', 'languages',
+            'about_description', 'current_location', 'is_online', 'last_seen',
+            'is_verified_provider', 'is_top_master',
             'created_at', 'updated_at',
         )
-        read_only_fields = ('average_rating', 'total_reviews', 'is_verified_provider', 'created_at', 'updated_at')
+        read_only_fields = (
+            'is_verified_provider', 'is_top_master', 'created_at', 'updated_at'
+        )
 
 
 class PreferredServiceSubcategorySerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = ServiceSubcategory
-        fields = ('id', 'name', 'description', 'icon', 'is_active', 'sort_order', 'featured', 'base_price', 'price_range_min', 'price_range_max', 'estimated_duration', 'complexity_level', 'safety_requirements', 'slug', 'meta_title', 'meta_description')
+        fields = ('id', 'name', 'description', 'icon', 'is_active', 'featured', 'base_price', 'price_range_min', 'price_range_max', 'estimated_duration', 'complexity_level', 'safety_requirements', 'slug', 'meta_title', 'meta_description')
 
 class ClientSerializer(AbstractTimestampedModelSerializer):
     preferred_services = PreferredServiceSubcategorySerializer(many=True, read_only=True)
@@ -45,7 +52,7 @@ class UserProfileDetailSerializer(AbstractTimestampedModelSerializer):
         model = UserProfile
         fields = (
             'id',
-            'user', 'user_type',
+            'user',
             'bio', 'date_of_birth', 'gender',
             'phone_number', 'address', 'city', 'state', 'country', 'postal_code',
             'terms_accepted', 'terms_accepted_at',
@@ -60,7 +67,6 @@ class UserProfileUpdateSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = UserProfile
         fields = (
-            'user_type',
             'bio', 'date_of_birth', 'gender',
             'phone_number', 'address', 'city', 'state', 'country', 'postal_code',
             'preferred_language', 'notification_preferences',
@@ -71,12 +77,14 @@ class ServiceProviderUpdateSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = ServiceProviderProfile
         fields = (
-            'business_name', 'business_description',
+            'business_name', 'business_description', 'profession',
             'service_areas', 'services_offered',
             'works_remotely', 'accepts_clients_at_location', 'travels_to_clients',
-            'is_available',
+            'is_available', 'hourly_rate', 'response_time_hours',
+            'work_experience_start_year', 'education_institution', 'education_years', 'languages',
+            'about_description', 'current_location',
         )
-        read_only_fields = ('is_verified_provider',)
+        read_only_fields = ('is_verified_provider', 'is_top_master')
 
 
 class ClientUpdateSerializer(AbstractTimestampedModelSerializer):
@@ -141,3 +149,73 @@ class AdvancedProfileUpdateSerializer(serializers.Serializer):
                     profile_serializer.save()
         
         return instance
+
+
+# New serializers for mobile app features
+class MasterSkillSerializer(AbstractTimestampedModelSerializer):
+    class Meta:
+        model = MasterSkill
+        fields = ('id', 'name', 'description', 'category', 'is_active', 'created_at', 'updated_at')
+
+
+class ServiceProviderSkillSerializer(AbstractTimestampedModelSerializer):
+    skill = MasterSkillSerializer(read_only=True)
+    skill_id = serializers.IntegerField(write_only=True)
+    
+    class Meta:
+        model = ServiceProviderSkill
+        fields = ('id', 'skill', 'skill_id', 'proficiency_level', 'years_of_experience', 'is_primary_skill', 'created_at', 'updated_at')
+
+
+class PortfolioItemSerializer(AbstractTimestampedModelSerializer):
+    class Meta:
+        model = PortfolioItem
+        fields = (
+            'id', 'service_provider', 'title', 'description', 'image',
+            'skill_used', 'is_featured', 'created_at', 'updated_at'
+        )
+        read_only_fields = ('service_provider', 'created_at', 'updated_at')
+
+
+class CertificateSerializer(AbstractTimestampedModelSerializer):
+    class Meta:
+        model = Certificate
+        fields = (
+            'id', 'service_provider', 'name', 'issuing_organization', 'certificate_number',
+            'issue_date', 'expiry_date', 'certificate_file', 'is_verified', 'created_at', 'updated_at'
+        )
+        read_only_fields = ('service_provider', 'created_at', 'updated_at')
+
+
+class ProfessionSerializer(AbstractTimestampedModelSerializer):
+    class Meta:
+        model = Profession
+        fields = ('id', 'name', 'description', 'category', 'is_active', 'created_at', 'updated_at')
+
+
+class ProviderStatisticsSerializer(AbstractTimestampedModelSerializer):
+    class Meta:
+        model = ProviderStatistics
+        fields = (
+            'id', 'provider', 'total_jobs_completed', 'on_time_percentage', 
+            'repeat_customer_percentage', 'average_rating', 'total_reviews', 'created_at', 'updated_at'
+        )
+        read_only_fields = ('provider', 'created_at', 'updated_at')
+
+
+
+
+# Enhanced serializers for mobile app
+class ServiceProviderDetailSerializer(ServiceProviderSerializer):
+    """Enhanced serializer for detailed provider view with related data."""
+    provider_skills = ServiceProviderSkillSerializer(many=True, read_only=True)
+    portfolio_items = PortfolioItemSerializer(many=True, read_only=True)
+    certificates = CertificateSerializer(many=True, read_only=True)
+    statistics = ProviderStatisticsSerializer(read_only=True)
+    
+    class Meta(ServiceProviderSerializer.Meta):
+        fields = ServiceProviderSerializer.Meta.fields + ('provider_skills', 'portfolio_items', 'certificates', 'statistics')
+
+
+
+

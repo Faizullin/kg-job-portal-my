@@ -49,10 +49,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000",
 ]
-INSTALLED_APPS += [
-    "drf_spectacular",
-    "drf_spectacular_sidecar",
-]
+# Add drf_spectacular if not already present
+if "drf_spectacular" not in INSTALLED_APPS:
+    INSTALLED_APPS += [
+        "drf_spectacular",
+        "drf_spectacular_sidecar",
+    ]
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Master KG Job Portal API",

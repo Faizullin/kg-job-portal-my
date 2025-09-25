@@ -4,17 +4,36 @@ from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedMo
 from accounts.models import UserModel
 
 
+class PaymentMethodType(models.TextChoices):
+    CREDIT_CARD = 'credit_card', _('Credit Card')
+    DEBIT_CARD = 'debit_card', _('Debit Card')
+    BANK_TRANSFER = 'bank_transfer', _('Bank Transfer')
+    DIGITAL_WALLET = 'digital_wallet', _('Digital Wallet')
+
+
+class InvoiceStatus(models.TextChoices):
+    DRAFT = 'draft', _('Draft')
+    SENT = 'sent', _('Sent')
+    PAID = 'paid', _('Paid')
+    OVERDUE = 'overdue', _('Overdue')
+    CANCELLED = 'cancelled', _('Cancelled')
+
+
+class PaymentStatus(models.TextChoices):
+    PENDING = 'pending', _('Pending')
+    PROCESSING = 'processing', _('Processing')
+    COMPLETED = 'completed', _('Completed')
+    FAILED = 'failed', _('Failed')
+    CANCELLED = 'cancelled', _('Cancelled')
+    REFUNDED = 'refunded', _('Refunded')
+
+
 class PaymentMethod(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Payment methods for users."""
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='payment_methods')
     
     # Payment method details
-    method_type = models.CharField(_("Method Type"), max_length=20, choices=[
-        ('credit_card', _('Credit Card')),
-        ('debit_card', _('Debit Card')),
-        ('bank_transfer', _('Bank Transfer')),
-        ('digital_wallet', _('Digital Wallet')),
-    ])
+    method_type = models.CharField(_("Method Type"), max_length=20, choices=PaymentMethodType.choices)
     
     # Card information (encrypted)
     card_last4 = models.CharField(_("Last 4 Digits"), max_length=4, blank=True)
@@ -68,13 +87,7 @@ class Invoice(AbstractSoftDeleteModel, AbstractTimestampedModel):
     total_amount = models.DecimalField(_("Total Amount"), max_digits=10, decimal_places=2)
     
     # Status
-    status = models.CharField(_("Status"), max_length=20, choices=[
-        ('draft', _('Draft')),
-        ('sent', _('Sent')),
-        ('paid', _('Paid')),
-        ('overdue', _('Overdue')),
-        ('cancelled', _('Cancelled')),
-    ], default='draft')
+    status = models.CharField(_("Status"), max_length=20, choices=InvoiceStatus.choices, default=InvoiceStatus.DRAFT)
     
     # Payment
     paid_amount = models.DecimalField(_("Paid Amount"), max_digits=10, decimal_places=2, default=0)
@@ -108,14 +121,7 @@ class Payment(AbstractSoftDeleteModel, AbstractTimestampedModel):
     currency = models.CharField(_("Currency"), default='USD')
     
     # Status
-    status = models.CharField(_("Status"), max_length=20, choices=[
-        ('pending', _('Pending')),
-        ('processing', _('Processing')),
-        ('completed', _('Completed')),
-        ('failed', _('Failed')),
-        ('cancelled', _('Cancelled')),
-        ('refunded', _('Refunded')),
-    ], default='pending')
+    status = models.CharField(_("Status"), max_length=20, choices=PaymentStatus.choices, default=PaymentStatus.PENDING)
     
     # Stripe integration
     stripe_payment_intent_id = models.CharField(_("Stripe Payment Intent ID"), max_length=255, blank=True)

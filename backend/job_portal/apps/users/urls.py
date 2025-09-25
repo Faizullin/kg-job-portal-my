@@ -1,39 +1,42 @@
 from django.urls import path
 from .api.views import (
-    UserProfileDetailApiView, ServiceProviderApiView,
-    ServiceProviderDetailApiView, ClientApiView, ClientDetailApiView,
-    ClientProfileUpdateView, ServiceProviderProfileUpdateView,
-    ClientProfileCreateView, ServiceProviderProfileCreateView,
-    AdvancedProfileApiView, ServiceProviderFeaturedApiView, TaskHistoryApiView
+    UserProfileDetailApiView, ServiceProviderDetailApiView, 
+    ClientProfileViewSet, ServiceProviderProfileViewSet,
+    AdvancedProfileApiView,
+    MasterSkillListApiView,
+    ServiceProviderSkillApiView, PortfolioItemApiView, CertificateApiView,
+    ProfessionListApiView, ProviderStatisticsApiView
 )
 
 app_name = 'users'
 
 urlpatterns = [
-    # Advanced Profile (combines user account + job portal profile)
-    path('api/v1/users/profile/advanced/', AdvancedProfileApiView.as_view(), name='advanced-profile'),
+    path('api/v1/users/my/profile/', UserProfileDetailApiView.as_view(), name='profile'),
+    path('api/v1/users/my/profile/advanced/', AdvancedProfileApiView.as_view(), name='profile-advanced'),
     
-    # Profile Creation (for initial setup)
-    path('api/v1/users/client/create/', ClientProfileCreateView.as_view(), name='client-create'),
-    path('api/v1/users/provider/create/', ServiceProviderProfileCreateView.as_view(), name='provider-create'),
+    path('api/v1/users/my/client/', ClientProfileViewSet.as_view({
+        "get": "retrieve",
+        "post": "create",
+        "put": "update",
+        "patch": "partial_update",
+    }), name='client-profile-viewset'),
+    path('api/v1/users/my/provider/', ServiceProviderProfileViewSet.as_view({
+        "get": "retrieve",
+        "post": "create",
+        "put": "update",
+        "patch": "partial_update",
+    }), name='provider-profile-viewset'),
     
-    # User Profile (GET and UPDATE for current user)
-    path('api/v1/users/profile/', UserProfileDetailApiView.as_view(), name='profile-detail'),
+    # Service Providers (Public - Detail Only)
+    path('api/v1/users/providers/<int:pk>/details/', ServiceProviderDetailApiView.as_view(), name='provider-details'),
     
-    # Profile Updates (for existing profiles)
-    path('api/v1/users/client/update/', ClientProfileUpdateView.as_view(), name='client-update'),
-    path('api/v1/users/provider/update/', ServiceProviderProfileUpdateView.as_view(), name='provider-update'),
+    # My Data Management
+    path('api/v1/users/my/skills/', ServiceProviderSkillApiView.as_view(), name='my-skills'),
+    path('api/v1/users/my/portfolio/', PortfolioItemApiView.as_view(), name='my-portfolio'),
+    path('api/v1/users/my/certificates/', CertificateApiView.as_view(), name='my-certificates'),
+    path('api/v1/users/my/statistics/', ProviderStatisticsApiView.as_view(), name='my-statistics'),
     
-    # Service Providers
-    path('api/v1/users/providers/', ServiceProviderApiView.as_view(), name='service-providers'),
-    path('api/v1/users/providers/featured/', ServiceProviderFeaturedApiView.as_view(), name='service-providers-featured'),
-    path('api/v1/users/providers/<int:pk>/details/', ServiceProviderDetailApiView.as_view(), name='service-provider-details'),
-    path('api/v1/users/provider/', ServiceProviderDetailApiView.as_view(), name='service-provider-detail'),
-    
-    # Clients
-    path('api/v1/users/clients/', ClientApiView.as_view(), name='clients'),
-    path('api/v1/users/client/', ClientDetailApiView.as_view(), name='client-detail'),
-    
-    # Task History
-    path('api/v1/users/task-history/', TaskHistoryApiView.as_view(), name='task-history'),
+    # Reference Data (Public)
+    path('api/v1/users/skills/', MasterSkillListApiView.as_view(), name='skills'),
+    path('api/v1/users/professions/', ProfessionListApiView.as_view(), name='professions'),
 ]

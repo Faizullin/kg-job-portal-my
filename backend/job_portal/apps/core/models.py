@@ -1,6 +1,45 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedModel
+from utils.abstract_models import AbstractSlugModel, AbstractSoftDeleteModel, AbstractTimestampedModel
+from django.utils.text import slugify
+
+
+class ComplexityLevel(models.TextChoices):
+    BEGINNER = 'beginner', _('Beginner')
+    INTERMEDIATE = 'intermediate', _('Intermediate')
+    ADVANCED = 'advanced', _('Advanced')
+    EXPERT = 'expert', _('Expert')
+
+
+class PriceType(models.TextChoices):
+    FIXED = 'fixed', _('Fixed Price')
+    PERCENTAGE = 'percentage', _('Percentage of Base Price')
+    PER_UNIT = 'per_unit', _('Per Unit')
+    PER_HOUR = 'per_hour', _('Per Hour')
+
+
+class SettingType(models.TextChoices):
+    STRING = 'string', _('String')
+    INTEGER = 'integer', _('Integer')
+    BOOLEAN = 'boolean', _('Boolean')
+    JSON = 'json', _('JSON')
+    FILE = 'file', _('File')
+
+
+class Platform(models.TextChoices):
+    ANDROID = 'android', _('Android')
+    IOS = 'ios', _('iOS')
+    WEB = 'web', _('Web')
+    ALL = 'all', _('All Platforms')
+
+
+class FAQCategory(models.TextChoices):
+    GENERAL = 'general', _('General')
+    SPECIALIST = 'specialist', _('Specialist')
+    REVIEWS = 'reviews', _('Reviews')
+    ACCOUNT = 'account', _('Account')
+    SEARCH = 'search', _('Search')
+    SAFETY = 'safety', _('Safety')
 
 
 class Language(AbstractSoftDeleteModel, AbstractTimestampedModel):
@@ -27,7 +66,7 @@ class Language(AbstractSoftDeleteModel, AbstractTimestampedModel):
         return f"{self.name} ({self.code})... [#{self.id}]"
 
 
-class ServiceCategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
+class ServiceCategory(AbstractSoftDeleteModel, AbstractTimestampedModel, AbstractSlugModel):
     """Main service categories (e.g., Cleaning, Plumbing, etc.)."""
     
     name = models.CharField(_("Category Name"), max_length=100)
@@ -50,8 +89,7 @@ class ServiceCategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
     meta_title = models.CharField(_("Meta Title"), max_length=60, blank=True)
     meta_description = models.TextField(_("Meta Description"), blank=True)
     keywords = models.TextField(_("Keywords"), blank=True)
-    slug = models.SlugField(_("Slug"), max_length=100, unique=True, blank=True)
-    
+
     # Requirements
     requires_license = models.BooleanField(_("Requires License"), default=False)
     requires_insurance = models.BooleanField(_("Requires Insurance"), default=False)
@@ -67,12 +105,11 @@ class ServiceCategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            from django.utils.text import slugify
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
 
-class ServiceSubcategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
+class ServiceSubcategory(AbstractSoftDeleteModel, AbstractTimestampedModel, AbstractSlugModel):
     """Specific services within job types."""
     
     category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE, related_name='subcategories')
@@ -91,18 +128,12 @@ class ServiceSubcategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
     
     # Service details
     estimated_duration = models.PositiveIntegerField(_("Estimated Duration (hours)"), null=True, blank=True)
-    complexity_level = models.CharField(_("Complexity Level"), max_length=20, choices=[
-        ('beginner', _('Beginner')),
-        ('intermediate', _('Intermediate')),
-        ('advanced', _('Advanced')),
-        ('expert', _('Expert')),
-    ], default='intermediate')
+    complexity_level = models.CharField(_("Complexity Level"), max_length=20, choices=ComplexityLevel.choices, default=ComplexityLevel.INTERMEDIATE)
     
     # Requirements
     safety_requirements = models.TextField(_("Safety Requirements"), blank=True)
     
     # SEO
-    slug = models.SlugField(_("Slug"), max_length=100, blank=True)
     meta_title = models.CharField(_("Meta Title"), max_length=60, blank=True)
     meta_description = models.TextField(_("Meta Description"), blank=True)
     
@@ -117,74 +148,12 @@ class ServiceSubcategory(AbstractSoftDeleteModel, AbstractTimestampedModel):
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            from django.utils.text import slugify
             self.slug = slugify(f"{self.category.name}-{self.name}")
         super().save(*args, **kwargs)
 
 
-class ServiceAddon(AbstractTimestampedModel):
-    """Optional add-ons for services."""
-    subcategory = models.ForeignKey(ServiceSubcategory, on_delete=models.CASCADE, related_name='addons')
-    name = models.CharField(_("Addon Name"), max_length=100)
-    description = models.TextField(_("Description"))
-    price = models.DecimalField(_("Price"), max_digits=10, decimal_places=2)
-    is_active = models.BooleanField(_("Active"), default=True)
-    
-    # Additional features
-    image = models.URLField(_("Image"), blank=True)
-    featured = models.BooleanField(_("Featured Addon"), default=False)
-    duration_addition = models.PositiveIntegerField(_("Duration Addition (hours)"), null=True, blank=True)
-    max_quantity = models.PositiveIntegerField(_("Maximum Quantity"), null=True, blank=True)
-    min_quantity = models.PositiveIntegerField(_("Minimum Quantity"), default=1)
-    
-    # Pricing options
-    price_type = models.CharField(_("Price Type"), max_length=20, choices=[
-        ('fixed', _('Fixed Price')),
-        ('percentage', _('Percentage of Base Price')),
-        ('per_unit', _('Per Unit')),
-        ('per_hour', _('Per Hour')),
-    ], default='fixed')
-    
-    # Requirements
-    requires_approval = models.BooleanField(_("Requires Approval"), default=False)
-    prerequisites = models.JSONField(_("Prerequisites"), default=list)
-    
-    class Meta:
-        verbose_name = _("Service Addon")
-        verbose_name_plural = _("Service Addons")
-        ordering = ['name']
-    
-    def __str__(self):
-        return f"{self.subcategory.name} - {self.name}... [#{self.id}]"
 
 
-class ServicePackage(AbstractTimestampedModel):
-    """Predefined service packages combining multiple addons."""
-    name = models.CharField(_("Package Name"), max_length=100)
-    description = models.TextField(_("Description"))
-    subcategory = models.ForeignKey(ServiceSubcategory, on_delete=models.CASCADE, related_name='packages')
-    
-    # Package details
-    addons = models.ManyToManyField(ServiceAddon, related_name='packages')
-    package_price = models.DecimalField(_("Package Price"), max_digits=10, decimal_places=2)
-    discount_percentage = models.DecimalField(_("Discount Percentage"), max_digits=5, decimal_places=2, default=0)
-    
-    # Features
-    is_popular = models.BooleanField(_("Popular Package"), default=False)
-    is_best_value = models.BooleanField(_("Best Value"), default=False)
-    estimated_duration = models.PositiveIntegerField(_("Estimated Duration (hours)"), null=True, blank=True)
-    
-    # Validity
-    valid_from = models.DateField(_("Valid From"), null=True, blank=True)
-    valid_until = models.DateField(_("Valid Until"), null=True, blank=True)
-    
-    class Meta:
-        verbose_name = _("Service Package")
-        verbose_name_plural = _("Service Packages")
-        ordering = ['name']
-    
-    def __str__(self):
-        return f"{self.name}... [#{self.id}]"
 
 
 class ServiceArea(AbstractSoftDeleteModel, AbstractTimestampedModel):
@@ -223,15 +192,10 @@ class SystemSettings(AbstractTimestampedModel):
     value = models.TextField(_("Setting Value"))
     description = models.TextField(_("Description"), blank=True)
     is_public = models.BooleanField(_("Public Setting"), default=False)
+    is_active = models.BooleanField(_("Active"), default=True)
     
     # Additional features
-    setting_type = models.CharField(_("Setting Type"), max_length=20, choices=[
-        ('string', _('String')),
-        ('integer', _('Integer')),
-        ('boolean', _('Boolean')),
-        ('json', _('JSON')),
-        ('file', _('File')),
-    ], default='string')
+    setting_type = models.CharField(_("Setting Type"), max_length=20, choices=SettingType.choices, default=SettingType.STRING)
     
     # Validation
     validation_regex = models.CharField(_("Validation Regex"), max_length=200, blank=True)
@@ -261,12 +225,7 @@ class AppVersion(AbstractTimestampedModel):
     release_date = models.DateTimeField(_("Release Date"), auto_now_add=True)
     
     # Additional features
-    platform = models.CharField(_("Platform"), max_length=20, choices=[
-        ('android', _('Android')),
-        ('ios', _('iOS')),
-        ('web', _('Web')),
-        ('all', _('All Platforms')),
-    ], default='all')
+    platform = models.CharField(_("Platform"), max_length=20, choices=Platform.choices, default=Platform.ALL)
     
     # Update details
     download_url = models.URLField(_("Download URL"), blank=True)
@@ -296,14 +255,8 @@ class SupportFAQ(AbstractTimestampedModel):
     answer = models.TextField(_("Answer"))
     
     # Categorization
-    category = models.CharField(_("Category"), max_length=50, choices=[
-        ('general', _('General')),
-        ('specialist', _('Specialist')),
-        ('reviews', _('Reviews')),
-        ('account', _('Account')),
-        ('search', _('Search')),
-        ('safety', _('Safety')),
-    ], default='general')
+    category = models.CharField(_("Category"), max_length=50, choices=FAQCategory.choices, default=FAQCategory.GENERAL)
+    language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name='faq_items', null=True, blank=True)
     
     # Ordering and visibility
     sort_order = models.PositiveIntegerField(_("Sort Order"), default=0)

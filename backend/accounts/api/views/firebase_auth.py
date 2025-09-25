@@ -132,7 +132,6 @@ class FirebaseAuthView(APIView):
             user_obj.save()
             UserProfile.objects.create(
                 user=user_obj,
-                user_type='client',  # Default to client
                 is_verified=True,   # Automatically verified
             )
 

@@ -1,0 +1,82 @@
+[
+  {
+    "model": "core.language",
+    "pk": 1,
+    "fields": {
+      "name": "English",
+      "code": "en",
+      "is_active": true,
+      "is_default": true,
+      "flag_icon": "🇺🇸",
+      "rtl_support": false,
+      "locale_code": "en_US",
+      "currency_code": "USD",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.language",
+    "pk": 2,
+    "fields": {
+      "name": "Русский",
+      "code": "ru",
+      "is_active": true,
+      "is_default": false,
+      "flag_icon": "🇷🇺",
+      "rtl_support": false,
+      "locale_code": "ru_RU",
+      "currency_code": "KGS",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.language",
+    "pk": 3,
+    "fields": {
+      "name": "Кыргызча",
+      "code": "ky",
+      "is_active": true,
+      "is_default": false,
+      "flag_icon": "🇰🇬",
+      "rtl_support": false,
+      "locale_code": "ky_KG",
+      "currency_code": "KGS",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.language",
+    "pk": 4,
+    "fields": {
+      "name": "العربية",
+      "code": "ar",
+      "is_active": true,
+      "is_default": false,
+      "flag_icon": "🇸🇦",
+      "rtl_support": true,
+      "locale_code": "ar_SA",
+      "currency_code": "SAR",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.language",
+    "pk": 5,
+    "fields": {
+      "name": "Türkçe",
+      "code": "tr",
+      "is_active": true,
+      "is_default": false,
+      "flag_icon": "🇹🇷",
+      "rtl_support": false,
+      "locale_code": "tr_TR",
+      "currency_code": "TRY",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]

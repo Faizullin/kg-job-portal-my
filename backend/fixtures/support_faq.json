@@ -1,0 +1,142 @@
+[
+  {
+    "model": "core.supportfaq",
+    "pk": 1,
+    "fields": {
+      "question": "Как найти мастера?",
+      "answer": "Выберите категорию услуг, просмотрите профили мастеров, прочитайте отзывы и выберите подходящего специалиста. Затем создайте заказ и дождитесь предложений.",
+      "category": "general",
+      "is_active": true,
+      "sort_order": 1,
+      "language": 2,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.supportfaq",
+    "pk": 2,
+    "fields": {
+      "question": "Как создать заказ?",
+      "answer": "Зарегистрируйтесь на платформе, выберите категорию услуги, заполните описание заказа, укажите бюджет и сроки выполнения. После создания заказа мастера смогут подавать свои предложения.",
+      "category": "orders",
+      "is_active": true,
+      "sort_order": 2,
+      "language": 2,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.supportfaq",
+    "pk": 3,
+    "fields": {
+      "question": "Как стать мастером?",
+      "answer": "Зарегистрируйтесь как мастер, заполните профиль, добавьте портфолио работ, укажите свои навыки и сертификаты. После модерации профиля вы сможете получать заказы.",
+      "category": "master",
+      "is_active": true,
+      "sort_order": 3,
+      "language": 2,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.supportfaq",
+    "pk": 4,
+    "fields": {
+      "question": "Как происходит оплата?",
+      "answer": "Оплата происходит через безопасную платежную систему. Средства замораживаются на время выполнения заказа и переводятся мастеру после успешного завершения работы.",
+      "category": "payment",
+      "is_active": true,
+      "sort_order": 4,
+      "language": 2,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.supportfaq",
+    "pk": 5,
+    "fields": {
+      "question": "Как отменить заказ?",
+      "answer": "Заказ можно отменить до начала выполнения. Если мастер уже начал работу, отмена возможна только по согласованию с мастером или через службу поддержки.",
+      "category": "orders",
+      "is_active": true,
+      "sort_order": 5,
+      "language": 2,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.supportfaq",
+    "pk": 6,
+    "fields": {
+      "question": "What services are available?",
+      "answer": "We offer a wide range of services including cleaning, repairs, delivery, beauty services, education, IT services, sports, and translation services. Browse our categories to find the service you need.",
+      "category": "general",
+      "is_active": true,
+      "sort_order": 1,
+      "language": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.supportfaq",
+    "pk": 7,
+    "fields": {
+      "question": "How to find a service provider?",
+      "answer": "Select a service category, browse provider profiles, read reviews, and choose the right specialist. Then create an order and wait for proposals from service providers.",
+      "category": "general",
+      "is_active": true,
+      "sort_order": 2,
+      "language": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.supportfaq",
+    "pk": 8,
+    "fields": {
+      "question": "How to create an order?",
+      "answer": "Register on the platform, select a service category, fill in the order description, specify budget and deadlines. After creating the order, service providers can submit their proposals.",
+      "category": "orders",
+      "is_active": true,
+      "sort_order": 3,
+      "language": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.supportfaq",
+    "pk": 9,
+    "fields": {
+      "question": "How to become a service provider?",
+      "answer": "Register as a service provider, fill in your profile, add portfolio items, specify your skills and certificates. After profile moderation, you will be able to receive orders.",
+      "category": "master",
+      "is_active": true,
+      "sort_order": 4,
+      "language": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.supportfaq",
+    "pk": 10,
+    "fields": {
+      "question": "How does payment work?",
+      "answer": "Payment is processed through a secure payment system. Funds are frozen during order execution and transferred to the service provider after successful completion of work.",
+      "category": "payment",
+      "is_active": true,
+      "sort_order": 5,
+      "language": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]

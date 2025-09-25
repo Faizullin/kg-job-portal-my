@@ -43,6 +43,8 @@ import { Route as AuthenticatedServiceProvidersProviderIdRouteImport } from './r
 import { Route as AuthenticatedPaymentsInvoicesRouteImport } from './routes/_authenticated/payments/invoices'
 import { Route as AuthenticatedOrdersOrderIdRouteImport } from './routes/_authenticated/orders/$orderId'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedDashboardMasterRouteImport } from './routes/_authenticated/dashboard/master'
+import { Route as AuthenticatedDashboardClientRouteImport } from './routes/_authenticated/dashboard/client'
 import { Route as AuthenticatedCoreSystemSettingsRouteImport } from './routes/_authenticated/core/system-settings'
 import { Route as AuthenticatedCoreSupportFaqRouteImport } from './routes/_authenticated/core/support-faq'
 import { Route as AuthenticatedCoreServiceSubcategoriesRouteImport } from './routes/_authenticated/core/service-subcategories'
@@ -237,6 +239,18 @@ const AuthenticatedErrorsErrorRoute =
     path: '/errors/$error',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDashboardMasterRoute =
+  AuthenticatedDashboardMasterRouteImport.update({
+    id: '/dashboard/master',
+    path: '/dashboard/master',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedDashboardClientRoute =
+  AuthenticatedDashboardClientRouteImport.update({
+    id: '/dashboard/client',
+    path: '/dashboard/client',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCoreSystemSettingsRoute =
   AuthenticatedCoreSystemSettingsRouteImport.update({
     id: '/core/system-settings',
@@ -285,6 +299,8 @@ export interface FileRoutesByFullPath {
   '/core/service-subcategories': typeof AuthenticatedCoreServiceSubcategoriesRoute
   '/core/support-faq': typeof AuthenticatedCoreSupportFaqRoute
   '/core/system-settings': typeof AuthenticatedCoreSystemSettingsRoute
+  '/dashboard/client': typeof AuthenticatedDashboardClientRoute
+  '/dashboard/master': typeof AuthenticatedDashboardMasterRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
   '/payments/invoices': typeof AuthenticatedPaymentsInvoicesRoute
@@ -325,6 +341,8 @@ export interface FileRoutesByTo {
   '/core/service-subcategories': typeof AuthenticatedCoreServiceSubcategoriesRoute
   '/core/support-faq': typeof AuthenticatedCoreSupportFaqRoute
   '/core/system-settings': typeof AuthenticatedCoreSystemSettingsRoute
+  '/dashboard/client': typeof AuthenticatedDashboardClientRoute
+  '/dashboard/master': typeof AuthenticatedDashboardMasterRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
   '/payments/invoices': typeof AuthenticatedPaymentsInvoicesRoute
@@ -367,6 +385,8 @@ export interface FileRoutesById {
   '/_authenticated/core/service-subcategories': typeof AuthenticatedCoreServiceSubcategoriesRoute
   '/_authenticated/core/support-faq': typeof AuthenticatedCoreSupportFaqRoute
   '/_authenticated/core/system-settings': typeof AuthenticatedCoreSystemSettingsRoute
+  '/_authenticated/dashboard/client': typeof AuthenticatedDashboardClientRoute
+  '/_authenticated/dashboard/master': typeof AuthenticatedDashboardMasterRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
   '/_authenticated/payments/invoices': typeof AuthenticatedPaymentsInvoicesRoute
@@ -409,6 +429,8 @@ export interface FileRouteTypes {
     | '/core/service-subcategories'
     | '/core/support-faq'
     | '/core/system-settings'
+    | '/dashboard/client'
+    | '/dashboard/master'
     | '/errors/$error'
     | '/orders/$orderId'
     | '/payments/invoices'
@@ -449,6 +471,8 @@ export interface FileRouteTypes {
     | '/core/service-subcategories'
     | '/core/support-faq'
     | '/core/system-settings'
+    | '/dashboard/client'
+    | '/dashboard/master'
     | '/errors/$error'
     | '/orders/$orderId'
     | '/payments/invoices'
@@ -490,6 +514,8 @@ export interface FileRouteTypes {
     | '/_authenticated/core/service-subcategories'
     | '/_authenticated/core/support-faq'
     | '/_authenticated/core/system-settings'
+    | '/_authenticated/dashboard/client'
+    | '/_authenticated/dashboard/master'
     | '/_authenticated/errors/$error'
     | '/_authenticated/orders/$orderId'
     | '/_authenticated/payments/invoices'
@@ -767,6 +793,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/dashboard/master': {
+      id: '/_authenticated/dashboard/master'
+      path: '/dashboard/master'
+      fullPath: '/dashboard/master'
+      preLoaderRoute: typeof AuthenticatedDashboardMasterRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard/client': {
+      id: '/_authenticated/dashboard/client'
+      path: '/dashboard/client'
+      fullPath: '/dashboard/client'
+      preLoaderRoute: typeof AuthenticatedDashboardClientRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/core/system-settings': {
       id: '/_authenticated/core/system-settings'
       path: '/core/system-settings'
@@ -843,6 +883,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCoreServiceSubcategoriesRoute: typeof AuthenticatedCoreServiceSubcategoriesRoute
   AuthenticatedCoreSupportFaqRoute: typeof AuthenticatedCoreSupportFaqRoute
   AuthenticatedCoreSystemSettingsRoute: typeof AuthenticatedCoreSystemSettingsRoute
+  AuthenticatedDashboardClientRoute: typeof AuthenticatedDashboardClientRoute
+  AuthenticatedDashboardMasterRoute: typeof AuthenticatedDashboardMasterRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedOrdersOrderIdRoute: typeof AuthenticatedOrdersOrderIdRoute
   AuthenticatedPaymentsInvoicesRoute: typeof AuthenticatedPaymentsInvoicesRoute
@@ -870,6 +912,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedCoreServiceSubcategoriesRoute,
   AuthenticatedCoreSupportFaqRoute: AuthenticatedCoreSupportFaqRoute,
   AuthenticatedCoreSystemSettingsRoute: AuthenticatedCoreSystemSettingsRoute,
+  AuthenticatedDashboardClientRoute: AuthenticatedDashboardClientRoute,
+  AuthenticatedDashboardMasterRoute: AuthenticatedDashboardMasterRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedOrdersOrderIdRoute: AuthenticatedOrdersOrderIdRoute,
   AuthenticatedPaymentsInvoicesRoute: AuthenticatedPaymentsInvoicesRoute,

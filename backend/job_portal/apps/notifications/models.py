@@ -4,6 +4,16 @@ from utils.abstract_models import AbstractTimestampedModel
 from accounts.models import UserModel
 
 
+class NotificationType(models.TextChoices):
+    BID_RECEIVED = 'bid_received', _('Bid Received')
+    BID_ACCEPTED = 'bid_accepted', _('Bid Accepted')
+    BID_REJECTED = 'bid_rejected', _('Bid Rejected')
+    ORDER_ASSIGNED = 'order_assigned', _('Order Assigned')
+    ORDER_COMPLETED = 'order_completed', _('Order Completed')
+    CHAT_MESSAGE = 'chat_message', _('Chat Message')
+    SYSTEM_ALERT = 'system_alert', _('System Alert')
+
+
 class UserNotification(AbstractTimestampedModel):
     """Individual notifications sent to users for important events."""
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='notifications')
@@ -13,15 +23,7 @@ class UserNotification(AbstractTimestampedModel):
     message = models.TextField(_("Message Content"))
     
     # Notification type for important events only
-    notification_type = models.CharField(_("Notification Type"), max_length=50, choices=[
-        ('bid_received', _('Bid Received')),
-        ('bid_accepted', _('Bid Accepted')),
-        ('bid_rejected', _('Bid Rejected')),
-        ('order_assigned', _('Order Assigned')),
-        ('order_completed', _('Order Completed')),
-        ('chat_message', _('Chat Message')),
-        ('system_alert', _('System Alert')),
-    ])
+    notification_type = models.CharField(_("Notification Type"), max_length=50, choices=NotificationType.choices)
     
     # Status
     is_read = models.BooleanField(_("Read"), default=False)

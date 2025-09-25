@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ...models import UserModel
+from ...models import UserModel, UserNotificationSettings
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -56,3 +56,18 @@ class UserListSerializer(serializers.ModelSerializer):
     
     def get_groups(self, obj):
         return [group.name for group in obj.groups.all()]
+
+
+class UserNotificationSettingsSerializer(serializers.ModelSerializer):
+    """Serializer for user notification settings."""
+    class Meta:
+        model = UserNotificationSettings
+        fields = (
+            'id', 'sms_notifications', 'push_notifications', 'email_notifications',
+            'task_notifications', 'specialist_messages', 'task_updates',
+            'marketing_emails', 'promotional_sms', 'newsletter',
+            'system_alerts', 'security_notifications',
+            'quiet_hours_enabled', 'quiet_hours_start', 'quiet_hours_end',
+            'created_at', 'updated_at'
+        )
+        read_only_fields = ('created_at', 'updated_at')

@@ -34,9 +34,10 @@ INSTALLED_APPS = [
     "job_portal.apps.payments",
     "job_portal.apps.chat",
     "job_portal.apps.notifications",
-    "job_portal.apps.analytics",
     "job_portal.apps.reviews",
     "job_portal.apps.search",
+    "job_portal.apps.attachments",
+    "job_portal.apps.dashboard",
     "debug_toolbar",
 ]
 

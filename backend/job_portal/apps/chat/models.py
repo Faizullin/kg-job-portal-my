@@ -4,6 +4,26 @@ from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedMo
 from accounts.models import UserModel
 
 
+class ChatType(models.TextChoices):
+    ORDER_CHAT = 'order_chat', _('Order Chat')
+    SUPPORT_CHAT = 'support_chat', _('Support Chat')
+    GENERAL_CHAT = 'general_chat', _('General Chat')
+
+
+class MessageType(models.TextChoices):
+    TEXT = 'text', _('Text')
+    IMAGE = 'image', _('Image')
+    FILE = 'file', _('File')
+    SYSTEM = 'system', _('System Message')
+    ORDER_UPDATE = 'order_update', _('Order Update')
+
+
+class ChatRole(models.TextChoices):
+    MEMBER = 'member', _('Member')
+    ADMIN = 'admin', _('Admin')
+    MODERATOR = 'moderator', _('Moderator')
+
+
 class ChatRoom(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Chat room for communication between users."""
     order = models.ForeignKey('orders.Order', on_delete=models.CASCADE, related_name='chat_rooms', null=True, blank=True)
@@ -15,11 +35,7 @@ class ChatRoom(AbstractSoftDeleteModel, AbstractTimestampedModel):
     last_message_at = models.DateTimeField(_("Last Message At"), null=True, blank=True)
     
     # Chat room type
-    chat_type = models.CharField(_("Chat Type"), max_length=20, choices=[
-        ('order_chat', _('Order Chat')),
-        ('support_chat', _('Support Chat')),
-        ('general_chat', _('General Chat')),
-    ], default='order_chat')
+    chat_type = models.CharField(_("Chat Type"), max_length=20, choices=ChatType.choices, default=ChatType.ORDER_CHAT)
     
     class Meta:
         verbose_name = _("Chat Room")
@@ -38,16 +54,12 @@ class ChatMessage(AbstractSoftDeleteModel, AbstractTimestampedModel):
     sender = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='sent_messages')
     
     # Message content
-    message_type = models.CharField(_("Message Type"), max_length=20, choices=[
-        ('text', _('Text')),
-        ('image', _('Image')),
-        ('file', _('File')),
-        ('system', _('System Message')),
-        ('order_update', _('Order Update')),
-    ], default='text')
+    message_type = models.CharField(_("Message Type"), max_length=20, choices=MessageType.choices, default=MessageType.TEXT)
     
     content = models.TextField(_("Message Content"))
-    attachment_url = models.URLField(_("Attachment URL"), blank=True)
+    
+    # File attachments (changed from URL to actual file upload)
+    attachment = models.FileField(_("Attachment"), upload_to='chat_attachments/', blank=True)
     attachment_name = models.CharField(_("Attachment Name"), max_length=200, blank=True)
     attachment_size = models.PositiveIntegerField(_("Attachment Size (bytes)"), null=True, blank=True)
     
@@ -74,11 +86,7 @@ class ChatParticipant(AbstractTimestampedModel):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='chat_participant_status')
     
     # Participant role
-    role = models.CharField(_("Role"), max_length=20, choices=[
-        ('member', _('Member')),
-        ('admin', _('Admin')),
-        ('moderator', _('Moderator')),
-    ], default='member')
+    role = models.CharField(_("Role"), max_length=20, choices=ChatRole.choices, default=ChatRole.MEMBER)
     
     # Participant status
     is_online = models.BooleanField(_("Online"), default=False)

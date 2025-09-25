@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from utils.serializers import AbstractTimestampedModelSerializer
-from ..models import Review
+from ..models import Review, AppFeedback
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -107,5 +107,48 @@ class ReviewAnalyticsSerializer(serializers.Serializer):
     rating_distribution = serializers.ListField(
         child=serializers.DictField()
     )
+
+
+class AppFeedbackSerializer(AbstractTimestampedModelSerializer):
+    """Serializer for app feedback and rating system."""
+    user_name = serializers.CharField(source='user.username', read_only=True)
+    user_email = serializers.EmailField(source='user.email', read_only=True)
+    
+    class Meta:
+        model = AppFeedback
+        fields = (
+            'id', 'user', 'user_name', 'user_email',
+            'general_opinion', 'detailed_feedback', 'overall_rating',
+            'design_feedback', 'usability_feedback', 'bug_report', 
+            'missing_features', 'everything_satisfies',
+            'app_version', 'device_info', 'platform',
+            'is_reviewed', 'admin_notes', 'created_at', 'updated_at'
+        )
+        read_only_fields = ('id', 'user', 'is_reviewed', 'admin_notes', 'created_at', 'updated_at')
+    
+    def validate_overall_rating(self, value):
+        """Validate overall rating is between 1 and 5."""
+        if not (1 <= value <= 5):
+            raise serializers.ValidationError("Overall rating must be between 1 and 5.")
+        return value
+
+
+class AppFeedbackCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating app feedback."""
+    
+    class Meta:
+        model = AppFeedback
+        fields = (
+            'general_opinion', 'detailed_feedback', 'overall_rating',
+            'design_feedback', 'usability_feedback', 'bug_report', 
+            'missing_features', 'everything_satisfies',
+            'app_version', 'device_info', 'platform'
+        )
+    
+    def validate_overall_rating(self, value):
+        """Validate overall rating is between 1 and 5."""
+        if not (1 <= value <= 5):
+            raise serializers.ValidationError("Overall rating must be between 1 and 5.")
+        return value
 
 

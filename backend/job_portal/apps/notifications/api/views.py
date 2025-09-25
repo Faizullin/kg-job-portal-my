@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -80,7 +82,6 @@ class NotificationRecentView(StandardizedViewMixin, generics.ListAPIView):
     pagination_class = CustomPagination
     
     def get_queryset(self):
-        from datetime import timedelta
         week_ago = timezone.now() - timedelta(days=7)
         
         return UserNotification.objects.filter(

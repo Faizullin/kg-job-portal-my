@@ -2,6 +2,7 @@
 from django.db.models import Max
 from django.utils import timezone
 from django.db import models
+import secrets
 
 # DRF imports
 from django_filters.rest_framework import DjangoFilterBackend
@@ -125,7 +126,9 @@ class ChatSendMessageApiView(StandardizedViewMixin, generics.GenericAPIView):
                 sender=request.user,
                 content=serializer.validated_data['message'],
                 message_type=serializer.validated_data.get('message_type', 'text'),
-                attachment_url=serializer.validated_data.get('attachment_url', '')
+                attachment=serializer.validated_data.get('attachment'),
+                attachment_name=serializer.validated_data.get('attachment').name if serializer.validated_data.get('attachment') else '',
+                attachment_size=serializer.validated_data.get('attachment').size if serializer.validated_data.get('attachment') else None
             )
             
             # Update unread count for other participants
@@ -151,7 +154,7 @@ class ChatSendMessageApiView(StandardizedViewMixin, generics.GenericAPIView):
                     'message_id': message.id,
                     'timestamp': message.created_at.isoformat(),
                     'message_type': message.message_type,
-                    'attachment_url': message.attachment_url or '',
+                    'attachment_url': message.attachment.url if message.attachment else '',
                 }
             )
             
@@ -175,7 +178,6 @@ class WebSocketInfoApiView(StandardizedViewMixin, generics.GenericAPIView):
     def get(self, request):
         """Get WebSocket connection info for the user."""
         # Generate a temporary token for WebSocket connection instead of exposing auth token
-        import secrets
         temp_token = secrets.token_urlsafe(32)
         
         serializer = WebSocketInfoSerializer({

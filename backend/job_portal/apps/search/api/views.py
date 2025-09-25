@@ -159,7 +159,6 @@ class GlobalSearchApiView(StandardizedViewMixin, APIView):
             "service_subcategory__category",
             "client__user_profile"
         ).prefetch_related(
-            "addons__addon",
             "photos",
             "bids__provider__user_profile"
         )

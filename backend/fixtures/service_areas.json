@@ -1,0 +1,182 @@
+[
+  {
+    "model": "core.servicearea",
+    "pk": 1,
+    "fields": {
+      "name": "Бишкек Центр",
+      "city": "Бишкек",
+      "state": "Бишкек",
+      "country": "Кыргызстан",
+      "latitude": "42.8746",
+      "longitude": "74.5698",
+      "postal_codes": ["720000", "720001", "720002", "720003", "720004", "720005"],
+      "is_active": true,
+      "base_price_multiplier": "1.00",
+      "travel_fee": "0.00",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicearea",
+    "pk": 2,
+    "fields": {
+      "name": "Бишкек Восток",
+      "city": "Бишкек",
+      "state": "Бишкек",
+      "country": "Кыргызстан",
+      "latitude": "42.8900",
+      "longitude": "74.6200",
+      "postal_codes": ["720006", "720007", "720008", "720009", "720010"],
+      "is_active": true,
+      "base_price_multiplier": "1.10",
+      "travel_fee": "100.00",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicearea",
+    "pk": 3,
+    "fields": {
+      "name": "Бишкек Запад",
+      "city": "Бишкек",
+      "state": "Бишкек",
+      "country": "Кыргызстан",
+      "latitude": "42.8500",
+      "longitude": "74.5000",
+      "postal_codes": ["720011", "720012", "720013", "720014", "720015"],
+      "is_active": true,
+      "base_price_multiplier": "1.05",
+      "travel_fee": "50.00",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicearea",
+    "pk": 4,
+    "fields": {
+      "name": "Ош Центр",
+      "city": "Ош",
+      "state": "Ош",
+      "country": "Кыргызстан",
+      "latitude": "40.5283",
+      "longitude": "72.7985",
+      "postal_codes": ["723500", "723501", "723502", "723503"],
+      "is_active": true,
+      "base_price_multiplier": "0.90",
+      "travel_fee": "200.00",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicearea",
+    "pk": 5,
+    "fields": {
+      "name": "Джалал-Абад Центр",
+      "city": "Джалал-Абад",
+      "state": "Джалал-Абад",
+      "country": "Кыргызстан",
+      "latitude": "40.9333",
+      "longitude": "72.9833",
+      "postal_codes": ["715000", "715001", "715002"],
+      "is_active": true,
+      "base_price_multiplier": "0.85",
+      "travel_fee": "300.00",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicearea",
+    "pk": 6,
+    "fields": {
+      "name": "Каракол Центр",
+      "city": "Каракол",
+      "state": "Иссык-Куль",
+      "country": "Кыргызстан",
+      "latitude": "42.4907",
+      "longitude": "78.3936",
+      "postal_codes": ["722200", "722201", "722202"],
+      "is_active": true,
+      "base_price_multiplier": "0.80",
+      "travel_fee": "500.00",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicearea",
+    "pk": 7,
+    "fields": {
+      "name": "Нарын Центр",
+      "city": "Нарын",
+      "state": "Нарын",
+      "country": "Кыргызстан",
+      "latitude": "41.4283",
+      "longitude": "75.9911",
+      "postal_codes": ["722600", "722601"],
+      "is_active": true,
+      "base_price_multiplier": "0.75",
+      "travel_fee": "600.00",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicearea",
+    "pk": 8,
+    "fields": {
+      "name": "Талас Центр",
+      "city": "Талас",
+      "state": "Талас",
+      "country": "Кыргызстан",
+      "latitude": "42.5167",
+      "longitude": "72.2333",
+      "postal_codes": ["723600", "723601"],
+      "is_active": true,
+      "base_price_multiplier": "0.70",
+      "travel_fee": "700.00",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicearea",
+    "pk": 9,
+    "fields": {
+      "name": "Баткен Центр",
+      "city": "Баткен",
+      "state": "Баткен",
+      "country": "Кыргызстан",
+      "latitude": "40.0500",
+      "longitude": "70.8167",
+      "postal_codes": ["720500", "720501"],
+      "is_active": true,
+      "base_price_multiplier": "0.65",
+      "travel_fee": "800.00",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.servicearea",
+    "pk": 10,
+    "fields": {
+      "name": "Токмок Центр",
+      "city": "Токмок",
+      "state": "Чуй",
+      "country": "Кыргызстан",
+      "latitude": "42.8419",
+      "longitude": "75.3014",
+      "postal_codes": ["722800", "722801"],
+      "is_active": true,
+      "base_price_multiplier": "0.95",
+      "travel_fee": "150.00",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]

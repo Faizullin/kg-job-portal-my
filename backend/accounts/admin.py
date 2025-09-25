@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     UserModel, 
-    UserActivityDateModel, LoginSession
+    UserActivityDateModel, LoginSession, UserNotificationSettings
 )
 
 
@@ -93,3 +93,42 @@ class LoginSessionAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'login_at')
     search_fields = ('user__username', 'user__email', 'session_key')
     ordering = ('-login_at',)
+
+
+@admin.register(UserNotificationSettings)
+class UserNotificationSettingsAdmin(admin.ModelAdmin):
+    list_display = ['user', 'sms_notifications', 'push_notifications', 'email_notifications', 'quiet_hours_enabled']
+    list_filter = ['sms_notifications', 'push_notifications', 'email_notifications', 'quiet_hours_enabled']
+    search_fields = ['user__username', 'user__email']
+    ordering = ['-created_at']
+    raw_id_fields = ['user']
+    
+    fieldsets = (
+        ('User Information', {
+            'fields': ('user',)
+        }),
+        ('Notification Types', {
+            'fields': ('sms_notifications', 'push_notifications', 'email_notifications')
+        }),
+        ('Task Notifications', {
+            'fields': ('task_notifications', 'specialist_messages', 'task_updates')
+        }),
+        ('Marketing Notifications', {
+            'fields': ('marketing_emails', 'promotional_sms', 'newsletter')
+        }),
+        ('System Notifications', {
+            'fields': ('system_alerts', 'security_notifications')
+        }),
+        ('Quiet Hours', {
+            'fields': ('quiet_hours_enabled', 'quiet_hours_start', 'quiet_hours_end')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    readonly_fields = ['created_at', 'updated_at']
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('user')

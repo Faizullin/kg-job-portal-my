@@ -15,8 +15,13 @@ service_account.json
 config/firebase/
 
 **/staticfiles/
-**/protected/
 **/mediafiles/
 /backend/mediafiles/**
-/backend/protected/**
-root@backend.vector-educate.com
+
+# Keep default images but ignore user uploads
+!/backend/mediafiles/defaults/
+/backend/mediafiles/defaults/*.png
+/backend/mediafiles/defaults/*.jpg
+/backend/mediafiles/defaults/*.jpeg
+/backend/mediafiles/defaults/*.gif
+/backend/mediafiles/defaults/*.svg

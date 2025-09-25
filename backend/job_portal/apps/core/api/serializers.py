@@ -52,7 +52,7 @@ class SystemSettingsSerializer(AbstractTimestampedModelSerializer, AbstractChoic
     
     class Meta:
         model = SystemSettings
-        fields = ['id', 'key', 'value', 'description', 'is_public', 'setting_type', 'category', 'setting_type_display']
+        fields = ['id', 'key', 'value', 'description', 'is_public', 'is_active', 'setting_type', 'setting_type_display']
     
     @extend_schema_field(serializers.CharField())
     def get_setting_type_display(self, obj):
@@ -65,7 +65,7 @@ class SupportFAQSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFie
     
     class Meta:
         model = SupportFAQ
-        fields = ['id', 'question', 'answer', 'category', 'category_display', 'sort_order', 'is_popular', 'is_active', 'view_count', 'created_at']
+        fields = ['id', 'question', 'answer', 'category', 'category_display', 'language', 'sort_order', 'is_popular', 'is_active', 'view_count', 'created_at']
     
     @extend_schema_field(serializers.CharField())
     def get_category_display(self, obj):

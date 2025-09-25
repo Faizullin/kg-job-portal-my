@@ -2,8 +2,9 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
-from utils.abstract_models import AbstractSoftDeleteModel, SoftDeleteManager
+from utils.abstract_models import AbstractSoftDeleteModel, SoftDeleteManager, AbstractTimestampedModel
 
 
 class UserManager(SoftDeleteManager, BaseUserManager):
@@ -52,25 +53,17 @@ class UserManager(SoftDeleteManager, BaseUserManager):
         return self.filter(blocked=False)
 
 
-class UserTypes:
-    free = 'free'
-    paid = 'paid'
-    premium_paid = 'premium_paid'
-
-    @classmethod
-    def choices(cls):
-        return [
-            (cls.free, 'Бесплатный'),
-            (cls.paid, 'Оплаченный'),
-            (cls.premium_paid, 'Премиум оплаченный'),
-        ]
+class UserTypes(models.TextChoices):
+    FREE = 'free', _('Бесплатный')
+    PAID = 'paid', _('Оплаченный')
+    PREMIUM_PAID = 'premium_paid', _('Премиум оплаченный')
 
 
 class UserModel(AbstractUser, AbstractSoftDeleteModel):
     # Use the custom manager
     objects = UserManager()
 
-    user_type = models.CharField(max_length=20, choices=UserTypes.choices(), default=UserTypes.free, )
+    user_type = models.CharField(max_length=20, choices=UserTypes.choices, default=UserTypes.FREE)
     blocked = models.BooleanField(default=False)
     firebase_user_id = models.CharField(max_length=200, null=True, blank=True)
 
@@ -112,7 +105,7 @@ class UserModel(AbstractUser, AbstractSoftDeleteModel):
         self.save(update_fields=['is_active'])
 
     def is_paid(self):
-        return self.user_type in (UserTypes.paid, UserTypes.premium_paid)
+        return self.user_type in (UserTypes.PAID, UserTypes.PREMIUM_PAID)
 
 
 
@@ -146,3 +139,43 @@ class LoginSession(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.login_at}"
+
+
+class UserNotificationSettings(AbstractTimestampedModel):
+    """User notification preferences and settings."""
+    user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='notification_settings')
+    
+    # SMS Notifications
+    sms_notifications = models.BooleanField(_("SMS Notifications"), default=True)
+    
+    # Push Notifications
+    push_notifications = models.BooleanField(_("Push Notifications"), default=True)
+    
+    # Email Notifications
+    email_notifications = models.BooleanField(_("Email Notifications"), default=True)
+    
+    # Task-related notifications
+    task_notifications = models.BooleanField(_("Task Notifications"), default=True)
+    specialist_messages = models.BooleanField(_("Specialist Messages"), default=True)
+    task_updates = models.BooleanField(_("Task Updates"), default=True)
+    
+    # Marketing notifications
+    marketing_emails = models.BooleanField(_("Marketing Emails"), default=False)
+    promotional_sms = models.BooleanField(_("Promotional SMS"), default=False)
+    newsletter = models.BooleanField(_("Newsletter"), default=False)
+    
+    # System notifications
+    system_alerts = models.BooleanField(_("System Alerts"), default=True)
+    security_notifications = models.BooleanField(_("Security Notifications"), default=True)
+    
+    # Quiet hours
+    quiet_hours_enabled = models.BooleanField(_("Quiet Hours Enabled"), default=False)
+    quiet_hours_start = models.TimeField(_("Quiet Hours Start"), null=True, blank=True)
+    quiet_hours_end = models.TimeField(_("Quiet Hours End"), null=True, blank=True)
+    
+    class Meta:
+        verbose_name = _("User Notification Settings")
+        verbose_name_plural = _("User Notification Settings")
+    
+    def __str__(self):
+        return f"{self.user.username} - Notification Settings [#{self.id}]"

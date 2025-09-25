@@ -25,7 +25,7 @@ export function FirebaseAuthProvider({ children }: { children: React.ReactNode }
   }, [data, setUser]);
 
   return (
-    <UserContext.Provider value={{ user: data ?? null, isLoading }}>
+    <UserContext.Provider value={{ user: auth.user ?? null, isLoading }}>
       {children}
     </UserContext.Provider>
   );
