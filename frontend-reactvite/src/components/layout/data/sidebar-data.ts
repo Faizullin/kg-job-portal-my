@@ -3,7 +3,6 @@ import {
   Bell,
   Briefcase,
   Building2,
-  CreditCard,
   FileText,
   HelpCircle,
   LayoutDashboard,
@@ -14,7 +13,6 @@ import {
   Settings,
   Shield,
   ShoppingBag,
-  Star,
   User,
   UserCog
 } from "lucide-react";
@@ -74,31 +72,26 @@ export const sidebarData: SidebarData = {
         },
       ],
     },
-    {
-      title: "Company & Services",
-      items: [
-        {
-          title: "Service Providers",
-          url: "/service-providers",
-          icon: Building2,
-        },
-        {
-          title: "Analytics",
-          url: "/analytics",
-          icon: BarChart3,
-        },
-        {
-          title: "Reviews",
-          url: "/reviews",
-          icon: Star,
-        },
-        {
-          title: "Payments",
-          url: "/payments",
-          icon: CreditCard,
-        },
-      ],
-    },
+    // {
+    //   title: "Company & Services",
+    //   items: [
+    //     {
+    //       title: "Analytics",
+    //       url: "/analytics",
+    //       icon: BarChart3,
+    //     },
+    //     {
+    //       title: "Reviews",
+    //       url: "/reviews",
+    //       icon: Star,
+    //     },
+    //     {
+    //       title: "Payments",
+    //       url: "/payments",
+    //       icon: CreditCard,
+    //     },
+    //   ],
+    // },
     {
       title: "Communication",
       items: [

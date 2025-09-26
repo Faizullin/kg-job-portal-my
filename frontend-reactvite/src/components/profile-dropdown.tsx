@@ -14,16 +14,16 @@ import {
 import { useDialogControl } from "@/hooks/use-dialog-control";
 import { useAuthStore } from "@/stores/auth-store";
 import { Link } from "@tanstack/react-router";
+import { Briefcase, User } from "lucide-react";
 import { useMemo } from "react";
-import { User, Briefcase } from "lucide-react";
 
 export function ProfileDropdown() {
   const control = useDialogControl();
-  const { auth } = useAuthStore();
+  const auth = useAuthStore();
 
   // Memoize user data to prevent unnecessary re-computations
   const user = useMemo(() => {
-    const backendUser = auth.user;  
+    const backendUser = auth.user;
 
     return backendUser
       ? {
@@ -38,22 +38,22 @@ export function ProfileDropdown() {
         avatar: "/avatars/default.jpg",
         initials: "U",
       };
-  }, [auth.user]); 
+  }, [auth.user]);
 
   // Profile switching logic
   const handleProfileToggle = () => {
-    if (auth.currentProfile === 'client') {
-      auth.setCurrentProfile('service_provider');
-    } else if (auth.currentProfile === 'service_provider') {
-      auth.setCurrentProfile('client');
+    if (auth.currentProfileType === 'client') {
+      auth.setCurrentProfileType('service_provider');
+    } else if (auth.currentProfileType === 'service_provider') {
+      auth.setCurrentProfileType('client');
     } else {
       // If no profile is selected, default to client if available, otherwise service provider
-      auth.setCurrentProfile(hasClientGroup ? 'client' : 'service_provider');
+      auth.setCurrentProfileType(hasClientGroup ? 'client' : 'service_provider');
     }
   };
 
   const getCurrentProfileLabel = () => {
-    switch (auth.currentProfile) {
+    switch (auth.currentProfileType) {
       case 'client':
         return 'Client';
       case 'service_provider':
@@ -64,18 +64,18 @@ export function ProfileDropdown() {
   };
 
   const getButtonText = () => {
-    switch (auth.currentProfile) {
+    switch (auth.currentProfileType) {
       case 'client':
-        return 'Switch to Service Provider';
+        return 'Service Provider';
       case 'service_provider':
-        return 'Switch to Client';
+        return 'Client';
       default:
         return hasClientGroup ? 'Activate Client' : 'Activate Service Provider';
     }
   };
 
   const getButtonIcon = () => {
-    switch (auth.currentProfile) {
+    switch (auth.currentProfileType) {
       case 'client':
         return <Briefcase className="h-4 w-4 mr-2" />;
       case 'service_provider':
@@ -93,9 +93,9 @@ export function ProfileDropdown() {
 
   const hasServiceProviderGroup = useMemo(() => {
     if (!auth.user?.groups) return false;
-    return auth.user.groups.includes('service_provider') || 
-           auth.user.groups.includes('Service Provider') ||
-           auth.user.groups.includes('serviceprovider');
+    return auth.user.groups.includes('service_provider') ||
+      auth.user.groups.includes('Service Provider') ||
+      auth.user.groups.includes('serviceprovider');
   }, [auth.user?.groups]);
 
   return (
@@ -119,27 +119,26 @@ export function ProfileDropdown() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          
+
           {/* Profile Switching Section */}
           <DropdownMenuGroup>
             <DropdownMenuLabel className="text-xs text-muted-foreground">
               Current Profile: {getCurrentProfileLabel()}
             </DropdownMenuLabel>
-            
+
             <div className="px-2 py-1.5">
               <Button
                 variant="outline"
                 size="sm"
                 className="w-full justify-start"
                 onClick={handleProfileToggle}
-                disabled={!hasClientGroup && !hasServiceProviderGroup}
               >
                 {getButtonIcon()}
                 {getButtonText()}
               </Button>
             </div>
           </DropdownMenuGroup>
-          
+
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>

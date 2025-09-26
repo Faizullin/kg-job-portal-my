@@ -22,7 +22,6 @@ import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
-import { Route as AuthenticatedServiceProvidersIndexRouteImport } from './routes/_authenticated/service-providers/index'
 import { Route as AuthenticatedSearchIndexRouteImport } from './routes/_authenticated/search/index'
 import { Route as AuthenticatedReviewsIndexRouteImport } from './routes/_authenticated/reviews/index'
 import { Route as AuthenticatedPaymentsIndexRouteImport } from './routes/_authenticated/payments/index'
@@ -39,17 +38,22 @@ import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsClientProfileRouteImport } from './routes/_authenticated/settings/client-profile'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
-import { Route as AuthenticatedServiceProvidersProviderIdRouteImport } from './routes/_authenticated/service-providers/$providerId'
 import { Route as AuthenticatedPaymentsInvoicesRouteImport } from './routes/_authenticated/payments/invoices'
 import { Route as AuthenticatedOrdersOrderIdRouteImport } from './routes/_authenticated/orders/$orderId'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
-import { Route as AuthenticatedDashboardMasterRouteImport } from './routes/_authenticated/dashboard/master'
-import { Route as AuthenticatedDashboardClientRouteImport } from './routes/_authenticated/dashboard/client'
 import { Route as AuthenticatedCoreSystemSettingsRouteImport } from './routes/_authenticated/core/system-settings'
 import { Route as AuthenticatedCoreSupportFaqRouteImport } from './routes/_authenticated/core/support-faq'
 import { Route as AuthenticatedCoreServiceSubcategoriesRouteImport } from './routes/_authenticated/core/service-subcategories'
 import { Route as AuthenticatedCoreServiceCategoriesRouteImport } from './routes/_authenticated/core/service-categories'
 import { Route as AuthenticatedCoreServiceAreasRouteImport } from './routes/_authenticated/core/service-areas'
+import { Route as AuthenticatedAppMasterRouteImport } from './routes/_authenticated/app/master'
+import { Route as AuthenticatedAppClientRouteImport } from './routes/_authenticated/app/client'
+import { Route as AuthenticatedAppServiceProvidersIndexRouteImport } from './routes/_authenticated/app/service-providers/index'
+import { Route as AuthenticatedAppServiceProvidersProviderIdRouteImport } from './routes/_authenticated/app/service-providers/$providerId'
+import { Route as AuthenticatedAppOrdersCreateIndexRouteImport } from './routes/_authenticated/app/orders/create/index'
+import { Route as AuthenticatedAppOrdersCreateServiceRouteImport } from './routes/_authenticated/app/orders/create/service'
+import { Route as AuthenticatedAppOrdersCreateReviewRouteImport } from './routes/_authenticated/app/orders/create/review'
+import { Route as AuthenticatedAppOrdersCreateDatetimeRouteImport } from './routes/_authenticated/app/orders/create/datetime'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -116,12 +120,6 @@ const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
   path: '/tasks/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedServiceProvidersIndexRoute =
-  AuthenticatedServiceProvidersIndexRouteImport.update({
-    id: '/service-providers/',
-    path: '/service-providers/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedSearchIndexRoute =
   AuthenticatedSearchIndexRouteImport.update({
     id: '/search/',
@@ -215,12 +213,6 @@ const AuthenticatedSettingsAppearanceRoute =
     path: '/appearance',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-const AuthenticatedServiceProvidersProviderIdRoute =
-  AuthenticatedServiceProvidersProviderIdRouteImport.update({
-    id: '/service-providers/$providerId',
-    path: '/service-providers/$providerId',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedPaymentsInvoicesRoute =
   AuthenticatedPaymentsInvoicesRouteImport.update({
     id: '/payments/invoices',
@@ -237,18 +229,6 @@ const AuthenticatedErrorsErrorRoute =
   AuthenticatedErrorsErrorRouteImport.update({
     id: '/errors/$error',
     path: '/errors/$error',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedDashboardMasterRoute =
-  AuthenticatedDashboardMasterRouteImport.update({
-    id: '/dashboard/master',
-    path: '/dashboard/master',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedDashboardClientRoute =
-  AuthenticatedDashboardClientRouteImport.update({
-    id: '/dashboard/client',
-    path: '/dashboard/client',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedCoreSystemSettingsRoute =
@@ -281,6 +261,52 @@ const AuthenticatedCoreServiceAreasRoute =
     path: '/core/service-areas',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppMasterRoute = AuthenticatedAppMasterRouteImport.update({
+  id: '/app/master',
+  path: '/app/master',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppClientRoute = AuthenticatedAppClientRouteImport.update({
+  id: '/app/client',
+  path: '/app/client',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppServiceProvidersIndexRoute =
+  AuthenticatedAppServiceProvidersIndexRouteImport.update({
+    id: '/app/service-providers/',
+    path: '/app/service-providers/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppServiceProvidersProviderIdRoute =
+  AuthenticatedAppServiceProvidersProviderIdRouteImport.update({
+    id: '/app/service-providers/$providerId',
+    path: '/app/service-providers/$providerId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppOrdersCreateIndexRoute =
+  AuthenticatedAppOrdersCreateIndexRouteImport.update({
+    id: '/app/orders/create/',
+    path: '/app/orders/create/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppOrdersCreateServiceRoute =
+  AuthenticatedAppOrdersCreateServiceRouteImport.update({
+    id: '/app/orders/create/service',
+    path: '/app/orders/create/service',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppOrdersCreateReviewRoute =
+  AuthenticatedAppOrdersCreateReviewRouteImport.update({
+    id: '/app/orders/create/review',
+    path: '/app/orders/create/review',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppOrdersCreateDatetimeRoute =
+  AuthenticatedAppOrdersCreateDatetimeRouteImport.update({
+    id: '/app/orders/create/datetime',
+    path: '/app/orders/create/datetime',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
@@ -294,17 +320,16 @@ export interface FileRoutesByFullPath {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
+  '/app/client': typeof AuthenticatedAppClientRoute
+  '/app/master': typeof AuthenticatedAppMasterRoute
   '/core/service-areas': typeof AuthenticatedCoreServiceAreasRoute
   '/core/service-categories': typeof AuthenticatedCoreServiceCategoriesRoute
   '/core/service-subcategories': typeof AuthenticatedCoreServiceSubcategoriesRoute
   '/core/support-faq': typeof AuthenticatedCoreSupportFaqRoute
   '/core/system-settings': typeof AuthenticatedCoreSystemSettingsRoute
-  '/dashboard/client': typeof AuthenticatedDashboardClientRoute
-  '/dashboard/master': typeof AuthenticatedDashboardMasterRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
   '/payments/invoices': typeof AuthenticatedPaymentsInvoicesRoute
-  '/service-providers/$providerId': typeof AuthenticatedServiceProvidersProviderIdRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/client-profile': typeof AuthenticatedSettingsClientProfileRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -321,8 +346,13 @@ export interface FileRoutesByFullPath {
   '/payments': typeof AuthenticatedPaymentsIndexRoute
   '/reviews': typeof AuthenticatedReviewsIndexRoute
   '/search': typeof AuthenticatedSearchIndexRoute
-  '/service-providers': typeof AuthenticatedServiceProvidersIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/app/service-providers/$providerId': typeof AuthenticatedAppServiceProvidersProviderIdRoute
+  '/app/service-providers': typeof AuthenticatedAppServiceProvidersIndexRoute
+  '/app/orders/create/datetime': typeof AuthenticatedAppOrdersCreateDatetimeRoute
+  '/app/orders/create/review': typeof AuthenticatedAppOrdersCreateReviewRoute
+  '/app/orders/create/service': typeof AuthenticatedAppOrdersCreateServiceRoute
+  '/app/orders/create': typeof AuthenticatedAppOrdersCreateIndexRoute
 }
 export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
@@ -336,17 +366,16 @@ export interface FileRoutesByTo {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
+  '/app/client': typeof AuthenticatedAppClientRoute
+  '/app/master': typeof AuthenticatedAppMasterRoute
   '/core/service-areas': typeof AuthenticatedCoreServiceAreasRoute
   '/core/service-categories': typeof AuthenticatedCoreServiceCategoriesRoute
   '/core/service-subcategories': typeof AuthenticatedCoreServiceSubcategoriesRoute
   '/core/support-faq': typeof AuthenticatedCoreSupportFaqRoute
   '/core/system-settings': typeof AuthenticatedCoreSystemSettingsRoute
-  '/dashboard/client': typeof AuthenticatedDashboardClientRoute
-  '/dashboard/master': typeof AuthenticatedDashboardMasterRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
   '/payments/invoices': typeof AuthenticatedPaymentsInvoicesRoute
-  '/service-providers/$providerId': typeof AuthenticatedServiceProvidersProviderIdRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/client-profile': typeof AuthenticatedSettingsClientProfileRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -363,8 +392,13 @@ export interface FileRoutesByTo {
   '/payments': typeof AuthenticatedPaymentsIndexRoute
   '/reviews': typeof AuthenticatedReviewsIndexRoute
   '/search': typeof AuthenticatedSearchIndexRoute
-  '/service-providers': typeof AuthenticatedServiceProvidersIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/app/service-providers/$providerId': typeof AuthenticatedAppServiceProvidersProviderIdRoute
+  '/app/service-providers': typeof AuthenticatedAppServiceProvidersIndexRoute
+  '/app/orders/create/datetime': typeof AuthenticatedAppOrdersCreateDatetimeRoute
+  '/app/orders/create/review': typeof AuthenticatedAppOrdersCreateReviewRoute
+  '/app/orders/create/service': typeof AuthenticatedAppOrdersCreateServiceRoute
+  '/app/orders/create': typeof AuthenticatedAppOrdersCreateIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -380,17 +414,16 @@ export interface FileRoutesById {
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/app/client': typeof AuthenticatedAppClientRoute
+  '/_authenticated/app/master': typeof AuthenticatedAppMasterRoute
   '/_authenticated/core/service-areas': typeof AuthenticatedCoreServiceAreasRoute
   '/_authenticated/core/service-categories': typeof AuthenticatedCoreServiceCategoriesRoute
   '/_authenticated/core/service-subcategories': typeof AuthenticatedCoreServiceSubcategoriesRoute
   '/_authenticated/core/support-faq': typeof AuthenticatedCoreSupportFaqRoute
   '/_authenticated/core/system-settings': typeof AuthenticatedCoreSystemSettingsRoute
-  '/_authenticated/dashboard/client': typeof AuthenticatedDashboardClientRoute
-  '/_authenticated/dashboard/master': typeof AuthenticatedDashboardMasterRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
   '/_authenticated/payments/invoices': typeof AuthenticatedPaymentsInvoicesRoute
-  '/_authenticated/service-providers/$providerId': typeof AuthenticatedServiceProvidersProviderIdRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/client-profile': typeof AuthenticatedSettingsClientProfileRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -407,8 +440,13 @@ export interface FileRoutesById {
   '/_authenticated/payments/': typeof AuthenticatedPaymentsIndexRoute
   '/_authenticated/reviews/': typeof AuthenticatedReviewsIndexRoute
   '/_authenticated/search/': typeof AuthenticatedSearchIndexRoute
-  '/_authenticated/service-providers/': typeof AuthenticatedServiceProvidersIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
+  '/_authenticated/app/service-providers/$providerId': typeof AuthenticatedAppServiceProvidersProviderIdRoute
+  '/_authenticated/app/service-providers/': typeof AuthenticatedAppServiceProvidersIndexRoute
+  '/_authenticated/app/orders/create/datetime': typeof AuthenticatedAppOrdersCreateDatetimeRoute
+  '/_authenticated/app/orders/create/review': typeof AuthenticatedAppOrdersCreateReviewRoute
+  '/_authenticated/app/orders/create/service': typeof AuthenticatedAppOrdersCreateServiceRoute
+  '/_authenticated/app/orders/create/': typeof AuthenticatedAppOrdersCreateIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -424,17 +462,16 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/'
+    | '/app/client'
+    | '/app/master'
     | '/core/service-areas'
     | '/core/service-categories'
     | '/core/service-subcategories'
     | '/core/support-faq'
     | '/core/system-settings'
-    | '/dashboard/client'
-    | '/dashboard/master'
     | '/errors/$error'
     | '/orders/$orderId'
     | '/payments/invoices'
-    | '/service-providers/$providerId'
     | '/settings/appearance'
     | '/settings/client-profile'
     | '/settings/display'
@@ -451,8 +488,13 @@ export interface FileRouteTypes {
     | '/payments'
     | '/reviews'
     | '/search'
-    | '/service-providers'
     | '/tasks'
+    | '/app/service-providers/$providerId'
+    | '/app/service-providers'
+    | '/app/orders/create/datetime'
+    | '/app/orders/create/review'
+    | '/app/orders/create/service'
+    | '/app/orders/create'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/settings'
@@ -466,17 +508,16 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/'
+    | '/app/client'
+    | '/app/master'
     | '/core/service-areas'
     | '/core/service-categories'
     | '/core/service-subcategories'
     | '/core/support-faq'
     | '/core/system-settings'
-    | '/dashboard/client'
-    | '/dashboard/master'
     | '/errors/$error'
     | '/orders/$orderId'
     | '/payments/invoices'
-    | '/service-providers/$providerId'
     | '/settings/appearance'
     | '/settings/client-profile'
     | '/settings/display'
@@ -493,8 +534,13 @@ export interface FileRouteTypes {
     | '/payments'
     | '/reviews'
     | '/search'
-    | '/service-providers'
     | '/tasks'
+    | '/app/service-providers/$providerId'
+    | '/app/service-providers'
+    | '/app/orders/create/datetime'
+    | '/app/orders/create/review'
+    | '/app/orders/create/service'
+    | '/app/orders/create'
   id:
     | '__root__'
     | '/_authenticated'
@@ -509,17 +555,16 @@ export interface FileRouteTypes {
     | '/(errors)/500'
     | '/(errors)/503'
     | '/_authenticated/'
+    | '/_authenticated/app/client'
+    | '/_authenticated/app/master'
     | '/_authenticated/core/service-areas'
     | '/_authenticated/core/service-categories'
     | '/_authenticated/core/service-subcategories'
     | '/_authenticated/core/support-faq'
     | '/_authenticated/core/system-settings'
-    | '/_authenticated/dashboard/client'
-    | '/_authenticated/dashboard/master'
     | '/_authenticated/errors/$error'
     | '/_authenticated/orders/$orderId'
     | '/_authenticated/payments/invoices'
-    | '/_authenticated/service-providers/$providerId'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/client-profile'
     | '/_authenticated/settings/display'
@@ -536,8 +581,13 @@ export interface FileRouteTypes {
     | '/_authenticated/payments/'
     | '/_authenticated/reviews/'
     | '/_authenticated/search/'
-    | '/_authenticated/service-providers/'
     | '/_authenticated/tasks/'
+    | '/_authenticated/app/service-providers/$providerId'
+    | '/_authenticated/app/service-providers/'
+    | '/_authenticated/app/orders/create/datetime'
+    | '/_authenticated/app/orders/create/review'
+    | '/_authenticated/app/orders/create/service'
+    | '/_authenticated/app/orders/create/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -644,13 +694,6 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/service-providers/': {
-      id: '/_authenticated/service-providers/'
-      path: '/service-providers'
-      fullPath: '/service-providers'
-      preLoaderRoute: typeof AuthenticatedServiceProvidersIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/search/': {
@@ -765,13 +808,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAppearanceRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/service-providers/$providerId': {
-      id: '/_authenticated/service-providers/$providerId'
-      path: '/service-providers/$providerId'
-      fullPath: '/service-providers/$providerId'
-      preLoaderRoute: typeof AuthenticatedServiceProvidersProviderIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/payments/invoices': {
       id: '/_authenticated/payments/invoices'
       path: '/payments/invoices'
@@ -791,20 +827,6 @@ declare module '@tanstack/react-router' {
       path: '/errors/$error'
       fullPath: '/errors/$error'
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dashboard/master': {
-      id: '/_authenticated/dashboard/master'
-      path: '/dashboard/master'
-      fullPath: '/dashboard/master'
-      preLoaderRoute: typeof AuthenticatedDashboardMasterRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dashboard/client': {
-      id: '/_authenticated/dashboard/client'
-      path: '/dashboard/client'
-      fullPath: '/dashboard/client'
-      preLoaderRoute: typeof AuthenticatedDashboardClientRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/core/system-settings': {
@@ -840,6 +862,62 @@ declare module '@tanstack/react-router' {
       path: '/core/service-areas'
       fullPath: '/core/service-areas'
       preLoaderRoute: typeof AuthenticatedCoreServiceAreasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/master': {
+      id: '/_authenticated/app/master'
+      path: '/app/master'
+      fullPath: '/app/master'
+      preLoaderRoute: typeof AuthenticatedAppMasterRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/client': {
+      id: '/_authenticated/app/client'
+      path: '/app/client'
+      fullPath: '/app/client'
+      preLoaderRoute: typeof AuthenticatedAppClientRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/service-providers/': {
+      id: '/_authenticated/app/service-providers/'
+      path: '/app/service-providers'
+      fullPath: '/app/service-providers'
+      preLoaderRoute: typeof AuthenticatedAppServiceProvidersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/service-providers/$providerId': {
+      id: '/_authenticated/app/service-providers/$providerId'
+      path: '/app/service-providers/$providerId'
+      fullPath: '/app/service-providers/$providerId'
+      preLoaderRoute: typeof AuthenticatedAppServiceProvidersProviderIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/orders/create/': {
+      id: '/_authenticated/app/orders/create/'
+      path: '/app/orders/create'
+      fullPath: '/app/orders/create'
+      preLoaderRoute: typeof AuthenticatedAppOrdersCreateIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/orders/create/service': {
+      id: '/_authenticated/app/orders/create/service'
+      path: '/app/orders/create/service'
+      fullPath: '/app/orders/create/service'
+      preLoaderRoute: typeof AuthenticatedAppOrdersCreateServiceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/orders/create/review': {
+      id: '/_authenticated/app/orders/create/review'
+      path: '/app/orders/create/review'
+      fullPath: '/app/orders/create/review'
+      preLoaderRoute: typeof AuthenticatedAppOrdersCreateReviewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/orders/create/datetime': {
+      id: '/_authenticated/app/orders/create/datetime'
+      path: '/app/orders/create/datetime'
+      fullPath: '/app/orders/create/datetime'
+      preLoaderRoute: typeof AuthenticatedAppOrdersCreateDatetimeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
   }
@@ -878,17 +956,16 @@ const AuthenticatedSettingsRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedAppClientRoute: typeof AuthenticatedAppClientRoute
+  AuthenticatedAppMasterRoute: typeof AuthenticatedAppMasterRoute
   AuthenticatedCoreServiceAreasRoute: typeof AuthenticatedCoreServiceAreasRoute
   AuthenticatedCoreServiceCategoriesRoute: typeof AuthenticatedCoreServiceCategoriesRoute
   AuthenticatedCoreServiceSubcategoriesRoute: typeof AuthenticatedCoreServiceSubcategoriesRoute
   AuthenticatedCoreSupportFaqRoute: typeof AuthenticatedCoreSupportFaqRoute
   AuthenticatedCoreSystemSettingsRoute: typeof AuthenticatedCoreSystemSettingsRoute
-  AuthenticatedDashboardClientRoute: typeof AuthenticatedDashboardClientRoute
-  AuthenticatedDashboardMasterRoute: typeof AuthenticatedDashboardMasterRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedOrdersOrderIdRoute: typeof AuthenticatedOrdersOrderIdRoute
   AuthenticatedPaymentsInvoicesRoute: typeof AuthenticatedPaymentsInvoicesRoute
-  AuthenticatedServiceProvidersProviderIdRoute: typeof AuthenticatedServiceProvidersProviderIdRoute
   AuthenticatedAnalyticsIndexRoute: typeof AuthenticatedAnalyticsIndexRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedBidsIndexRoute: typeof AuthenticatedBidsIndexRoute
@@ -898,13 +975,20 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPaymentsIndexRoute: typeof AuthenticatedPaymentsIndexRoute
   AuthenticatedReviewsIndexRoute: typeof AuthenticatedReviewsIndexRoute
   AuthenticatedSearchIndexRoute: typeof AuthenticatedSearchIndexRoute
-  AuthenticatedServiceProvidersIndexRoute: typeof AuthenticatedServiceProvidersIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
+  AuthenticatedAppServiceProvidersProviderIdRoute: typeof AuthenticatedAppServiceProvidersProviderIdRoute
+  AuthenticatedAppServiceProvidersIndexRoute: typeof AuthenticatedAppServiceProvidersIndexRoute
+  AuthenticatedAppOrdersCreateDatetimeRoute: typeof AuthenticatedAppOrdersCreateDatetimeRoute
+  AuthenticatedAppOrdersCreateReviewRoute: typeof AuthenticatedAppOrdersCreateReviewRoute
+  AuthenticatedAppOrdersCreateServiceRoute: typeof AuthenticatedAppOrdersCreateServiceRoute
+  AuthenticatedAppOrdersCreateIndexRoute: typeof AuthenticatedAppOrdersCreateIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedAppClientRoute: AuthenticatedAppClientRoute,
+  AuthenticatedAppMasterRoute: AuthenticatedAppMasterRoute,
   AuthenticatedCoreServiceAreasRoute: AuthenticatedCoreServiceAreasRoute,
   AuthenticatedCoreServiceCategoriesRoute:
     AuthenticatedCoreServiceCategoriesRoute,
@@ -912,13 +996,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedCoreServiceSubcategoriesRoute,
   AuthenticatedCoreSupportFaqRoute: AuthenticatedCoreSupportFaqRoute,
   AuthenticatedCoreSystemSettingsRoute: AuthenticatedCoreSystemSettingsRoute,
-  AuthenticatedDashboardClientRoute: AuthenticatedDashboardClientRoute,
-  AuthenticatedDashboardMasterRoute: AuthenticatedDashboardMasterRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedOrdersOrderIdRoute: AuthenticatedOrdersOrderIdRoute,
   AuthenticatedPaymentsInvoicesRoute: AuthenticatedPaymentsInvoicesRoute,
-  AuthenticatedServiceProvidersProviderIdRoute:
-    AuthenticatedServiceProvidersProviderIdRoute,
   AuthenticatedAnalyticsIndexRoute: AuthenticatedAnalyticsIndexRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedBidsIndexRoute: AuthenticatedBidsIndexRoute,
@@ -928,9 +1008,19 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPaymentsIndexRoute: AuthenticatedPaymentsIndexRoute,
   AuthenticatedReviewsIndexRoute: AuthenticatedReviewsIndexRoute,
   AuthenticatedSearchIndexRoute: AuthenticatedSearchIndexRoute,
-  AuthenticatedServiceProvidersIndexRoute:
-    AuthenticatedServiceProvidersIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
+  AuthenticatedAppServiceProvidersProviderIdRoute:
+    AuthenticatedAppServiceProvidersProviderIdRoute,
+  AuthenticatedAppServiceProvidersIndexRoute:
+    AuthenticatedAppServiceProvidersIndexRoute,
+  AuthenticatedAppOrdersCreateDatetimeRoute:
+    AuthenticatedAppOrdersCreateDatetimeRoute,
+  AuthenticatedAppOrdersCreateReviewRoute:
+    AuthenticatedAppOrdersCreateReviewRoute,
+  AuthenticatedAppOrdersCreateServiceRoute:
+    AuthenticatedAppOrdersCreateServiceRoute,
+  AuthenticatedAppOrdersCreateIndexRoute:
+    AuthenticatedAppOrdersCreateIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

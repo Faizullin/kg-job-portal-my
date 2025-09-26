@@ -1,14 +1,14 @@
 import { useAuthStore } from "@/stores/auth-store";
-import myApi from "../api/my-api";
-import { getUserFriendlyErrorMessage } from "./error-handler";
-import { getFirebaseAuth, getGoogleProvider } from "./firebase";
 import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  type User as FirebaseUser,
 } from "firebase/auth";
+import { getUserFriendlyErrorMessage } from "./error-handler";
+import { getFirebaseAuth, getGoogleProvider } from "./firebase";
 
 /**
  * AuthClient - Centralized authentication management
@@ -84,7 +84,7 @@ export class AuthClient {
   static async sendPasswordResetEmail(email: string) {
     try {
       await sendPasswordResetEmail(getFirebaseAuth(), email);
-      
+
       return {
         success: true,
         message: `Password reset email sent to ${email}. Please check your inbox.`,
@@ -103,17 +103,14 @@ export class AuthClient {
   static async signOut() {
     try {
       await signOut(getFirebaseAuth());
-      myApi.clearAuthData();
-      const { auth } = useAuthStore.getState();
+      const auth = useAuthStore.getState();
       auth.reset();
-
       return {
         success: true,
         message: "Signed out successfully",
       };
     } catch (error: any) {
-      myApi.clearAuthData();
-      const { auth } = useAuthStore.getState();
+      const auth = useAuthStore.getState();
       auth.reset();
 
       return {
@@ -124,34 +121,10 @@ export class AuthClient {
   }
 
   /**
-   * Check if user is authenticated
-   */
-  static isAuthenticated(): boolean {
-    const { auth } = useAuthStore.getState();
-    return auth.isAuthenticated();
-  }
-
-  /**
-   * Get current user from store
-   */
-  static getCurrentUser() {
-    const { auth } = useAuthStore.getState();
-    return auth.user;
-  }
-
-  /**
-   * Get current Firebase user from store
-   */
-  static getCurrentFirebaseUser() {
-    const { auth } = useAuthStore.getState();
-    return auth.firebaseUser;
-  }
-
-  /**
    * Private method to handle backend authentication
    */
-  private static async authenticateWithBackend(firebaseUser: any) {
-    const { auth } = useAuthStore.getState();
-    await auth.authenticateWithBackend(firebaseUser);
+  private static async authenticateWithBackend(firebaseUser: FirebaseUser) {
+    const authStore = useAuthStore.getState();
+    await authStore.authenticateWithBackend(firebaseUser);
   }
 }

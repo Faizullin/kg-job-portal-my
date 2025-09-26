@@ -1,23 +1,48 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.response import Response
+from django.db import models
 from django.db.models import Avg, Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResponse
 
 from rest_framework.permissions import IsAuthenticated
 from utils.exceptions import StandardizedViewMixin
 from utils.pagination import CustomPagination
 from ..models import Review
-from .serializers import ReviewSerializer, ReviewCreateSerializer, ReviewUpdateSerializer, ReviewAnalyticsSerializer
+from .serializers import (
+    ReviewSerializer, ReviewCreateSerializer, ReviewUpdateSerializer, 
+    ReviewAnalyticsSerializer, ClientRatingSerializer, OrderAssignmentReviewSerializer
+)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="List reviews",
+        description="Get a list of all reviews with filtering and search capabilities",
+        responses={
+            200: ReviewSerializer(many=True),
+            401: OpenApiResponse(description="Authentication required"),
+        }
+    ),
+    post=extend_schema(
+        summary="Create review",
+        description="Create a new review for a completed order",
+        request=ReviewCreateSerializer,
+        responses={
+            201: ReviewSerializer,
+            400: OpenApiResponse(description="Invalid data"),
+            401: OpenApiResponse(description="Authentication required"),
+        }
+    )
+)
 class ReviewApiView(StandardizedViewMixin, generics.ListCreateAPIView):
-    """List and create reviews."""
+    """List and create reviews with OpenAPI documentation."""
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['overall_rating', 'is_verified']
-    search_fields = ['title', 'comment', 'reviewer__name', 'provider__user_profile__name']
+    search_fields = ['title', 'comment', 'reviewer__first_name', 'provider__user_profile__user__first_name']
     ordering_fields = ['overall_rating', 'created_at']
     ordering = ['-created_at']
     pagination_class = CustomPagination
@@ -25,7 +50,7 @@ class ReviewApiView(StandardizedViewMixin, generics.ListCreateAPIView):
     def get_queryset(self):
         return Review.objects.select_related(
             'reviewer', 
-            'provider__user_profile',
+            'provider__user_profile__user',
             'order'
         )
     
@@ -134,6 +159,74 @@ class ReviewAnalyticsApiView(StandardizedViewMixin, generics.GenericAPIView):
         }
         
         serializer = self.get_serializer(stats)
+        return Response(serializer.data)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Get order assignment reviews",
+        description="Get review data from order assignments (client ratings)",
+        responses={
+            200: OrderAssignmentReviewSerializer(many=True),
+            401: OpenApiResponse(description="Authentication required"),
+        }
+    )
+)
+class OrderAssignmentReviewsApiView(StandardizedViewMixin, generics.ListAPIView):
+    """Get review data from order assignments."""
+    serializer_class = OrderAssignmentReviewSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
+    
+    def get_queryset(self):
+        """Get order assignments with review data."""
+        from job_portal.apps.orders.models import OrderAssignment
+        
+        user = self.request.user
+        
+        # Get assignments where user is either client or provider
+        assignments = OrderAssignment.objects.filter(
+            models.Q(order__client__user_profile__user=user) |
+            models.Q(provider__user_profile__user=user)
+        ).select_related(
+            'order__client__user_profile__user',
+            'provider__user_profile__user'
+        )
+        
+        return assignments
+    
+    def list(self, request, *args, **kwargs):
+        """Return serialized assignment review data."""
+        assignments = self.get_queryset()
+        
+        review_data = []
+        for assignment in assignments:
+            data = {
+                'order_id': assignment.order.id,
+                'order_title': assignment.order.title,
+                'provider_name': assignment.provider.user_profile.user.get_full_name() or assignment.provider.user_profile.user.username,
+                'client_name': assignment.order.client.user_profile.user.get_full_name() or assignment.order.client.user_profile.user.username,
+                'client_rating': assignment.client_rating,
+                'client_review': assignment.client_review,
+                'provider_rating': None,  # This would come from Review model
+                'provider_review': None,  # This would come from Review model
+                'completed_at': assignment.order.completed_at
+            }
+            
+            # Get provider review if exists
+            try:
+                provider_review = Review.objects.get(
+                    order=assignment.order,
+                    reviewer=assignment.provider.user_profile.user
+                )
+                data['provider_rating'] = provider_review.overall_rating
+                data['provider_review'] = provider_review.comment
+            except Review.DoesNotExist:
+                pass
+            
+            review_data.append(data)
+        
+        serializer = self.get_serializer(review_data, many=True)
         return Response(serializer.data)
 
 

@@ -1,19 +1,22 @@
 {
 	"info": {
-		"_postman_id": "kg-job-portal-api",
+		"_postman_id": "f786b661-8aa2-4caf-9af4-f1b9242c8c98",
 		"name": "KG Job Portal API - Complete User Journey",
-		"description": "# KG Job Portal API Documentation\n\n## Overview\nThis collection provides comprehensive API testing for the KG Job Portal platform, organized by user journey from registration to main features.\n\n## Features\n- 🔐 Firebase Authentication\n- 👤 User Profile Management\n- 👥 Client & Provider Profiles\n- 📝 Order Management\n- 💰 Bidding System\n- 💬 Real-time Chat\n- 🔔 Notifications\n- 💳 Payment Processing\n- ⭐ Reviews & Ratings\n- 🔍 Search & Discovery\n- 📊 Analytics & Dashboard\n\n## Getting Started\n1. Set up environment variables\n2. Start with Firebase Authentication\n3. Follow the user journey folders\n4. Use sample request bodies provided\n\n## Authentication\nAll authenticated endpoints require the `Authorization` header:\n```\nAuthorization: Token {{auth_token}}\n```\n\n## Base URL\nDefault: `http://localhost:8000`\n\n## Support\nFor detailed API documentation, visit `/api/schema/swagger-ui/` or `/api/schema/redoc/`",
+		"description": "# KG Job Portal API - Complete Backend Integration\n\n## 🚀 Quick Start\n1. Set up environment variables (base_url)\n2. Start with Firebase Authentication on Mobile or Web\n3. Extract Firebase ID token and use in `/api/v1/auth/firebase/`\n4. Get JWT token and use in Postman Authorization\n5. Follow the user journey folders for complete workflow\n\n## 🔐 Authentication\nAll authenticated endpoints require:\n```\nAuthorization: Token {{auth_token}}\n```\n\n## 📱 Mobile App Features\nNew mobile-specific endpoints added:\n- **Real-time Status**: Online/offline status updates\n- **Order Management**: Complete order lifecycle (assigned → in_progress → completed)\n- **Photo Upload**: Before/after photo management\n- **Rating System**: Bidirectional client/provider rating\n- **Assignment Tracking**: Detailed assignment information\n\n## 🏗️ Backend Architecture\n\n### Core Apps & URLs\n- **Authentication**: `/api/v1/auth/` (Firebase, Logout)\n- **User Management**: `/api/v1/users/` (Profiles, Ratings, Online Status)\n- **Core System**: `/api/v1/core/` (Languages, Categories, Areas, Settings)\n- **Order Management**: `/api/v1/orders/` (CRUD, Status, Attachments, Ratings)\n- **Chat System**: `/api/v1/chat/` (Conversations, WebSocket)\n- **Reviews**: `/api/v1/reviews/` (Provider Reviews, Client Ratings)\n- **Notifications**: `/api/v1/notifications/` (User Notifications)\n- **Search**: `/api/v1/search/` (Orders, Providers)\n- **Dashboard**: `/api/v1/dashboard/` (Analytics, Statistics)\n\n## 📚 API Documentation\n- **Swagger UI**: `/api/schema/swagger-ui/`\n- **ReDoc**: `/api/schema/redoc/`\n- **Admin Panel**: `/admin`\n\n## 🔄 Mobile App Workflow\n1. **Authentication**: Firebase login → JWT token\n2. **Profile Setup**: Create client/provider profiles\n3. **Order Management**: Create, assign, track orders\n4. **Real-time Updates**: Online status, order progress\n5. **Photo Management**: Upload before/after photos\n6. **Rating System**: Rate clients and providers\n7. **Review System**: Comprehensive review data\n\n## 🎯 Key Features\n- **OpenAPI Support**: Complete schema documentation\n- **Real-time Chat**: WebSocket integration\n- **File Upload**: Photo and document management\n- **Rating System**: Bidirectional rating system\n- **Status Tracking**: Real-time order and user status\n- **Mobile Optimized**: All endpoints designed for mobile integration",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "kg-job-portal"
+		"_exporter_id": "48429857",
+		"_collection_link": "https://amanzholtasbaev-5812708.postman.co/workspace/KgMasterWorkspace~55722d2c-da1f-432c-abcb-7efba75b52bf/collection/48429857-f786b661-8aa2-4caf-9af4-f1b9242c8c98?action=share&source=collection_link&creator=48429857"
 	},
 	"item": [
 		{
 			"name": "🔐 Authentication & Registration",
-			"description": "# Authentication & Registration\n\nThis folder contains endpoints for user authentication and registration using Firebase.\n\n## Flow\n1. **Firebase Authentication**: Authenticate with Firebase ID token\n2. **Get Auth Token**: Copy the returned token to `auth_token` variable\n3. **Use Token**: Include token in Authorization header for all subsequent requests\n\n## Firebase Setup\n- Get Firebase ID token from your Firebase client\n- Set `firebase_id_token` environment variable\n- Call Firebase Authentication endpoint\n\n## Token Management\n- Token is returned in response after successful authentication\n- Copy token to `auth_token` environment variable\n- Token format: `Authorization: Token <your_token>`",
 			"item": [
 				{
 					"name": "Firebase Authentication",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -23,12 +26,20 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id_token\": \"{{firebase_id_token}}\"\n}"
+							"raw": "{\n    \"id_token\": \"eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiNWVkMjEyYzQ0MzcwYjYwZDZmZWI4ZGIyNWNkMjNiNGQ0Zjc2M2VhMSJ9.eyJpc3MiOiAiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAdGltZXN0YW1wLWRiLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwgInN1YiI6ICJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0B0aW1lc3RhbXAtZGIuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInVpZCI6ICJXMmVDVjd2dWRqYkl2d3BYdXFoOTd1OE1DUFcyIiwgImlhdCI6IDE3NTg1NjQ4NTYsICJleHAiOiAxNzU4NTY4NDU2fQ.KmXu2_Sy7fPmJgzPicnvqmZW-Ew-YFALVApx0pMv1sormHx9u0PoPTePpT0JH8AqYddjU8nbmEh8kOpxT5VC4pL18xBgWDOT8ys_eEyQLpKiNbRIGa8Xda-8mZdsBJ3ztbr2LzKtcJpwlf6PgvFe54K-sAk0ETXDh89IN7zRogkUBX9LA9W8LZdB8C5Xuq2nEIg3it1YS_gscfJ19kkRKv1msxqEqq366nZ74R3AAwu-2gYPr9e6BtgrgF3xkySO5bvgPrt1T0YFWqvu67V23g523b6jUzzHrv1h-NzjIZG9wZFBKYP0vL7m8dE_8EkCdzqkMxSjv1DikG_jdIxzYw\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/auth/firebase/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "auth", "firebase", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"firebase",
+								""
+							]
 						},
 						"description": "# Firebase Authentication\n\nAuthenticate user with Firebase ID token or register new user if verified.\n\n## Purpose\n- **Login**: Authenticate existing users\n- **Registration**: Create new user accounts\n- **Token Exchange**: Exchange Firebase token for Django auth token\n\n## Request Body\n```json\n{\n    \"id_token\": \"your_firebase_id_token_here\"\n}\n```\n\n## Response\n- **200 OK**: Authentication successful\n- **201 Created**: New user registered\n- **400 Bad Request**: Invalid token\n- **401 Unauthorized**: Token verification failed\n\n## Next Steps\n1. Copy the returned `token` from response\n2. Set it as `auth_token` environment variable\n3. Use in Authorization header for all subsequent requests\n\n## Example Response\n```json\n{\n    \"token\": \"abc123def456...\",\n    \"user\": {\n        \"id\": 1,\n        \"email\": \"user@example.com\",\n        \"name\": \"John Doe\"\n    }\n}\n```"
 					},
@@ -50,66 +61,27 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/auth/logout/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "auth", "logout", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout",
+								""
+							]
 						},
 						"description": "# User Logout\n\nLogout user and invalidate authentication token.\n\n## Purpose\n- **Session Termination**: End user session\n- **Token Invalidation**: Invalidate current auth token\n- **Security**: Ensure secure logout\n\n## Authentication\nRequires valid authentication token in Authorization header.\n\n## Response\n- **200 OK**: Logout successful\n- **401 Unauthorized**: Invalid or expired token\n\n## Example Response\n```json\n{\n    \"message\": \"Successfully logged out\",\n    \"timestamp\": \"2024-01-15T10:30:00Z\"\n}\n```\n\n## Note\nAfter logout, the current `auth_token` will be invalidated and cannot be used for further requests."
 					},
 					"response": []
 				}
 			],
-			"description": "Authentication endpoints for user login and logout"
+			"description": "fir login with flutter firebase\n\nthen get id token:\n\nStartFragment\n\n``` dart\nfinal user = await FirebaseAuth.instance.currentUser();\nfinal idToken = await user.getIdToken();\nfinal token = idToken.token;\n\n ```\n\nThen use token in Firebase Authentication:\n\n- User created!"
 		},
 		{
-			"name": "👤 User Profile Setup",
-			"description": "# User Profile Setup\n\nThis folder contains endpoints for managing user profile information.\n\n## Purpose\n- **Profile Management**: Get and update user profile data\n- **Image Upload**: Upload and manage profile photos\n- **Account Information**: Manage basic account details\n\n## Flow\n1. **Get Profile**: Retrieve current user profile\n2. **Update Profile**: Update profile information\n3. **Upload Image**: Upload profile photo\n4. **Advanced Profile**: Get combined account and job portal data\n\n## Authentication\nAll endpoints require valid authentication token.\n\n## Profile Fields\n- `name`: User's display name\n- `description`: User bio/description\n- `photo_url`: Profile image URL\n- `email`: User email (read-only)\n- `phone_number`: Contact number\n- `address`: Physical address\n\n## Image Upload\n- Supports multiple image formats (JPEG, PNG, WebP)\n- Maximum file size: 5MB\n- Images are automatically resized and optimized",
+			"name": "User Profile Setup",
 			"item": [
-				{
-					"name": "Get User Profile",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Token {{auth_token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/v1/profile/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "profile", ""]
-						},
-						"description": "# Get User Profile\n\nRetrieve current user's profile information.\n\n## Purpose\n- **Profile Data**: Get complete user profile\n- **Account Status**: Check account verification status\n- **Settings**: View user preferences and settings\n\n## Authentication\nRequires valid authentication token.\n\n## Response\n- **200 OK**: Profile retrieved successfully\n- **401 Unauthorized**: Invalid or expired token\n\n## Example Response\n```json\n{\n    \"id\": 1,\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"description\": \"Professional service provider\",\n    \"photo_url\": \"https://example.com/profile.jpg\",\n    \"phone_number\": \"+1234567890\",\n    \"address\": \"123 Main St, City, State\",\n    \"is_verified\": true,\n    \"created_at\": \"2024-01-01T00:00:00Z\",\n    \"updated_at\": \"2024-01-15T10:30:00Z\"\n}\n```\n\n## Use Cases\n- Display user profile in app\n- Check verification status\n- Show account information\n- Validate user data"
-					},
-					"response": []
-				},
-				{
-					"name": "Update User Profile",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Token {{auth_token}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"John Doe\",\n    \"description\": \"Professional service provider\",\n    \"photo_url\": \"https://example.com/photo.jpg\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/v1/profile/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "profile", ""]
-						},
-						"description": "Update user profile information"
-					},
-					"response": []
-				},
 				{
 					"name": "Upload Profile Image",
 					"request": {
@@ -126,14 +98,21 @@
 								{
 									"key": "photo",
 									"type": "file",
-									"src": []
+									"src": "/C:/Users/osman/OneDrive/Pictures/Screenshots/Снимок экрана 2025-02-02 140418.png"
 								}
 							]
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/profile/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "profile", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"profile",
+								""
+							]
 						},
 						"description": "Upload profile image"
 					},
@@ -141,6 +120,9 @@
 				},
 				{
 					"name": "Get Advanced Profile",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -149,23 +131,78 @@
 								"value": "Token {{auth_token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/users/profile/advanced/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "users", "profile", "advanced", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"profile",
+								"advanced",
+								""
+							]
+						},
+						"description": "Get combined user account and job portal profile"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Advanced Profile",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_data\": {\r\n        \"id\": 1,\r\n        \"username\": \"amanzholtasbaev\",\r\n        \"email\": \"amanzholtasbaev@gmail.com\",\r\n        \"first_name\": \"John\",\r\n        \"last_name\": \"Doe\",\r\n        \"name\": \"John Doe\",\r\n        \"description\": \"Professional service provider\"\r\n    },\r\n    \"job_portal_profile\": {\r\n        \"id\": 1,\r\n        \"user\": 1,\r\n        \"bio\": \"\",\r\n        \"date_of_birth\": \"2000-01-30\",\r\n        \"gender\": \"\",\r\n        \"phone_number\": \"+7 777 777\",\r\n        \"address\": \"\",\r\n        \"city\": \"\",\r\n        \"state\": \"\",\r\n        \"country\": \"\",\r\n        \"postal_code\": \"\",\r\n        \"terms_accepted\": true,\r\n        \"is_verified\": true\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/profile/advanced/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"profile",
+								"advanced",
+								""
+							]
 						},
 						"description": "Get combined user account and job portal profile"
 					},
 					"response": []
 				}
 			],
-			"description": "User profile management endpoints"
+			"description": "User profile management endpoints:\n\n/api/v1/users/profile/advanced/\n\nAllows to load 2 models: User and UserProfile (more dteailed infod)\n\n- GET: get data with both user field and profile field\n    \n\nUse {{base_url}}/api/v1/profile/ POST to upload avatar image\n\nTo access search for employees or jobs need to create:\n\n- Employer Profile Setup\n    \n- Employee Profile Setup"
 		},
 		{
-			"name": "👥 Client Profile Setup",
+			"name": "Employer Profile Setup",
 			"item": [
 				{
-					"name": "Create Client Profile",
+					"name": "Create Profile",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -180,19 +217,28 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"preferred_services\": [1, 2, 3]\n}"
+							"raw": "{\n    \"preferred_services\": [1]\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/users/client/create/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "users", "client", "create", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"client",
+								"create",
+								""
+							]
 						},
 						"description": "Create client profile for job portal"
 					},
 					"response": []
 				},
 				{
-					"name": "Update Client Profile",
+					"name": "Update Profile",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -207,19 +253,28 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"preferred_services\": [1, 2, 3, 4]\n}"
+							"raw": "{\n    \"preferred_services\": []\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/users/client/update/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "users", "client", "update", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"client",
+								"update",
+								""
+							]
 						},
 						"description": "Update client profile preferences"
 					},
 					"response": []
 				},
 				{
-					"name": "Get Client Profile",
+					"name": "Get Profile",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -230,8 +285,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/users/client/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "users", "client", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"client",
+								""
+							]
 						},
 						"description": "Get current user's client profile"
 					},
@@ -241,10 +304,10 @@
 			"description": "Client profile setup and management"
 		},
 		{
-			"name": "🔧 Service Provider Setup",
+			"name": "Employee Setup",
 			"item": [
 				{
-					"name": "Create Service Provider Profile",
+					"name": "Create Profile",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -259,19 +322,28 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"business_name\": \"Professional Services Co.\",\n    \"business_description\": \"Professional service provider with years of experience\",\n    \"service_areas\": [1, 2],\n    \"services_offered\": [1, 2, 3],\n    \"works_remotely\": true,\n    \"accepts_clients_at_location\": true,\n    \"travels_to_clients\": true,\n    \"is_available\": true\n}"
+							"raw": "{\n    \"business_name\": \"Professional Services Co.\",\n    \"business_description\": \"Professional service provider with years of experience\",\n    \"service_areas\": [1],\n    \"services_offered\": [1],\n    \"works_remotely\": true,\n    \"accepts_clients_at_location\": true,\n    \"travels_to_clients\": true,\n    \"is_available\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/users/provider/create/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "users", "provider", "create", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"provider",
+								"create",
+								""
+							]
 						},
 						"description": "Create service provider profile"
 					},
 					"response": []
 				},
 				{
-					"name": "Update Service Provider Profile",
+					"name": "Update Profile",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -286,19 +358,28 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"business_name\": \"Updated Business Name\",\n    \"business_description\": \"Updated description\",\n    \"service_areas\": [1, 2, 3],\n    \"services_offered\": [1, 2, 3, 4],\n    \"works_remotely\": false,\n    \"accepts_clients_at_location\": true,\n    \"travels_to_clients\": false,\n    \"is_available\": true\n}"
+							"raw": "{\n    \"business_name\": \"Updated Business Name\",\n    \"business_description\": \"Updated description\",\n    \"service_areas\": [1],\n    \"services_offered\": [1],\n    \"works_remotely\": false,\n    \"accepts_clients_at_location\": true,\n    \"travels_to_clients\": false,\n    \"is_available\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/users/provider/update/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "users", "provider", "update", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"provider",
+								"update",
+								""
+							]
 						},
 						"description": "Update service provider profile"
 					},
 					"response": []
 				},
 				{
-					"name": "Get Service Provider Profile",
+					"name": "Get Profile",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -309,8 +390,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/users/provider/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "users", "provider", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"provider",
+								""
+							]
 						},
 						"description": "Get current user's service provider profile"
 					},
@@ -320,7 +409,7 @@
 			"description": "Service provider profile setup and management"
 		},
 		{
-			"name": "📋 Core System Data",
+			"name": "Core System Data",
 			"item": [
 				{
 					"name": "Get Languages",
@@ -329,8 +418,16 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/api/v1/core/languages/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "core", "languages", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"core",
+								"languages",
+								""
+							]
 						},
 						"description": "Get supported languages"
 					},
@@ -343,8 +440,16 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/api/v1/core/service-categories/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "core", "service-categories", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"core",
+								"service-categories",
+								""
+							]
 						},
 						"description": "Get main service categories"
 					},
@@ -357,8 +462,16 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/api/v1/core/service-subcategories/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "core", "service-subcategories", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"core",
+								"service-subcategories",
+								""
+							]
 						},
 						"description": "Get detailed service subcategories"
 					},
@@ -371,8 +484,16 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/api/v1/core/service-areas/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "core", "service-areas", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"core",
+								"service-areas",
+								""
+							]
 						},
 						"description": "Get geographic service areas"
 					},
@@ -385,8 +506,16 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/api/v1/core/system-settings/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "core", "system-settings", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"core",
+								"system-settings",
+								""
+							]
 						},
 						"description": "Get system-wide configuration"
 					},
@@ -399,8 +528,16 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/api/v1/core/app-versions/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "core", "app-versions", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"core",
+								"app-versions",
+								""
+							]
 						},
 						"description": "Get mobile app version information"
 					},
@@ -413,22 +550,30 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/api/v1/core/support/faq/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "core", "support", "faq", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"core",
+								"support",
+								"faq",
+								""
+							]
 						},
 						"description": "Get support FAQ items"
 					},
 					"response": []
 				}
 			],
-			"description": "Core system data endpoints"
+			"description": "Core system data endpoints\n\nMajoriy populated in admin panel /admin in browser\n\nService Category -> Service Subcategory\n\nService Category -> Service Area -> Employee profile\n\n- Service Area is locations list for Employee regsiter"
 		},
 		{
-			"name": "📝 Order Management (Client)",
-			"description": "# Order Management (Client)\n\nThis folder contains endpoints for clients to manage their service orders.\n\n## Purpose\n- **Order Creation**: Create new service orders\n- **Order Management**: View, update, and track orders\n- **Bid Monitoring**: Monitor bids on your orders\n- **Order Lifecycle**: Manage order from creation to completion\n\n## Order Flow\n1. **Create Order**: Submit new service request\n2. **Monitor Bids**: Review bids from providers\n3. **Accept Bid**: Select preferred provider\n4. **Track Progress**: Monitor order completion\n5. **Complete Order**: Mark order as completed\n\n## Order Statuses\n- `draft`: Order being prepared\n- `published`: Order visible to providers\n- `bidding`: Accepting bids\n- `assigned`: Provider selected\n- `in_progress`: Service in progress\n- `completed`: Service finished\n- `cancelled`: Order cancelled\n- `disputed`: Order disputed\n\n## Required Fields\n- `service_subcategory`: Type of service\n- `title`: Order title\n- `description`: Detailed description\n- `location`: Service location\n- `city`, `state`, `country`, `postal_code`: Address\n- `urgency`: Priority level\n\n## Optional Fields\n- `service_date`: Preferred date\n- `service_time`: Preferred time\n- `budget_min`, `budget_max`: Budget range\n- `special_requirements`: Additional requirements",
+			"name": "Job Management (Employer)",
 			"item": [
 				{
-					"name": "Create Order",
+					"name": "Create",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -447,8 +592,16 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/orders/create/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "orders", "create", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"create",
+								""
+							]
 						},
 						"description": "# Create Order\n\nCreate a new service order for providers to bid on.\n\n## Purpose\n- **Service Request**: Submit service requirements\n- **Provider Matching**: Allow providers to find and bid\n- **Order Tracking**: Start order lifecycle\n\n## Authentication\nRequires valid authentication token and client profile.\n\n## Required Fields\n- `service_subcategory`: ID of service type (get from core endpoints)\n- `title`: Brief order title (max 200 chars)\n- `description`: Detailed service description\n- `location`: Service address\n- `city`, `state`, `country`, `postal_code`: Complete address\n- `urgency`: Priority level (`low`, `medium`, `high`, `urgent`)\n\n## Optional Fields\n- `service_date`: Preferred service date (YYYY-MM-DD)\n- `service_time`: Preferred service time (HH:MM:SS)\n- `budget_min`, `budget_max`: Budget range (decimal)\n- `special_requirements`: Additional requirements\n\n## Response\n- **201 Created**: Order created successfully\n- **400 Bad Request**: Invalid data or missing required fields\n- **401 Unauthorized**: Authentication required\n- **403 Forbidden**: Client profile required\n\n## Example Response\n```json\n{\n    \"id\": 123,\n    \"title\": \"House Cleaning Service\",\n    \"status\": \"published\",\n    \"client\": 1,\n    \"service_subcategory\": 1,\n    \"created_at\": \"2024-01-15T10:30:00Z\",\n    \"published_at\": \"2024-01-15T10:30:00Z\"\n}\n```\n\n## Next Steps\n1. Order becomes visible to providers\n2. Providers can submit bids\n3. Monitor bids using 'Get Order Bids' endpoint\n4. Accept preferred bid when ready"
 					},
@@ -466,15 +619,23 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/orders/my/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "orders", "my", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"my",
+								""
+							]
 						},
 						"description": "Get current user's orders (as client)"
 					},
 					"response": []
 				},
 				{
-					"name": "Get Order Details",
+					"name": "Get My Order Detail",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -485,15 +646,23 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/orders/{{order_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "orders", "{{order_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{order_id}}",
+								""
+							]
 						},
 						"description": "Get specific order details"
 					},
 					"response": []
 				},
 				{
-					"name": "Update Order",
+					"name": "Update",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -508,19 +677,30 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Updated House Cleaning Service\",\n    \"description\": \"Updated description\",\n    \"location\": \"123 Updated St, City Center\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"country\": \"USA\",\n    \"postal_code\": \"10001\",\n    \"service_date\": \"2024-01-20\",\n    \"service_time\": \"14:00:00\",\n    \"urgency\": \"high\",\n    \"budget_min\": \"150.00\",\n    \"budget_max\": \"250.00\",\n    \"special_requirements\": \"Updated requirements\"\n}"
+							"raw": "{\n    \"title\": \"Updated House Cleaning Service\",\n    \"description\": \"Updated description\",\n    \"location\": \"123 Updated St, City Center\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"country\": \"USA\",\n    \"postal_code\": \"10001\",\n    \"service_date\": \"2024-01-20\",\n    \"service_time\": \"14:00:00\",\n    \"urgency\": \"high\",\n    \"budget_min\": \"150.00\",\n    \"budget_max\": \"300.00\",\n    \"special_requirements\": \"Updated requirements\",\n    \"status\": \"published\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/orders/{{order_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "orders", "{{order_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{order_id}}",
+								""
+							]
 						},
 						"description": "Update order details"
 					},
 					"response": []
 				},
 				{
-					"name": "Get Order Bids",
+					"name": "Get Job Applications",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -529,21 +709,38 @@
 								"value": "Token {{auth_token}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/orders/my-orders/bids/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "orders", "my-orders", "bids", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"my-orders",
+								"bids",
+								""
+							]
 						},
 						"description": "Get bids on user's orders"
 					},
 					"response": []
 				}
 			],
-			"description": "Order management for clients"
+			"description": "Jobs management for clients\n\n- Basic CRUD and nepoint to get jobs plplications from employees.\n    \n\nIn Update endploint status field is important: \"draft\" | \"published\""
 		},
 		{
-			"name": "💰 Bidding System (Provider)",
-			"description": "# Bidding System (Provider)\n\nThis folder contains endpoints for service providers to manage bids and find work.\n\n## Purpose\n- **Order Discovery**: Find available service orders\n- **Bid Management**: Submit, track, and manage bids\n- **Competition**: Compete with other providers\n- **Work Acquisition**: Secure service contracts\n\n## Provider Flow\n1. **Browse Orders**: Find suitable service orders\n2. **Submit Bid**: Propose service terms and pricing\n3. **Track Bids**: Monitor bid status and responses\n4. **Accept Assignment**: Get assigned to accepted orders\n5. **Complete Service**: Deliver service and get paid\n\n## Bid Statuses\n- `pending`: Bid submitted, awaiting client review\n- `accepted`: Client accepted the bid\n- `rejected`: Client rejected the bid\n- `withdrawn`: Provider withdrew the bid\n- `expired`: Bid expired (order closed)\n\n## Bid Components\n- `amount`: Proposed service price\n- `description`: Service approach and details\n- `estimated_duration`: Expected completion time\n- `terms_conditions`: Service terms\n- `is_negotiable`: Whether price is negotiable\n\n## Best Practices\n- **Competitive Pricing**: Research market rates\n- **Detailed Descriptions**: Explain your approach\n- **Realistic Timelines**: Provide accurate duration estimates\n- **Professional Terms**: Use clear, professional language\n- **Quick Response**: Submit bids promptly for better chances\n\n## Bid Limits\n- One bid per provider per order\n- Can withdraw bid before client decision\n- Cannot modify bid after submission\n- Bid expires when order closes",
+			"name": "Applications System",
 			"item": [
 				{
 					"name": "Get Available Orders",
@@ -556,16 +753,31 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/orders/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "orders", ""]
+							"raw": "{{base_url}}/api/v1/search/orders/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"search",
+								"orders",
+								""
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "{{search_query}}",
+									"disabled": true
+								}
+							]
 						},
 						"description": "Get all available orders (admin/provider view)"
 					},
 					"response": []
 				},
 				{
-					"name": "Create Bid",
+					"name": "Create Application",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -584,15 +796,24 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/orders/{{order_id}}/bids/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "orders", "{{order_id}}", "bids", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{order_id}}",
+								"bids",
+								""
+							]
 						},
 						"description": "# Create Bid\n\nSubmit a bid for a specific service order.\n\n## Purpose\n- **Service Proposal**: Propose your service terms\n- **Competition**: Compete with other providers\n- **Contract Opportunity**: Secure service contracts\n\n## Authentication\nRequires valid authentication token and service provider profile.\n\n## Required Fields\n- `amount`: Proposed service price (decimal, e.g., \"150.00\")\n- `description`: Detailed service description and approach\n\n## Optional Fields\n- `estimated_duration`: Expected completion time in hours\n- `terms_conditions`: Service terms and conditions\n- `is_negotiable`: Whether price is negotiable (boolean)\n\n## Bid Guidelines\n- **Competitive Pricing**: Research market rates\n- **Clear Description**: Explain your service approach\n- **Realistic Timeline**: Provide accurate duration estimates\n- **Professional Terms**: Use clear, professional language\n\n## Response\n- **201 Created**: Bid submitted successfully\n- **400 Bad Request**: Invalid data or missing required fields\n- **401 Unauthorized**: Authentication required\n- **403 Forbidden**: Service provider profile required\n- **404 Not Found**: Order not found or not available\n- **409 Conflict**: Bid already exists for this order\n\n## Example Response\n```json\n{\n    \"id\": 456,\n    \"order\": 123,\n    \"provider\": 1,\n    \"amount\": \"150.00\",\n    \"description\": \"Professional cleaning service with eco-friendly products\",\n    \"estimated_duration\": 4,\n    \"status\": \"pending\",\n    \"is_negotiable\": true,\n    \"created_at\": \"2024-01-15T10:30:00Z\"\n}\n```\n\n## Next Steps\n1. Client will review your bid\n2. Monitor bid status using 'Get My Bids'\n3. If accepted, you'll be assigned to the order\n4. If rejected, you can bid on other orders"
 					},
 					"response": []
 				},
 				{
-					"name": "Get My Bids",
+					"name": "Get My Applications",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -603,15 +824,23 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/orders/my-bids/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "orders", "my-bids", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"my-bids",
+								""
+							]
 						},
 						"description": "Get current user's bids"
 					},
 					"response": []
 				},
 				{
-					"name": "Accept Bid (Client)",
+					"name": "Accept Bid (Employer)",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -630,15 +859,25 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/orders/bids/{{bid_id}}/accept/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "orders", "bids", "{{bid_id}}", "accept", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"bids",
+								"{{bid_id}}",
+								"accept",
+								""
+							]
 						},
 						"description": "Accept a bid and create order assignment"
 					},
 					"response": []
 				},
 				{
-					"name": "Reject Bid (Client)",
+					"name": "Reject Bid (Employer)",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -657,8 +896,18 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/orders/bids/{{bid_id}}/reject/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "orders", "bids", "{{bid_id}}", "reject", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"bids",
+								"{{bid_id}}",
+								"reject",
+								""
+							]
 						},
 						"description": "Reject a bid"
 					},
@@ -684,15 +933,25 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/orders/bids/{{bid_id}}/withdraw/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "orders", "bids", "{{bid_id}}", "withdraw", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"bids",
+								"{{bid_id}}",
+								"withdraw",
+								""
+							]
 						},
 						"description": "Withdraw a bid (by provider)"
 					},
 					"response": []
 				}
 			],
-			"description": "Bidding system for service providers"
+			"description": "Bid means Application\n\nExployer can: accept, reject order\n\nProvider can: widthdraw current application order."
 		},
 		{
 			"name": "💬 Chat & Communication",
@@ -709,8 +968,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/chat/conversations/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "chat", "conversations", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"conversations",
+								""
+							]
 						},
 						"description": "Get user's chat conversations"
 					},
@@ -728,8 +995,17 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/chat/conversations/{{conversation_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "chat", "conversations", "{{conversation_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"conversations",
+								"{{conversation_id}}",
+								""
+							]
 						},
 						"description": "Get conversation details with messages"
 					},
@@ -755,8 +1031,18 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/chat/conversations/{{conversation_id}}/send/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "chat", "conversations", "{{conversation_id}}", "send", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"conversations",
+								"{{conversation_id}}",
+								"send",
+								""
+							]
 						},
 						"description": "Send a message to a chat room"
 					},
@@ -774,8 +1060,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/chat/websocket-info/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "chat", "websocket-info", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"websocket-info",
+								""
+							]
 						},
 						"description": "Get WebSocket connection info for real-time chat"
 					},
@@ -799,8 +1093,15 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/notifications/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "notifications", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								""
+							]
 						},
 						"description": "Get user notifications"
 					},
@@ -818,8 +1119,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/notifications/unread/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "notifications", "unread", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"unread",
+								""
+							]
 						},
 						"description": "Get unread notifications"
 					},
@@ -837,8 +1146,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/notifications/count/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "notifications", "count", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"count",
+								""
+							]
 						},
 						"description": "Get notification counts"
 					},
@@ -856,8 +1173,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/notifications/mark-all-read/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "notifications", "mark-all-read", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"mark-all-read",
+								""
+							]
 						},
 						"description": "Mark all notifications as read"
 					},
@@ -875,8 +1200,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/notifications/recent/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "notifications", "recent", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"recent",
+								""
+							]
 						},
 						"description": "Get recent notifications (last 7 days)"
 					},
@@ -887,7 +1220,6 @@
 		},
 		{
 			"name": "💳 Payment System",
-			"description": "# Payment System\n\nThis folder contains endpoints for managing payments, payment methods, and billing.\n\n## Purpose\n- **Payment Methods**: Manage credit cards, bank accounts, digital wallets\n- **Payment Processing**: Process payments for services\n- **Invoice Management**: Generate and track invoices\n- **Billing History**: View payment history and transactions\n\n## Payment Flow\n1. **Add Payment Method**: Set up credit card or bank account\n2. **Service Completion**: Provider completes service\n3. **Invoice Generation**: System generates invoice\n4. **Payment Processing**: Client pays invoice\n5. **Fund Distribution**: Provider receives payment\n\n## Payment Methods\n- `credit_card`: Credit card payments\n- `debit_card`: Debit card payments\n- `bank_transfer`: Direct bank transfers\n- `digital_wallet`: Digital wallet payments (PayPal, etc.)\n\n## Payment Statuses\n- `pending`: Payment initiated\n- `processing`: Payment being processed\n- `completed`: Payment successful\n- `failed`: Payment failed\n- `cancelled`: Payment cancelled\n- `refunded`: Payment refunded\n\n## Security Features\n- **Tokenization**: Card details are tokenized\n- **PCI Compliance**: Secure payment processing\n- **Fraud Protection**: Built-in fraud detection\n- **Encryption**: All payment data encrypted\n\n## Supported Currencies\n- USD (default)\n- EUR\n- GBP\n- CAD\n- AUD\n\n## Payment Limits\n- Minimum: $1.00\n- Maximum: $10,000.00\n- Daily limit: $50,000.00\n- Monthly limit: $500,000.00",
 			"item": [
 				{
 					"name": "Get Payment Methods",
@@ -901,8 +1233,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/payments/methods/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "payments", "methods", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"payments",
+								"methods",
+								""
+							]
 						},
 						"description": "Get user's payment methods"
 					},
@@ -928,8 +1268,17 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/payments/methods/create/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "payments", "methods", "create", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"payments",
+								"methods",
+								"create",
+								""
+							]
 						},
 						"description": "Add a new payment method"
 					},
@@ -947,8 +1296,15 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/payments/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "payments", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"payments",
+								""
+							]
 						},
 						"description": "Get user's payment history"
 					},
@@ -974,8 +1330,16 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/payments/create/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "payments", "create", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"payments",
+								"create",
+								""
+							]
 						},
 						"description": "Create a new payment"
 					},
@@ -993,8 +1357,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/payments/invoices/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "payments", "invoices", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"payments",
+								"invoices",
+								""
+							]
 						},
 						"description": "Get user's invoices"
 					},
@@ -1026,8 +1398,15 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/reviews/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "reviews", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								""
+							]
 						},
 						"description": "Create a review for completed service"
 					},
@@ -1045,8 +1424,15 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/reviews/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "reviews", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								""
+							]
 						},
 						"description": "Get all reviews"
 					},
@@ -1064,8 +1450,17 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/reviews/provider/{{provider_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "reviews", "provider", "{{provider_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								"provider",
+								"{{provider_id}}",
+								""
+							]
 						},
 						"description": "Get reviews for a specific provider"
 					},
@@ -1083,8 +1478,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/reviews/analytics/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "reviews", "analytics", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								"analytics",
+								""
+							]
 						},
 						"description": "Get review analytics"
 					},
@@ -1097,31 +1500,6 @@
 			"name": "🔍 Search & Discovery",
 			"item": [
 				{
-					"name": "Global Search",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Token {{auth_token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/v1/search/global/?q={{search_query}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "search", "global", ""],
-							"query": [
-								{
-									"key": "q",
-									"value": "{{search_query}}"
-								}
-							]
-						},
-						"description": "Global search across all content"
-					},
-					"response": []
-				},
-				{
 					"name": "Search Orders",
 					"request": {
 						"method": "GET",
@@ -1132,13 +1510,22 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/search/orders/?q={{search_query}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "search", "orders", ""],
+							"raw": "{{base_url}}/api/v1/search/orders/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"search",
+								"orders",
+								""
+							],
 							"query": [
 								{
 									"key": "q",
-									"value": "{{search_query}}"
+									"value": "{{search_query}}",
+									"disabled": true
 								}
 							]
 						},
@@ -1157,13 +1544,22 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/search/providers/?q={{search_query}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "search", "providers", ""],
+							"raw": "{{base_url}}/api/v1/search/providers/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"search",
+								"providers",
+								""
+							],
 							"query": [
 								{
 									"key": "q",
-									"value": "{{search_query}}"
+									"value": "{{search_query}}",
+									"disabled": true
 								}
 							]
 						},
@@ -1178,29 +1574,279 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/api/v1/users/providers/featured/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "users", "providers", "featured", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"providers",
+								"featured",
+								""
+							]
 						},
 						"description": "Get featured service providers"
 					},
 					"response": []
+				}
+			],
+			"description": "2 GET requests to load info about providers or orders.\n\nGet Featured Providers is related to prroivders with rating > **4.0**\n\nFor providers search only shown if is_available=true"
+		},
+		{
+			"name": "📱 Mobile App Features",
+			"item": [
+				{
+					"name": "Update Online Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"is_online\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/my/online-status/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "my", "online-status", ""]
+						},
+						"description": "# Update Online Status\n\nUpdate service provider's online availability status.\n\n## Purpose\n- **Real-time Status**: Update provider availability\n- **Last Seen**: Track when provider was last active\n- **Mobile Integration**: Essential for mobile app status indicators\n\n## Request Body\n```json\n{\n    \"is_online\": true\n}\n```\n\n## Response\n- **200 OK**: Status updated successfully\n- **404 Not Found**: Provider profile not found\n\n## Mobile App Usage\nUsed by mobile app to show provider online/offline status in real-time."
+					},
+					"response": []
 				},
 				{
-					"name": "Get All Providers",
+					"name": "Update Order Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"in_progress\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders/{{order_id}}/status/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders", "{{order_id}}", "status", ""]
+						},
+						"description": "# Update Order Status\n\nUpdate order status (assigned → in_progress → completed).\n\n## Purpose\n- **Status Tracking**: Track order progress through workflow\n- **Mobile Integration**: Essential for mobile app status updates\n- **Timestamps**: Automatically update relevant timestamps\n\n## Valid Status Transitions\n- `assigned` → `in_progress`\n- `in_progress` → `completed`\n\n## Request Body\n```json\n{\n    \"status\": \"in_progress\"\n}\n```\n\n## Response\n- **200 OK**: Status updated successfully\n- **400 Bad Request**: Invalid status transition\n\n## Mobile App Usage\nUsed by mobile app to update order status in real-time."
+					},
+					"response": []
+				},
+				{
+					"name": "Start Work on Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders/{{order_id}}/start-work/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders", "{{order_id}}", "start-work", ""]
+						},
+						"description": "# Start Work on Order\n\nStart work on assigned order (assigned → in_progress).\n\n## Purpose\n- **Work Initiation**: Mark order as started\n- **Timestamp Tracking**: Record start date and time\n- **Status Update**: Automatically update order status\n\n## Response\n- **200 OK**: Work started successfully\n- **400 Bad Request**: Order not assigned or already started\n\n## Mobile App Usage\nUsed by mobile app when provider starts working on an order."
+					},
+					"response": []
+				},
+				{
+					"name": "Complete Order with Photos",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "completion_photos",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "client_rating",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "client_review",
+									"value": "Excellent work!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders/{{order_id}}/complete/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders", "{{order_id}}", "complete", ""]
+						},
+						"description": "# Complete Order with Photos\n\nComplete order with completion photos and client rating.\n\n## Purpose\n- **Job Completion**: Mark order as completed\n- **Photo Upload**: Upload 'after' completion photos\n- **Client Rating**: Rate client after job completion\n- **Status Update**: Automatically update order status\n\n## Form Data\n- `completion_photos`: Array of photo files\n- `client_rating`: Rating from 1 to 5 (optional)\n- `client_review`: Review text (optional)\n\n## Response\n- **200 OK**: Order completed successfully\n- **400 Bad Request**: Order not in progress\n\n## Mobile App Usage\nUsed by mobile app for job completion workflow with photo upload."
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Order Attachments",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "attachments",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "description",
+									"value": "Before photos",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders/{{order_id}}/attachments/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders", "{{order_id}}", "attachments", ""]
+						},
+						"description": "# Upload Order Attachments\n\nUpload attachments to order (before photos, documents, etc.).\n\n## Purpose\n- **File Upload**: Upload photos and documents to orders\n- **Before Photos**: Upload 'before' photos for job reference\n- **Document Sharing**: Share relevant documents\n\n## Form Data\n- `attachments`: Array of files to upload\n- `description`: Optional description for attachments\n\n## Response\n- **201 Created**: Attachments uploaded successfully\n- **403 Forbidden**: Permission denied\n\n## Mobile App Usage\nUsed by mobile app to upload photos and documents to orders."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order Attachments",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{auth_token}}"
+							}
+						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/providers/",
+							"raw": "{{base_url}}/api/v1/orders/{{order_id}}/attachments/list/",
 							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "users", "providers", ""]
+							"path": ["api", "v1", "orders", "{{order_id}}", "attachments", "list", ""]
 						},
-						"description": "Get all available service providers"
+						"description": "# Get Order Attachments\n\nGet all attachments for an order.\n\n## Purpose\n- **File Retrieval**: Get all order attachments\n- **Photo Display**: Display 'before' photos in mobile app\n- **Document Access**: Access shared documents\n\n## Response\n- **200 OK**: Attachments retrieved successfully\n- **403 Forbidden**: Permission denied\n\n## Mobile App Usage\nUsed by mobile app to display order photos and documents."
+					},
+					"response": []
+				},
+				{
+					"name": "Rate Client",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rating\": 5,\n    \"review\": \"Great client to work with!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders/{{order_id}}/rate-client/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders", "{{order_id}}", "rate-client", ""]
+						},
+						"description": "# Rate Client\n\nRate client after job completion.\n\n## Purpose\n- **Client Rating**: Rate client from 1 to 5 stars\n- **Review System**: Write review about client\n- **Feedback**: Provide feedback for future reference\n\n## Request Body\n```json\n{\n    \"rating\": 5,\n    \"review\": \"Great client to work with!\"\n}\n```\n\n## Response\n- **200 OK**: Client rated successfully\n- **400 Bad Request**: Order not completed or already rated\n\n## Mobile App Usage\nUsed by mobile app for client rating after job completion."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order Assignment Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/orders/{{order_id}}/assignment/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "orders", "{{order_id}}", "assignment", ""]
+						},
+						"description": "# Get Order Assignment Details\n\nGet detailed assignment information for an order.\n\n## Purpose\n- **Assignment Info**: Get assignment details\n- **Provider Details**: Get assigned provider information\n- **Progress Tracking**: Track assignment progress\n\n## Response\n- **200 OK**: Assignment details retrieved\n- **404 Not Found**: Assignment not found\n\n## Mobile App Usage\nUsed by mobile app to display assignment details and progress."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Rating",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/{{user_id}}/rating/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "{{user_id}}", "rating", ""]
+						},
+						"description": "# Get User Rating\n\nGet user's average rating and review count.\n\n## Purpose\n- **Rating Display**: Show user's average rating\n- **Review Count**: Display total number of reviews\n- **Profile Info**: Essential for user profiles\n\n## Response\n- **200 OK**: User rating retrieved\n- **404 Not Found**: User not found\n\n## Mobile App Usage\nUsed by mobile app to display user ratings in profiles and order details."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assignment Reviews",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/reviews/assignments/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "reviews", "assignments", ""]
+						},
+						"description": "# Get Assignment Reviews\n\nGet review data from order assignments (client ratings).\n\n## Purpose\n- **Review Data**: Get comprehensive review data\n- **Client Ratings**: Access client ratings from assignments\n- **Provider Ratings**: Access provider ratings from reviews\n- **Unified View**: Combined data from both models\n\n## Response\n- **200 OK**: Review data retrieved\n- **401 Unauthorized**: Authentication required\n\n## Mobile App Usage\nUsed by mobile app to display comprehensive review data for orders."
 					},
 					"response": []
 				}
 			],
-			"description": "Search and discovery features"
+			"description": "Mobile app specific features for job portal:\n\n## Key Features\n- **Real-time Status**: Online/offline status updates\n- **Order Management**: Complete order lifecycle management\n- **Photo Upload**: Before/after photo management\n- **Rating System**: Bidirectional rating system\n- **Assignment Tracking**: Detailed assignment information\n\n## Mobile App Integration\nThese endpoints are specifically designed for mobile app integration and provide all necessary functionality for the job portal mobile application.\n\n## Workflow\n1. Update online status when app opens/closes\n2. Start work on assigned orders\n3. Upload photos and documents\n4. Complete orders with photos and ratings\n5. Track assignment progress and reviews"
 		},
 		{
 			"name": "📊 Analytics & Dashboard",
@@ -1217,8 +1863,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/analytics/dashboard/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "analytics", "dashboard", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"analytics",
+								"dashboard",
+								""
+							]
 						},
 						"description": "Get dashboard overview data"
 					},
@@ -1236,8 +1890,16 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/users/task-history/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "users", "task-history", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"task-history",
+								""
+							]
 						},
 						"description": "Get user's task history (orders created or worked on)"
 					},
@@ -1247,11 +1909,22 @@
 			"description": "Analytics and dashboard features"
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_token}}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
 				"type": "text/javascript",
+				"requests": {},
 				"exec": [
 					""
 				]
@@ -1261,6 +1934,7 @@
 			"listen": "test",
 			"script": {
 				"type": "text/javascript",
+				"requests": {},
 				"exec": [
 					""
 				]
@@ -1270,43 +1944,35 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://localhost:8000",
-			"type": "string"
+			"value": "http://194.32.141.155:8000"
 		},
 		{
 			"key": "auth_token",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
 			"key": "firebase_id_token",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
 			"key": "order_id",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		},
 		{
 			"key": "bid_id",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		},
 		{
 			"key": "conversation_id",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		},
 		{
 			"key": "provider_id",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		},
 		{
 			"key": "search_query",
-			"value": "cleaning",
-			"type": "string"
+			"value": "cleaning"
 		}
 	]
 }

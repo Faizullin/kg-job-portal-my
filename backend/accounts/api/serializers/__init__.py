@@ -4,7 +4,7 @@ from .profile_image_serializer import *
 
 __all__ = [
     'FireBaseAuthSerializer',
-    'UserProfileSerializer',
+    'UserDetailSerializer',
     'UserUpdateSerializer',
     'UserListSerializer',
     'ProfileImageUploadSerializer',

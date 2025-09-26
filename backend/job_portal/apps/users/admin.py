@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import UserProfile, ServiceProviderProfile, ClientProfile, ProviderStatistics
+from .models import (
+    UserProfile, ServiceProviderProfile, ClientProfile, ProviderStatistics,
+    MasterSkill, ServiceProviderSkill, PortfolioItem, Certificate, Profession
+)
 
 
 @admin.register(UserProfile)
@@ -46,11 +49,11 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 @admin.register(ServiceProviderProfile)
 class ServiceProviderProfileAdmin(admin.ModelAdmin):
-    list_display = ['user_profile', 'business_name', 'is_available', 'is_verified_provider', 'get_average_rating', 'get_total_reviews']
+    list_display = ['user_profile', 'business_name', 'is_available', 'is_verified_provider', 'is_top_master', 'get_average_rating', 'get_total_reviews']
     list_filter = ['is_verified_provider', 'is_available', 'created_at']
     search_fields = ['user_profile__user__first_name', 'user_profile__user__last_name', 'business_name']
     ordering = ['-created_at']
-    list_editable = ['is_verified_provider', 'is_available']
+    list_editable = ['is_verified_provider', 'is_available', 'is_top_master']
     raw_id_fields = ['user_profile', 'profession']
     
     fieldsets = (
@@ -148,5 +151,106 @@ class ProviderStatisticsAdmin(admin.ModelAdmin):
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('provider__user_profile__user')
+
+
+@admin.register(MasterSkill)
+class MasterSkillAdmin(admin.ModelAdmin):
+    list_display = ['name', 'category', 'is_active', 'created_at']
+    list_filter = ['category', 'is_active', 'created_at']
+    search_fields = ['name', 'description']
+    ordering = ['name']
+    list_editable = ['is_active']
+    raw_id_fields = ['category']
+    
+    fieldsets = (
+        ('Skill Information', {
+            'fields': ('name', 'description', 'category', 'is_active')
+        }),
+    )
+
+
+@admin.register(ServiceProviderSkill)
+class ServiceProviderSkillAdmin(admin.ModelAdmin):
+    list_display = ['service_provider', 'skill', 'proficiency_level', 'years_of_experience', 'is_primary_skill']
+    list_filter = ['proficiency_level', 'is_primary_skill', 'created_at']
+    search_fields = ['service_provider__user_profile__user__first_name', 'service_provider__user_profile__user__last_name', 'skill__name']
+    ordering = ['-created_at']
+    list_editable = ['proficiency_level', 'years_of_experience', 'is_primary_skill']
+    raw_id_fields = ['service_provider', 'skill']
+    
+    fieldsets = (
+        ('Provider & Skill', {
+            'fields': ('service_provider', 'skill')
+        }),
+        ('Proficiency Details', {
+            'fields': ('proficiency_level', 'years_of_experience', 'is_primary_skill')
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('service_provider__user_profile__user', 'skill')
+
+
+@admin.register(PortfolioItem)
+class PortfolioItemAdmin(admin.ModelAdmin):
+    list_display = ['title', 'service_provider', 'skill_used', 'is_featured', 'created_at']
+    list_filter = ['is_featured', 'skill_used', 'created_at']
+    search_fields = ['title', 'description', 'service_provider__user_profile__user__first_name', 'service_provider__user_profile__user__last_name']
+    ordering = ['-is_featured', '-created_at']
+    list_editable = ['is_featured']
+    raw_id_fields = ['service_provider', 'skill_used']
+    
+    fieldsets = (
+        ('Portfolio Information', {
+            'fields': ('service_provider', 'title', 'description', 'skill_used', 'is_featured')
+        }),
+        ('Media', {
+            'fields': ('image',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('service_provider__user_profile__user', 'skill_used')
+
+
+@admin.register(Certificate)
+class CertificateAdmin(admin.ModelAdmin):
+    list_display = ['name', 'service_provider', 'issuing_organization', 'issue_date', 'is_verified']
+    list_filter = ['is_verified', 'issue_date', 'created_at']
+    search_fields = ['name', 'issuing_organization', 'certificate_number', 'service_provider__user_profile__user__first_name', 'service_provider__user_profile__user__last_name']
+    ordering = ['-issue_date', '-created_at']
+    list_editable = ['is_verified']
+    raw_id_fields = ['service_provider']
+    
+    fieldsets = (
+        ('Certificate Information', {
+            'fields': ('service_provider', 'name', 'issuing_organization', 'certificate_number')
+        }),
+        ('Dates', {
+            'fields': ('issue_date', 'expiry_date')
+        }),
+        ('Files & Verification', {
+            'fields': ('certificate_file', 'is_verified')
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('service_provider__user_profile__user')
+
+
+@admin.register(Profession)
+class ProfessionAdmin(admin.ModelAdmin):
+    list_display = ['name', 'category', 'is_active', 'created_at']
+    list_filter = ['category', 'is_active', 'created_at']
+    search_fields = ['name', 'description']
+    ordering = ['name']
+    list_editable = ['is_active']
+    raw_id_fields = ['category']
+    
+    fieldsets = (
+        ('Profession Information', {
+            'fields': ('name', 'description', 'category', 'is_active')
+        }),
+    )
 
 

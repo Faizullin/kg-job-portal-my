@@ -16,9 +16,9 @@ import { useAuthStore } from "@/stores/auth-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2, UserPlus } from "lucide-react";
-import { toast } from "sonner";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -54,7 +54,7 @@ export function UserSignUpForm({
 }: UserSignUpFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { auth } = useAuthStore();
+  const auth = useAuthStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -71,7 +71,7 @@ export function UserSignUpForm({
 
     try {
       const result = await AuthClient.signUpWithEmailPassword(
-        data.email, 
+        data.email,
         data.password
       );
 

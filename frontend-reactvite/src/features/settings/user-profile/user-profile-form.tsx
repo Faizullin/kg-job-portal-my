@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -30,7 +30,7 @@ export function UserProfileForm() {
   const { data: profileData, isLoading } = useQuery({
     queryKey: ["job-portal-user-profile"],
     queryFn: async () => {
-      const response = await myApi.v1UsersProfileRetrieve();
+      const response = await myApi.v1UsersMyProfileAdvancedRetrieve();
       return response.data;
     },
     staleTime: 5 * 60 * 1000,
@@ -66,7 +66,9 @@ export function UserProfileForm() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: UserProfileFormData) => {
-      const response = await myApi.v1UsersProfilePartialUpdate({ patchedUserProfileUpdate: data });
+      const response = await myApi.v1UsersMyProfileAdvancedPartialUpdate({
+        patchedAdvancedUserProfileRetrieveUpdate: data,
+      });
       return response.data;
     },
     onSuccess: () => {

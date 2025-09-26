@@ -1,43 +1,56 @@
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import Group, Permission
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from utils.exceptions import StandardizedViewMixin
+from utils.permissions import HasServiceProviderProfile
 
 from ..models import (
-    ClientProfile, ServiceProviderProfile, UserProfile, 
-    MasterSkill, ServiceProviderSkill, PortfolioItem, Certificate,
-    Profession, ProviderStatistics
+    Certificate,
+    ClientProfile,
+    MasterSkill,
+    PortfolioItem,
+    Profession,
+    ProviderStatistics,
+    ServiceProviderProfile,
+    ServiceProviderSkill,
 )
 from .serializers import (
-    ClientUpdateSerializer,
-    ServiceProviderUpdateSerializer,
-    UserProfileDetailSerializer,
-    UserProfileUpdateSerializer,
-    AdvancedProfileSerializer,
-    AdvancedProfileUpdateSerializer,
-    MasterSkillSerializer,
-    ServiceProviderSkillSerializer,
-    PortfolioItemSerializer,
-    CertificateSerializer,
+    AdvancedUserProfileRetrieveUpdateSerializer,
+    CertificateCreateUpdateSerializer,
+    CertificateDetailSerializer,
+    ClientProfileCreateUpdateSerializer,
+    MasterSkillDetailSerializer,
+    PortfolioItemCreateUpdateSerializer,
+    PortfolioItemDetailSerializer,
     ProfessionSerializer,
     ProviderStatisticsSerializer,
-    ServiceProviderDetailSerializer,
+    ServiceProviderProfileDetailSerializer,
+    ServiceProviderProfileUpdateSerializer,
+    ServiceProviderSkillCreateUpdateSerializer,
+    ServiceProviderSkillDetailSerializer,
 )
-from django.contrib.auth.models import Group, Permission
-from utils.permissions import HasServiceProviderProfile
 
 
 def assign_client_permissions(user):
     """Assign client-specific permissions to user."""
-    client_group, created = Group.objects.get_or_create(name='client')
+    client_group, _ = Group.objects.get_or_create(name="client")
     user.groups.add(client_group)
-    
-    # Assign basic client permissions
     permissions = Permission.objects.filter(
-        codename__in=['add_order', 'view_order', 'change_order', 'view_bid', 'add_payment', 'view_payment']
+        codename__in=[
+            "add_order",
+            "view_order",
+            "change_order",
+            "view_bid",
+            "add_payment",
+            "view_payment",
+        ]
     )
     for perm in permissions:
         user.user_permissions.add(perm)
@@ -45,475 +58,329 @@ def assign_client_permissions(user):
 
 def assign_service_provider_permissions(user):
     """Assign service provider-specific permissions to user."""
-    provider_group, created = Group.objects.get_or_create(name='service_provider')
+    provider_group, _ = Group.objects.get_or_create(name="service_provider")
     user.groups.add(provider_group)
-    
-    # Assign basic service provider permissions
     permissions = Permission.objects.filter(
-        codename__in=['view_order', 'add_bid', 'view_bid', 'change_bid', 'view_payment']
+        codename__in=["view_order", "add_bid", "view_bid", "change_bid", "view_payment"]
     )
     for perm in permissions:
         user.user_permissions.add(perm)
 
 
-class UserProfileDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
-    serializer_class = UserProfileUpdateSerializer
+class AdvancedUserProfileRetrieveUpdateAPIView(
+    StandardizedViewMixin, generics.RetrieveUpdateAPIView
+):
     permission_classes = [IsAuthenticated]
-    
+    serializer_class = AdvancedUserProfileRetrieveUpdateSerializer
+
     def get_object(self):
-        return get_object_or_404(UserProfile, user=self.request.user)
-    
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return UserProfileDetailSerializer
-        return UserProfileUpdateSerializer
+        return self.request.user.job_portal_profile
 
 
-
-
-
-
-
-
-class ServiceProviderDetailApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
-    serializer_class = ServiceProviderDetailSerializer
-    permission_classes = [AllowAny]
-    
-    def get_queryset(self):
-        """Get provider with all related data."""
-        return ServiceProviderProfile.objects.select_related(
-            'user_profile__user', 
-            'statistics',
-            'profession__category'
-        ).prefetch_related(
-            'provider_skills__skill',
-            'portfolio_items',
-            'certificates'
-        )
-    
-    def get_object(self):
-        """Get provider by ID and ensure related models are initialized."""
-        provider = get_object_or_404(
-            self.get_queryset(),
-            pk=self.kwargs['pk']
-        )
-        # Ensure all related models are initialized
-        provider.initialize_related_models()
-        return provider
-    
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return ServiceProviderDetailSerializer
-        return ServiceProviderUpdateSerializer
-
-
-
-
-# Profile Creation Views
-class ClientProfileViewSet(StandardizedViewMixin, generics.GenericAPIView):
-    """Client profile viewset with create, retrieve, update, and partial_update methods."""
-    serializer_class = ClientUpdateSerializer
+class ClientProfileCreateAPIView(StandardizedViewMixin, generics.CreateAPIView):
+    serializer_class = ClientProfileCreateUpdateSerializer
     permission_classes = [IsAuthenticated]
-    
-    def get_object(self):
-        """Get client profile for authenticated user."""
-        try:
-            return ClientProfile.objects.get(user_profile__user=self.request.user)
-        except ClientProfile.DoesNotExist:
-            return None
-    
+
     def create(self, request, *args, **kwargs):
         """Create client profile."""
-        try:
-            user_profile = UserProfile.objects.get(user=request.user)
-        except UserProfile.DoesNotExist:
-            return Response({
-                'error': 'User must have a job portal profile first'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
+        user_profile = request.user.job_portal_profile
+
         if ClientProfile.objects.filter(user_profile=user_profile).exists():
-            return Response({
-                'error': 'User already has a client profile'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
+            raise ValidationError("Client profile already exists.")
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data.copy()
-        preferred_services = validated_data.pop('preferred_services', None)
-        
+        preferred_services = validated_data.pop("preferred_services", None)
         client_profile = ClientProfile.objects.create(
-            user_profile=user_profile,
-            **validated_data
+            user_profile=user_profile, **validated_data
         )
-        
         if preferred_services is not None:
             client_profile.preferred_services.set(preferred_services)
-        
-        # Automatically assign client permissions
+
         assign_client_permissions(request.user)
-        
-        # Update user type in profile
-        user_profile.save()
-        
-        return Response({
-            'message': 'Client profile created successfully',
-            'client_profile': ClientUpdateSerializer(client_profile).data
-        }, status=status.HTTP_201_CREATED)
-    
-    def retrieve(self, request, *args, **kwargs):
-        """Retrieve client profile."""
-        instance = self.get_object()
-        if not instance:
-            return Response({
-                'error': 'Client profile not found'
-            }, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = self.get_serializer(instance)
-        return Response({
-            'client_profile': serializer.data
-        }, status=status.HTTP_200_OK)
-    
-    def update(self, request, *args, **kwargs):
-        """Update client profile (full update)."""
-        instance = self.get_object()
-        if not instance:
-            return Response({
-                'error': 'Client profile not found'
-            }, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = self.get_serializer(instance, data=request.data, partial=False)
-        serializer.is_valid(raise_exception=True)
-        
-        # Extract many-to-many fields
-        validated_data = serializer.validated_data.copy()
-        preferred_services = validated_data.pop('preferred_services', None)
-        
-        # Update instance
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        
-        # Set many-to-many fields if provided
-        if preferred_services is not None:
-            instance.preferred_services.set(preferred_services)
-        
-        return Response({
-            'message': 'Client profile updated successfully',
-            'client_profile': ClientUpdateSerializer(instance).data
-        }, status=status.HTTP_200_OK)
-    
-    def partial_update(self, request, *args, **kwargs):
-        """Update client profile (partial update)."""
-        instance = self.get_object()
-        if not instance:
-            return Response({
-                'error': 'Client profile not found'
-            }, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        
-        # Extract many-to-many fields
-        validated_data = serializer.validated_data.copy()
-        preferred_services = validated_data.pop('preferred_services', None)
-        
-        # Update instance
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        
-        # Set many-to-many fields if provided
-        if preferred_services is not None:
-            instance.preferred_services.set(preferred_services)
-        
-        return Response({
-            'message': 'Client profile updated successfully',
-            'client_profile': ClientUpdateSerializer(instance).data
-        }, status=status.HTTP_200_OK)
+
+        return Response(
+            {"message": "Client profile created successfully."},
+            status=status.HTTP_201_CREATED,
+        )
 
 
-class ServiceProviderProfileRetrieveView(StandardizedViewMixin, generics.RetrieveAPIView):
-    """Retrieve service provider profile for authenticated user."""
-    serializer_class = ServiceProviderUpdateSerializer
+class ClientProfileRetrieveUpdateAPIView(
+    StandardizedViewMixin, generics.RetrieveUpdateAPIView
+):
+    serializer_class = ClientProfileCreateUpdateSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get_object(self):
-        """Get service provider profile for authenticated user."""
-        try:
-            return ServiceProviderProfile.objects.get(user_profile__user=self.request.user)
-        except ServiceProviderProfile.DoesNotExist:
-            return None
-    
-    def retrieve(self, request, *args, **kwargs):
-        """Retrieve service provider profile."""
-        instance = self.get_object()
-        if not instance:
-            return Response({
-                'error': 'Service provider profile not found'
-            }, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = self.get_serializer(instance)
-        return Response({
-            'provider_profile': serializer.data
-        }, status=status.HTTP_200_OK)
+        return self.request.user.job_portal_profile.client_profile
 
 
-class ServiceProviderProfileCreateView(StandardizedViewMixin, generics.CreateAPIView):
-    """Create service provider profile for authenticated user."""
-    serializer_class = ServiceProviderUpdateSerializer
+class ServiceProviderProfileCreateAPIView(
+    StandardizedViewMixin, generics.CreateAPIView
+):
+    serializer_class = ServiceProviderProfileUpdateSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def create(self, request, *args, **kwargs):
         """Create service provider profile."""
-        try:
-            user_profile = UserProfile.objects.get(user=request.user)
-        except UserProfile.DoesNotExist:
-            return Response({
-                'error': 'User must have a job portal profile first'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
+        user_profile = request.user.job_portal_profile
+
         if ServiceProviderProfile.objects.filter(user_profile=user_profile).exists():
-            return Response({
-                'error': 'User already has a service provider profile'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
+            raise ValidationError("Service provider profile already exists.")
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data.copy()
-        service_areas = validated_data.pop('service_areas', None)
-        services_offered = validated_data.pop('services_offered', None)
-        
-        # Create service provider profile
+        service_areas = validated_data.pop("service_areas", None)
+        services_offered = validated_data.pop("services_offered", None)
+
         provider_profile = ServiceProviderProfile.objects.create(
-            user_profile=user_profile,
-            **validated_data
+            user_profile=user_profile, **validated_data
         )
-        
-        # Set many-to-many relationships
+
         if service_areas is not None:
             provider_profile.service_areas.set(service_areas)
         if services_offered is not None:
             provider_profile.services_offered.set(services_offered)
-        
-        # Initialize all related models
-        provider_profile.initialize_related_models()
-        
-        # Automatically assign service provider permissions
+
         assign_service_provider_permissions(request.user)
-        
-        return Response({
-            'message': 'Service provider profile created successfully with initialized statistics',
-            'provider_profile': ServiceProviderUpdateSerializer(provider_profile).data
-        }, status=status.HTTP_201_CREATED)
+
+        return Response(
+            {"message": "Service provider profile created successfully."},
+            status=status.HTTP_201_CREATED,
+        )
 
 
-class ServiceProviderProfileUpdateView(StandardizedViewMixin, generics.UpdateAPIView):
-    """Update service provider profile for authenticated user."""
-    serializer_class = ServiceProviderUpdateSerializer
+class ServiceProviderProfileRetrieveUpdateAPIView(
+    StandardizedViewMixin, generics.RetrieveUpdateAPIView
+):
+    serializer_class = ServiceProviderProfileUpdateSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get_object(self):
-        """Get service provider profile for authenticated user."""
-        try:
-            return ServiceProviderProfile.objects.get(user_profile__user=self.request.user)
-        except ServiceProviderProfile.DoesNotExist:
-            return None
-    
-    def update(self, request, *args, **kwargs):
-        """Update service provider profile."""
-        instance = self.get_object()
-        if not instance:
-            return Response({
-                'error': 'Service provider profile not found'
-            }, status=status.HTTP_404_NOT_FOUND)
-        
-        partial = kwargs.pop('partial', False)
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        
-        # Extract many-to-many fields
-        validated_data = serializer.validated_data.copy()
-        service_areas = validated_data.pop('service_areas', None)
-        services_offered = validated_data.pop('services_offered', None)
-        
-        # Update existing profile
-        for field, value in validated_data.items():
-            setattr(instance, field, value)
-        instance.save()
-        
-        # Set many-to-many fields if provided
-        if service_areas is not None:
-            instance.service_areas.set(service_areas)
-        if services_offered is not None:
-            instance.services_offered.set(services_offered)
-        
-        return Response({
-            'message': 'Service provider profile updated successfully',
-            'provider_profile': ServiceProviderUpdateSerializer(instance).data
-        }, status=status.HTTP_200_OK)
+        return self.request.user.job_portal_profile.service_provider_profile
 
 
-class AdvancedProfileApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
-    serializer_class = AdvancedProfileSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_object(self):
-        return self.request.user
-    
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return AdvancedProfileSerializer
-        return AdvancedProfileUpdateSerializer
-    
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        
-        updated_user = serializer.save()
-        response_serializer = AdvancedProfileSerializer(updated_user)
-        return Response({
-            'message': 'Profile updated successfully',
-            'data': response_serializer.data
-        }, status=status.HTTP_200_OK)
-
-
-
-
-# Mobile App Specific Views
-
-
-
-
-
-
-class MasterSkillListApiView(StandardizedViewMixin, generics.ListAPIView):
-    """List available skills for service providers."""
-    serializer_class = MasterSkillSerializer
+class ServiceProviderRetrieveAPIView(StandardizedViewMixin, generics.RetrieveAPIView):
+    """Retrieve service provider details for public viewing."""
+    serializer_class = ServiceProviderProfileDetailSerializer
     permission_classes = [AllowAny]
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_fields = ['category', 'is_active']
-    search_fields = ['name', 'description']
-    
-    def get_queryset(self):
-        return MasterSkill.objects.filter(is_active=True).select_related('category')
 
-
-class ServiceProviderSkillApiView(StandardizedViewMixin, generics.ListCreateAPIView):
-    """Manage my service provider skills."""
-    serializer_class = ServiceProviderSkillSerializer
-    permission_classes = [IsAuthenticated, HasServiceProviderProfile]
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['is_primary_skill', 'proficiency_level']
-    ordering_fields = ['is_primary_skill', 'years_of_experience']
-    ordering = ['-is_primary_skill', '-years_of_experience']
-    
     def get_queryset(self):
-        """Get skills for current user's service provider profile."""
-        try:
-            provider_profile = ServiceProviderProfile.objects.get(
-                user_profile__user=self.request.user
-            )
-            return ServiceProviderSkill.objects.filter(
-                service_provider=provider_profile
-            ).select_related('skill')
-        except ServiceProviderProfile.DoesNotExist:
-            return ServiceProviderSkill.objects.none()
-    
-    def perform_create(self, serializer):
-        """Create skill for current user's provider profile."""
-        provider_profile = ServiceProviderProfile.objects.get(
-            user_profile__user=self.request.user
+        return ServiceProviderProfile.objects.filter(
+            is_available=True
+        ).select_related(
+            "user_profile__user",
+            "profession"
+        ).prefetch_related(
+            "provider_skills__skill",
+            "portfolio_items",
+            "certificates",
+            "statistics"
         )
+
+
+class ServiceProviderSkillAPIView(StandardizedViewMixin, generics.ListCreateAPIView):
+    """List and create service provider skills."""
+    serializer_class = ServiceProviderSkillDetailSerializer
+    permission_classes = [IsAuthenticated, HasServiceProviderProfile]
+
+    def get_queryset(self):
+        provider_profile = self.request.user.job_portal_profile.service_provider_profile
+        return ServiceProviderSkill.objects.filter(
+            service_provider=provider_profile
+        ).select_related("skill")
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return ServiceProviderSkillCreateUpdateSerializer
+        return ServiceProviderSkillDetailSerializer
+
+    def perform_create(self, serializer):
+        provider_profile = self.request.user.job_portal_profile.service_provider_profile
         serializer.save(service_provider=provider_profile)
 
 
-class PortfolioItemApiView(StandardizedViewMixin, generics.ListCreateAPIView):
-    """Manage my service provider portfolio items."""
-    serializer_class = PortfolioItemSerializer
-    permission_classes = [IsAuthenticated, HasServiceProviderProfile]
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['is_featured', 'skill_used']
-    ordering_fields = ['is_featured', 'created_at']
-    ordering = ['-is_featured', '-created_at']
-    
+class MasterSkillListAPIView(StandardizedViewMixin, generics.ListAPIView):
+    """List all available master skills."""
+    serializer_class = MasterSkillDetailSerializer
+    permission_classes = [AllowAny]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ["category", "is_active"]
+    search_fields = ["name", "description"]
+    ordering_fields = ["name", "created_at"]
+    ordering = ["name"]
+
     def get_queryset(self):
-        """Get portfolio items for current user's service provider profile."""
-        try:
-            provider_profile = ServiceProviderProfile.objects.get(
-                user_profile__user=self.request.user
-            )
-            return PortfolioItem.objects.filter(
-                service_provider=provider_profile
-            ).select_related('skill_used')
-        except ServiceProviderProfile.DoesNotExist:
-            return PortfolioItem.objects.none()
-    
+        return MasterSkill.objects.filter(is_active=True).select_related("category")
+
+
+class PortfolioItemListCreateAPIView(
+    StandardizedViewMixin, generics.ListCreateAPIView
+):
+    """List and create portfolio items."""
+    permission_classes = [IsAuthenticated, HasServiceProviderProfile]
+
+    def get_queryset(self):
+        provider_profile = self.request.user.job_portal_profile.service_provider_profile
+        return PortfolioItem.objects.filter(
+            service_provider=provider_profile
+        ).select_related("skill_used")
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return PortfolioItemCreateUpdateSerializer
+        return PortfolioItemDetailSerializer
+
     def perform_create(self, serializer):
-        """Create portfolio item for current user's provider profile."""
-        provider_profile = ServiceProviderProfile.objects.get(
-            user_profile__user=self.request.user
-        )
+        provider_profile = self.request.user.job_portal_profile.service_provider_profile
         serializer.save(service_provider=provider_profile)
 
 
-class CertificateApiView(StandardizedViewMixin, generics.ListCreateAPIView):
-    """Manage my service provider certificates."""
-    serializer_class = CertificateSerializer
+class PortfolioItemRetrieveUpdateDestroyAPIView(
+    StandardizedViewMixin, generics.RetrieveUpdateDestroyAPIView
+):
+    """Retrieve, update, and delete portfolio items."""
     permission_classes = [IsAuthenticated, HasServiceProviderProfile]
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['is_verified']
-    ordering_fields = ['is_verified', 'issue_date']
-    ordering = ['-is_verified', '-issue_date']
-    
+
     def get_queryset(self):
-        """Get certificates for current user's service provider profile."""
-        try:
-            provider_profile = ServiceProviderProfile.objects.get(
-                user_profile__user=self.request.user
-            )
-            return Certificate.objects.filter(
-                service_provider=provider_profile
-            )
-        except ServiceProviderProfile.DoesNotExist:
-            return Certificate.objects.none()
-    
+        provider_profile = self.request.user.job_portal_profile.service_provider_profile
+        return PortfolioItem.objects.filter(
+            service_provider=provider_profile
+        ).select_related("skill_used")
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return PortfolioItemDetailSerializer
+        return PortfolioItemCreateUpdateSerializer
+
+
+class CertificateListCreateAPIView(StandardizedViewMixin, generics.ListCreateAPIView):
+    """List and create certificates."""
+    permission_classes = [IsAuthenticated, HasServiceProviderProfile]
+
+    def get_queryset(self):
+        provider_profile = self.request.user.job_portal_profile.service_provider_profile
+        return Certificate.objects.filter(service_provider=provider_profile)
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return CertificateCreateUpdateSerializer
+        return CertificateDetailSerializer
+
     def perform_create(self, serializer):
-        """Create certificate for current user's provider profile."""
-        provider_profile = ServiceProviderProfile.objects.get(
-            user_profile__user=self.request.user
-        )
+        provider_profile = self.request.user.job_portal_profile.service_provider_profile
         serializer.save(service_provider=provider_profile)
 
 
+class CertificateRetrieveUpdateDestroyAPIView(
+    StandardizedViewMixin, generics.RetrieveUpdateDestroyAPIView
+):
+    """Retrieve, update, and delete certificates."""
+    permission_classes = [IsAuthenticated, HasServiceProviderProfile]
+
+    def get_queryset(self):
+        provider_profile = self.request.user.job_portal_profile.service_provider_profile
+        return Certificate.objects.filter(service_provider=provider_profile)
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return CertificateDetailSerializer
+        return CertificateCreateUpdateSerializer
 
 
-
-
-class ProfessionListApiView(StandardizedViewMixin, generics.ListAPIView):
-    """List available professions."""
+class ProfessionListAPIView(StandardizedViewMixin, generics.ListAPIView):
+    """List all available professions."""
     serializer_class = ProfessionSerializer
     permission_classes = [AllowAny]
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_fields = ['category', 'is_active']
-    search_fields = ['name', 'description']
-    
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ["category", "is_active"]
+    search_fields = ["name", "description"]
+    ordering_fields = ["name", "created_at"]
+    ordering = ["name"]
+
     def get_queryset(self):
-        return Profession.objects.filter(is_active=True).select_related('category')
+        return Profession.objects.filter(is_active=True).select_related("category")
 
 
-class ProviderStatisticsApiView(StandardizedViewMixin, generics.RetrieveUpdateAPIView):
-    """Manage my provider statistics."""
+class ProviderStatisticsRetrieveAPIView(
+    StandardizedViewMixin, generics.RetrieveAPIView
+):
+    """Retrieve provider statistics."""
     serializer_class = ProviderStatisticsSerializer
     permission_classes = [IsAuthenticated, HasServiceProviderProfile]
-    
+
     def get_object(self):
-        """Get statistics for current user's provider profile."""
-        provider_profile = ServiceProviderProfile.objects.get(
-            user_profile__user=self.request.user
-        )
+        provider_profile = self.request.user.job_portal_profile.service_provider_profile
         statistics, created = ProviderStatistics.objects.get_or_create(
             provider=provider_profile
         )
         return statistics
+
+
+class UpdateOnlineStatusAPIView(StandardizedViewMixin, APIView):
+    """Update user's online status."""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Update online status for service provider."""
+        is_online = request.data.get('is_online', False)
+        
+        try:
+            provider_profile = request.user.job_portal_profile.service_provider_profile
+            provider_profile.is_online = is_online
+            provider_profile.last_seen = timezone.now()
+            provider_profile.save(update_fields=['is_online', 'last_seen'])
+            
+            return Response({
+                'message': 'Online status updated successfully',
+                'is_online': is_online,
+                'last_seen': provider_profile.last_seen
+            }, status=status.HTTP_200_OK)
+            
+        except AttributeError:
+            return Response({
+                'error': 'Service provider profile not found'
+            }, status=status.HTTP_404_NOT_FOUND)
+
+
+class GetUserRatingAPIView(StandardizedViewMixin, APIView):
+    """Get user rating (for clients)."""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        """Get user rating."""
+        try:
+            from job_portal.apps.orders.models import OrderAssignment
+            
+            # Get user's client profile
+            user_profile = request.user.job_portal_profile
+            client_profile = user_profile.client_profile
+            
+            # Calculate average rating from completed orders
+            assignments = OrderAssignment.objects.filter(
+                order__client=client_profile,
+                client_rating__isnull=False
+            )
+            
+            if assignments.exists():
+                avg_rating = assignments.aggregate(
+                    avg_rating=models.Avg('client_rating')
+                )['avg_rating']
+                total_reviews = assignments.count()
+            else:
+                avg_rating = 0.0
+                total_reviews = 0
+            
+            return Response({
+                'user_id': request.user.id,
+                'username': request.user.username,
+                'average_rating': round(float(avg_rating), 1),
+                'total_reviews': total_reviews
+            }, status=status.HTTP_200_OK)
+            
+        except AttributeError:
+            return Response({
+                'error': 'Client profile not found'
+            }, status=status.HTTP_404_NOT_FOUND)

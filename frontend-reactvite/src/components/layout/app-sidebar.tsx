@@ -15,12 +15,11 @@ import { type SidebarData } from "./types";
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout();
-  const { auth } = useAuthStore();
+  const auth = useAuthStore();
 
   // Memoize user data to prevent unnecessary re-computations
   const user = useMemo(() => {
     const backendUser = auth.user;
-
     return backendUser
       ? {
         name: backendUser.username || backendUser.email.split("@")[0] || "User",

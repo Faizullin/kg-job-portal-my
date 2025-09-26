@@ -5,7 +5,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { toast } from "sonner";
 import { DirectionProvider } from "./context/direction-provider";
-import { FirebaseAuthProvider } from "./context/firebase-auth-provider";
 import { FontProvider } from "./context/font-provider";
 import { ThemeProvider } from "./context/theme-provider";
 import { handleServerError } from "./lib/handle-server-error";
@@ -48,7 +47,7 @@ const queryClient = new QueryClient({
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {
           toast.error("Session expired!");
-          useAuthStore.getState().auth.reset();
+          useAuthStore.getState().reset();
           const redirect = `${router.history.location.href}`;
           router.navigate({ to: "/sign-in", search: { redirect } });
         }
@@ -86,9 +85,7 @@ createRoot(document.getElementById("root")!).render(
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <FontProvider>
           <DirectionProvider>
-            <FirebaseAuthProvider >
-              <RouterProvider router={router} />
-            </FirebaseAuthProvider>
+            <RouterProvider router={router} />
           </DirectionProvider>
         </FontProvider>
       </ThemeProvider>

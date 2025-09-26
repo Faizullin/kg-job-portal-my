@@ -378,7 +378,7 @@ export function MasterDashboard() {
 const masterTopNav = [
   {
     title: "Главная",
-    href: "/dashboard/master",
+    href: "/app/master",
     isActive: true,
     disabled: false,
   },

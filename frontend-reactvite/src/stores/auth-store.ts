@@ -1,5 +1,6 @@
-import type { ServiceProvider, UserProfile } from "@/lib/api/axios-client";
-import { type User } from "firebase/auth";
+import type { UserProfile } from "@/lib/api/axios-client";
+import myApi from "@/lib/api/my-api";
+import { type User as FirebaseUser } from "firebase/auth";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -8,169 +9,101 @@ type AuthUser = UserProfile;
 export type ProfileType = 'client' | 'service_provider';
 
 interface AuthState {
+  token: string | null;
+  setToken: (token: string | null) => void;
+  isAuthenticated: boolean;
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
   user: AuthUser | null;
-  firebaseUser: User | null;
   isLoading: boolean;
-  currentProfile: ProfileType | null;
-  clientProfile: Client | null;
-  serviceProviderProfile: ServiceProvider | null;
-  setUser: (user: AuthUser | null) => void;
-  setFirebaseUser: (user: User | null) => void;
-  setLoading: (loading: boolean) => void;
-  setCurrentProfile: (profile: ProfileType | null) => void;
-  setClientProfile: (profile: Client | null) => void;
-  setServiceProviderProfile: (profile: ServiceProvider | null) => void;
+  setIsLoading: (loading: boolean) => void;
+  currentProfileType: ProfileType | null;
+  setCurrentProfileType: (profile: ProfileType | null) => void;
   reset: () => void;
-  authenticateWithBackend: (firebaseUser: User) => Promise<void>;
-  loadFromStorage: () => void;
-  isAuthenticated: () => boolean;
+  authenticateWithBackend: (firebaseUser: FirebaseUser) => Promise<void>;
+  getProfile: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
-  //   (set) => {
-  //   return {
-  //     auth: {
-  //       user: null,
-  //       userProfile: null,
-  //       firebaseUser: null,
-  //       isLoading: false,
-  //       isProfileLoading: false,
-  //       currentProfile: null,
-  //       clientProfile: null,
-  //       serviceProviderProfile: null,
-  //       setUser: (user) =>
-  //         set((state) => ({ ...state, auth: { ...state.auth, user } })),
-  //       setFirebaseUser: (firebaseUser) =>
-  //         set((state) => ({ ...state, auth: { ...state.auth, firebaseUser } })),
-  //       setLoading: (isLoading) =>
-  //         set((state) => ({ ...state, auth: { ...state.auth, isLoading } })),
-  //       setCurrentProfile: (currentProfile) => {
-  //         myApi.setCurrentProfile(currentProfile);
-  //         set((state) => ({ ...state, auth: { ...state.auth, currentProfile } }));
-  //       },
-  //       setClientProfile: (clientProfile) => {
-  //         myApi.setClientProfile(clientProfile);
-  //         set((state) => ({ ...state, auth: { ...state.auth, clientProfile } }));
-  //       },
-  //       setServiceProviderProfile: (serviceProviderProfile) => {
-  //         myApi.setServiceProviderProfile(serviceProviderProfile);
-  //         set((state) => ({ ...state, auth: { ...state.auth, serviceProviderProfile } }));
-  //       },
-  //       reset: () =>
-  //         set((state) => {
-  //           myApi.clearAuthData();
-  //           return {
-  //             ...state,
-  //             auth: {
-  //               ...state.auth,
-  //               user: null,
-  //               userProfile: null,
-  //               firebaseUser: null,
-  //               isLoading: false,
-  //               isProfileLoading: false,
-  //               currentProfile: null,
-  //               clientProfile: null,
-  //               serviceProviderProfile: null,
-  //             },
-  //           };
-  //         }),
-  //       loadFromStorage: () => {
-  //         const authData = myApi.getAuthData();
-  //         if (authData?.user) {
-  //           set((state) => {
-  //             // Only update if user is not already loaded
-  //             if (!state.auth.user) {
-  //               return {
-  //                 ...state,
-  //                 auth: {
-  //                   ...state.auth,
-  //                   user: authData.user,
-  //                   currentProfile: authData.currentProfile || null,
-  //                   clientProfile: authData.clientProfile || null,
-  //                   serviceProviderProfile: authData.serviceProviderProfile || null,
-  //                 },
-  //               };
-  //             }
-  //             return state;
-  //           });
-  //         }
-  //       },
-  //       isAuthenticated: () => {
-  //         return myApi.isAuthenticated();
-  //       },
-  //       authenticateWithBackend: async (firebaseUser: User) => {
-  //         set((state) => ({
-  //           ...state,
-  //           auth: { ...state.auth, isLoading: true },
-  //         }));
+  persist((set) => ({
+    token: null,
+    setToken: (token) =>
+      set((state) => ({ ...state, token })),
+    isAuthenticated: false,
+    setIsAuthenticated: (isAuthenticated) =>
+      set((state) => ({ ...state, isAuthenticated })),
+    user: null,
+    isLoading: false,
+    setIsLoading: (isLoading) =>
+      set((state) => ({ ...state, isLoading })),
+    currentProfileType: null,
+    setCurrentProfileType: (currentProfileType) => {
+      set((state) => ({ ...state, currentProfileType }))
+    },
+    reset: () =>
+      set(() => {
+        return {
+          token: null,
+          user: null,
+          currentProfileType: null,
+          firebaseUser: null,
+          isLoading: false,
+        };
+      }),
+    authenticateWithBackend: async (firebaseUser: FirebaseUser) => {
+      set((state) => ({
+        ...state,
+        isLoading: true,
+      }));
 
-  //         try {
-  //           const result = await myApi.authenticateWithBackend(firebaseUser);
-
-  //           if (result.success) {
-  //             const authData = myApi.getAuthData();
-  //             if (authData?.user) {
-  //               set((state) => ({
-  //                 ...state,
-  //                 auth: {
-  //                   ...state.auth,
-  //                   user: authData.user!,
-  //                 },
-  //               }));
-  //             } else {
-  //               set((state) => ({
-  //                 ...state,
-  //                 auth: { ...state.auth, user: null },
-  //               }));
-  //             }
-  //           } else {
-  //             throw new Error(result.error);
-  //           }
-  //         } catch (error) {
-  //           console.error("Backend authentication failed:", error);
-  //           set((state) => ({
-  //             ...state,
-  //             auth: { ...state.auth, isLoading: false },
-  //           }));
-  //           throw error;
-  //         }
-  //       },
-  //     },
-  //   };
-  // }
-  persist<AuthState>(
-    (set) => ({
-      token: null,
-      profile: null,
-      isAuth: false,
-      errors: null,
-      setToken: (token: string) =>
-        set((state) => ({
-          token,
-          isAuth: !!token,
-        })),
-      register: async (user: createUser) => {
-        try {
-          const resRegister = await registerRequest(user);
-          set(() => ({
-            token: resRegister.data.token,
-            isAuth: true,
+      try {
+        const token = await firebaseUser.getIdToken();
+        const response = await myApi.axios.post<{
+          user: UserProfile;
+          token: string;
+          message: string;
+        }>("/api/v1/auth/firebase/", {
+          id_token: token,
+        });
+        const authData = response.data;
+        if (authData.user) {
+          set((state) => ({
+            ...state,
+            user: authData.user,
+            token: authData.token,
+            isLoading: false,
+            isAuthenticated: true,
           }));
-        } catch (error) {
-          set(() => ({ errors: error.response.data }));
+        } else {
+          set((state) => ({
+            ...state,
+            user: null,
+            token: null,
+            isLoading: false,
+            isAuthenticated: false,
+          }));
         }
-      },
-      getProfile: async () => {
-        const resProfile = await profileRequest();
-        set(() => ({
-          profile: resProfile.data,
+      } catch (error) {
+        console.error("Backend authentication failed:", error);
+        set((state) => ({
+          ...state,
+          isLoading: false,
         }));
-      },
-      logout: () => set(() => ({ token: null, profile: null, isAuth: false })),
-      cleanErrors: () => set(() => ({ errors: null })),
-    }),
-    {
-      name: "auth",
-    }
-  )
+        throw error;
+      }
+    },
+    getProfile: async () => {
+      try {
+        const profile = await myApi.v1ProfileRetrieve();
+        set((state) => ({
+          ...state,
+          profile: profile,
+        }));
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+        throw error;
+      }
+    },
+  }), {
+    name: "auth-store",
+  }),
 );

@@ -32,8 +32,8 @@ export function ProfileForm() {
   const loadUserProfileAdvancedQuery = useQuery({
     queryKey: [loadUserProfileAdvancedQueryKey],
     queryFn: async () => {
-      const response = await myApi.v1UsersProfileAdvancedRetrieve();
-      return response.data.user_data;
+      const response = await myApi.v1UsersMyProfileAdvancedRetrieve();
+      return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 1,
@@ -52,7 +52,7 @@ export function ProfileForm() {
 
   // Update form when profile data loads
   useEffect(() => {
-    const profileData = loadUserProfileAdvancedQuery.data;
+    const profileData = loadUserProfileAdvancedQuery.data?.user;
     if (profileData) {
       form.reset({
         username: profileData.username || "",
@@ -99,7 +99,7 @@ export function ProfileForm() {
   };
 
   const fullName = useMemo(() => {
-    return `${loadUserProfileAdvancedQuery.data?.first_name || ""} ${loadUserProfileAdvancedQuery.data?.last_name || ""}`;
+    return `${loadUserProfileAdvancedQuery.data?.user.first_name || ""} ${loadUserProfileAdvancedQuery.data?.user.last_name || ""}`;
   }, [loadUserProfileAdvancedQuery.data]);
 
   if (loadUserProfileAdvancedQuery.isLoading) {
@@ -123,7 +123,7 @@ export function ProfileForm() {
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-4">
                   <Avatar className="size-16">
-                    <AvatarImage src={loadUserProfileAdvancedQuery.data?.photo_url ?? undefined} className="object-cover" />
+                    <AvatarImage src={loadUserProfileAdvancedQuery.data?.user.photo_url ?? undefined} className="object-cover" />
                     <AvatarFallback>{(fullName || "").slice(0, 1)}</AvatarFallback>
                   </Avatar>
                   <div className="flex items-center gap-2">

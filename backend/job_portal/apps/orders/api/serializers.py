@@ -47,10 +47,12 @@ class OrderSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSer
 
 
 class OrderCreateSerializer(AbstractTimestampedModelSerializer):
+    id = serializers.IntegerField(required=False)
+    
     class Meta:
         model = Order
         fields = [
-            'service_subcategory', 'title', 'description', 'location', 'city', 'state',
+            'id','service_subcategory', 'title', 'description', 'location', 'city', 'state',
             'country', 'postal_code', 'service_date', 'service_time', 'urgency',
             'budget_min', 'budget_max', 'special_requirements'
         ]

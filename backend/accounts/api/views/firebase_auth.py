@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from job_portal.apps.users.models import UserProfile
 from utils.helpers import get_client_ip
-from ..serializers import FireBaseAuthSerializer, FirebaseAuthResponseSerializer, UserProfileSerializer
+from ..serializers import FireBaseAuthSerializer, FirebaseAuthResponseSerializer, UserDetailSerializer
 from ...models import UserModel
 import uuid
 from django.utils.text import slugify
@@ -51,7 +51,7 @@ class FirebaseAuthView(APIView):
                 token, created = Token.objects.get_or_create(user=user_profile)
 
                 # Use UserProfileSerializer for consistent response
-                user_serializer = UserProfileSerializer(user_profile)
+                user_serializer = UserDetailSerializer(user_profile)
                 response_data = {
                     'token': token.key,
                     'user': user_serializer.data,
@@ -83,7 +83,7 @@ class FirebaseAuthView(APIView):
                 token, created = Token.objects.get_or_create(user=user_profile)
 
                 # Use UserProfileSerializer for consistent response
-                user_serializer = UserProfileSerializer(user_profile)
+                user_serializer = UserDetailSerializer(user_profile)
                 response_data = {
                     'token': token.key,
                     'user': user_serializer.data,

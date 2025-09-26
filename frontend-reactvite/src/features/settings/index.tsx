@@ -1,15 +1,15 @@
-import { Outlet } from "@tanstack/react-router";
-import { Monitor, Bell, Palette, UserCog, Briefcase, ShoppingCart, Shield, Users, User } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { ConfigDrawer } from "@/components/config-drawer";
 import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { SidebarNav } from "./_components/sidebar-nav";
+import { Separator } from "@/components/ui/separator";
 import { useAuthStore } from "@/stores/auth-store";
+import { Outlet } from "@tanstack/react-router";
+import { Bell, Briefcase, Monitor, Palette, Shield, ShoppingCart, User, UserCog, Users } from "lucide-react";
 import { useMemo } from "react";
+import { SidebarNav } from "./_components/sidebar-nav";
 
 // Base sidebar navigation items
 const getBaseSidebarItems = () => [
@@ -87,13 +87,13 @@ const getRoleBasedSidebarItems = (user: any) => {
 };
 
 export function Settings() {
-  const { auth } = useAuthStore();
+  const auth = useAuthStore();
 
   // Memoize sidebar items based on user roles and permissions
   const sidebarNavItems = useMemo(() => {
     const baseItems = getBaseSidebarItems();
     const roleBasedItems = getRoleBasedSidebarItems(auth.user);
-    
+
     return [
       ...baseItems,
       ...roleBasedItems.filter(item => item.visible)

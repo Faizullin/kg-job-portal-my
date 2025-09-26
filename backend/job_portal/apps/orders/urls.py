@@ -8,7 +8,10 @@ from .api.views import (
     BidApiView, BidCreateApiView, BidDetailApiView,
     BidAcceptApiView, BidRejectApiView, BidWithdrawApiView,
     OrderAssignmentApiView, OrderAssignmentDetailApiView,
-    MyAssignmentsView, MyOrderAssignmentsView
+    MyAssignmentsView, MyOrderAssignmentsView,
+    UpdateOrderStatusAPIView, CompleteOrderAPIView,
+    UploadOrderAttachmentsAPIView, GetOrderAttachmentsAPIView,
+    RateClientAPIView, StartWorkAPIView, GetOrderAssignmentAPIView
 )
 
 app_name = 'orders'
@@ -43,4 +46,19 @@ urlpatterns = [
     # My Assignments (User-specific)
     path('api/v1/orders/my-assignments/', MyAssignmentsView.as_view(), name='my-assignments'),
     path('api/v1/orders/my-orders/assignments/', MyOrderAssignmentsView.as_view(), name='my-order-assignments'),
+    
+    # Order Status Management (Mobile App Features)
+    path('api/v1/orders/<int:pk>/status/', UpdateOrderStatusAPIView.as_view(), name='update-order-status'),
+    path('api/v1/orders/<int:pk>/complete/', CompleteOrderAPIView.as_view(), name='complete-order'),
+    path('api/v1/orders/<int:pk>/start-work/', StartWorkAPIView.as_view(), name='start-work'),
+    
+    # Order Attachments (Mobile App Features)
+    path('api/v1/orders/<int:pk>/attachments/', UploadOrderAttachmentsAPIView.as_view(), name='upload-order-attachments'),
+    path('api/v1/orders/<int:pk>/attachments/list/', GetOrderAttachmentsAPIView.as_view(), name='get-order-attachments'),
+    
+    # Client Rating (Mobile App Features)
+    path('api/v1/orders/<int:pk>/rate-client/', RateClientAPIView.as_view(), name='rate-client'),
+    
+    # Order Assignment Details (Mobile App Features)
+    path('api/v1/orders/<int:pk>/assignment/', GetOrderAssignmentAPIView.as_view(), name='get-order-assignment'),
 ]

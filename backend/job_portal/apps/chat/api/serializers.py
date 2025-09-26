@@ -3,7 +3,7 @@ from utils.serializers import (
     AbstractTimestampedModelSerializer,
     AbstractChoiceFieldSerializerMixin,
 )
-from ..models import ChatRoom, ChatMessage, ChatParticipant
+from ..models import ChatRoom, ChatMessage
 
 
 
@@ -11,12 +11,13 @@ from ..models import ChatRoom, ChatMessage, ChatParticipant
 class MessageSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin):
     sender_name = serializers.SerializerMethodField()
     message_type_display = serializers.SerializerMethodField()
+    attachment_url = serializers.SerializerMethodField()
     
     class Meta:
         model = ChatMessage
         fields = [
             'id', 'chat_room', 'sender', 'sender_name', 'content', 'message_type',
-            'message_type_display', 'attachment', 'attachment_name', 'attachment_size',
+            'message_type_display', 'attachment', 'attachment_url', 'attachment_name', 'attachment_size',
             'is_read', 'read_at', 'created_at'
         ]
     
@@ -27,14 +28,125 @@ class MessageSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldS
     
     def get_message_type_display(self, obj):
         return self.get_choice_display(obj, 'message_type')
+    
+    def get_attachment_url(self, obj):
+        if obj.attachment:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.attachment.url)
+            return obj.attachment.url
+        return None
 
 
 
 
+
+
+class ChatRoomCreateSerializer(serializers.Serializer):
+    """Serializer for creating chat rooms."""
+    id = serializers.IntegerField(read_only=True, help_text='Chat room ID')
+    title = serializers.CharField(
+        max_length=200, 
+        help_text='Chat room title',
+        required=False,
+        default='New Chat'
+    )
+    chat_type = serializers.ChoiceField(
+        choices=[('general_chat', 'General Chat'), ('order_chat', 'Order Chat'), ('support_chat', 'Support Chat')],
+        default='general_chat',
+        help_text='Type of chat room'
+    )
+    participants = serializers.ListField(
+        child=serializers.IntegerField(),
+        help_text='List of user IDs to add as participants',
+        required=False,
+        default=list
+    )
+    order_id = serializers.IntegerField(
+        help_text='Order ID if this is an order chat',
+        required=False,
+        allow_null=True
+    )
+
+    def validate_participants(self, value):
+        """Validate that participants exist and are not the current user."""
+        if not value:
+            return value
+        
+        from accounts.models import UserModel
+        existing_users = UserModel.objects.filter(id__in=value).values_list('id', flat=True)
+        invalid_ids = set(value) - set(existing_users)
+        
+        if invalid_ids:
+            raise serializers.ValidationError(f"Invalid user IDs: {list(invalid_ids)}")
+        
+        return value
+
+    def validate_order_id(self, value):
+        """Validate that order exists if provided."""
+        if value is not None:
+            from job_portal.apps.orders.models import Order
+            try:
+                Order.objects.get(id=value)
+            except Order.DoesNotExist:
+                raise serializers.ValidationError("Order not found")
+        return value
+
+
+class ChatRoomAddParticipantSerializer(serializers.Serializer):
+    """Serializer for adding participants to chat rooms."""
+    id = serializers.IntegerField(read_only=True, help_text='Response ID')
+    participant_id = serializers.IntegerField(help_text='User ID to add as participant')
+
+    def validate_participant_id(self, value):
+        """Validate that participant exists."""
+        from accounts.models import UserModel
+        try:
+            UserModel.objects.get(id=value)
+        except UserModel.DoesNotExist:
+            raise serializers.ValidationError("User not found")
+        return value
+
+
+class ChatRoomSerializer(AbstractTimestampedModelSerializer):
+    """Serializer for chat room details."""
+    participants_count = serializers.SerializerMethodField()
+    other_participants = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = ChatRoom
+        fields = [
+            'id', 'title', 'chat_type', 'is_active', 'created_at',
+            'participants_count', 'other_participants'
+        ]
+    
+    def get_participants_count(self, obj):
+        """Get number of participants."""
+        return obj.participants.count()
+    
+    def get_other_participants(self, obj):
+        """Get other participants (excluding current user)."""
+        request = self.context.get('request')
+        if not request or not request.user:
+            return []
+        
+        other_participants = obj.participants.exclude(user=request.user)
+        return [
+            {
+                'id': participant.user.id,
+                'username': participant.user.username,
+                'first_name': participant.user.first_name,
+                'last_name': participant.user.last_name,
+                'photo_url': getattr(participant.user, 'photo_url', None),
+                'role': participant.role
+            }
+            for participant in other_participants
+        ]
 
 
 class WebSocketInfoSerializer(serializers.Serializer):
     """Serializer for WebSocket connection information."""
+    id = serializers.IntegerField(read_only=True, help_text='Response ID')
     websocket_url = serializers.CharField(help_text='Base WebSocket URL')
     temp_token = serializers.CharField(help_text='Temporary token for WebSocket connection')
     user_id = serializers.IntegerField(help_text='User ID for WebSocket connection')
@@ -174,10 +286,40 @@ class ChatConversationDetailSerializer(AbstractTimestampedModelSerializer):
 
 class ChatSendMessageSerializer(serializers.Serializer):
     """Serializer for sending messages via mobile API."""
-    message = serializers.CharField(max_length=1000, help_text='Message content')
+    message = serializers.CharField(
+        max_length=1000, 
+        help_text='Message content',
+        allow_blank=True,
+        required=False
+    )
     message_type = serializers.ChoiceField(
         choices=[('text', 'Text'), ('image', 'Image'), ('file', 'File')],
         default='text',
         help_text='Message type'
     )
-    attachment = serializers.FileField(required=False, allow_null=True, help_text='File attachment')
+    attachment = serializers.FileField(
+        required=False, 
+        allow_null=True, 
+        help_text='File attachment (image or document)',
+        allow_empty_file=False
+    )
+    
+    def validate(self, data):
+        """Validate that either message content or attachment is provided."""
+        message = data.get('message', '')
+        attachment = data.get('attachment')
+        
+        if not message and not attachment:
+            raise serializers.ValidationError(
+                "Either message content or attachment must be provided."
+            )
+        
+        if attachment and data.get('message_type') == 'image':
+            # Validate image file types
+            allowed_image_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+            if attachment.content_type not in allowed_image_types:
+                raise serializers.ValidationError(
+                    f"Invalid image type. Allowed types: {', '.join(allowed_image_types)}"
+                )
+        
+        return data

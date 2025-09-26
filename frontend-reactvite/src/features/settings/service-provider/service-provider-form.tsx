@@ -1,10 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { MultiCombobox } from "@/components/ui/combobox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { MultiCombobox } from "@/components/ui/combobox";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -31,11 +31,11 @@ const loadServiceProviderQueryKey = "service-provider-profile";
 
 export function ServiceProviderForm() {
   const queryClient = useQueryClient();
-  
+
   const loadServiceProviderQuery = useQuery({
     queryKey: [loadServiceProviderQueryKey],
     queryFn: async () => {
-      const response = await myApi.v1UsersProviderRetrieve();
+      const response = await myApi.v1UsersMyProviderRetrieve();
       return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -122,6 +122,7 @@ export function ServiceProviderForm() {
   // Update form when profile data loads
   useEffect(() => {
     const profileData = loadServiceProviderQuery.data;
+    console.log(profileData);
     if (profileData) {
       form.reset({
         business_name: profileData.business_name || "",
@@ -143,7 +144,7 @@ export function ServiceProviderForm() {
         service_areas: data.service_areas.map(id => parseInt(id)),
         services_offered: data.services_offered.map(id => parseInt(id))
       };
-      const response = await myApi.v1UsersProviderPartialUpdate({ patchedServiceProviderUpdate: transformedData });
+      const response = await myApi.v1UsersMyProviderPartialUpdate({ patchedServiceProviderProfileUpdate: transformedData });
       return response.data;
     },
     onSuccess: () => {
@@ -176,7 +177,7 @@ export function ServiceProviderForm() {
             <Briefcase className="h-5 w-5" />
             Business Information
           </h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               control={form.control}
@@ -201,10 +202,10 @@ export function ServiceProviderForm() {
               <FormItem>
                 <FormLabel>Business Description</FormLabel>
                 <FormControl>
-                  <Textarea 
-                    placeholder="Describe your business and services..." 
+                  <Textarea
+                    placeholder="Describe your business and services..."
                     className="min-h-[100px]"
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -218,7 +219,7 @@ export function ServiceProviderForm() {
             <Briefcase className="h-5 w-5" />
             Services Offered
           </h3>
-          
+
           <FormField
             control={form.control}
             name="services_offered"
@@ -269,7 +270,7 @@ export function ServiceProviderForm() {
             <MapPin className="h-5 w-5" />
             Service Areas
           </h3>
-          
+
           <FormField
             control={form.control}
             name="service_areas"
@@ -320,7 +321,7 @@ export function ServiceProviderForm() {
             <Clock className="h-5 w-5" />
             Availability
           </h3>
-          
+
           <FormField
             control={form.control}
             name="is_available"
@@ -350,7 +351,7 @@ export function ServiceProviderForm() {
             <Clock className="h-5 w-5" />
             Availability Options
           </h3>
-          
+
           <div className="space-y-4">
             <FormField
               control={form.control}
@@ -424,7 +425,7 @@ export function ServiceProviderForm() {
         </div>
 
         <div className="flex justify-end">
-          <Button type="submit" disabled={updateProviderMutation.isPending}>  
+          <Button type="submit" disabled={updateProviderMutation.isPending}>
             {updateProviderMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (

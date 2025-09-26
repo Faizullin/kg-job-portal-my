@@ -133,6 +133,23 @@ class Order(AbstractCascadingSoftDeleteModel, AbstractTimestampedModel):
         
         return chat_room
     
+    def add_provider_to_chat(self, provider):
+        """Add service provider to the order's chat room."""
+        if not self.chat_rooms.exists():
+            self._create_chat_room()
+        
+        chat_room = self.chat_rooms.first()
+        
+        # Check if provider is already in the chat
+        if not chat_room.participants.filter(id=provider.user_profile.user.id).exists():
+            ChatParticipant.objects.create(
+                chat_room=chat_room,
+                user=provider.user_profile.user,
+                role='member'
+            )
+        
+        return chat_room
+    
     def __str__(self):
         return f"Order #{self.id} - {self.title} [#{self.id}]"
 

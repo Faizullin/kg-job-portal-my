@@ -9,7 +9,7 @@ from rest_framework.decorators import action
 from ...models import UserModel
 from ..serializers import (
     UserListSerializer,
-    UserProfileSerializer,
+    UserDetailSerializer,
     UserUpdateSerializer,
 )
 from utils.pagination import CustomPagination
@@ -24,7 +24,7 @@ class UserProfileApiView(generics.RetrieveUpdateAPIView):
     
     def get_serializer_class(self):
         if self.request.method == 'GET':
-            return UserProfileSerializer
+            return UserDetailSerializer
         return UserUpdateSerializer
     
     def post(self, request):

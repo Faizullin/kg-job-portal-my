@@ -1,15 +1,15 @@
+import { Button } from "@/components/ui/button";
+import myApi from "@/lib/api/my-api";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ContentSection } from "../_components/content-section";
 import { ClientProfileForm } from "./client-profile-form";
-import myApi from "@/lib/api/my-api";
-import { Button } from "@/components/ui/button";
-import { useMutation, useQuery } from "@tanstack/react-query";
 
 const loadClientProfileQueryKey = "client-profile";
 
 export function SettingsClientProfile() {
   const submitMutation = useMutation({
     mutationFn: async () => {
-      await myApi.v1UsersClientCreateCreate();
+      await myApi.v1UsersMyClientCreateCreate();
     },
     onSuccess: () => {
       window.location.reload();
@@ -19,10 +19,10 @@ export function SettingsClientProfile() {
     queryKey: [loadClientProfileQueryKey],
     queryFn: async () => {
       try {
-        const res = await myApi.v1UsersClientRetrieve();
-        return { exists: true, data: res.data } as const;
+        const res = await myApi.v1UsersMyClientRetrieve();
+        return { exists: true, data: res.data };
       } catch {
-        return { exists: false } as const;
+        return { exists: false };
       }
     }
   });

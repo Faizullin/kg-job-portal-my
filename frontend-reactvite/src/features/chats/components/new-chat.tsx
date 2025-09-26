@@ -14,23 +14,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useUser } from "@/context/firebase-auth-provider";
 import type { DialogControl } from "@/hooks/use-dialog-control";
-import type { ChatRoom, UserList } from "@/lib/api/axios-client/api";
+import { ChatRoomCreateChatTypeEnum, type ChatConversation, type UserList } from "@/lib/api/axios-client/api";
 import myApi from "@/lib/api/my-api";
+import { useAuthStore } from "@/stores/auth-store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { type ChatUser } from "../data/chat-types";
-
-type User = Omit<ChatUser, "messages">;
 
 type NewChatProps = {
-  users?: User[];
   control?: DialogControl;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  onCreated?: (room: ChatRoom) => void;
+  onCreated?: (room: ChatConversation) => void;
   orderId?: number; // Optional order to attach to the chat
 };
 
@@ -38,12 +34,12 @@ export function NewChat({ onOpenChange, open, control, onCreated, orderId }: New
   const [selectedUsers, setSelectedUsers] = useState<UserList[]>([]);
   const [search, setSearch] = useState("");
   const queryClient = useQueryClient();
-  const { user } = useUser();
+  const { user } = useAuthStore();
   const loadChatUserSearchQuery = useQuery({
     queryKey: ["chat-user-search", search],
-    queryFn: () => {  
+    queryFn: () => {
       return myApi.v1UsersList({
-        search, 
+        search,
         pageSize: 20
       })
     },
@@ -52,28 +48,53 @@ export function NewChat({ onOpenChange, open, control, onCreated, orderId }: New
   const users = useMemo(() => {
     if (!user?.id) return [];
     return (loadChatUserSearchQuery.data?.data?.results || [])
-    .filter((u) => String(u.id) !== String(user.id))
+      .filter((u) => String(u.id) !== String(user.id))
   }, [loadChatUserSearchQuery.data, user]);
 
   const createRoomMutation = useMutation({
     mutationFn: async () => {
-      const participantIds = selectedUsers.map((u) => Number(u.id)).filter((n) => !Number.isNaN(n));
-      const title = selectedUsers.map((u) => u.username).join(", ");
-      
-      const response = await myApi.v1ChatRoomsCreateCreate({
+      if (selectedUsers.length === 0) throw new Error('No users selected');
+
+      // Create chat room using the backend API
+      // const response = await myApi.axios.post('/api/v1/chat/conversations/create/', {
+      //   title: selectedUsers.map((u) => u.username).join(", ") || (orderId ? 'Order Chat' : 'New Chat'),
+      //   chat_type: orderId ? 'order_chat' : 'general_chat',
+      //   participants: selectedUsers.map(u => u.id),
+      //   ...(orderId && { order_id: orderId })
+      // });
+      const response = await myApi.v1ChatConversationsCreateCreate({
         chatRoomCreate: {
-          title: title || (orderId ? 'Order Chat' : 'New Chat'),
-          chat_type: (orderId ? 'order_chat' : 'general_chat') as 'order_chat' | 'general_chat',
-          is_active: true,
-          participants: participantIds,
-          ...(orderId && { order: orderId }),
-        } as any
-      });      
-      return response.data;
+          title: selectedUsers.map((u) => u.username).join(", ") || (orderId ? 'Order Chat' : 'New Chat'),
+          chat_type: orderId ? ChatRoomCreateChatTypeEnum.order_chat : ChatRoomCreateChatTypeEnum.general_chat,
+          participants: selectedUsers.map(u => u.id),
+          ...(orderId && { order_id: orderId })
+        }
+      });
+
+      // Convert ChatRoom response to ChatConversation format
+      const chatRoom = response.data;
+      const firstUser = selectedUsers[0];
+
+      const conversation: ChatConversation = {
+        id: chatRoom.id,
+        title: chatRoom.title,
+        chat_type: chatRoom.chat_type as any,
+        other_participant_name: firstUser.username,
+        other_participant_avatar: firstUser.photo_url || '',
+        other_participant_online: 'false',
+        last_message_preview: '',
+        last_message_time: '',
+        service_category: '',
+        unread_count: '0',
+        is_active: chatRoom.is_active,
+        created_at: chatRoom.created_at
+      };
+
+      return conversation;
     },
     onSuccess: (room) => {
-      queryClient.invalidateQueries({ queryKey: ['chatRooms'] });
-      if (onCreated) onCreated(room as any);
+      queryClient.invalidateQueries({ queryKey: ['chat-rooms'] });
+      if (onCreated) onCreated(room);
       if (control) control.hide();
       setSelectedUsers([]);
     },
@@ -154,12 +175,12 @@ export function NewChat({ onOpenChange, open, control, onCreated, orderId }: New
                     <div className="flex items-center gap-2">
                       <img
                         src={user.photo_url || "/placeholder.svg"}
-                        alt={user.name}
+                        alt={user.username}
                         className="h-8 w-8 rounded-full"
                       />
                       <div className="flex flex-col">
                         <span className="text-sm font-medium">
-                          {user.name}
+                          {user.username}
                         </span>
                         <span className="text-accent-foreground/70 text-xs">
                           {user.username}

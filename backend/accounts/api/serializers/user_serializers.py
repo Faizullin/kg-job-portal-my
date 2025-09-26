@@ -2,7 +2,7 @@ from rest_framework import serializers
 from ...models import UserModel, UserNotificationSettings
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
+class UserDetailSerializer(serializers.ModelSerializer):
     """Serializer for user profile information - enhanced version of api_users"""
     groups = serializers.SerializerMethodField()
     permissions = serializers.SerializerMethodField()

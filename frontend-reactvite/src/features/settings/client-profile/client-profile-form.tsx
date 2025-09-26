@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { MultiCombobox } from "@/components/ui/combobox";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -25,7 +25,7 @@ export function ClientProfileForm() {
   const loadClientProfileQuery = useQuery({
     queryKey: [loadClientProfileQueryKey],
     queryFn: async () => {
-      const response = await myApi.v1UsersClientRetrieve();
+      const response = await myApi.v1UsersMyClientRetrieve();
       return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -50,7 +50,7 @@ export function ClientProfileForm() {
   const form = useForm<ClientProfileFormData>({
     resolver: zodResolver(clientProfileSchema),
     defaultValues: {
-      preferred_services:  [],
+      preferred_services: [],
     },
   });
 
@@ -67,9 +67,9 @@ export function ClientProfileForm() {
     mutationFn: async (data: ClientProfileFormData) => {
       const transformedData = {
         ...data,
-        preferred_services: data.preferred_services.map(i => parseInt(i)) 
+        preferred_services: data.preferred_services.map(i => parseInt(i))
       }
-      const response = await myApi.v1UsersClientPartialUpdate({ patchedClientUpdate: transformedData });
+      const response = await myApi.v1UsersMyClientPartialUpdate({ patchedClientProfileCreateUpdate: transformedData });
       return response.data;
     },
     onSuccess: () => {
