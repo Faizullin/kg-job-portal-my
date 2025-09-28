@@ -8,7 +8,7 @@ from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedMo
 
 
 class ChatType(models.TextChoices):
-    ORDER_CHAT = 'order_chat', _('Order Chat')
+    JOB_CHAT = 'job_chat', _('Job Chat')
     SUPPORT_CHAT = 'support_chat', _('Support Chat')
     GENERAL_CHAT = 'general_chat', _('General Chat')
 
@@ -39,7 +39,7 @@ class ChatRoom(AbstractSoftDeleteModel, AbstractTimestampedModel):
 
     # Last message
     last_message_at = models.DateTimeField(_("Last Message At"), null=True, blank=True)
-    chat_type = models.CharField(_("Chat Type"), max_length=20, choices=ChatType.choices, default=ChatType.ORDER_CHAT)
+    chat_type = models.CharField(_("Chat Type"), max_length=20, choices=ChatType.choices, default=ChatType.JOB_CHAT)
 
     class Meta:
         verbose_name = _("Chat Room")

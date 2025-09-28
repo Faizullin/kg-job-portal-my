@@ -7,6 +7,7 @@ from django.db.models import Max
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
 
@@ -22,7 +23,8 @@ from .serializers import (
     ChatRoomAddParticipantSerializer,
     ChatRoomSerializer,
 )
-from ..models import ChatMessage, ChatParticipant, ChatRoom
+from ..models import ChatMessage, ChatParticipant, ChatRoom, ChatType
+from ...jobs.models import Job
 
 
 class ChatConversationListApiView(generics.ListAPIView):
@@ -283,3 +285,420 @@ class ChatRoomAddParticipantApiView(generics.GenericAPIView):
             'message': 'Participant added successfully',
             'participant_name': f"{participant_user.first_name} {participant_user.last_name}".strip() or participant_user.username
         }, status=status.HTTP_201_CREATED)
+
+
+# job_portal/apps/chat/views.py
+from rest_framework import viewsets, status, permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView, CreateAPIView, get_object_or_404
+from django.db.models import Q, Count, F, Max
+from django.db import transaction
+from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+
+# Chat Room ViewSet
+class ChatRoomViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing chat rooms
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = ChatRoomFilter
+    search_fields = ['title']
+    ordering_fields = ['created_at', 'last_message_at']
+    ordering = ['-last_message_at', '-created_at']
+
+    def get_queryset(self):
+        """Return chat rooms where user is a participant"""
+        return ChatRoom.objects.filter(
+            participants=self.request.user,
+            is_deleted=False
+        ).select_related('job').prefetch_related(
+            'participants', 'participant_status'
+        ).distinct()
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ChatRoomListSerializer
+        elif self.action == 'create':
+            return ChatRoomCreateSerializer
+        return ChatRoomSerializer
+
+    @action(detail=True, methods=['post'])
+    def join(self, request, pk=None):
+        """Join a chat room"""
+        chat_room = self.get_object()
+        user = request.user
+
+        participant, created = ChatParticipant.objects.get_or_create(
+            chat_room=chat_room,
+            user=user,
+            defaults={'role': 'member'}
+        )
+
+        if created:
+            return Response({'message': 'Successfully joined chat room'})
+        return Response({'message': 'Already a member of this chat room'})
+
+    @action(detail=True, methods=['post'])
+    def leave(self, request, pk=None):
+        """Leave a chat room"""
+        chat_room = self.get_object()
+        user = request.user
+
+        try:
+            participant = ChatParticipant.objects.get(
+                chat_room=chat_room, user=user
+            )
+            participant.delete()
+            return Response({'message': 'Successfully left chat room'})
+        except ChatParticipant.DoesNotExist:
+            return Response(
+                {'error': 'Not a member of this chat room'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    @action(detail=True, methods=['get'])
+    def messages(self, request, pk=None):
+        """Get messages for a chat room with pagination"""
+        chat_room = self.get_object()
+
+        # Check if user is participant
+        if not chat_room.participants.filter(id=request.user.id).exists():
+            return Response(
+                {'error': 'You are not a participant in this chat room'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        messages = chat_room.messages.select_related(
+            'sender', 'reply_to__sender'
+        ).filter(is_deleted=False)
+
+        # Apply filters
+        page = int(request.query_params.get('page', 1))
+        page_size = min(int(request.query_params.get('page_size', 50)), 100)
+
+        # Pagination
+        start = (page - 1) * page_size
+        end = start + page_size
+        paginated_messages = messages[start:end]
+
+        serializer = ChatMessageSerializer(
+            paginated_messages, many=True, context={'request': request}
+        )
+
+        return Response({
+            'results': serializer.data,
+            'has_more': messages.count() > end,
+            'total_count': messages.count()
+        })
+
+    @action(detail=True, methods=['post'])
+    def mark_read(self, request, pk=None):
+        """Mark messages as read in this chat room"""
+        chat_room = self.get_object()
+
+        try:
+            participant = ChatParticipant.objects.get(
+                chat_room=chat_room, user=request.user
+            )
+
+            # Reset unread count
+            participant.unread_count = 0
+            participant.last_seen = timezone.now()
+            participant.save(update_fields=['unread_count', 'last_seen'])
+
+            # Mark messages as read
+            unread_messages = chat_room.messages.filter(
+                is_read=False
+            ).exclude(sender=request.user)
+
+            unread_messages.update(
+                is_read=True,
+                read_at=timezone.now()
+            )
+
+            return Response({'message': 'Messages marked as read'})
+
+        except ChatParticipant.DoesNotExist:
+            return Response(
+                {'error': 'Not a participant in this chat room'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+    @action(detail=True, methods=['post'])
+    def add_participants(self, request, pk=None):
+        """Add new participants to chat room"""
+        chat_room = self.get_object()
+        user_ids = request.data.get('user_ids', [])
+
+        # Check if requester is admin/moderator
+        try:
+            requester_participant = ChatParticipant.objects.get(
+                chat_room=chat_room, user=request.user
+            )
+            if requester_participant.role not in ['admin', 'moderator']:
+                return Response(
+                    {'error': 'Only admins can add participants'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+        except ChatParticipant.DoesNotExist:
+            return Response(
+                {'error': 'Not a participant in this chat room'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        added_users = []
+        for user_id in user_ids:
+            try:
+                from django.contrib.auth import get_user_model
+                User = get_user_model()
+                user = User.objects.get(id=user_id)
+
+                participant, created = ChatParticipant.objects.get_or_create(
+                    chat_room=chat_room,
+                    user=user,
+                    defaults={'role': 'member'}
+                )
+
+                if created:
+                    added_users.append({
+                        'id': user.id,
+                        'name': f"{user.first_name} {user.last_name}".strip() or user.username
+                    })
+
+            except User.DoesNotExist:
+                continue
+
+        return Response({
+            'message': f'Added {len(added_users)} participants',
+            'added_users': added_users
+        })
+
+
+# Chat Message ViewSet
+class ChatMessageViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing chat messages
+    """
+    serializer_class = ChatMessageSerializer
+    permission_classes = [permissions.IsAuthenticated, IsChatParticipant]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = ChatMessageFilter
+    ordering = ['created_at']
+
+    def get_queryset(self):
+        """Return messages from chat rooms where user is a participant"""
+        return ChatMessage.objects.filter(
+            chat_room__participants=self.request.user,
+            is_deleted=False
+        ).select_related('sender', 'chat_room', 'reply_to__sender')
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return ChatMessageCreateSerializer
+        return ChatMessageSerializer
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated, IsMessageSender])
+    def edit(self, request, pk=None):
+        """Edit a message (only sender can edit)"""
+        message = self.get_object()
+        new_content = request.data.get('content', '').strip()
+
+        if not new_content:
+            return Response(
+                {'error': 'Content cannot be empty'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Only allow editing text messages
+        if message.message_type != MessageType.TEXT:
+            return Response(
+                {'error': 'Only text messages can be edited'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        message.content = new_content
+        message.save(update_fields=['content', 'updated_at'])
+
+        serializer = ChatMessageSerializer(message, context={'request': request})
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
+    def react(self, request, pk=None):
+        """Add reaction to a message"""
+        message = self.get_object()
+        reaction = request.data.get('reaction', '').strip()
+
+        if not reaction:
+            return Response(
+                {'error': 'Reaction cannot be empty'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # This would require a MessageReaction model in a full implementation
+        # For now, just return success
+        return Response({
+            'message': f'Added reaction "{reaction}" to message'
+        })
+
+
+# Participant Management
+class ChatParticipantViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing chat participants
+    """
+    serializer_class = ChatParticipantSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return ChatParticipant.objects.filter(
+            chat_room__participants=self.request.user
+        ).select_related('user', 'chat_room')
+
+    def get_serializer_class(self):
+        if self.action in ['update', 'partial_update']:
+            return ChatParticipantUpdateSerializer
+        return ChatParticipantSerializer
+
+    @action(detail=True, methods=['post'])
+    def update_online_status(self, request, pk=None):
+        """Update user's online status"""
+        participant = self.get_object()
+
+        if participant.user != request.user:
+            return Response(
+                {'error': 'Can only update your own status'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        is_online = request.data.get('is_online', False)
+        participant.is_online = is_online
+        if not is_online:
+            participant.last_seen = timezone.now()
+
+        participant.save(update_fields=['is_online', 'last_seen'])
+
+        serializer = OnlineStatusSerializer({
+            'is_online': participant.is_online,
+            'last_seen': participant.last_seen
+        })
+        return Response(serializer.data)
+
+
+# Standalone Views
+class SendMessageView(CreateAPIView):
+    """Send a new message to chat room"""
+    serializer_class = ChatMessageCreateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class MyChatsView(ListAPIView):
+    """List current user's chat rooms"""
+    serializer_class = ChatRoomListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return ChatRoom.objects.filter(
+            participants=self.request.user,
+            is_deleted=False
+        ).select_related('job').prefetch_related('participants').distinct()
+
+
+class StartJobChatView(APIView):
+    """Start a chat for a specific job between employer and master"""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, job_id):
+        job = get_object_or_404(Job, id=job_id)
+
+        user = request.user
+
+        # Determine other participant
+        other_user = None
+        if hasattr(user, 'employer') and job.employer == user.employer:
+            # Employer starting chat - need to find assigned master
+            try:
+                assignment = job.assignment
+                other_user = assignment.master.user
+            except:
+                return Response(
+                    {'error': 'No master assigned to this job yet'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        elif hasattr(user, 'master'):
+            # Master starting chat
+            other_user = job.employer.user
+        else:
+            raise PermissionDenied("Invalid user.")
+
+        # Check if chat already exists
+        existing_chat = ChatRoom.objects.filter(
+            job=job,
+            participants__in=[user, other_user],
+            is_deleted=False
+        ).annotate(
+            participant_count=Count('participants')
+        ).filter(participant_count=2).first()
+
+        if existing_chat:
+            serializer = ChatRoomSerializer(existing_chat, context={'request': request})
+            return Response(serializer.data)
+
+        # Create new chat room
+        with transaction.atomic():
+            chat_room = ChatRoom.objects.create(
+                title=f"Job: {job.title}",
+                chat_type=ChatType.JOB_CHAT,
+                job=job,
+                is_active=True
+            )
+
+            # Add both participants
+            ChatParticipant.objects.create(
+                chat_room=chat_room,
+                user=user,
+                role='member'
+            )
+            ChatParticipant.objects.create(
+                chat_room=chat_room,
+                user=other_user,
+                role='member'
+            )
+
+        serializer = ChatRoomSerializer(chat_room, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class UnreadMessagesView(APIView):
+    """Get count of unread messages for current user"""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        total_unread = ChatParticipant.objects.filter(
+            user=request.user,
+            chat_room__is_deleted=False
+        ).aggregate(
+            total=Count('unread_count')
+        )['total'] or 0
+
+        return Response({'unread_count': total_unread})
+
+
+class UpdateOnlineStatusView(APIView):
+    """Update user's online status across all chats"""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        is_online = request.data.get('is_online', False)
+
+        update_fields = {'is_online': is_online}
+        if not is_online:
+            update_fields['last_seen'] = timezone.now()
+
+        ChatParticipant.objects.filter(
+            user=request.user

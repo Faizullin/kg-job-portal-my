@@ -51,23 +51,12 @@ class ChatRoomCreateSerializer(serializers.Serializer):
         required=False,
         default='New Chat'
     )
-    chat_type = serializers.ChoiceField(
-        choices=[('general_chat', 'General Chat'), ('order_chat', 'Order Chat'), ('support_chat', 'Support Chat')],
-        default='general_chat',
-        help_text='Type of chat room'
-    )
     participants = serializers.ListField(
         child=serializers.IntegerField(),
         help_text='List of user IDs to add as participants',
         required=False,
         default=list
     )
-    order_id = serializers.IntegerField(
-        help_text='Order ID if this is an order chat',
-        required=False,
-        allow_null=True
-    )
-
     def validate_participants(self, value):
         """Validate that participants exist and are not the current user."""
         if not value:
