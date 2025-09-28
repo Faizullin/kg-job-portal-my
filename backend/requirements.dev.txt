@@ -79,6 +79,9 @@ django-jazzmin
 django-environ
 django-crispy-forms
 crispy-bootstrap4
+elasticsearch
+elasticsearch-dsl
+django-elasticsearch-dsl
 
 # Development packages
 django-debug-toolbar
