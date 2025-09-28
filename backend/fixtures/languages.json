@@ -5,7 +5,9 @@
     "fields": {
       "name": "English",
       "code": "en",
+      "native_name": "English",
       "is_active": true,
+      "is_deleted": false,
       "is_default": true,
       "flag_icon": "🇺🇸",
       "rtl_support": false,
@@ -21,7 +23,9 @@
     "fields": {
       "name": "Русский",
       "code": "ru",
+      "native_name": "Русский",
       "is_active": true,
+      "is_deleted": false,
       "is_default": false,
       "flag_icon": "🇷🇺",
       "rtl_support": false,
@@ -37,7 +41,9 @@
     "fields": {
       "name": "Кыргызча",
       "code": "ky",
+      "native_name": "Кыргызча",
       "is_active": true,
+      "is_deleted": false,
       "is_default": false,
       "flag_icon": "🇰🇬",
       "rtl_support": false,
@@ -53,7 +59,9 @@
     "fields": {
       "name": "العربية",
       "code": "ar",
+      "native_name": "العربية",
       "is_active": true,
+      "is_deleted": false,
       "is_default": false,
       "flag_icon": "🇸🇦",
       "rtl_support": true,
@@ -69,7 +77,9 @@
     "fields": {
       "name": "Türkçe",
       "code": "tr",
+      "native_name": "Türkçe",
       "is_active": true,
+      "is_deleted": false,
       "is_default": false,
       "flag_icon": "🇹🇷",
       "rtl_support": false,

@@ -1,20 +1,14 @@
-from accounts.models import UserModel
 from rest_framework import serializers
 
 from job_portal.apps.core.models import ServiceCategory, ServiceSubcategory
-from job_portal.apps.orders.models import Order
-from job_portal.apps.reviews.models import Review
 from job_portal.apps.users.api.serializers import (
     AdvancedUserProfileRetrieveUpdateSerializer,
-    PortfolioItemDetailSerializer,
+    PortfolioItemCreateUpdateSerializer,
     ProfessionSerializer,
     ProviderStatisticsSerializer,
 )
 from job_portal.apps.users.models import (
-    Certificate,
-    MasterSkill,
-    PortfolioItem,
-    Profession,
+    Skill,
     ProviderStatistics,
     ServiceProviderProfile,
     ServiceProviderSkill,
@@ -75,7 +69,7 @@ class MasterSkillSerializer(serializers.ModelSerializer):
     """Serializer for master skills."""
 
     class Meta:
-        model = MasterSkill
+        model = Skill
         fields = ["id", "name", "description"]
 
 
@@ -101,7 +95,7 @@ class ServiceProviderSearchListSerializer(serializers.ModelSerializer):
     profession = ProfessionSerializer(read_only=True)
     statistics = ProviderStatisticsSerializer(read_only=True)
     provider_skills = ServiceProviderSkillSerializer(many=True, read_only=True)
-    portfolio_items = PortfolioItemDetailSerializer(many=True, read_only=True)
+    portfolio_items = PortfolioItemCreateUpdateSerializer(many=True, read_only=True)
 
     class Meta:
         model = ServiceProviderProfile
@@ -157,7 +151,6 @@ class ClientDashboardResponseSerializer(serializers.Serializer):
     top_providers = ServiceProviderProfileSerializer(many=True)
     recent_orders = OrderSerializer(many=True)
     platform_stats = PlatformStatsSerializer()
-
 
 # class ClientUserSerializer(serializers.ModelSerializer):
 #     """Serializer for client user data."""

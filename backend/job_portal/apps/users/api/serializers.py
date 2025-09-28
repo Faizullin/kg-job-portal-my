@@ -1,82 +1,68 @@
-from accounts.api.serializers.user_serializers import (
-    UserDetailSerializer,
-    UserUpdateSerializer,
-)
-from accounts.models import UserModel
-from job_portal.apps.core.api.serializers import (
-    ServiceAreaSerializer,
-    ServiceSubcategorySerializer,
-)
 from rest_framework import serializers
-from utils.serializers import AbstractTimestampedModelSerializer
+from rest_framework.exceptions import ValidationError
 
+from accounts.models import UserModel
+from utils.serializers import AbstractTimestampedModelSerializer
 from ..models import (
-    Certificate,
-    ClientProfile,
-    MasterSkill,
+    Employer,
+    Skill,
     PortfolioItem,
-    Profession,
-    ProviderStatistics,
-    ServiceProviderProfile,
-    ServiceProviderSkill,
-    UserProfile,
+    Master, MasterSkill, Certificate, Profession, MasterStatistics,
 )
 
 
 class UserRetrieveUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ("id", "username", "description", "email", "first_name", "last_name", "photo_url")
+        fields = (
+            "id",
+            "username",
+            "description",
+            "email",
+            "first_name",
+            "last_name",
+            "photo_url",
+        )
         read_only_fields = ("id", "photo_url")
 
 
-class AdvancedUserProfileRetrieveUpdateSerializer(serializers.ModelSerializer):
-    user = UserRetrieveUpdateSerializer()
-
+class EmployerProfileCreateUpdateSerializer(AbstractTimestampedModelSerializer):
     class Meta:
-        model = UserProfile
+        model = Employer
+        fields = ("id", "preferred_services", "favorite_masters",)
+        read_only_fields = ("id",)
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        employer_profile, created = Employer.objects.get_or_create(user=user, defaults=validated_data)
+        if not created:
+            raise ValidationError("Employer profile already exists for this user.")
+        preferred_services = validated_data.pop("preferred_services", None)
+        favorite_masters = validated_data.pop("favorite_masters", None)
+        if preferred_services:
+            employer_profile.preferred_services.set(preferred_services)
+        if favorite_masters:
+            employer_profile.favorite_masters.set(favorite_masters)
+        return employer_profile
+
+    def update(self, instance, validated_data):
+        preferred_services = validated_data.pop("preferred_services", None)
+        favorite_masters = validated_data.pop("favorite_masters", None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if preferred_services is not None:
+            instance.preferred_services.set(preferred_services)
+        if favorite_masters is not None:
+            instance.favorite_masters.set(favorite_masters)
+        instance.save()
+        return instance
+
+
+class MasterProfileCreateUpdateSerializer(AbstractTimestampedModelSerializer):
+    class Meta:
+        model = Master
         fields = (
             "id",
-            "user",
-            "bio",
-            "date_of_birth",
-            "gender",
-            "phone_number",
-            "address",
-            "city",
-            "state",
-            "country",
-            "postal_code",
-            "terms_accepted",
-            "terms_accepted_at",
-            "preferred_language",
-            "notification_preferences",
-            "is_verified",
-            "verification_date",
-            "created_at",
-            "updated_at",
-        )
-        read_only_fields = (
-            "user",
-            "is_verified",
-            "verification_date",
-            "created_at",
-            "updated_at",
-        )
-
-
-class ClientProfileCreateUpdateSerializer(AbstractTimestampedModelSerializer):
-    class Meta:
-        model = ClientProfile
-        fields = ("preferred_services",)
-
-
-class ServiceProviderProfileUpdateSerializer(AbstractTimestampedModelSerializer):
-    class Meta:
-        model = ServiceProviderProfile
-        fields = (
-            "business_name",
-            "business_description",
             "profession",
             "service_areas",
             "services_offered",
@@ -93,50 +79,77 @@ class ServiceProviderProfileUpdateSerializer(AbstractTimestampedModelSerializer)
             "about_description",
             "current_location",
         )
-        read_only_fields = ("is_verified_provider", "is_top_master")
+        read_only_fields = ("id", "is_verified_provider", "is_top_master")
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        master_profile, created = Master.objects.get_or_create(user=user, defaults=validated_data)
+        if not created:
+            raise ValidationError("Master profile already exists for this user.")
+        service_areas = validated_data.pop("service_areas", None)
+        services_offered = validated_data.pop("services_offered", None)
+        if service_areas:
+            master_profile.service_areas.set(service_areas)
+        if services_offered:
+            master_profile.service_offered.set(services_offered)
+        return master_profile
+
+    def update(self, instance, validated_data):
+        service_areas = validated_data.pop("service_areas", None)
+        services_offered = validated_data.pop("services_offered", None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if service_areas is not None:
+            instance.service_areas.set(service_areas)
+        if services_offered is not None:
+            instance.service_offered.set(services_offered)
+        instance.save()
+        return instance
 
 
-class MasterSkillDetailSerializer(AbstractTimestampedModelSerializer):
-    """Serializer for listing available skills."""
+class SkillDetailSerializer(AbstractTimestampedModelSerializer):
+    class Meta:
+        model = Skill
+        fields = ("id", "name", "description", "category", "is_active")
+        read_only_fields = ("id",)
+
+
+class MasterSkillSerializer(AbstractTimestampedModelSerializer):
+    skill = SkillDetailSerializer(read_only=True)
+    skill_id = serializers.PrimaryKeyRelatedField(
+        source='skill', queryset=Skill.objects.filter(is_active=True),
+        write_only=True
+    )
 
     class Meta:
         model = MasterSkill
-        fields = ("id", "name", "description", "category", "is_active")
-
-
-class ServiceProviderSkillDetailSerializer(AbstractTimestampedModelSerializer):
-    """Serializer for service provider skills (list/detail)."""
-
-    skill = MasterSkillDetailSerializer(read_only=True)
-
-    class Meta:
-        model = ServiceProviderSkill
         fields = (
             "id",
             "skill",
+            "skill_id",
             "is_primary_skill",
             "proficiency_level",
             "years_of_experience",
+            "created_at",
+        )
+        read_only_fields = ("id", "created_at",)
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        master_profile = user.master_profile
+        return MasterSkill.objects.create(
+            **validated_data,
+            master=master_profile
         )
 
 
-class ServiceProviderSkillCreateUpdateSerializer(AbstractTimestampedModelSerializer):
-    """Serializer for creating/updating service provider skills."""
-
-    class Meta:
-        model = ServiceProviderSkill
-        fields = (
-            "skill",
-            "is_primary_skill",
-            "proficiency_level",
-            "years_of_experience",
-        )
-
-
-class PortfolioItemDetailSerializer(AbstractTimestampedModelSerializer):
-    """Serializer for portfolio items (list/detail)."""
-
-    skill_used = MasterSkillDetailSerializer(read_only=True)
+class PortfolioItemSerializer(AbstractTimestampedModelSerializer):
+    skill_used = SkillDetailSerializer(read_only=True)
+    skill_used_id = serializers.PrimaryKeyRelatedField(
+        source='skill_used', queryset=Skill.objects.filter(is_active=True),
+        write_only=True, required=False,
+        allow_null=True
+    )
 
     class Meta:
         model = PortfolioItem
@@ -145,23 +158,23 @@ class PortfolioItemDetailSerializer(AbstractTimestampedModelSerializer):
             "title",
             "description",
             "skill_used",
+            "skill_used_id",
             "is_featured",
             "image",
             "created_at",
         )
+        read_only_fields = ("id", "created_at")
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        master_profile = user.master_profile
+        return PortfolioItem.objects.create(
+            **validated_data,
+            master=master_profile
+        )
 
 
-class PortfolioItemCreateUpdateSerializer(AbstractTimestampedModelSerializer):
-    """Serializer for creating/updating portfolio items."""
-
-    class Meta:
-        model = PortfolioItem
-        fields = ("title", "description", "skill_used", "is_featured", "image")
-
-
-class CertificateDetailSerializer(AbstractTimestampedModelSerializer):
-    """Serializer for certificates (list/detail)."""
-
+class CertificateSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = Certificate
         fields = (
@@ -174,40 +187,18 @@ class CertificateDetailSerializer(AbstractTimestampedModelSerializer):
             "certificate_file",
             "is_verified",
         )
+        read_only_fields = ("id", "is_verified",)
 
-
-class CertificateCreateUpdateSerializer(AbstractTimestampedModelSerializer):
-    """Serializer for creating/updating certificates."""
-
-    class Meta:
-        model = Certificate
-        fields = (
-            "name",
-            "issuing_organization",
-            "issue_date",
-            "expiry_date",
-            "certificate_number",
-            "certificate_file",
-        )
-
-
-class ProviderStatisticsSerializer(AbstractTimestampedModelSerializer):
-    """Serializer for provider statistics."""
-
-    class Meta:
-        model = ProviderStatistics
-        fields = (
-            "average_rating",
-            "total_reviews",
-            "total_jobs_completed",
-            "on_time_percentage",
-            "repeat_customer_percentage",
+    def create(self, validated_data):
+        user = self.context['request'].user
+        master_profile = user.master_profile
+        return Certificate.objects.create(
+            **validated_data,
+            master=master_profile
         )
 
 
 class ProfessionSerializer(AbstractTimestampedModelSerializer):
-    """Serializer for listing professions."""
-
     class Meta:
         model = Profession
         fields = (
@@ -223,70 +214,38 @@ class UserDetailChildSerializer(AbstractTimestampedModelSerializer):
         read_only_fields = ("id", "photo_url")
 
 
-class UserPrfileWrapSerializer(serializers.ModelSerializer):
+class MasterStatisticsSerializer(AbstractTimestampedModelSerializer):
+    class Meta:
+        model = MasterStatistics
+        fields = (
+            "id",
+            "total_jobs_completed",
+            "on_time_percentage",
+            "repeat_customer_percentage",
+            "average_rating",
+            "total_reviews",
+        )
+
+
+class PublicMasterProfileDetailSerializer(serializers.ModelSerializer):
+    """Detailed serializer for service provider profile."""
+
     user = UserDetailChildSerializer(read_only=True)
-
-    class Meta:
-        model = UserProfile
-        fields = (
-            "id",
-            "user",
-            "bio",
-            "date_of_birth",
-            "gender",
-            "phone_number",
-            "address",
-            "city",
-            "state",
-            "country",
-            "postal_code",
-            "terms_accepted",
-            "terms_accepted_at",
-            "preferred_language",
-            "notification_preferences",
-            "is_verified",
-            "verification_date",
-            "created_at",
-            "updated_at",
-        )
-        read_only_fields = (
-            "id",
-            "user",
-            "is_verified",
-            "verification_date",
-            "created_at",
-            "updated_at",
-        )
-
-
-class ServiceProviderProfileDetailSerializer(serializers.ModelSerializer):
-    """Enhanced serializer for detailed provider view with related data."""
-
-    user_profile = AdvancedUserProfileRetrieveUpdateSerializer(read_only=True)
-    provider_skills = ServiceProviderSkillDetailSerializer(many=True, read_only=True)
-    portfolio_items = PortfolioItemDetailSerializer(many=True, read_only=True)
-    certificates = CertificateDetailSerializer(many=True, read_only=True)
-    statistics = ProviderStatisticsSerializer(read_only=True)
     profession = ProfessionSerializer(read_only=True)
+    skills = MasterSkillSerializer(many=True, read_only=True)
+    portfolio_items = PortfolioItemSerializer(many=True, read_only=True)
+    certificates = CertificateSerializer(many=True, read_only=True)
+    statistics = MasterStatisticsSerializer(read_only=True)
 
     class Meta:
-        model = ServiceProviderProfile
+        model = Master
         fields = (
             "id",
-            "user_profile",
-            "provider_skills",
-            "portfolio_items",
-            "certificates",
-            "statistics",
-            "profession",
-            "is_available",
-            "is_verified_provider",
-            "is_top_master",
-            "business_name",
-            "business_description",
+            "user",
             "works_remotely",
             "accepts_clients_at_location",
             "travels_to_clients",
+            "is_available",
             "hourly_rate",
             "response_time_hours",
             "work_experience_start_year",
@@ -297,4 +256,12 @@ class ServiceProviderProfileDetailSerializer(serializers.ModelSerializer):
             "current_location",
             "is_online",
             "last_seen",
+            "is_verified_provider",
+            "is_top_master",
+
+            "profession",
+            "skills",
+            "portfolio_items",
+            "certificates",
+            "statistics",
         )

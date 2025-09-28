@@ -1,0 +1,67 @@
+[
+  {
+    "model": "users.profession",
+    "pk": 1,
+    "fields": {
+      "name": "Уборщик",
+      "description": "Профессиональная уборка помещений",
+      "category": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.profession",
+    "pk": 2,
+    "fields": {
+      "name": "Сантехник",
+      "description": "Ремонт и установка сантехники",
+      "category": 2,
+      "is_active": true,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.profession",
+    "pk": 3,
+    "fields": {
+      "name": "Электрик",
+      "description": "Электромонтажные работы",
+      "category": 3,
+      "is_active": true,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.profession",
+    "pk": 4,
+    "fields": {
+      "name": "Мастер по ремонту",
+      "description": "Общие ремонтные работы",
+      "category": 4,
+      "is_active": true,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.profession",
+    "pk": 5,
+    "fields": {
+      "name": "IT-специалист",
+      "description": "Компьютерная помощь и IT-услуги",
+      "category": 5,
+      "is_active": true,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]

@@ -1,8 +1,11 @@
-import firebase_admin
 import os
+from pathlib import Path
+
+import firebase_admin
 from django.utils import timezone
 from firebase_admin import credentials
-from pathlib import Path
+
+from .jazzmin_admin import JAZZMIN_SETTINGS  # noqa
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -15,6 +18,9 @@ ALLOWED_HOSTS = os.environ["DJANGO_ALLOWED_HOSTS"].split(",")
 CSRF_TRUSTED_ORIGINS = os.environ["DJANGO_CSRF_TRUSTED_ORIGINS"].split(",")
 
 INSTALLED_APPS = [
+    'admin_dashboard',
+    'jazzmin',
+
     "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -27,16 +33,21 @@ INSTALLED_APPS = [
     "django_q",
     "rest_framework.authtoken",
     "django_filters",
+
     "accounts",
     "job_portal.apps.core",
     "job_portal.apps.users",
-    "job_portal.apps.orders",
-    "job_portal.apps.payments",
-    "job_portal.apps.chat",
+    "job_portal.apps.jobs",
+    # "job_portal.apps.payments",
+    "job_portal.apps.chats",
     "job_portal.apps.notifications",
     "job_portal.apps.reviews",
     "job_portal.apps.attachments",
     "job_portal.apps.dashboard",
+    "job_portal.apps.resumes",
+    "job_portal.apps.locations",
+    "job_portal.apps.contacts",
+
     "debug_toolbar",
 ]
 
@@ -51,13 +62,12 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-
 ROOT_URLCONF = "backend.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [ ],
+        "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -92,7 +102,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "utils.pagination.CustomPagination",
     "PAGE_SIZE": 20,
-    # Exception handler removed - using default DRF exception handler
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
 }
 
 # Security Settings
@@ -188,9 +198,3 @@ USE_NGINX = os.environ.get("USE_NGINX", "False").lower() == "true"
 FIREBASE_CREDENTIALS_PATH = os.environ["FIREBASE_CREDENTIALS_PATH"]
 cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
 firebase_admin.initialize_app(cred)
-
-
-# Job Portal and Accounts apps
-# LMS apps removed - replaced with job_portal and accounts
-
-# LOGGING = {}

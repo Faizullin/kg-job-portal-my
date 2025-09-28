@@ -1,6 +1,6 @@
 from .auth_serializers import *
-from .user_serializers import *
 from .profile_image_serializer import *
+from .user_serializers import *
 
 __all__ = [
     'FireBaseAuthSerializer',
@@ -9,5 +9,7 @@ __all__ = [
     'UserListSerializer',
     'ProfileImageUploadSerializer',
     'ProfileImageResponseSerializer',
-    "FirebaseAuthResponseSerializer"
+    "FirebaseAuthResponseSerializer",
+    'LogoutResponseSerializer',
+    "UserProfileSerializer",
 ]

@@ -1,4 +1,3 @@
-from accounts.models import UserModel
 from django.db.models import Avg
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import OpenApiResponse, extend_schema
@@ -7,20 +6,18 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from utils.exceptions import StandardizedViewMixin
 
 from job_portal.apps.core.models import ServiceCategory
-from job_portal.apps.orders.models import Order
-from job_portal.apps.users.models import ClientProfile, ServiceProviderProfile
-
+from job_portal.apps.users.models import Employer, Master
 from .serializers import (
     ClientDashboardResponseSerializer,
     OrderSerializer,
     ServiceProviderSearchListSerializer,
 )
+from ...jobs.models import Job
 
 
-class ClientDashboardApiView(StandardizedViewMixin, APIView):
+class ClientDashboardApiView(APIView):
     """Client dashboard API - provides data specific to clients."""
 
     permission_classes = [IsAuthenticated]
@@ -38,7 +35,7 @@ class ClientDashboardApiView(StandardizedViewMixin, APIView):
         """Get client dashboard data."""
         try:
             user = request.user
-            client_profile: ClientProfile = user.job_portal_profile.client_profile
+            client_profile: Employer = user.job_portal_profile.client_profile
 
             # Get featured categories - prioritize client's preferred service categories
             preferred_category_ids = set(
@@ -67,7 +64,7 @@ class ClientDashboardApiView(StandardizedViewMixin, APIView):
             )
 
             preferred_provider_profiles = (
-                ServiceProviderProfile.objects.filter(
+                Master.objects.filter(
                     is_available=True,
                     is_top_master=True,
                     services_offered__id__in=preferred_service_ids,
@@ -83,11 +80,11 @@ class ClientDashboardApiView(StandardizedViewMixin, APIView):
                 )
                 .distinct()
             )
- 
+
             # Then, get other users with top providers to fill up to 5 items
             remaining_count = 5 - preferred_provider_profiles.count()
             other_provider_profiles = (
-                ServiceProviderProfile.objects.filter(
+                Master.objects.filter(
                     is_available=True,
                     is_top_master=True,
                 )
@@ -109,10 +106,10 @@ class ClientDashboardApiView(StandardizedViewMixin, APIView):
                 other_provider_profiles
             )
             print("top_providers", top_providers, "preferred_service_ids", preferred_service_ids)
- 
+
             # Get recent orders for this client
             recent_orders = (
-                Order.objects.filter(client=client_profile)
+                Job.objects.filter(client=client_profile)
                 .select_related(
                     "service_subcategory__category", "client__user_profile__user"
                 )
@@ -142,7 +139,7 @@ class ClientDashboardApiView(StandardizedViewMixin, APIView):
         """Get client-specific platform statistics."""
         try:
             # Get real statistics from database - focus on top masters
-            total_providers = ServiceProviderProfile.objects.filter(
+            total_providers = Master.objects.filter(
                 is_available=True, is_top_master=True
             ).count()
 
@@ -151,14 +148,14 @@ class ClientDashboardApiView(StandardizedViewMixin, APIView):
             ).count()
 
             # Calculate average rating from top masters only
-            avg_rating_result = ServiceProviderProfile.objects.filter(
+            avg_rating_result = Master.objects.filter(
                 is_available=True, is_top_master=True, statistics__isnull=False
             ).aggregate(avg_rating=Avg("statistics__average_rating"))
 
             avg_rating = avg_rating_result["avg_rating"] or 0
 
             # Get average response time from top masters
-            avg_response_time = ServiceProviderProfile.objects.filter(
+            avg_response_time = Master.objects.filter(
                 is_available=True, is_top_master=True
             ).aggregate(avg_response=Avg("response_time_hours"))
 
@@ -179,7 +176,7 @@ class ClientDashboardApiView(StandardizedViewMixin, APIView):
             }
 
 
-# class ProviderDashboardApiView(StandardizedViewMixin, APIView):
+# class ProviderDashboardApiView(APIView):
 #     """Provider dashboard API - provides data specific to service providers."""
 
 #     permission_classes = [IsAuthenticated, HasServiceProviderProfile]
@@ -294,7 +291,7 @@ class ClientDashboardApiView(StandardizedViewMixin, APIView):
 #             }
 
 
-class ServiceProviderSearchAPIView(StandardizedViewMixin, generics.ListAPIView):
+class ServiceProviderSearchAPIView(generics.ListAPIView):
     """Search service providers."""
 
     serializer_class = ServiceProviderSearchListSerializer
@@ -320,7 +317,7 @@ class ServiceProviderSearchAPIView(StandardizedViewMixin, generics.ListAPIView):
     def get_queryset(self):
         """Get available service providers."""
         return (
-            ServiceProviderProfile.objects.filter(is_available=True)
+            Master.objects.filter(is_available=True)
             .select_related(
                 "user_profile__user",
                 "profession",
@@ -337,7 +334,7 @@ class ServiceProviderSearchAPIView(StandardizedViewMixin, generics.ListAPIView):
         )
 
 
-class OrderSearchAPIView(StandardizedViewMixin, generics.ListAPIView):
+class OrderSearchAPIView(generics.ListAPIView):
     """Search orders."""
 
     serializer_class = OrderSerializer
@@ -364,7 +361,7 @@ class OrderSearchAPIView(StandardizedViewMixin, generics.ListAPIView):
     def get_queryset(self):
         """Get published orders."""
         return (
-            Order.objects.filter(status__in=["published", "bidding"], is_deleted=False)
+            Job.objects.filter(status__in=["published", "bidding"], is_deleted=False)
             .select_related(
                 "service_subcategory",
                 "service_subcategory__category",

@@ -31,17 +31,14 @@ class CustomTokenAuthentication(TokenAuthentication):
             
             # Check if user is active and not blocked
             if not token.user.is_active:
-                # print(f"Inactive user attempted authentication: {token.user.email}")
                 return None
             
             if hasattr(token.user, 'blocked') and token.user.blocked:
-                # print(f"Blocked user attempted authentication: {token.user.email}")
                 return None
             
             return (token.user, token) 
             
         except Token.DoesNotExist:
-            # print(f"Invalid token attempted: {token_key[:10]}...")
             return None
     
     def _print_headers(self, request):

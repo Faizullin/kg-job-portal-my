@@ -1,0 +1,62 @@
+[
+  {
+    "model": "users.company",
+    "pk": 1,
+    "fields": {
+      "name": "Чистый Дом",
+      "description": "Профессиональные услуги уборки",
+      "website": "https://cleanhouse.kg",
+      "contact_email": "info@cleanhouse.kg",
+      "contact_phone": "+996 555 123 456",
+      "address": "г. Бишкек, ул. Чуй 123",
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.company",
+    "pk": 2,
+    "fields": {
+      "name": "СантехПро",
+      "description": "Сантехнические услуги",
+      "website": "https://santechpro.kg",
+      "contact_email": "contact@santechpro.kg",
+      "contact_phone": "+996 555 789 012",
+      "address": "г. Бишкек, ул. Манаса 456",
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.company",
+    "pk": 3,
+    "fields": {
+      "name": "ЭлектроМастер",
+      "description": "Электромонтажные работы",
+      "website": "https://electromaster.kg",
+      "contact_email": "info@electromaster.kg",
+      "contact_phone": "+996 555 345 678",
+      "address": "г. Бишкек, ул. Токтогула 789",
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.company",
+    "pk": 4,
+    "fields": {
+      "name": "IT-Хелп",
+      "description": "Компьютерная помощь и IT-услуги",
+      "website": "https://ithelp.kg",
+      "contact_email": "support@ithelp.kg",
+      "contact_phone": "+996 555 901 234",
+      "address": "г. Бишкек, ул. Советская 321",
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]

@@ -1,104 +1,61 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
 from .api.views import (
-    AdvancedUserProfileRetrieveUpdateAPIView,
-    CertificateListCreateAPIView,
-    CertificateRetrieveUpdateDestroyAPIView,
-    ClientProfileCreateAPIView,
-    ClientProfileRetrieveUpdateAPIView,
-    MasterSkillListAPIView,
-    PortfolioItemListCreateAPIView,
-    PortfolioItemRetrieveUpdateDestroyAPIView,
-    ProfessionListAPIView,
-    ProviderStatisticsRetrieveAPIView,
-    ServiceProviderProfileCreateAPIView,
-    ServiceProviderProfileRetrieveUpdateAPIView,
-    ServiceProviderRetrieveAPIView,
-    ServiceProviderSkillAPIView,
-    UpdateOnlineStatusAPIView,
-    GetUserRatingAPIView,
+    EmployerProfileRetrieveUpdateAPIView,
+    MasterSkillAPIViewSet,
+    MasterProfileCreateAPIView, EmployerProfileCreateAPIView,
+    MasterProfileRetrieveUpdateAPIView, MasterPortfolioAPIViewSet, PublicSkillListAPIView, PublicProfessionListAPIView,
+    PublicMasterProfileRetrieveAPIView, CertificateAPIViewSet, MasterUpdateOnlineStatusAPIView,
 )
+
+router = DefaultRouter()
+router.register(r'api/v1/users/my/skills', MasterSkillAPIViewSet, basename='my-skills')
+router.register(r'api/v1/users/my/portfolio', MasterPortfolioAPIViewSet, basename='my-portfolio')
+router.register(r'api/v1/users/my/certificates', CertificateAPIViewSet, basename='my-certificates')
 
 app_name = "users"
 
 urlpatterns = [
     path(
-        "api/v1/users/my/profile/advanced/",
-        AdvancedUserProfileRetrieveUpdateAPIView.as_view(),
-        name="my-profile-retrieve-update",
+        "api/v1/users/my/employer/create/",
+        EmployerProfileCreateAPIView.as_view(),
+        name="my-employer-create",
     ),
     path(
-        "api/v1/users/my/client/create/",
-        ClientProfileCreateAPIView.as_view(),
-        name="my-client-create",
+        "api/v1/users/my/master/create",
+        MasterProfileCreateAPIView.as_view(),
+        name="my-master-create",
     ),
     path(
-        "api/v1/users/my/client/",
-        ClientProfileRetrieveUpdateAPIView.as_view(),
-        name="my-client-retrieve-update",
+        "api/v1/users/my/employer/",
+        EmployerProfileRetrieveUpdateAPIView.as_view(),
+        name="my-employer-retrieve-update",
     ),
     path(
-        "api/v1/users/my/provider/create",
-        ServiceProviderProfileCreateAPIView.as_view(),
-        name="my-provider-create",
+        "api/v1/users/my/master/",
+        MasterProfileRetrieveUpdateAPIView.as_view(),
+        name="my-master-retrieve-update",
     ),
     path(
-        "api/v1/users/my/provider/",
-        ServiceProviderProfileRetrieveUpdateAPIView.as_view(),
-        name="my-provider-retrieve-update",
+        "api/v1/users/my/status",
+        MasterUpdateOnlineStatusAPIView.as_view(),
+        name="my-master-update-online-status",
     ),
-    path(
-        "api/v1/users/my/statistics/",
-        ProviderStatisticsRetrieveAPIView.as_view(),
-        name="my-statistics-retrieve",
-    ),
-    path(
-        "api/v1/users/my/skills/",
-        ServiceProviderSkillAPIView.as_view(),
-        name="my-skills-list-create",
-    ),
-    path(
-        "api/v1/users/my/portfolio/",
-        PortfolioItemListCreateAPIView.as_view(),
-        name="my-portfolio-list-create",
-    ),
-    path(
-        "api/v1/users/my/portfolio/<int:pk>/",
-        PortfolioItemRetrieveUpdateDestroyAPIView.as_view(),
-        name="my-portfolio-retrieve-update-destroy",
-    ),
-    path(
-        "api/v1/users/my/certificates/",
-        CertificateListCreateAPIView.as_view(),
-        name="my-certificates-list-create",
-    ),
-    path(
-        "api/v1/users/my/certificates/<int:pk>/",
-        CertificateRetrieveUpdateDestroyAPIView.as_view(),
-        name="my-certificate-retrieve-update-destroy",
-    ),
+    path("", include(router.urls)),
+
     # Reference Data (Public)
     path(
-        "api/v1/users/skills/", MasterSkillListAPIView.as_view(), name="skills-list"
+        "api/v1/users/skills/", PublicSkillListAPIView.as_view(), name="public-skill-list"
     ),
     path(
         "api/v1/users/professions/",
-        ProfessionListAPIView.as_view(),
-        name="professions-list",
+        PublicProfessionListAPIView.as_view(),
+        name="public-professions-list",
     ),
     path(
-        "api/v1/users/providers/<int:pk>/details/",
-        ServiceProviderRetrieveAPIView.as_view(),
-        name="provider-retrieve",
-    ),
-    path(
-        "api/v1/users/my/online-status/",
-        UpdateOnlineStatusAPIView.as_view(),
-        name="update-online-status",
-    ),
-    path(
-        "api/v1/users/<int:pk>/rating/",
-        GetUserRatingAPIView.as_view(),
-        name="get-user-rating",
-    ),
+        "api/v1/users/masters/<int:id>/details/",
+        PublicMasterProfileRetrieveAPIView.as_view(),
+        name="public-master-profile-retrieve",
+    )
 ]

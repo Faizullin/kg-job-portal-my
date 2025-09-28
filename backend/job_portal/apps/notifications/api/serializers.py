@@ -2,34 +2,34 @@ from utils.serializers import (
     AbstractTimestampedModelSerializer,
     AbstractChoiceFieldSerializerMixin,
 )
-from ..models import UserNotification
+from ..models import Notification
 
 
 class NotificationSerializer(AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin):
-    """Serializer for UserNotification model."""
-    
+    """Serializer for Notification model."""
+
     class Meta:
-        model = UserNotification
+        model = Notification
         fields = [
-            'id', 'user', 'title', 'message', 'notification_type',
-            'is_read', 'read_at', 'order', 'bid', 'created_at'
+            'id', 'recipient', 'title', 'message',
+            'is_read', 'read_at', 'level', 'verb', 'actor', 'target', 'created_at'
         ]
         read_only_fields = ('id', 'created_at', 'read_at')
 
 
 class NotificationCreateSerializer(AbstractTimestampedModelSerializer):
     """Serializer for creating notifications."""
-    
+
     class Meta:
-        model = UserNotification
+        model = Notification
         fields = [
-            'user', 'title', 'message', 'notification_type', 'order', 'bid'
+            'recipient', 'title', 'message', 'level', 'verb', 'actor', 'target'
         ]
 
 
 class NotificationUpdateSerializer(AbstractTimestampedModelSerializer):
     """Serializer for updating notification read status."""
-    
+
     class Meta:
-        model = UserNotification
+        model = Notification
         fields = ['is_read', 'read_at']

@@ -1,0 +1,93 @@
+[
+  {
+    "model": "users.skill",
+    "pk": 1,
+    "fields": {
+      "name": "Генеральная уборка",
+      "description": "Полная уборка помещений",
+      "category": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.skill",
+    "pk": 2,
+    "fields": {
+      "name": "Ежедневная уборка",
+      "description": "Регулярная уборка помещений",
+      "category": 1,
+      "is_active": true,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.skill",
+    "pk": 3,
+    "fields": {
+      "name": "Ремонт кранов",
+      "description": "Устранение неполадок с кранами",
+      "category": 2,
+      "is_active": true,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.skill",
+    "pk": 4,
+    "fields": {
+      "name": "Установка сантехники",
+      "description": "Монтаж сантехнического оборудования",
+      "category": 2,
+      "is_active": true,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.skill",
+    "pk": 5,
+    "fields": {
+      "name": "Электромонтаж",
+      "description": "Установка и ремонт электропроводки",
+      "category": 3,
+      "is_active": true,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.skill",
+    "pk": 6,
+    "fields": {
+      "name": "Ремонт компьютеров",
+      "description": "Диагностика и ремонт ПК",
+      "category": 5,
+      "is_active": true,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.skill",
+    "pk": 7,
+    "fields": {
+      "name": "Установка программ",
+      "description": "Настройка и установка ПО",
+      "category": 5,
+      "is_active": true,
+      "is_deleted": false,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]

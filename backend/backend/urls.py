@@ -12,6 +12,7 @@ urlpatterns = [
 
 
 
+
 if settings.DEBUG:
     from debug_toolbar.toolbar import debug_toolbar_urls
     from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView #, SpectacularJSONAPIView

@@ -1,15 +1,15 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+
 from .api.views import (
-    LanguageViewSet, ServiceCategoryViewSet, ServiceSubcategoryViewSet, 
+    LanguageReadOnlyModelViewSet, ServiceCategoryViewSet, ServiceSubcategoryViewSet,
     ServiceAreaViewSet, SystemSettingsViewSet, SupportFAQViewSet
 )
 
 app_name = 'core'
 
-# Single router handles ALL endpoints
 router = DefaultRouter()
-router.register(r'languages', LanguageViewSet, basename='language')
+router.register(r'languages', LanguageReadOnlyModelViewSet, basename='language')
 router.register(r'service-categories', ServiceCategoryViewSet, basename='servicecategory')
 router.register(r'service-subcategories', ServiceSubcategoryViewSet, basename='servicesubcategory')
 router.register(r'service-areas', ServiceAreaViewSet, basename='servicearea')

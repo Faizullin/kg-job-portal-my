@@ -59,6 +59,17 @@ class UserTypes(models.TextChoices):
     PREMIUM_PAID = 'premium_paid', _('Премиум оплаченный')
 
 
+def user_photo_storage_upload_to(instance, filename):
+    """Generate upload path for user photos."""
+
+    current_datetime = timezone.now().strftime('%Y/%m/%d')
+    # mege updated file name
+    if not instance.pk:
+        raise ValueError("Instance must have a primary key before uploading a photo.")
+    updated_filename = f"{current_datetime}_{filename}"
+    return f'user_photos/user_{instance.pk}/{updated_filename}'
+
+
 class UserModel(AbstractUser, AbstractSoftDeleteModel):
     # Use the custom manager
     objects = UserManager()
@@ -68,45 +79,36 @@ class UserModel(AbstractUser, AbstractSoftDeleteModel):
     firebase_user_id = models.CharField(max_length=200, null=True, blank=True)
 
     # user data
-    email = models.EmailField(max_length=255, unique=True, verbose_name='Email')
-    description = models.TextField(blank=True, null=True, verbose_name='Описание')
-    photo = models.ImageField(upload_to='user_photos/', blank=True, null=True, verbose_name='Фото')
-    photo_url = models.URLField(blank=True, null=True, verbose_name='Ссылка на фото (Firebase)')
-
-
-
+    email = models.EmailField(max_length=255, unique=True, verbose_name=_('Email'))
+    description = models.TextField(blank=True, null=True, verbose_name=_("Description"))
+    photo = models.ImageField(upload_to=user_photo_storage_upload_to, blank=True, null=True, verbose_name=_("Photo"))
+    photo_url = models.URLField(blank=True, null=True, verbose_name=_("Photo URL"))
     REQUIRED_FIELDS = ['email']
 
     def __str__(self):
-        return f'{self.pk} Profile of {self.email}'
+        return f'{self.pk} Profile of {self.email} [#{self.id}]'
 
     def delete(self, using=None, keep_parents=False):
         """Override delete to implement soft delete with additional cleanup."""
-        # Soft delete the user
-        super().delete(using, keep_parents)
 
-        # Additional cleanup for soft-deleted users
+        super().delete(using, keep_parents)
         self._cleanup_deleted_user()
 
     def _cleanup_deleted_user(self):
         """Clean up user data when soft-deleted."""
-        # Clear sensitive data
-        self.firebase_user_id = None
 
-        # Save the cleanup
+        self.firebase_user_id = None
         self.save(update_fields=['firebase_user_id'])
 
     def restore(self, strict=True):
         """Restore a soft-deleted user."""
         super().restore(strict)
 
-        # Reactivate the user account
         self.is_active = True
         self.save(update_fields=['is_active'])
 
     def is_paid(self):
         return self.user_type in (UserTypes.PAID, UserTypes.PREMIUM_PAID)
-
 
 
 class UserActivityDateModel(models.Model):
@@ -144,38 +146,38 @@ class LoginSession(models.Model):
 class UserNotificationSettings(AbstractTimestampedModel):
     """User notification preferences and settings."""
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='notification_settings')
-    
+
     # SMS Notifications
     sms_notifications = models.BooleanField(_("SMS Notifications"), default=True)
-    
+
     # Push Notifications
     push_notifications = models.BooleanField(_("Push Notifications"), default=True)
-    
+
     # Email Notifications
     email_notifications = models.BooleanField(_("Email Notifications"), default=True)
-    
+
     # Task-related notifications
     task_notifications = models.BooleanField(_("Task Notifications"), default=True)
     specialist_messages = models.BooleanField(_("Specialist Messages"), default=True)
     task_updates = models.BooleanField(_("Task Updates"), default=True)
-    
+
     # Marketing notifications
     marketing_emails = models.BooleanField(_("Marketing Emails"), default=False)
     promotional_sms = models.BooleanField(_("Promotional SMS"), default=False)
     newsletter = models.BooleanField(_("Newsletter"), default=False)
-    
+
     # System notifications
     system_alerts = models.BooleanField(_("System Alerts"), default=True)
     security_notifications = models.BooleanField(_("Security Notifications"), default=True)
-    
+
     # Quiet hours
     quiet_hours_enabled = models.BooleanField(_("Quiet Hours Enabled"), default=False)
     quiet_hours_start = models.TimeField(_("Quiet Hours Start"), null=True, blank=True)
     quiet_hours_end = models.TimeField(_("Quiet Hours End"), null=True, blank=True)
-    
+
     class Meta:
         verbose_name = _("User Notification Settings")
         verbose_name_plural = _("User Notification Settings")
-    
+
     def __str__(self):
         return f"{self.user.username} - Notification Settings [#{self.id}]"

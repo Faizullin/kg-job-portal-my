@@ -1,67 +1,44 @@
+from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from accounts.models import UserModel
 from job_portal.apps.core.models import ServiceCategory, ServiceArea, ServiceSubcategory
-from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedModel
+from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedModel, TitleField, ActiveField, \
+    PhoneNumberField
+
+UserModel = get_user_model()
 
 
 class Gender(models.TextChoices):
     MALE = 'male', _('Male')
     FEMALE = 'female', _('Female')
-    OTHER = 'other', _('Other')
-    PREFER_NOT_TO_SAY = 'prefer_not_to_say', _('Prefer not to say')
 
 
-class UserProfile(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Extended user profile for job portal functionality."""
+class Profession(AbstractSoftDeleteModel, AbstractTimestampedModel):
+    """Available professions for masters"""
 
-    user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='job_portal_profile')
-
-    # Profile information
-    bio = models.TextField(_("Bio"), blank=True)
-    date_of_birth = models.DateField(_("Date of Birth"), null=True, blank=True)
-    gender = models.CharField(_("Gender"), max_length=20, choices=Gender.choices, blank=True)
-
-    # Contact information
-    phone_number = models.CharField(_("Phone Number"), max_length=20, blank=True)
-    address = models.TextField(_("Address"), blank=True)
-    city = models.CharField(_("City"), max_length=100, blank=True)
-    state = models.CharField(_("State/Province"), max_length=100, blank=True)
-    country = models.CharField(_("Country"), max_length=100, blank=True)
-    postal_code = models.CharField(_("Postal Code"), max_length=20, blank=True)
-
-    # Terms and conditions
-    terms_accepted = models.BooleanField(_("Terms Accepted"), default=False)
-    terms_accepted_at = models.DateTimeField(_("Terms Accepted At"), null=True, blank=True)
-
-    # Preferences
-    preferred_language = models.ForeignKey('core.Language', on_delete=models.SET_NULL, null=True, blank=True)
-    notification_preferences = models.JSONField(_("Notification Preferences"), default=dict)
-
-    # Verification
-    is_verified = models.BooleanField(_("Verified"), default=False)
-    verification_date = models.DateTimeField(_("Verification Date"), null=True, blank=True)
+    name = TitleField(unique=True)
+    description = models.TextField(_("Description"), blank=True)
+    category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE, related_name='professions')
+    is_active = ActiveField()
 
     class Meta:
-        verbose_name = _("User Profile")
-        verbose_name_plural = _("User Profiles")
+        verbose_name = _("Profession")
+        verbose_name_plural = _("Professions")
+        ordering = ['name']
 
     def __str__(self):
-        return f"{self.user.username} - Profile [#{self.id}]"
+        return f"{self.name}... [#{self.id}]"
 
 
-class ServiceProviderProfile(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Extended profile for service providers."""
-    # Uses default SoftDeleteManager from AbstractSoftDeleteModel
+class Master(AbstractSoftDeleteModel, AbstractTimestampedModel):
+    """Extended profile for masters."""
 
-    user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='service_provider_profile')
+    user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='master_profile')
 
     # Business information
-    business_name = models.CharField(_("Business Name"), max_length=200, blank=True)
-    business_description = models.TextField(_("Business Description"), blank=True)
-    profession = models.ForeignKey('Profession', on_delete=models.SET_NULL, null=True, blank=True,
-                                   related_name='providers')
+    profession = models.ForeignKey(Profession, on_delete=models.SET_NULL, null=True, blank=True, related_name="masters")
 
     # Locations and services
     service_areas = models.ManyToManyField(ServiceArea, blank=True, related_name='providers')
@@ -93,44 +70,44 @@ class ServiceProviderProfile(AbstractSoftDeleteModel, AbstractTimestampedModel):
     is_verified_provider = models.BooleanField(_("Verified Provider"), default=False)
     is_top_master = models.BooleanField(_("Top Master"), default=False)
 
+    skills = models.ManyToManyField('Skill', through='MasterSkill', related_name='masters')
+
     class Meta:
-        verbose_name = _("Service Provider Profile")
-        verbose_name_plural = _("Service Provider Profiles")
+        verbose_name = _("Master Profile")
+        verbose_name_plural = _("Master Profiles")
 
     def __str__(self):
-        return f"{self.user_profile.user.username} - Service Provider [#{self.id}]"
+        return f"{self.user.username} - Master [#{self.id}]"
 
 
-class ClientProfile(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Extended profile for clients."""
-    user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='client_profile')
+class Employer(AbstractSoftDeleteModel, AbstractTimestampedModel):
+    """Extended profile for employers."""
 
-    # Client preferences
+    user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='employer_profile')
+
     preferred_services = models.ManyToManyField(ServiceSubcategory, blank=True,
-                                                related_name='client_preferences')
+                                                related_name='employer_preferences')
 
-    # Order history
     total_orders = models.PositiveIntegerField(_("Total Orders"), default=0)
     completed_orders = models.PositiveIntegerField(_("Completed Orders"), default=0)
     cancelled_orders = models.PositiveIntegerField(_("Cancelled Orders"), default=0)
 
     # Favorites
-    favorite_providers = models.ManyToManyField(ServiceProviderProfile, blank=True, related_name='favorite_clients')
+    favorite_masters = models.ManyToManyField(Master, blank=True, related_name='favorite_employers')
 
     class Meta:
-        verbose_name = _("Client Profile")
-        verbose_name_plural = _("Client Profiles")
+        verbose_name = _("Employer Profile")
+        verbose_name_plural = _("Employer Profiles")
 
     def __str__(self):
-        return f"{self.user_profile.user.username} - Client [#{self.id}]"
+        return f"{self.user.username} - Employer [#{self.id}]"
 
 
-class MasterSkill(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Skills that service providers can have."""
-    name = models.CharField(_("Skill Name"), max_length=100, unique=True)
+class Skill(AbstractSoftDeleteModel, AbstractTimestampedModel):
+    name = TitleField()
     description = models.TextField(_("Description"), blank=True)
     category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE, related_name='skills')
-    is_active = models.BooleanField(_("Active"), default=True)
+    is_active = ActiveField()
 
     class Meta:
         verbose_name = _("Master Skill")
@@ -141,42 +118,53 @@ class MasterSkill(AbstractSoftDeleteModel, AbstractTimestampedModel):
         return f"{self.name}... [#{self.id}]"
 
 
-class ProficiencyLevel(models.TextChoices):
+class MasterSkillProficiencyLevel(models.TextChoices):
     BEGINNER = 'beginner', _('Beginner')
     INTERMEDIATE = 'intermediate', _('Intermediate')
     ADVANCED = 'advanced', _('Advanced')
     EXPERT = 'expert', _('Expert')
 
 
-class ServiceProviderSkill(AbstractTimestampedModel):
-    """Many-to-many relationship between service providers and skills."""
-    service_provider = models.ForeignKey(ServiceProviderProfile, on_delete=models.CASCADE,
-                                         related_name='provider_skills')
-    skill = models.ForeignKey(MasterSkill, on_delete=models.CASCADE, related_name='providers')
-    proficiency_level = models.CharField(_("Proficiency Level"), max_length=20, choices=ProficiencyLevel.choices,
-                                         default=ProficiencyLevel.INTERMEDIATE)
+class MasterSkill(AbstractTimestampedModel):
+    """Skills associated with a master."""
+
+    master = models.ForeignKey(Master, on_delete=models.CASCADE, related_name='master_skills')
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name='providers')
+    proficiency_level = models.CharField(_("Proficiency Level"), max_length=20,
+                                         choices=MasterSkillProficiencyLevel.choices,
+                                         default=MasterSkillProficiencyLevel.INTERMEDIATE)
     years_of_experience = models.PositiveIntegerField(_("Years of Experience"), default=0)
     is_primary_skill = models.BooleanField(_("Primary Skill"), default=False)
 
     class Meta:
-        verbose_name = _("Service Provider Skill")
-        verbose_name_plural = _("Service Provider Skills")
-        unique_together = ['service_provider', 'skill']
+        verbose_name = _("Master Skill")
+        verbose_name_plural = _("Master Skills")
+        unique_together = ['master', 'skill']
 
     def __str__(self):
-        return f"{self.service_provider.user_profile.user.username} - {self.skill.name} [#{self.id}]"
+        return f"{self.master.user.username} - {self.skill.name} [#{self.id}]"
+
+
+def portfolio_attachment_storage_upload_to(instance, filename):
+    """Generate upload path for attachments."""
+
+    current_datetime = timezone.now().strftime('%Y/%m/%d')
+    if not instance.pk:
+        raise ValueError("Instance must have a primary key before uploading.")
+    updated_filename = f"{current_datetime}_{filename}"
+    return f'portfolio_items/attachment_{instance.pk}/{updated_filename}'
 
 
 class PortfolioItem(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Portfolio examples of service provider's work."""
-    service_provider = models.ForeignKey(ServiceProviderProfile, on_delete=models.CASCADE,
-                                         related_name='portfolio_items')
-    title = models.CharField(_("Work Title"), max_length=200)
+    """Portfolio items showcasing a master's work."""
+
+    master = models.ForeignKey(Master, on_delete=models.CASCADE, related_name='portfolio_items')
+    title = TitleField()
     description = models.TextField(_("Description"), blank=True)
-    image = models.ImageField(_("Portfolio Image"), upload_to='portfolio_images/')
-    skill_used = models.ForeignKey(MasterSkill, on_delete=models.SET_NULL, null=True, blank=True,
+    image = models.ImageField(_("Portfolio Image"), upload_to=portfolio_attachment_storage_upload_to)
+    skill_used = models.ForeignKey(Skill, on_delete=models.SET_NULL, null=True, blank=True,
                                    related_name='portfolio_items')
-    is_featured = models.BooleanField(_("Featured Example"), default=False)
+    is_featured = models.BooleanField(_("Featured Item"), default=False)
 
     class Meta:
         verbose_name = _("Portfolio Item")
@@ -184,18 +172,29 @@ class PortfolioItem(AbstractSoftDeleteModel, AbstractTimestampedModel):
         ordering = ['-is_featured', '-created_at']
 
     def __str__(self):
-        return f"{self.service_provider.user_profile.user.username} - {self.title}... [#{self.id}]"
+        return f"{self.master.user.username} - {self.title}... [#{self.id}]"
+
+
+def certificate_storage_upload_to(instance, filename):
+    """Generate upload path for attachments."""
+
+    current_datetime = timezone.now().strftime('%Y/%m/%d')
+    if not instance.pk:
+        raise ValueError("Instance must have a primary key before uploading.")
+    updated_filename = f"{current_datetime}_{filename}"
+    return f'certificates/attachment_{instance.pk}/{updated_filename}'
 
 
 class Certificate(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Professional certificates and qualifications."""
-    service_provider = models.ForeignKey(ServiceProviderProfile, on_delete=models.CASCADE, related_name='certificates')
-    name = models.CharField(_("Certificate Name"), max_length=200)
+    """Certificates and qualifications of a master."""
+
+    master = models.ForeignKey(Master, on_delete=models.CASCADE, related_name='certificates')
+    name = TitleField()
     issuing_organization = models.CharField(_("Issuing Organization"), max_length=200)
     certificate_number = models.CharField(_("Certificate Number"), max_length=100, blank=True)
     issue_date = models.DateField(_("Issue Date"), null=True, blank=True)
     expiry_date = models.DateField(_("Expiry Date"), null=True, blank=True)
-    certificate_file = models.FileField(_("Certificate File"), upload_to='certificates/', blank=True)
+    certificate_file = models.FileField(_("Certificate File"), upload_to=certificate_storage_upload_to, blank=True, null=True)
     is_verified = models.BooleanField(_("Verified"), default=False)
 
     class Meta:
@@ -204,28 +203,13 @@ class Certificate(AbstractSoftDeleteModel, AbstractTimestampedModel):
         ordering = ['-issue_date']
 
     def __str__(self):
-        return f"{self.service_provider.user_profile.user.username} - {self.name}... [#{self.id}]"
+        return f"{self.master.user.username} - {self.name}... [#{self.id}]"
 
 
-class Profession(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Available professions for service providers."""
-    name = models.CharField(_("Profession Name"), max_length=100, unique=True)
-    description = models.TextField(_("Description"), blank=True)
-    category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE, related_name='professions')
-    is_active = models.BooleanField(_("Active"), default=True)
+class MasterStatistics(AbstractTimestampedModel):
+    """Statistical data related to masters."""
 
-    class Meta:
-        verbose_name = _("Profession")
-        verbose_name_plural = _("Professions")
-        ordering = ['name']
-
-    def __str__(self):
-        return f"{self.name}... [#{self.id}]"
-
-
-class ProviderStatistics(AbstractTimestampedModel):
-    """Statistics for service providers."""
-    provider = models.OneToOneField(ServiceProviderProfile, on_delete=models.CASCADE, related_name='statistics')
+    master = models.OneToOneField(Master, on_delete=models.CASCADE, related_name='statistics')
 
     # Performance metrics
     total_jobs_completed = models.PositiveIntegerField(_("Total Jobs Completed"), default=0)
@@ -238,8 +222,28 @@ class ProviderStatistics(AbstractTimestampedModel):
     total_reviews = models.PositiveIntegerField(_("Total Reviews"), default=0)
 
     class Meta:
-        verbose_name = _("Provider Statistics")
-        verbose_name_plural = _("Provider Statistics")
+        verbose_name = _("Master Statistics")
+        verbose_name_plural = _("Master Statistics")
 
     def __str__(self):
-        return f"{self.provider.user_profile.user.username} Statistics... [#{self.id}]"
+        return f"{self.master.user.username} Statistics... [#{self.id}]"
+
+
+class Company(AbstractTimestampedModel):
+    """Companies that masters can be associated with."""
+
+    name = TitleField()
+    description = models.TextField(_("Description"), blank=True)
+    website = models.URLField(_("Website"), blank=True)
+    contact_email = models.EmailField(_("Contact Email"), blank=True)
+    contact_phone = PhoneNumberField(blank=True)
+    address = models.CharField(_("Address"), max_length=255, blank=True)
+    is_active = ActiveField()
+
+    class Meta:
+        verbose_name = _("Company")
+        verbose_name_plural = _("Companies")
+        ordering = ['name']
+
+    def __str__(self):
+        return f"{self.name}... [#{self.id}]"

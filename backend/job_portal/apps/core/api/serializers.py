@@ -1,10 +1,14 @@
+import copy
+import inspect
+
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
+from rest_framework.fields import _UnvalidatedField
+
 from utils.serializers import (
     AbstractChoiceFieldSerializerMixin,
     AbstractTimestampedModelSerializer,
 )
-
 from ..models import (
     AppVersion,
     Language,
@@ -295,3 +299,17 @@ class SupportFAQCreateUpdateSerializer(serializers.ModelSerializer):
             "is_popular",
             "is_active",
         ]
+
+
+class ResponseDataWrapperSerializer(serializers.Serializer):
+    message = serializers.CharField(read_only=True)
+    data = _UnvalidatedField(read_only=True)
+
+    def __init__(self, **kwargs):
+        self.data = kwargs.pop('data', copy.deepcopy(self.data))
+        assert not inspect.isclass(self.data), '`data` has not been instantiated.'
+        assert self.data.source is None, (
+            "The `source` argument is not meaningful when applied to a `data=` field. "
+            "Remove `source=` from the field declaration."
+        )
+        super().__init__(**kwargs)

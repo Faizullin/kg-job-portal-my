@@ -1,64 +1,38 @@
 from django.contrib import admin
 from .models import (
-    UserProfile, ServiceProviderProfile, ClientProfile, ProviderStatistics,
-    MasterSkill, ServiceProviderSkill, PortfolioItem, Certificate, Profession
+    Profession, Master, Employer, Skill, MasterSkill, PortfolioItem, 
+    Certificate, MasterStatistics, Company
 )
 
 
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'is_verified', 'phone_display', 'location_display']
-    list_filter = ['is_verified', 'gender', 'created_at']
-    search_fields = ['user__first_name', 'user__last_name', 'user__email', 'phone_number', 'address']
-    ordering = ['-created_at']
-    list_editable = ['is_verified']
-    raw_id_fields = ['user', 'preferred_language']
+@admin.register(Profession)
+class ProfessionAdmin(admin.ModelAdmin):
+    list_display = ['name', 'category', 'is_active', 'created_at']
+    list_filter = ['category', 'is_active', 'created_at']
+    search_fields = ['name', 'description']
+    ordering = ['name']
+    list_editable = ['is_active']
+    raw_id_fields = ['category']
     
     fieldsets = (
-        ('User Information', {
-            'fields': ('user', 'phone_number', 'address')
-        }),
-        ('Personal Details', {
-            'fields': ('bio', 'date_of_birth', 'gender')
-        }),
-        ('Location', {
-            'fields': ('city', 'state', 'country', 'postal_code')
-        }),
-        ('Preferences', {
-            'fields': ('preferred_language', 'notification_preferences')
-        }),
-        ('Verification', {
-            'fields': ('is_verified', 'verification_date')
+        ('Profession Information', {
+            'fields': ('name', 'description', 'category', 'is_active')
         }),
     )
-    
-    def phone_display(self, obj):
-        return obj.phone_number if obj.phone_number else '-'
-    phone_display.short_description = 'Phone'
-    
-    def location_display(self, obj):
-        if obj.city and obj.state:
-            return f"{obj.city}, {obj.state}"
-        elif obj.city:
-            return obj.city
-        elif obj.state:
-            return obj.state
-        return '-'
-    location_display.short_description = 'Location'
 
 
-@admin.register(ServiceProviderProfile)
-class ServiceProviderProfileAdmin(admin.ModelAdmin):
-    list_display = ['user_profile', 'business_name', 'is_available', 'is_verified_provider', 'is_top_master', 'get_average_rating', 'get_total_reviews']
+@admin.register(Master)
+class MasterAdmin(admin.ModelAdmin):
+    list_display = ['user', 'profession', 'is_available', 'is_verified_provider', 'is_top_master', 'get_average_rating', 'get_total_reviews']
     list_filter = ['is_verified_provider', 'is_available', 'created_at']
-    search_fields = ['user_profile__user__first_name', 'user_profile__user__last_name', 'business_name']
+    search_fields = ['user__first_name', 'user__last_name', 'profession__name']
     ordering = ['-created_at']
     list_editable = ['is_verified_provider', 'is_available', 'is_top_master']
-    raw_id_fields = ['user_profile', 'profession']
+    raw_id_fields = ['user', 'profession']
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('user_profile', 'business_name', 'business_description', 'profession')
+            'fields': ('user', 'profession')
         }),
         ('Business Details', {
             'fields': ('service_areas', 'services_offered', 'works_remotely', 'accepts_clients_at_location', 'travels_to_clients')
@@ -90,20 +64,20 @@ class ServiceProviderProfileAdmin(admin.ModelAdmin):
     get_total_reviews.short_description = 'Total Reviews'
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('user_profile__user', 'statistics')
+        return super().get_queryset(request).select_related('user', 'statistics')
 
 
-@admin.register(ClientProfile)
-class ClientProfileAdmin(admin.ModelAdmin):
-    list_display = ['user_profile', 'total_orders', 'completed_orders', 'cancelled_orders']
+@admin.register(Employer)
+class EmployerAdmin(admin.ModelAdmin):
+    list_display = ['user', 'total_orders', 'completed_orders', 'cancelled_orders']
     list_filter = ['created_at']
-    search_fields = ['user_profile__user__first_name', 'user_profile__user__last_name']
+    search_fields = ['user__first_name', 'user__last_name']
     ordering = ['-total_orders', '-created_at']
-    raw_id_fields = ['user_profile', 'favorite_providers']
+    raw_id_fields = ['user', 'favorite_masters']
     
     fieldsets = (
         ('Client Information', {
-            'fields': ('user_profile',)
+            'fields': ('user',)
         }),
         ('Preferences', {
             'fields': ('preferred_services',)
@@ -112,28 +86,28 @@ class ClientProfileAdmin(admin.ModelAdmin):
             'fields': ('total_orders', 'completed_orders', 'cancelled_orders')
         }),
         ('Favorites', {
-            'fields': ('favorite_providers',)
+            'fields': ('favorite_masters',)
         }),
     )
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('user_profile__user')
+        return super().get_queryset(request).select_related('user')
 
 
-@admin.register(ProviderStatistics)
-class ProviderStatisticsAdmin(admin.ModelAdmin):
+@admin.register(MasterStatistics)
+class MasterStatisticsAdmin(admin.ModelAdmin):
     list_display = [
-        'provider', 'total_jobs_completed', 'average_rating', 'total_reviews',
+        'master', 'total_jobs_completed', 'average_rating', 'total_reviews',
         'on_time_percentage', 'repeat_customer_percentage', 'created_at'
     ]
     list_filter = ['created_at']
-    search_fields = ['provider__user_profile__user__first_name', 'provider__user_profile__user__last_name']
+    search_fields = ['master__user__first_name', 'master__user__last_name']
     ordering = ['-average_rating', '-total_reviews']
-    raw_id_fields = ['provider']
+    raw_id_fields = ['master']
     
     fieldsets = (
-        ('Provider Information', {
-            'fields': ('provider',)
+        ('Master Information', {
+            'fields': ('master',)
         }),
         ('Performance Metrics', {
             'fields': ('total_jobs_completed', 'on_time_percentage', 'repeat_customer_percentage')
@@ -150,11 +124,11 @@ class ProviderStatisticsAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at']
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('provider__user_profile__user')
+        return super().get_queryset(request).select_related('master__user')
 
 
-@admin.register(MasterSkill)
-class MasterSkillAdmin(admin.ModelAdmin):
+@admin.register(Skill)
+class SkillAdmin(admin.ModelAdmin):
     list_display = ['name', 'category', 'is_active', 'created_at']
     list_filter = ['category', 'is_active', 'created_at']
     search_fields = ['name', 'description']
@@ -169,18 +143,18 @@ class MasterSkillAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(ServiceProviderSkill)
-class ServiceProviderSkillAdmin(admin.ModelAdmin):
-    list_display = ['service_provider', 'skill', 'proficiency_level', 'years_of_experience', 'is_primary_skill']
+@admin.register(MasterSkill)
+class MasterSkillAdmin(admin.ModelAdmin):
+    list_display = ['master', 'skill', 'proficiency_level', 'years_of_experience', 'is_primary_skill']
     list_filter = ['proficiency_level', 'is_primary_skill', 'created_at']
-    search_fields = ['service_provider__user_profile__user__first_name', 'service_provider__user_profile__user__last_name', 'skill__name']
+    search_fields = ['master__user__first_name', 'master__user__last_name', 'skill__name']
     ordering = ['-created_at']
     list_editable = ['proficiency_level', 'years_of_experience', 'is_primary_skill']
-    raw_id_fields = ['service_provider', 'skill']
+    raw_id_fields = ['master', 'skill']
     
     fieldsets = (
-        ('Provider & Skill', {
-            'fields': ('service_provider', 'skill')
+        ('Master & Skill', {
+            'fields': ('master', 'skill')
         }),
         ('Proficiency Details', {
             'fields': ('proficiency_level', 'years_of_experience', 'is_primary_skill')
@@ -188,21 +162,21 @@ class ServiceProviderSkillAdmin(admin.ModelAdmin):
     )
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('service_provider__user_profile__user', 'skill')
+        return super().get_queryset(request).select_related('master__user', 'skill')
 
 
 @admin.register(PortfolioItem)
 class PortfolioItemAdmin(admin.ModelAdmin):
-    list_display = ['title', 'service_provider', 'skill_used', 'is_featured', 'created_at']
+    list_display = ['title', 'master', 'skill_used', 'is_featured', 'created_at']
     list_filter = ['is_featured', 'skill_used', 'created_at']
-    search_fields = ['title', 'description', 'service_provider__user_profile__user__first_name', 'service_provider__user_profile__user__last_name']
+    search_fields = ['title', 'description', 'master__user__first_name', 'master__user__last_name']
     ordering = ['-is_featured', '-created_at']
     list_editable = ['is_featured']
-    raw_id_fields = ['service_provider', 'skill_used']
+    raw_id_fields = ['master', 'skill_used']
     
     fieldsets = (
         ('Portfolio Information', {
-            'fields': ('service_provider', 'title', 'description', 'skill_used', 'is_featured')
+            'fields': ('master', 'title', 'description', 'skill_used', 'is_featured')
         }),
         ('Media', {
             'fields': ('image',)
@@ -210,21 +184,21 @@ class PortfolioItemAdmin(admin.ModelAdmin):
     )
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('service_provider__user_profile__user', 'skill_used')
+        return super().get_queryset(request).select_related('master__user', 'skill_used')
 
 
 @admin.register(Certificate)
 class CertificateAdmin(admin.ModelAdmin):
-    list_display = ['name', 'service_provider', 'issuing_organization', 'issue_date', 'is_verified']
+    list_display = ['name', 'master', 'issuing_organization', 'issue_date', 'is_verified']
     list_filter = ['is_verified', 'issue_date', 'created_at']
-    search_fields = ['name', 'issuing_organization', 'certificate_number', 'service_provider__user_profile__user__first_name', 'service_provider__user_profile__user__last_name']
+    search_fields = ['name', 'issuing_organization', 'certificate_number', 'master__user__first_name', 'master__user__last_name']
     ordering = ['-issue_date', '-created_at']
     list_editable = ['is_verified']
-    raw_id_fields = ['service_provider']
+    raw_id_fields = ['master']
     
     fieldsets = (
         ('Certificate Information', {
-            'fields': ('service_provider', 'name', 'issuing_organization', 'certificate_number')
+            'fields': ('master', 'name', 'issuing_organization', 'certificate_number')
         }),
         ('Dates', {
             'fields': ('issue_date', 'expiry_date')
@@ -235,22 +209,29 @@ class CertificateAdmin(admin.ModelAdmin):
     )
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('service_provider__user_profile__user')
+        return super().get_queryset(request).select_related('master__user')
 
 
-@admin.register(Profession)
-class ProfessionAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'is_active', 'created_at']
-    list_filter = ['category', 'is_active', 'created_at']
-    search_fields = ['name', 'description']
+@admin.register(Company)
+class CompanyAdmin(admin.ModelAdmin):
+    list_display = ['name', 'contact_email', 'website', 'is_active', 'created_at']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['name', 'description', 'contact_email', 'website']
     ordering = ['name']
     list_editable = ['is_active']
-    raw_id_fields = ['category']
     
     fieldsets = (
-        ('Profession Information', {
-            'fields': ('name', 'description', 'category', 'is_active')
+        ('Company Information', {
+            'fields': ('name', 'description', 'website')
+        }),
+        ('Contact Information', {
+            'fields': ('contact_email', 'contact_phone', 'address')
+        }),
+        ('Status', {
+            'fields': ('is_active',),
+            'classes': ('collapse',)
         }),
     )
-
-
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related()

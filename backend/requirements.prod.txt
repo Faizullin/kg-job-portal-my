@@ -75,6 +75,10 @@ yarl==1.9.4
 zope.interface==6.2.0
 django-filter
 stripe
+django-jazzmin
+django-environ
+django-crispy-forms
+crispy-bootstrap4
 
 # Production packages
 gunicorn
