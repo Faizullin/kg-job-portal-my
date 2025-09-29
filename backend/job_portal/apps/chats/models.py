@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+import mimetypes
+import os
 
 from accounts.models import UserModel
 from job_portal.apps.jobs.models import Job
@@ -50,16 +52,6 @@ class ChatRoom(AbstractSoftDeleteModel, AbstractTimestampedModel):
         return f"Chat Room: {self.title} [#{self.id}]"
 
 
-def attachment_storage_upload_to(instance, filename):
-    """Generate upload path for attachments."""
-
-    current_datetime = timezone.now().strftime('%Y/%m/%d')
-    if not instance.pk:
-        raise ValueError("Instance must have a primary key before uploading.")
-    updated_filename = f"{current_datetime}_{filename}"
-    return f'chat_attachments/attachment_{instance.pk}/{updated_filename}'
-
-
 class ChatMessage(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Individual chat messages."""
 
@@ -68,10 +60,6 @@ class ChatMessage(AbstractSoftDeleteModel, AbstractTimestampedModel):
     message_type = models.CharField(_("Message Type"), max_length=20, choices=MessageType.choices,
                                     default=MessageType.TEXT)
     content = models.TextField(_("Message Content"))
-
-    attachment = models.FileField(_("Attachment"), upload_to=attachment_storage_upload_to, blank=True, null=True)
-    attachment_name = models.CharField(_("Attachment Name"), max_length=200, blank=True)
-    attachment_size = models.PositiveIntegerField(_("Attachment Size (bytes)"), null=True, blank=True)
 
     # Message status
     is_read = models.BooleanField(_("Read"), default=False)
@@ -88,8 +76,72 @@ class ChatMessage(AbstractSoftDeleteModel, AbstractTimestampedModel):
         return f"{sender_name}: {self.content[:50]}... [#{self.id}]"
 
 
+def attachment_storage_upload_to(instance, filename):
+    """Generate upload path for attachments."""
+
+    current_datetime = timezone.now().strftime('%Y/%m/%d')
+    if not instance.pk:
+        raise ValueError("Instance must have a primary key before uploading.")
+    updated_filename = f"{current_datetime}_{filename}"
+    return f'chat_attachments/attachment_{instance.pk}/{updated_filename}'
+
+
+class ChatAttachment(AbstractSoftDeleteModel, AbstractTimestampedModel):
+    """Separate model for chat message attachments."""
+
+    message = models.ForeignKey(
+        ChatMessage,
+        on_delete=models.CASCADE,
+        related_name='attachments'
+    )
+    file = models.FileField(_("File"), upload_to=attachment_storage_upload_to)
+    original_filename = models.CharField(_("File Name"), max_length=255)
+    size = models.PositiveIntegerField(_("File Size (bytes)"))
+    file_type = models.CharField(_("File Type"), max_length=100, blank=True)
+
+    class Meta:
+        verbose_name = _("Chat Attachment")
+        verbose_name_plural = _("Chat Attachments")
+        ordering = ['created_at']
+        indexes = [
+            models.Index(fields=['message', 'created_at']),
+        ]
+
+    def save(self, *args, **kwargs):
+        """Override save to automatically populate fields if not set."""
+        if self.file and not self.original_filename:
+            self.original_filename = os.path.basename(self.file.name)
+        
+        if self.file and not self.size:
+            try:
+                self.size = self.file.size
+            except (OSError, AttributeError):
+                self.size = 0
+        
+        if self.file and not self.file_type:
+            # Get MIME type from file extension
+            mime_type, _ = mimetypes.guess_type(self.original_filename or self.file.name)
+            if mime_type:
+                self.file_type = mime_type
+            else:
+                # Fallback to file extension
+                ext = os.path.splitext(self.original_filename or self.file.name)[1].lower()
+                if ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp']:
+                    self.file_type = 'image'
+                elif ext in ['.pdf', '.doc', '.docx', '.txt']:
+                    self.file_type = 'document'
+                else:
+                    self.file_type = 'file'
+        
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Attachment: {self.original_filename} for Message [#{self.id}]"
+
+
 class ChatParticipant(AbstractTimestampedModel):
     """Track participant status in chat rooms."""
+
     chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='participant_status')
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='chat_participant_status')
 
@@ -112,5 +164,5 @@ class ChatParticipant(AbstractTimestampedModel):
 
     def __str__(self):
         user_name = f"{self.user.first_name} {self.user.last_name}".strip() or self.user.username
-        room_title = self.chat_room.title or (self.chat_room.order.title if self.chat_room.order else 'General Chat')
+        room_title = self.chat_room.title or 'General Chat'
         return f"{user_name} in {room_title} [#{self.id}]"

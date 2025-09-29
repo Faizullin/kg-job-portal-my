@@ -1,19 +1,13 @@
-from django.urls import path
-from .api.views import (
-    WebSocketInfoApiView,
-    ChatConversationListApiView, ChatConversationDetailApiView, ChatSendMessageApiView,
-    ChatRoomCreateApiView, ChatRoomAddParticipantApiView
-)
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
-app_name = 'chat'
+from job_portal.apps.chats.api.views import ChatRoomAPIViewSet
+
+app_name = 'chats'
+
+router = DefaultRouter()
+router.register(r'api/v1/chats/rooms', ChatRoomAPIViewSet, basename='chat_rooms')
 
 urlpatterns = [
-    path('api/v1/chat/conversations/', ChatConversationListApiView.as_view(), name='chat-conversations'),
-    path('api/v1/chat/conversations/create/', ChatRoomCreateApiView.as_view(), name='chat-room-create'),
-    path('api/v1/chat/conversations/<int:pk>/', ChatConversationDetailApiView.as_view(), name='chat-conversation-detail'),
-    path('api/v1/chat/conversations/<int:pk>/send/', ChatSendMessageApiView.as_view(), name='chat-send-message'),
-    path('api/v1/chat/conversations/<int:pk>/add-participant/', ChatRoomAddParticipantApiView.as_view(), name='chat-add-participant'),
-    
-    # WebSocket connection information
-    path('api/v1/chat/websocket-info/', WebSocketInfoApiView.as_view(), name='websocket-info'),
+    path('', include(router.urls)),
 ]
