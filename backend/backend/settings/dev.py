@@ -27,21 +27,29 @@ SPECTACULAR_SETTINGS = {
     ],
 }
 REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
-MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
-INTERNAL_IPS = [
-    "127.0.0.1",
-    "localhost",
-    "0.0.0.0",
+
+#
+# INSTALLED_APPS += [
+#     "debug_toolbar",
+# ]
+# MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
+# INTERNAL_IPS = [
+#     "127.0.0.1",
+#     "localhost",
+#     "0.0.0.0",
+# ]
+#
+# def show_toolbar(_):
+#     return True
+#
+# DEBUG_TOOLBAR_CONFIG = {
+#     "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+#     "RESULTS_CACHE_SIZE": 100,
+#     "SQL_WARNING_THRESHOLD": 2000,
+#     "IS_RUNNING_TESTS": False,
+# }
+
+INSTALLED_APPS += [
+    "silk",
 ]
-
-
-def show_toolbar(_):
-    return True
-
-
-DEBUG_TOOLBAR_CONFIG = {
-    "SHOW_TOOLBAR_CALLBACK": show_toolbar,
-    "RESULTS_CACHE_SIZE": 100,
-    "SQL_WARNING_THRESHOLD": 2000,
-    "IS_RUNNING_TESTS": False,
-}
+MIDDLEWARE.insert(5, "silk.middleware.SilkyMiddleware")

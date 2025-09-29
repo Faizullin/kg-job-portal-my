@@ -82,13 +82,14 @@ crispy-bootstrap4
 elasticsearch
 elasticsearch-dsl
 django-elasticsearch-dsl
-
-# Development packages
-django-debug-toolbar
 drf-standardized-errors
-pyyaml 
-inflection
 channels-redis==4.1.0
 redis==5.0.1
 django-redis==5.4.0
+
+# Development packages
+django-debug-toolbar
+django-silk
+pyyaml 
+inflection
 drf-spectacular[sidecar]

@@ -99,6 +99,7 @@ class JobAPIViewSet(ModelViewSet):
         responses={
             200: _JobApiActionSerializer,
         },
+        operation_id="v1_jobs_publish"
     )
     @action(detail=True, methods=["post"])
     def publish(self, request):
@@ -120,6 +121,7 @@ class JobAPIViewSet(ModelViewSet):
         responses={
             200: _JobApiActionSerializer,
         },
+        operation_id="v1_jobs_cancel"
     )
     @action(detail=True, methods=["post"])
     def cancel(self, request):
@@ -143,6 +145,7 @@ class JobAPIViewSet(ModelViewSet):
         responses={
             200: _JobApiActionSerializer,
         },
+        operation_id="v1_jobs_apply"
     )
     @action(detail=True, methods=["post"])
     def apply(self, request, *args, **kwargs):
@@ -183,6 +186,7 @@ class JobAPIViewSet(ModelViewSet):
         responses={
             200: CResponseSerializer,
         },
+        operation_id="v1_jobs_bookmark"
     )
     @action(detail=True, methods=["post"])
     def bookmark(self, request):
@@ -210,6 +214,7 @@ class JobAPIViewSet(ModelViewSet):
         responses={
             200: CResponseSerializer,
         },
+        operation_id="v1_jobs_favorite"
     )
     @action(detail=True, methods=["post"])
     def favorite(self, request):
@@ -445,6 +450,7 @@ class JobAssignmentViewSet(ModelViewSet):
         responses={
             200: _JobAssignmentApiActionSerializer,
         },
+        operation_id="v1_job_assignments_start"
     )
     @action(detail=True, methods=["post"])
     def start(self, request):
@@ -473,6 +479,7 @@ class JobAssignmentViewSet(ModelViewSet):
         responses={
             200: _JobAssignmentApiActionSerializer,
         },
+        operation_id="v1_job_assignments_complete"
     )
     @action(detail=True, methods=["post"])
     def complete(self, request):

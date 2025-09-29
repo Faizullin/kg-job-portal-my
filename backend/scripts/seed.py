@@ -276,6 +276,7 @@ def setup_groups():
 
 def run_migrations():
     """Run database migrations."""
+    call_command('makemigrations', verbosity=0)
     call_command('migrate', verbosity=0)
 
 

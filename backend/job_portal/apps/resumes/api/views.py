@@ -35,6 +35,7 @@ class MasterResumeAPIViewSet(ModelViewSet):
         responses={
             200: OpenApiResponse(description="Resume published"),
         },
+        operation_id="v1_resumes_publish"
     )
     @action(detail=True, methods=['post'])
     def publish(self, request, pk=None):
@@ -51,7 +52,8 @@ class MasterResumeAPIViewSet(ModelViewSet):
             200: OpenApiResponse(
                 description="Resume archived",
             )
-        }
+        },
+        operation_id="v1_resumes_archive"
     )
     @action(detail=True, methods=['post'])
     def archive(self, request, pk=None):

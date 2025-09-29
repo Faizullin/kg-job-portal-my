@@ -4,7 +4,8 @@
     "pk": 1,
     "fields": {
       "category": 1,
-      "title": "Генеральная уборка",
+      "name": "Генеральная уборка",
+      "slug": "uborka-generalnaya-uborka",
       "description": "Полная уборка квартиры или дома включая все комнаты",
       "icon": "🏠",
       "is_active": true,
@@ -14,7 +15,6 @@
       "base_price": "2500.00",
       "price_range_min": "2000.00",
       "price_range_max": "4000.00",
-      "slug": "uborka-generalnaya-uborka",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -24,7 +24,8 @@
     "pk": 2,
     "fields": {
       "category": 1,
-      "title": "Ежедневная уборка",
+      "name": "Ежедневная уборка",
+      "slug": "uborka-ezhednevnaya-uborka",
       "description": "Регулярная уборка жилых и офисных помещений",
       "icon": "🧽",
       "is_active": true,
@@ -34,7 +35,6 @@
       "base_price": "800.00",
       "price_range_min": "600.00",
       "price_range_max": "1200.00",
-      "slug": "uborka-ezhednevnaya-uborka",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -44,7 +44,8 @@
     "pk": 3,
     "fields": {
       "category": 1,
-      "title": "Уборка после ремонта",
+      "name": "Уборка после ремонта",
+      "slug": "uborka-uborka-posle-remonta",
       "description": "Специализированная уборка после строительных работ",
       "icon": "🏗️",
       "is_active": true,
@@ -54,7 +55,6 @@
       "base_price": "4000.00",
       "price_range_min": "3000.00",
       "price_range_max": "6000.00",
-      "slug": "uborka-uborka-posle-remonta",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -64,7 +64,8 @@
     "pk": 4,
     "fields": {
       "category": 2,
-      "title": "Сантехника",
+      "name": "Сантехника",
+      "slug": "remont-santehnika",
       "description": "Ремонт и установка сантехнического оборудования",
       "icon": "🚿",
       "is_active": true,
@@ -74,7 +75,6 @@
       "base_price": "3000.00",
       "price_range_min": "2000.00",
       "price_range_max": "8000.00",
-      "slug": "remont-santehnika",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -84,7 +84,8 @@
     "pk": 5,
     "fields": {
       "category": 2,
-      "title": "Электрика",
+      "name": "Электрика",
+      "slug": "remont-elektrika",
       "description": "Электромонтажные работы и ремонт",
       "icon": "⚡",
       "is_active": true,
@@ -94,7 +95,6 @@
       "base_price": "2500.00",
       "price_range_min": "1500.00",
       "price_range_max": "6000.00",
-      "slug": "remont-elektrika",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -104,7 +104,8 @@
     "pk": 6,
     "fields": {
       "category": 2,
-      "title": "Мебель",
+      "name": "Мебель",
+      "slug": "remont-mebel",
       "description": "Ремонт и сборка мебели",
       "icon": "🪑",
       "is_active": true,
@@ -114,7 +115,6 @@
       "base_price": "2000.00",
       "price_range_min": "1000.00",
       "price_range_max": "5000.00",
-      "slug": "remont-mebel",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -124,7 +124,8 @@
     "pk": 7,
     "fields": {
       "category": 3,
-      "title": "Доставка еды",
+      "name": "Доставка еды",
+      "slug": "dostavka-dostavka-edy",
       "description": "Доставка готовых блюд и продуктов",
       "icon": "🍕",
       "is_active": true,
@@ -134,7 +135,6 @@
       "base_price": "300.00",
       "price_range_min": "200.00",
       "price_range_max": "500.00",
-      "slug": "dostavka-dostavka-edy",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -144,7 +144,8 @@
     "pk": 8,
     "fields": {
       "category": 3,
-      "title": "Доставка документов",
+      "name": "Доставка документов",
+      "slug": "dostavka-dostavka-dokumentov",
       "description": "Курьерская доставка документов и писем",
       "icon": "📄",
       "is_active": true,
@@ -154,7 +155,6 @@
       "base_price": "400.00",
       "price_range_min": "300.00",
       "price_range_max": "800.00",
-      "slug": "dostavka-dostavka-dokumentov",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -164,7 +164,8 @@
     "pk": 9,
     "fields": {
       "category": 4,
-      "title": "Маникюр",
+      "name": "Маникюр",
+      "slug": "krasota-manikyur",
       "description": "Услуги маникюра и ухода за ногтями",
       "icon": "💅",
       "is_active": true,
@@ -174,7 +175,6 @@
       "base_price": "1200.00",
       "price_range_min": "800.00",
       "price_range_max": "2000.00",
-      "slug": "krasota-manikyur",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -184,7 +184,8 @@
     "pk": 10,
     "fields": {
       "category": 4,
-      "title": "Парикмахерские услуги",
+      "name": "Парикмахерские услуги",
+      "slug": "krasota-parikmaherskie-uslugi",
       "description": "Стрижки, укладки, окрашивание волос",
       "icon": "💇",
       "is_active": true,
@@ -194,7 +195,6 @@
       "base_price": "1500.00",
       "price_range_min": "1000.00",
       "price_range_max": "3000.00",
-      "slug": "krasota-parikmaherskie-uslugi",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -204,7 +204,8 @@
     "pk": 11,
     "fields": {
       "category": 5,
-      "title": "Английский язык",
+      "name": "Английский язык",
+      "slug": "obrazovanie-angliyskiy-yazyk",
       "description": "Изучение английского языка с репетитором",
       "icon": "🇬🇧",
       "is_active": true,
@@ -214,7 +215,6 @@
       "base_price": "800.00",
       "price_range_min": "600.00",
       "price_range_max": "1200.00",
-      "slug": "obrazovanie-angliyskiy-yazyk",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -224,7 +224,8 @@
     "pk": 12,
     "fields": {
       "category": 5,
-      "title": "Математика",
+      "name": "Математика",
+      "slug": "obrazovanie-matematika",
       "description": "Репетиторство по математике для школьников и студентов",
       "icon": "📐",
       "is_active": true,
@@ -234,7 +235,6 @@
       "base_price": "600.00",
       "price_range_min": "400.00",
       "price_range_max": "1000.00",
-      "slug": "obrazovanie-matematika",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -244,7 +244,8 @@
     "pk": 13,
     "fields": {
       "category": 6,
-      "title": "Разработка сайтов",
+      "name": "Разработка сайтов",
+      "slug": "it-uslugi-razrabotka-saytov",
       "description": "Создание и разработка веб-сайтов",
       "icon": "🌐",
       "is_active": true,
@@ -254,7 +255,6 @@
       "base_price": "15000.00",
       "price_range_min": "8000.00",
       "price_range_max": "50000.00",
-      "slug": "it-uslugi-razrabotka-saytov",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -264,7 +264,8 @@
     "pk": 14,
     "fields": {
       "category": 6,
-      "title": "Мобильные приложения",
+      "name": "Мобильные приложения",
+      "slug": "it-uslugi-mobilnye-prilozheniya",
       "description": "Разработка мобильных приложений для iOS и Android",
       "icon": "📱",
       "is_active": true,
@@ -274,7 +275,6 @@
       "base_price": "25000.00",
       "price_range_min": "15000.00",
       "price_range_max": "100000.00",
-      "slug": "it-uslugi-mobilnye-prilozheniya",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -284,7 +284,8 @@
     "pk": 15,
     "fields": {
       "category": 7,
-      "title": "Персональный тренер",
+      "name": "Персональный тренер",
+      "slug": "sport-personalnyy-trener",
       "description": "Индивидуальные тренировки с персональным тренером",
       "icon": "💪",
       "is_active": true,
@@ -294,7 +295,6 @@
       "base_price": "2000.00",
       "price_range_min": "1500.00",
       "price_range_max": "3500.00",
-      "slug": "sport-personalnyy-trener",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -304,7 +304,8 @@
     "pk": 16,
     "fields": {
       "category": 7,
-      "title": "Йога",
+      "name": "Йога",
+      "slug": "sport-yoga",
       "description": "Занятия йогой и медитацией",
       "icon": "🧘",
       "is_active": true,
@@ -314,7 +315,6 @@
       "base_price": "1000.00",
       "price_range_min": "800.00",
       "price_range_max": "1500.00",
-      "slug": "sport-yoga",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -324,7 +324,8 @@
     "pk": 17,
     "fields": {
       "category": 8,
-      "title": "Письменный перевод",
+      "name": "Письменный перевод",
+      "slug": "perevody-pismennyy-perevod",
       "description": "Перевод документов и текстов",
       "icon": "📝",
       "is_active": true,
@@ -334,7 +335,6 @@
       "base_price": "800.00",
       "price_range_min": "500.00",
       "price_range_max": "1500.00",
-      "slug": "perevody-pismennyy-perevod",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -344,7 +344,8 @@
     "pk": 18,
     "fields": {
       "category": 8,
-      "title": "Устный перевод",
+      "name": "Устный перевод",
+      "slug": "perevody-ustnyy-perevod",
       "description": "Синхронный и последовательный перевод",
       "icon": "🗣️",
       "is_active": true,
@@ -354,7 +355,6 @@
       "base_price": "1500.00",
       "price_range_min": "1000.00",
       "price_range_max": "3000.00",
-      "slug": "perevody-ustnyy-perevod",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }

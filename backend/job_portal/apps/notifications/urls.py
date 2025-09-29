@@ -1,18 +1,13 @@
-from django.urls import path
-from .api.views import (
-    NotificationApiView, NotificationDetailApiView, NotificationCreateApiView,
-    NotificationUnreadView, NotificationRecentView, NotificationMarkAllReadView, NotificationCountView
-)
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+from .api.views import NotificationAPIViewSet
 
 app_name = 'notifications'
 
+router = DefaultRouter()
+router.register(r'api/v1/notifications', NotificationAPIViewSet, basename='notifications')
+
 urlpatterns = [
-    # Notifications
-    path('api/v1/notifications/', NotificationApiView.as_view(), name='notifications'),
-    path('api/v1/notifications/create/', NotificationCreateApiView.as_view(), name='notification-create'),
-    path('api/v1/notifications/<int:pk>/', NotificationDetailApiView.as_view(), name='notification-detail'),
-    path('api/v1/notifications/unread/', NotificationUnreadView.as_view(), name='notification-unread'),
-    path('api/v1/notifications/recent/', NotificationRecentView.as_view(), name='notification-recent'),
-    path('api/v1/notifications/mark-all-read/', NotificationMarkAllReadView.as_view(), name='notification-mark-all-read'),
-    path('api/v1/notifications/count/', NotificationCountView.as_view(), name='notification-count'),
+    path('', include(router.urls)),
 ]

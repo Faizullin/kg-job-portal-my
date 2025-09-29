@@ -4,11 +4,10 @@ import inspect
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.fields import _UnvalidatedField
-
 from utils.serializers import (
-    AbstractChoiceFieldSerializerMixin,
     AbstractTimestampedModelSerializer,
 )
+
 from ..models import (
     AppVersion,
     Language,
@@ -20,9 +19,7 @@ from ..models import (
 )
 
 
-class LanguageSerializer(
-    AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin
-):
+class LanguageSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = Language
         fields = [
@@ -37,9 +34,7 @@ class LanguageSerializer(
         ]
 
 
-class ServiceSubcategorySerializer(
-    AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin
-):
+class ServiceSubcategorySerializer(AbstractTimestampedModelSerializer):
     complexity_level_display = serializers.SerializerMethodField()
 
     class Meta:
@@ -63,9 +58,7 @@ class ServiceSubcategorySerializer(
         return self.get_choice_display(obj, "complexity_level")
 
 
-class ServiceCategorySerializer(
-    AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin
-):
+class ServiceCategorySerializer(AbstractTimestampedModelSerializer):
     subcategories = ServiceSubcategorySerializer(many=True, read_only=True)
 
     class Meta:
@@ -113,9 +106,7 @@ class ServiceAreaSerializer(AbstractTimestampedModelSerializer):
         return None
 
 
-class SystemSettingsSerializer(
-    AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin
-):
+class SystemSettingsSerializer(AbstractTimestampedModelSerializer):
     setting_type_display = serializers.SerializerMethodField()
 
     class Meta:
@@ -136,9 +127,7 @@ class SystemSettingsSerializer(
         return self.get_choice_display(obj, "setting_type")
 
 
-class SupportFAQSerializer(
-    AbstractTimestampedModelSerializer, AbstractChoiceFieldSerializerMixin
-):
+class SupportFAQSerializer(AbstractTimestampedModelSerializer):
     """Serializer for support FAQ items."""
 
     category_display = serializers.SerializerMethodField()
@@ -306,8 +295,8 @@ class ResponseDataWrapperSerializer(serializers.Serializer):
     data = _UnvalidatedField(read_only=True)
 
     def __init__(self, **kwargs):
-        self.data = kwargs.pop('data', copy.deepcopy(self.data))
-        assert not inspect.isclass(self.data), '`data` has not been instantiated.'
+        self.data = kwargs.pop("data", copy.deepcopy(self.data))
+        assert not inspect.isclass(self.data), "`data` has not been instantiated."
         assert self.data.source is None, (
             "The `source` argument is not meaningful when applied to a `data=` field. "
             "Remove `source=` from the field declaration."

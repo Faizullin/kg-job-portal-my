@@ -3,7 +3,8 @@
     "model": "core.servicecategory",
     "pk": 1,
     "fields": {
-      "title": "Уборка",
+      "name": "Уборка",
+      "slug": "uborka",
       "description": "Услуги по уборке домов, офисов и других помещений",
       "icon": "🧹",
       "color": "#10B981",
@@ -14,7 +15,6 @@
       "commission_rate": "10.00",
       "min_price": "500.00",
       "max_price": "5000.00",
-      "slug": "uborka",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -23,7 +23,8 @@
     "model": "core.servicecategory",
     "pk": 2,
     "fields": {
-      "title": "Ремонт",
+      "name": "Ремонт",
+      "slug": "remont",
       "description": "Ремонтные работы и техническое обслуживание",
       "icon": "🔧",
       "color": "#F59E0B",
@@ -34,7 +35,6 @@
       "commission_rate": "12.00",
       "min_price": "1000.00",
       "max_price": "10000.00",
-      "slug": "remont",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -43,7 +43,8 @@
     "model": "core.servicecategory",
     "pk": 3,
     "fields": {
-      "title": "Доставка",
+      "name": "Доставка",
+      "slug": "dostavka",
       "description": "Услуги доставки и курьерской службы",
       "icon": "🚚",
       "color": "#3B82F6",
@@ -54,7 +55,6 @@
       "commission_rate": "8.00",
       "min_price": "200.00",
       "max_price": "2000.00",
-      "slug": "dostavka",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -63,7 +63,8 @@
     "model": "core.servicecategory",
     "pk": 4,
     "fields": {
-      "title": "Красота",
+      "name": "Красота",
+      "slug": "krasota",
       "description": "Услуги красоты и ухода за собой",
       "icon": "💄",
       "color": "#EC4899",
@@ -74,7 +75,6 @@
       "commission_rate": "15.00",
       "min_price": "800.00",
       "max_price": "8000.00",
-      "slug": "krasota",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -83,7 +83,8 @@
     "model": "core.servicecategory",
     "pk": 5,
     "fields": {
-      "title": "Образование",
+      "name": "Образование",
+      "slug": "obrazovanie",
       "description": "Образовательные услуги и репетиторство",
       "icon": "📚",
       "color": "#8B5CF6",
@@ -94,7 +95,6 @@
       "commission_rate": "20.00",
       "min_price": "300.00",
       "max_price": "3000.00",
-      "slug": "obrazovanie",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -103,7 +103,8 @@
     "model": "core.servicecategory",
     "pk": 6,
     "fields": {
-      "title": "IT Услуги",
+      "name": "IT Услуги",
+      "slug": "it-uslugi",
       "description": "Информационные технологии и программирование",
       "icon": "💻",
       "color": "#06B6D4",
@@ -114,7 +115,6 @@
       "commission_rate": "25.00",
       "min_price": "2000.00",
       "max_price": "50000.00",
-      "slug": "it-uslugi",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -123,7 +123,8 @@
     "model": "core.servicecategory",
     "pk": 7,
     "fields": {
-      "title": "Спорт",
+      "name": "Спорт",
+      "slug": "sport",
       "description": "Спортивные услуги и фитнес",
       "icon": "🏃",
       "color": "#EF4444",
@@ -134,7 +135,6 @@
       "commission_rate": "18.00",
       "min_price": "500.00",
       "max_price": "5000.00",
-      "slug": "sport",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }
@@ -143,7 +143,8 @@
     "model": "core.servicecategory",
     "pk": 8,
     "fields": {
-      "title": "Переводы",
+      "name": "Переводы",
+      "slug": "perevody",
       "description": "Услуги перевода и локализации",
       "icon": "🌐",
       "color": "#84CC16",
@@ -154,7 +155,6 @@
       "commission_rate": "22.00",
       "min_price": "400.00",
       "max_price": "4000.00",
-      "slug": "perevody",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
     }

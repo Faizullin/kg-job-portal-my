@@ -82,16 +82,17 @@ crispy-bootstrap4
 elasticsearch
 elasticsearch-dsl
 django-elasticsearch-dsl
-
-# Production packages
-gunicorn
+drf-standardized-errors
 channels-redis==4.1.0
 redis==5.0.1
 django-redis==5.4.0
 
+# Production packages
+gunicorn
+
 # Development packages
 django-debug-toolbar
-drf-standardized-errors
+django-silk
 pyyaml 
 inflection
 drf-spectacular[sidecar]

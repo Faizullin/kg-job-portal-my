@@ -71,7 +71,8 @@ class Notification(AbstractTimestampedModel):
 
     def mark_as_unread(self):
         if self.is_read:
-            self.unread = False
+            self.is_read = False
+            self.read_at = None
             self.save()
 
     # def qs_read(self):

@@ -47,8 +47,6 @@ INSTALLED_APPS = [
     "job_portal.apps.resumes",
     "job_portal.apps.locations",
     "job_portal.apps.contacts",
-
-    "debug_toolbar",
 ]
 
 MIDDLEWARE = [

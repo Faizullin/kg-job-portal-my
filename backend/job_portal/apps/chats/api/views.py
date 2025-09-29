@@ -72,6 +72,10 @@ class ChatRoomAPIViewSet(ModelViewSet):
             return ChatRoomCreateSerializer
         return ChatRoomSerializer
 
+    @extend_schema(
+        description="Leave a chat room",
+        operation_id="v1_chat_rooms_leave"
+    )
     @action(detail=True, methods=['post'])
     def leave(self, request, pk=None):
         """Leave a chat room"""
@@ -89,6 +93,10 @@ class ChatRoomAPIViewSet(ModelViewSet):
         self._broadcast_user_left(chat_room, request.user)
         return Response({'message': 'Successfully left chat room'})
 
+    @extend_schema(
+        description="Add participants to chat room",
+        operation_id="v1_chat_rooms_add_participants"
+    )
     @action(detail=True, methods=["post"])
     def add_participants(self, request, pk=None):
         chat_room = self.get_object()
@@ -125,7 +133,8 @@ class ChatRoomAPIViewSet(ModelViewSet):
             OpenApiParameter(name='search', description='Search in message content', type=str),
             OpenApiParameter(name='message_type', description='Filter by message type', type=str),
         ],
-        responses={200: MessageSerializer(many=True)}
+        responses={200: MessageSerializer(many=True)},
+        operation_id="v1_chat_rooms_messages"
     )
     @action(detail=True, methods=['get'])
     def messages(self, request, pk=None):
@@ -160,7 +169,8 @@ class ChatRoomAPIViewSet(ModelViewSet):
         request=MessageCreateSerializer,
         responses={
             200: MessageSerializer,
-        }
+        },
+        operation_id="v1_chat_rooms_send_message"
     )
     @action(detail=True, methods=["post"])
     def send_message(self, request, pk=None):
@@ -201,6 +211,10 @@ class ChatRoomAPIViewSet(ModelViewSet):
         self._broadcast_message_add(chat_room, chat_message, request)
         return Response(MessageSerializer(chat_message, context={'request': request}).data)
 
+    @extend_schema(
+        description="Edit a message in chat room",
+        operation_id="v1_chat_rooms_edit_message"
+    )
     @action(detail=True, methods=['patch'], url_path="messages/(?P<message_id>[^/.]+)/edit")
     def edit_message(self, request, pk=None, message_id=None):
         """Edit an existing message in the chat room."""
@@ -218,6 +232,10 @@ class ChatRoomAPIViewSet(ModelViewSet):
         self._broadcast_message_edit(chat_room, message, request)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        description="Delete a message from chat room",
+        operation_id="v1_chat_rooms_delete_message"
+    )
     @action(detail=True, methods=['delete'], url_path="messages/(?P<message_id>[^/.]+)")
     def delete_message(self, request, pk=None, message_id=None):
         """Remove message"""
