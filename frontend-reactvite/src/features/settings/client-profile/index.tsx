@@ -9,7 +9,7 @@ const loadClientProfileQueryKey = "client-profile";
 export function SettingsClientProfile() {
   const submitMutation = useMutation({
     mutationFn: async () => {
-      await myApi.v1UsersMyClientCreateCreate();
+      await myApi.v1UsersMyEmployerCreateCreate();
     },
     onSuccess: () => {
       window.location.reload();
@@ -19,7 +19,7 @@ export function SettingsClientProfile() {
     queryKey: [loadClientProfileQueryKey],
     queryFn: async () => {
       try {
-        const res = await myApi.v1UsersMyClientRetrieve();
+        const res = await myApi.v1UsersMyEmployerRetrieve();
         return { exists: true, data: res.data };
       } catch {
         return { exists: false };

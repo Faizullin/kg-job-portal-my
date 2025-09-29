@@ -15,18 +15,22 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { DialogControl } from "@/hooks/use-dialog-control";
-import { ChatRoomCreateChatTypeEnum, type ChatConversation, type UserList } from "@/lib/api/axios-client/api";
+import { ChatTypeEnum, type ChatRoom, type ChatRoomCreate, type UserList } from "@/lib/api/axios-client/api";
 import myApi from "@/lib/api/my-api";
 import { useAuthStore } from "@/stores/auth-store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+// Query keys
+const CHAT_USER_SEARCH_QUERY_KEY = 'chat-user-search';
+const CHAT_ROOMS_QUERY_KEY = 'chat-rooms';
+
 type NewChatProps = {
   control?: DialogControl;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  onCreated?: (room: ChatConversation) => void;
+  onCreated?: (room: ChatRoom) => void;
   orderId?: number; // Optional order to attach to the chat
 };
 
@@ -36,18 +40,21 @@ export function NewChat({ onOpenChange, open, control, onCreated, orderId }: New
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
   const loadChatUserSearchQuery = useQuery({
-    queryKey: ["chat-user-search", search],
-    queryFn: () => {
-      return myApi.v1UsersList({
+    queryKey: [CHAT_USER_SEARCH_QUERY_KEY, search],
+    queryFn: async () => {
+      const response = await myApi.v1UsersList({
         search,
         pageSize: 20
-      })
+      });
+      return response.data;
     },
+    enabled: search.length > 0,
+    staleTime: 2 * 60 * 1000, // 2 minutes
   });
 
   const users = useMemo(() => {
     if (!user?.id) return [];
-    return (loadChatUserSearchQuery.data?.data?.results || [])
+    return (loadChatUserSearchQuery.data?.results || [])
       .filter((u) => String(u.id) !== String(user.id))
   }, [loadChatUserSearchQuery.data, user]);
 
@@ -55,49 +62,31 @@ export function NewChat({ onOpenChange, open, control, onCreated, orderId }: New
     mutationFn: async () => {
       if (selectedUsers.length === 0) throw new Error('No users selected');
 
-      // Create chat room using the backend API
-      // const response = await myApi.axios.post('/api/v1/chat/conversations/create/', {
-      //   title: selectedUsers.map((u) => u.username).join(", ") || (orderId ? 'Order Chat' : 'New Chat'),
-      //   chat_type: orderId ? 'order_chat' : 'general_chat',
-      //   participants: selectedUsers.map(u => u.id),
-      //   ...(orderId && { order_id: orderId })
-      // });
-      const response = await myApi.v1ChatConversationsCreateCreate({
-        chatRoomCreate: {
-          title: selectedUsers.map((u) => u.username).join(", ") || (orderId ? 'Order Chat' : 'New Chat'),
-          chat_type: orderId ? ChatRoomCreateChatTypeEnum.order_chat : ChatRoomCreateChatTypeEnum.general_chat,
-          participants: selectedUsers.map(u => u.id),
-          ...(orderId && { order_id: orderId })
-        }
-      });
-
-      // Convert ChatRoom response to ChatConversation format
-      const chatRoom = response.data;
-      const firstUser = selectedUsers[0];
-
-      const conversation: ChatConversation = {
-        id: chatRoom.id,
-        title: chatRoom.title,
-        chat_type: chatRoom.chat_type as any,
-        other_participant_name: firstUser.username,
-        other_participant_avatar: firstUser.photo_url || '',
-        other_participant_online: 'false',
-        last_message_preview: '',
-        last_message_time: '',
-        service_category: '',
-        unread_count: '0',
-        is_active: chatRoom.is_active,
-        created_at: chatRoom.created_at
+      const chatRoomCreate: ChatRoomCreate = {
+        id: 0, // Will be set by backend
+        title: selectedUsers.map((u) => u.username).join(", ") || (orderId ? 'Order Chat' : 'New Chat'),
+        chat_type: orderId ? ChatTypeEnum.job_chat : ChatTypeEnum.general_chat,
+        participants_users_ids: selectedUsers.map(u => u.id),
+        job: orderId || null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
 
-      return conversation;
+      const response = await myApi.v1ChatsRoomsCreate({
+        chatRoomCreate
+      });
+
+      return response.data;
     },
     onSuccess: (room) => {
-      queryClient.invalidateQueries({ queryKey: ['chat-rooms'] });
+      queryClient.invalidateQueries({ queryKey: [CHAT_ROOMS_QUERY_KEY] });
       if (onCreated) onCreated(room);
       if (control) control.hide();
       setSelectedUsers([]);
     },
+    onError: (error) => {
+      console.error('Failed to create chat room:', error);
+    }
   });
 
   const handleSelectUser = (user: UserList) => {

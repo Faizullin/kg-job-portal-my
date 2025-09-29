@@ -384,7 +384,7 @@ const masterTopNav = [
   },
   {
     title: "Заказы",
-    href: "/orders",
+    href: "/jobs",
     isActive: false,
     disabled: false,
   },
@@ -402,7 +402,7 @@ const masterTopNav = [
   },
   {
     title: "Профиль",
-    href: "/settings/service-provider",
+    href: "/settings/master",
     isActive: false,
     disabled: false,
   },

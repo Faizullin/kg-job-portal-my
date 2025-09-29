@@ -1,19 +1,17 @@
-import type { UserProfile } from "@/lib/api/axios-client";
+import type { UserDetail } from "@/lib/api/axios-client";
 import myApi from "@/lib/api/my-api";
 import { type User as FirebaseUser } from "firebase/auth";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type AuthUser = UserProfile;
-
-export type ProfileType = 'client' | 'service_provider';
+export type ProfileType = 'client' | 'master';
 
 interface AuthState {
   token: string | null;
   setToken: (token: string | null) => void;
   isAuthenticated: boolean;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
-  user: AuthUser | null;
+  user: UserDetail | null;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
   currentProfileType: ProfileType | null;
@@ -58,7 +56,7 @@ export const useAuthStore = create<AuthState>()(
       try {
         const token = await firebaseUser.getIdToken();
         const response = await myApi.axios.post<{
-          user: UserProfile;
+          user: UserDetail;
           token: string;
           message: string;
         }>("/api/v1/auth/firebase/", {

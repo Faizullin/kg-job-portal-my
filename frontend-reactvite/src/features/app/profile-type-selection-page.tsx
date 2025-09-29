@@ -76,7 +76,7 @@ export function ProfileTypeSelectionPage() {
                                     <p className="text-sm text-muted-foreground mb-4">
                                         Размещайте портфолио, получайте заказы и развивайте бизнес
                                     </p>
-                                    <Link to="/settings/service-provider">
+                                    <Link to="/settings/master">
                                         <Button className="w-full">
                                             Настроить профиль мастера
                                         </Button>

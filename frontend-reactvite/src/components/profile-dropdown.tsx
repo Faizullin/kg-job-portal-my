@@ -43,12 +43,12 @@ export function ProfileDropdown() {
   // Profile switching logic
   const handleProfileToggle = () => {
     if (auth.currentProfileType === 'client') {
-      auth.setCurrentProfileType('service_provider');
-    } else if (auth.currentProfileType === 'service_provider') {
+      auth.setCurrentProfileType('master');
+    } else if (auth.currentProfileType === 'master') {
       auth.setCurrentProfileType('client');
     } else {
       // If no profile is selected, default to client if available, otherwise service provider
-      auth.setCurrentProfileType(hasClientGroup ? 'client' : 'service_provider');
+      auth.setCurrentProfileType(hasClientGroup ? 'client' : 'master');
     }
   };
 
@@ -56,8 +56,8 @@ export function ProfileDropdown() {
     switch (auth.currentProfileType) {
       case 'client':
         return 'Client';
-      case 'service_provider':
-        return 'Service Provider';
+      case 'master':
+        return 'Master';
       default:
         return 'Select Profile';
     }
@@ -66,11 +66,11 @@ export function ProfileDropdown() {
   const getButtonText = () => {
     switch (auth.currentProfileType) {
       case 'client':
-        return 'Service Provider';
-      case 'service_provider':
+        return 'Master';
+      case 'master':
         return 'Client';
       default:
-        return hasClientGroup ? 'Activate Client' : 'Activate Service Provider';
+        return hasClientGroup ? 'Activate Client' : 'Activate Master';
     }
   };
 
@@ -78,7 +78,7 @@ export function ProfileDropdown() {
     switch (auth.currentProfileType) {
       case 'client':
         return <Briefcase className="h-4 w-4 mr-2" />;
-      case 'service_provider':
+      case 'master':
         return <User className="h-4 w-4 mr-2" />;
       default:
         return hasClientGroup ? <User className="h-4 w-4 mr-2" /> : <Briefcase className="h-4 w-4 mr-2" />;
@@ -91,12 +91,6 @@ export function ProfileDropdown() {
     return auth.user.groups.includes('client') || auth.user.groups.includes('Client');
   }, [auth.user?.groups]);
 
-  const hasServiceProviderGroup = useMemo(() => {
-    if (!auth.user?.groups) return false;
-    return auth.user.groups.includes('service_provider') ||
-      auth.user.groups.includes('Service Provider') ||
-      auth.user.groups.includes('serviceprovider');
-  }, [auth.user?.groups]);
 
   return (
     <>

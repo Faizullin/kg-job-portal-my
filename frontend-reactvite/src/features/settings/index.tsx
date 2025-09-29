@@ -7,7 +7,7 @@ import { ThemeSwitch } from "@/components/theme-switch";
 import { Separator } from "@/components/ui/separator";
 import { useAuthStore } from "@/stores/auth-store";
 import { Outlet } from "@tanstack/react-router";
-import { Bell, Briefcase, Monitor, Palette, Shield, ShoppingCart, User, UserCog, Users } from "lucide-react";
+import { Bell, Briefcase, Monitor, Palette, Shield, ShoppingCart, UserCog, Users } from "lucide-react";
 import { useMemo } from "react";
 import { SidebarNav } from "./_components/sidebar-nav";
 
@@ -17,12 +17,6 @@ const getBaseSidebarItems = () => [
     title: "Profile",
     href: "/settings/profile",
     icon: <UserCog size={18} />,
-    visible: true,
-  },
-  {
-    title: "User Profile",
-    href: "/settings/user-profile",
-    icon: <User size={18} />,
     visible: true,
   },
   {
@@ -51,8 +45,8 @@ const getRoleBasedSidebarItems = (user: any) => {
 
   // Always show both tabs; pages handle initialization if profile missing
   items.push({
-    title: "Service Provider",
-    href: "/settings/service-provider",
+    title: "Master",
+    href: "/settings/master",
     icon: <Briefcase size={18} />,
     visible: true,
   });

@@ -70,11 +70,14 @@ const RenderTable = () => {
 
   const loadServiceAreasQuery = useQuery({
     queryKey: [loadServiceAreasQueryKey, debouncedSearchQuery],
-    queryFn: () => myApi.v1CoreServiceAreasList({
-      search: debouncedSearchQuery || undefined,
-      page: 1,
-      pageSize: 10,
-    }).then(r => r.data),
+    queryFn: async () => {
+      const response = await myApi.v1CoreServiceAreasList({
+        search: debouncedSearchQuery || undefined,
+        page: 1,
+        pageSize: 10,
+      })
+      return response.data;
+    },
     staleTime: 0,
   });
 
@@ -84,7 +87,7 @@ const RenderTable = () => {
     setParsedData(parsed);
     setParsedPagination({
       pageCount: Math.ceil(
-        loadServiceAreasQuery.data.count / 10,
+        (loadServiceAreasQuery.data.count || 0) / 10,
       ),
     });
   }, [loadServiceAreasQuery.data]);
@@ -104,16 +107,10 @@ const RenderTable = () => {
       state: area.state,
       country: area.country,
       is_active: area.is_active ?? true,
+      service_categories: area.service_categories.map(category => category.toString()) || [],
     });
   }, [areaDialog]);
 
-  const handleDelete = useCallback((area: ServiceArea) => {
-    NiceModal.show(DeleteConfirmNiceDialog, {
-      title: "Delete Service Area",
-      description: `Are you sure you want to delete "${area.name}"? This action cannot be undone.`,
-      onConfirm: () => deleteMutation.mutate(area.id),
-    });
-  }, []);
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => myApi.v1CoreServiceAreasDestroy({ id }),
@@ -125,6 +122,19 @@ const RenderTable = () => {
       toast.error(error.response?.data?.detail || "Failed to delete service area");
     },
   });
+  const deleteMutationMutateAsync = deleteMutation.mutateAsync;
+  const handleDelete = useCallback((area: ServiceArea) => {
+    NiceModal.show(DeleteConfirmNiceDialog, {
+      args: {
+        title: "Delete Service Area",
+        desc: `Are you sure you want to delete "${area.name}"? This action cannot be undone.`,
+      }
+    }).then((response) => {
+      if (response.reason === "confirm") {
+        deleteMutationMutateAsync(area.id);
+      }
+    })
+  }, [deleteMutationMutateAsync]);
 
   const getStatusColor = useCallback((isActive: boolean) => {
     return isActive ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" : "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";

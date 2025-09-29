@@ -33,8 +33,8 @@ export const Route = createFileRoute("/_authenticated")({
         if (auth.currentProfileType === null) {
           if (response.groups.includes('client')) {
             auth.setCurrentProfileType('client');
-          } else if (response.groups.includes('service_provider')) {
-            auth.setCurrentProfileType('service_provider');
+          } else if (response.groups.includes('master')) {
+            auth.setCurrentProfileType('master');
           }
         }
       } catch (error) {

@@ -33,7 +33,7 @@ export function AppSidebar() {
   const navGroups = useMemo(() => {
     const currentUser = auth.user;
     const roles = (currentUser?.groups || []) as string[];
-    const isProvider = roles.includes("provider");
+    const isProvider = roles.includes("master");
     const hasAdminAccess = currentUser?.is_staff || currentUser?.is_superuser || false;
 
     const isAllowedUrl = (url: string) => {
@@ -45,11 +45,9 @@ export function AppSidebar() {
       }
 
       if (isProvider) {
-        // Providers: allow search and bids; hide orders and tasks by default
-        if (url === "/orders" || url === "/tasks") return false;
+        if (url === "/jobs" || url === "/tasks") return false;
         return true;
       }
-      // Clients: allow orders; hide provider-only pages
       if (url === "/search" || url === "/bids") return false;
       return true;
     };

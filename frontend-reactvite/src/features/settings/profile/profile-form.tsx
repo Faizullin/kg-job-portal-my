@@ -24,15 +24,15 @@ const profileSchema = z.object({
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
-const loadUserProfileAdvancedQueryKey = "user-profile-advanced";
+const loadUserProfileQueryKey = "user-profile";
 
 export function ProfileForm() {
   const queryClient = useQueryClient();
 
-  const loadUserProfileAdvancedQuery = useQuery({
-    queryKey: [loadUserProfileAdvancedQueryKey],
+  const loadUserProfileQuery = useQuery({
+    queryKey: [loadUserProfileQueryKey],
     queryFn: async () => {
-      const response = await myApi.v1UsersMyProfileAdvancedRetrieve();
+      const response = await myApi.v1ProfileRetrieve();
       return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -45,14 +45,14 @@ export function ProfileForm() {
       username: "",
       email: "",
       description: "",
-      first_name:  "",
-      last_name:  "",
+      first_name: "",
+      last_name: "",
     },
   });
 
   // Update form when profile data loads
   useEffect(() => {
-    const profileData = loadUserProfileAdvancedQuery.data?.user;
+    const profileData = loadUserProfileQuery.data;
     if (profileData) {
       form.reset({
         username: profileData.username || "",
@@ -62,7 +62,7 @@ export function ProfileForm() {
         last_name: profileData.last_name || "",
       });
     }
-  }, [loadUserProfileAdvancedQuery.data, form]);
+  }, [loadUserProfileQuery.data, form]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: ProfileFormData) => {
@@ -70,7 +70,7 @@ export function ProfileForm() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [loadUserProfileAdvancedQueryKey] });
+      queryClient.invalidateQueries({ queryKey: [loadUserProfileQueryKey] });
       toast.success("Profile updated successfully");
     },
     onError: (error: any) => {
@@ -81,16 +81,16 @@ export function ProfileForm() {
   const uploadAvatar = async (file: File) => {
     const formData = new FormData();
     formData.append("photo", file);
-    await myApi.axios.post("/api/v1/profile/", formData, {
+    await myApi.axios.post(`/api/v1/profile/avatar?action=upload_photo`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    await queryClient.invalidateQueries({ queryKey: [loadUserProfileAdvancedQueryKey] });
+    await queryClient.invalidateQueries({ queryKey: [loadUserProfileQueryKey] });
     toast.success("Profile image uploaded");
   };
 
   // const resetAvatar = async () => {
   //   await myApi.axios.delete("/api/v1/profile/");
-  //   await queryClient.invalidateQueries({ queryKey: [loadUserProfileAdvancedQueryKey] });
+  //   await queryClient.invalidateQueries({ queryKey: [loadUserProfileQueryKey] });
   //   toast.success("Profile image reset");
   // };
 
@@ -99,10 +99,10 @@ export function ProfileForm() {
   };
 
   const fullName = useMemo(() => {
-    return `${loadUserProfileAdvancedQuery.data?.user.first_name || ""} ${loadUserProfileAdvancedQuery.data?.user.last_name || ""}`;
-  }, [loadUserProfileAdvancedQuery.data]);
+    return `${loadUserProfileQuery.data?.first_name || ""} ${loadUserProfileQuery.data?.last_name || ""}`;
+  }, [loadUserProfileQuery.data]);
 
-  if (loadUserProfileAdvancedQuery.isLoading) {
+  if (loadUserProfileQuery.isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
         <Loader2 className="h-6 w-6 animate-spin" />
@@ -111,73 +111,44 @@ export function ProfileForm() {
     );
   }
 
-    return (
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Information</CardTitle>
-              <CardDescription />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-4">
-                  <Avatar className="size-16">
-                    <AvatarImage src={loadUserProfileAdvancedQuery.data?.user.photo_url ?? undefined} className="object-cover" />
-                    <AvatarFallback>{(fullName || "").slice(0, 1)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex items-center gap-2">
-                    <Input type="file" accept="image/*" onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) uploadAvatar(file);
-                    }} />
-                    {/* {loadUserProfileAdvancedQuery.data?.photo && (
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Account Information</CardTitle>
+            <CardDescription />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-4">
+                <Avatar className="size-16">
+                  <AvatarImage src={loadUserProfileQuery.data?.photo_url ?? undefined} className="object-cover" />
+                  <AvatarFallback>{(fullName || "").slice(0, 1)}</AvatarFallback>
+                </Avatar>
+                <div className="flex items-center gap-2">
+                  <Input type="file" accept="image/*" onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) uploadAvatar(file);
+                  }} />
+                  {/* {loadUserProfileAdvancedQuery.data?.photo && (
                       <Button type="button" variant="outline" onClick={resetAvatar}>Reset</Button>
                     )} */}
-                  </div>
                 </div>
               </div>
+            </div>
 
-              <Separator />
+            <Separator />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="first_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter first name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="last_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter last name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="username"
+                name="first_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Display Name</FormLabel>
+                    <FormLabel>First Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter display name" {...field} />
+                      <Input placeholder="Enter first name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -186,49 +157,78 @@ export function ProfileForm() {
 
               <FormField
                 control={form.control}
-                name="email"
+                name="last_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Last Name</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="Enter email" {...field} />
+                      <Input placeholder="Enter last name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            </div>
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Tell us about yourself..."
-                        className="min-h-[80px]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Display Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter display name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="Enter email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Tell us about yourself..."
+                      className="min-h-[80px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end">
+              <Button type="submit" disabled={updateProfileMutation.isPending}>
+                {updateProfileMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4" />
                 )}
-              />
-
-              <div className="flex justify-end">
-                <Button type="submit" disabled={updateProfileMutation.isPending}>
-                  {updateProfileMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Save className="h-4 w-4" />
-                  )}
-                  {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </form>
-      </Form>
-    );
+                {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </form>
+    </Form>
+  );
 }

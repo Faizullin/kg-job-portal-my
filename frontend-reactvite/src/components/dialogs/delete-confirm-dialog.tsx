@@ -6,7 +6,7 @@ export const DeleteConfirmNiceDialog = NiceModal.create<NiceModalHocPropsExtende
     args: {
         title: string;
         desc: string;
-        confirmText: string;
+        confirmText?: string;
     };
 }>, {
     reason: "confirm" | "cancel";
@@ -36,7 +36,7 @@ export const DeleteConfirmNiceDialog = NiceModal.create<NiceModalHocPropsExtende
                 onCancel={handleCancel}
                 title={args.title}
                 desc={args.desc}
-                confirmText={args.confirmText}
+                confirmText={args.confirmText || "Delete"}
             />
         );
     });

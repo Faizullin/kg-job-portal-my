@@ -3,7 +3,6 @@ import {
   Bell,
   Briefcase,
   Building2,
-  FileText,
   HelpCircle,
   LayoutDashboard,
   MessageCircle,
@@ -56,19 +55,9 @@ export const sidebarData: SidebarData = {
           icon: Search,
         },
         {
-          title: "Applications",
-          url: "/apps",
-          icon: FileText,
-        },
-        {
-          title: "Orders",
-          url: "/orders",
+          title: "Jobs",
+          url: "/jobs",
           icon: ShoppingBag,
-        },
-        {
-          title: "Bids",
-          url: "/bids",
-          icon: Briefcase,
         },
       ],
     },
@@ -156,8 +145,8 @@ export const sidebarData: SidebarData = {
               icon: UserCog,
             },
             {
-              title: "Service Provider",
-              url: "/settings/service-provider",
+              title: "Master",
+              url: "/settings/master",
               icon: Building2,
             },
             {

@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_authenticated/")({
   beforeLoad: () => {
     const authStore = useAuthStore.getState();
     const { currentProfileType } = authStore;
-    if (currentProfileType === 'service_provider') {
+    if (currentProfileType === 'master') {
       throw redirect({ to: "/app/master" });
     } else if (currentProfileType === 'client') {
       throw redirect({ to: "/app/client" });

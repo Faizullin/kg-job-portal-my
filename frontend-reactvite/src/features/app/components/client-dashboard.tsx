@@ -293,7 +293,7 @@ export function ClientDashboard() {
                             </div>
                             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                               <div className="flex items-center space-x-1">
-                                <Star className="h-3 w-3 fill-yello w-400 text-yellow-400" />
+                                <Star className="h-3 w-3 fill-yello text-yellow-400" />
                                 <span className="font-medium">
                                   {master.statistics?.average_rating || '~'}
                                 </span>
@@ -400,7 +400,7 @@ const clientTopNav = [
   },
   {
     title: "Заказы",
-    href: "/orders",
+    href: "/jobs",
     isActive: false,
     disabled: false,
   },

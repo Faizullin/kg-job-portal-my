@@ -25,7 +25,7 @@ export function ClientProfileForm() {
   const loadClientProfileQuery = useQuery({
     queryKey: [loadClientProfileQueryKey],
     queryFn: async () => {
-      const response = await myApi.v1UsersMyClientRetrieve();
+      const response = await myApi.v1UsersMyEmployerRetrieve();
       return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -69,7 +69,9 @@ export function ClientProfileForm() {
         ...data,
         preferred_services: data.preferred_services.map(i => parseInt(i))
       }
-      const response = await myApi.v1UsersMyClientPartialUpdate({ patchedClientProfileCreateUpdate: transformedData });
+      const response = await myApi.v1UsersMyEmployerPartialUpdate({ 
+        patchedEmployerProfileCreateUpdate: transformedData 
+      });
       return response.data;
     },
     onSuccess: () => {
