@@ -1,3 +1,4 @@
+import { CUrls } from "@/config/constants";
 import { useAuthStore } from "@/stores/auth-store";
 import type { AxiosInstance } from "axios";
 import globalAxios from "axios";
@@ -6,7 +7,7 @@ import { getFirebaseAuth } from "../auth/firebase";
 import { V1Api } from "./axios-client/api";
 import type { Configuration } from "./axios-client/configuration";
 
-const BASE_PATH = import.meta.env.VITE_BACKEND_API_URL;
+const BASE_PATH = CUrls.BACKEND_API_URL;
 
 
 class MyApi extends V1Api {

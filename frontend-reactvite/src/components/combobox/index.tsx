@@ -29,7 +29,7 @@ interface Props<T extends object> {
     multiple?: boolean;
     disabled?: boolean;
     size?: number;
-    renderText: (value: T) => string;
+    renderLabel: (value: T) => string | React.ReactNode;
     searchFn: (search: string, offset: number, size: number) => Promise<T[]>;
     onCreateClick?: () => void;
     onEditClick?: (item: T) => void;
@@ -57,7 +57,7 @@ const ComboBox2 = <T extends object>({
     multiple = false,
     disabled = false,
     size = 25,
-    renderText,
+    renderLabel,
     onChange,
     searchFn,
     onCreateClick,
@@ -160,7 +160,7 @@ const ComboBox2 = <T extends object>({
                                                     variant="secondary"
                                                     className="text-xs"
                                                 >
-                                                    {renderText(item)}
+                                                    {renderLabel(item)}
                                                     <span
                                                         onClick={(e) => {
                                                             e.stopPropagation();
@@ -189,7 +189,7 @@ const ComboBox2 = <T extends object>({
                                         ? `${value.length} selected`
                                         : `${title}`
                                 ) : value ? (
-                                    renderText(value as T)
+                                    renderLabel(value as T)
                                 ) : (
                                     `${title}`
                                 )}
@@ -264,7 +264,7 @@ const ComboBox2 = <T extends object>({
                                         onSelect={() => handleSelect(option)}
                                         className="flex items-center justify-between group"
                                     >
-                                        <div className="flex items-center">
+                                        <div className="flex items-center gap-2">
                                             <Check
                                                 className={cn(
                                                     "mr-2 h-4 w-4",
@@ -277,7 +277,9 @@ const ComboBox2 = <T extends object>({
                                                             : "opacity-0",
                                                 )}
                                             />
-                                            {renderText(option)}
+                                            <div className="flex-1">
+                                                {renderLabel(option)}
+                                            </div>
                                         </div>
 
                                         {showEditButton && onEditClick && (
@@ -330,7 +332,7 @@ const ComboBox2 = <T extends object>({
                             variant="secondary"
                             className="flex items-center gap-1"
                         >
-                            {renderText(item)}
+                            {renderLabel(item)}
                             <span
                                 onClick={() => handleRemoveItem(item)}
                                 className="ml-1 hover:text-destructive cursor-pointer"

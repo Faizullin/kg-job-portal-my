@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from ..models import ChatParticipant
+from ..models import ChatMessage, ChatParticipant, ChatRoom, ChatRole
 
 
 class IsChatParticipant(permissions.BasePermission):
@@ -51,4 +51,27 @@ class IsMessageSender(permissions.BasePermission):
             return True
 
         # Only sender can modify their own messages
+        return obj.sender == request.user
+
+
+class IsChatOwner(permissions.BasePermission):
+    """
+    Permission to check if user is admin
+    """
+
+    def has_object_permission(self, request, view, obj: ChatRoom):
+        users = ChatParticipant.objects.filter(
+            chat_room=obj,
+            user=request.user,
+            role=ChatRole.ADMIN,
+        )
+        return not users.exists()
+
+
+class IsChatMessageOwner(permissions.BasePermission):
+    """
+    Permission to check if user is the owner of the chat message.
+    """
+
+    def has_object_permission(self, request, view, obj: ChatMessage):
         return obj.sender == request.user

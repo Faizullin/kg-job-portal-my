@@ -5,7 +5,7 @@ from job_portal.apps.users.api.serializers import UserDetailChildSerializer
 from utils.serializers import (
     AbstractTimestampedModelSerializer,
 )
-from ..models import ChatRoom, ChatMessage, ChatParticipant, MessageType, ChatAttachment
+from ..models import ChatRoom, ChatMessage, ChatParticipant, MessageType, ChatAttachment, ChatRole
 
 UserModel = get_user_model()
 
@@ -74,29 +74,43 @@ class ChatRoomCreateSerializer(serializers.ModelSerializer):
         required=False,
         default=list
     )
+    participants = ChatParticipantSerializer(
+        many=True,
+        read_only=True
+    )
 
     class Meta:
         model = ChatRoom
-        fields = ['id', 'title', 'participants_users_ids', 'job', 'chat_type', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'participants_users_ids', 'participants', 'job', 'chat_type', 'created_at',
+                  'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
     def create(self, validated_data):
         participants_users_ids = validated_data.pop('participants_users_ids', [])
-        chat_room = ChatRoom.objects.create(**validated_data)
+        chat_room = ChatRoom.objects.create(
+            **validated_data,
+            is_active=True,
+        )
         add_initial_chat_room_participants(chat_room, participants_users_ids)
+        user = self.context['request'].user
+        ChatParticipant.objects.create(
+            chat_room=chat_room,
+            user=user,
+            role=ChatRole.ADMIN,
+        )
         return chat_room
 
 
 class ChatAttachmentSerializer(serializers.ModelSerializer):
     """Serializer for chat message attachments."""
-    
+
     file_url = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = ChatAttachment
         fields = ['id', 'original_filename', 'file_url', 'size', 'file_type', 'created_at']
         read_only_fields = ['id', 'created_at']
-    
+
     def get_file_url(self, obj):
         request = self.context.get('request')
         if request and obj.file:
@@ -106,20 +120,20 @@ class ChatAttachmentSerializer(serializers.ModelSerializer):
 
 class MessageSerializer(AbstractTimestampedModelSerializer):
     """Serializer for chat messages."""
-    
+
     sender = UserDetailChildSerializer(read_only=True)
     attachments = ChatAttachmentSerializer(many=True, read_only=True)
     reply_to_sender = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = ChatMessage
         fields = [
-            'id', 'chat_room', 'sender', 'content', 'message_type', 
+            'id', 'chat_room', 'sender', 'content', 'message_type',
             'attachments', 'reply_to', 'reply_to_sender',
             'is_read', 'read_at', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'sender', 'is_read', 'read_at', 'created_at', 'updated_at']
-    
+
     def get_reply_to_sender(self, obj):
         if obj.reply_to:
             return {
@@ -137,11 +151,19 @@ class MessageCreateSerializer(serializers.ModelSerializer):
         allow_empty_file=False,
         write_only=True,
     )
+    message_type = serializers.ChoiceField(
+        choices=[
+            MessageType.TEXT,
+            MessageType.IMAGE,
+            MessageType.FILE,
+        ]
+    )
 
     class Meta:
         model = ChatMessage
-        fields = ["id", "chat_room", "sender", "content", "is_read", "read_at", "created_at", "updated_at",
-                  "attachment_file"]
+        fields = ["id", "chat_room", "sender", "message_type", "content", "is_read", "read_at", "created_at",
+                  "updated_at",
+                  "attachment_file", ]
         read_only_fields = ["id", "chat_room", "sender", "is_read", "read_at", "created_at", "updated_at"]
 
 

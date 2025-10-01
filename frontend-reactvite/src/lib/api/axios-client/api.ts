@@ -370,6 +370,12 @@ export interface ChatRoomCreate {
     'participants_users_ids'?: Array<number>;
     /**
      * 
+     * @type {Array<ChatParticipant>}
+     * @memberof ChatRoomCreate
+     */
+    'participants': Array<ChatParticipant>;
+    /**
+     * 
      * @type {number}
      * @memberof ChatRoomCreate
      */
@@ -2071,10 +2077,10 @@ export interface Message {
     'content': string;
     /**
      * 
-     * @type {MessageTypeEnum}
+     * @type {MessageMessageTypeEnum}
      * @memberof Message
      */
-    'message_type'?: MessageTypeEnum;
+    'message_type'?: MessageMessageTypeEnum;
     /**
      * 
      * @type {Array<ChatAttachment>}
@@ -2144,6 +2150,12 @@ export interface MessageCreate {
     'sender': number;
     /**
      * 
+     * @type {MessageCreateMessageTypeEnum}
+     * @memberof MessageCreate
+     */
+    'message_type': MessageCreateMessageTypeEnum;
+    /**
+     * 
      * @type {string}
      * @memberof MessageCreate
      */
@@ -2180,12 +2192,25 @@ export interface MessageCreate {
     'attachment_file'?: string | null;
 }
 /**
+ * * `text` - text * `image` - image * `file` - file
+ * @export
+ * @enum {string}
+ */
+
+export enum MessageCreateMessageTypeEnum {
+    text = 'text',
+    image = 'image',
+    file = 'file'
+}
+
+
+/**
  * * `text` - Текст * `image` - Изображение * `file` - Файл * `system` - System Message * `order_update` - Order Update
  * @export
  * @enum {string}
  */
 
-export enum MessageTypeEnum {
+export enum MessageMessageTypeEnum {
     text = 'text',
     image = 'image',
     file = 'file',
@@ -2194,6 +2219,43 @@ export enum MessageTypeEnum {
 }
 
 
+/**
+ * 
+ * @export
+ * @interface MessageUpdate
+ */
+export interface MessageUpdate {
+    /**
+     * 
+     * @type {number}
+     * @memberof MessageUpdate
+     */
+    'id': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof MessageUpdate
+     */
+    'chat_room': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof MessageUpdate
+     */
+    'content': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MessageUpdate
+     */
+    'created_at': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MessageUpdate
+     */
+    'updated_at': string;
+}
 /**
  * Serializer for Notification model.
  * @export
@@ -3749,6 +3811,85 @@ export interface PatchedMasterSkill {
      * @memberof PatchedMasterSkill
      */
     'created_at'?: string;
+}
+/**
+ * Serializer for chat messages.
+ * @export
+ * @interface PatchedMessage
+ */
+export interface PatchedMessage {
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedMessage
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedMessage
+     */
+    'chat_room'?: number;
+    /**
+     * 
+     * @type {AssignmentMasterUser}
+     * @memberof PatchedMessage
+     */
+    'sender'?: AssignmentMasterUser;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedMessage
+     */
+    'content'?: string;
+    /**
+     * 
+     * @type {MessageMessageTypeEnum}
+     * @memberof PatchedMessage
+     */
+    'message_type'?: MessageMessageTypeEnum;
+    /**
+     * 
+     * @type {Array<ChatAttachment>}
+     * @memberof PatchedMessage
+     */
+    'attachments'?: Array<ChatAttachment>;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedMessage
+     */
+    'reply_to'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedMessage
+     */
+    'reply_to_sender'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedMessage
+     */
+    'is_read'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedMessage
+     */
+    'read_at'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedMessage
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedMessage
+     */
+    'updated_at'?: string;
 }
 /**
  * Serializer for updating notification read status.
@@ -7155,94 +7296,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Delete a message from chat room
-         * @param {string} id 
-         * @param {string} messageId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsDeleteMessage: async (id: string, messageId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatRoomsDeleteMessage', 'id', id)
-            // verify required parameter 'messageId' is not null or undefined
-            assertParamExists('v1ChatRoomsDeleteMessage', 'messageId', messageId)
-            const localVarPath = `/api/v1/chats/rooms/{id}/messages/{message_id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
-                .replace(`{${"message_id"}}`, encodeURIComponent(String(messageId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Edit a message in chat room
-         * @param {string} id 
-         * @param {string} messageId 
-         * @param {PatchedChatRoom} [patchedChatRoom] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsEditMessage: async (id: string, messageId: string, patchedChatRoom?: PatchedChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatRoomsEditMessage', 'id', id)
-            // verify required parameter 'messageId' is not null or undefined
-            assertParamExists('v1ChatRoomsEditMessage', 'messageId', messageId)
-            const localVarPath = `/api/v1/chats/rooms/{id}/messages/{message_id}/edit/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
-                .replace(`{${"message_id"}}`, encodeURIComponent(String(messageId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedChatRoom, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * Leave a chat room
          * @param {string} id 
          * @param {ChatRoom} chatRoom 
@@ -7280,113 +7333,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(chatRoom, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * List all messages in a chat room with filtering and search
-         * @param {string} id 
-         * @param {string} [messageType] Filter by message type
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] Search in message content
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsMessages: async (id: string, messageType?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatRoomsMessages', 'id', id)
-            const localVarPath = `/api/v1/chats/rooms/{id}/messages/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (messageType !== undefined) {
-                localVarQueryParameter['message_type'] = messageType;
-            }
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-            if (search !== undefined) {
-                localVarQueryParameter['search'] = search;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Send message to chat room
-         * @param {string} id 
-         * @param {MessageCreate} messageCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsSendMessage: async (id: string, messageCreate: MessageCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatRoomsSendMessage', 'id', id)
-            // verify required parameter 'messageCreate' is not null or undefined
-            assertParamExists('v1ChatRoomsSendMessage', 'messageCreate', messageCreate)
-            const localVarPath = `/api/v1/chats/rooms/{id}/send_message/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(messageCreate, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7519,6 +7465,286 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {MessageCreate} messageCreate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsMessagesCreate: async (chatRoomId: string, messageCreate: MessageCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'chatRoomId' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesCreate', 'chatRoomId', chatRoomId)
+            // verify required parameter 'messageCreate' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesCreate', 'messageCreate', messageCreate)
+            const localVarPath = `/api/v1/chats/rooms/{chat_room_id}/messages/`
+                .replace(`{${"chat_room_id"}}`, encodeURIComponent(String(chatRoomId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(messageCreate, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsMessagesDestroy: async (chatRoomId: string, id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'chatRoomId' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesDestroy', 'chatRoomId', chatRoomId)
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesDestroy', 'id', id)
+            const localVarPath = `/api/v1/chats/rooms/{chat_room_id}/messages/{id}/`
+                .replace(`{${"chat_room_id"}}`, encodeURIComponent(String(chatRoomId)))
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsMessagesList: async (chatRoomId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'chatRoomId' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesList', 'chatRoomId', chatRoomId)
+            const localVarPath = `/api/v1/chats/rooms/{chat_room_id}/messages/`
+                .replace(`{${"chat_room_id"}}`, encodeURIComponent(String(chatRoomId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} id 
+         * @param {PatchedMessage} [patchedMessage] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsMessagesPartialUpdate: async (chatRoomId: string, id: string, patchedMessage?: PatchedMessage, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'chatRoomId' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesPartialUpdate', 'chatRoomId', chatRoomId)
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesPartialUpdate', 'id', id)
+            const localVarPath = `/api/v1/chats/rooms/{chat_room_id}/messages/{id}/`
+                .replace(`{${"chat_room_id"}}`, encodeURIComponent(String(chatRoomId)))
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedMessage, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsMessagesRetrieve: async (chatRoomId: string, id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'chatRoomId' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesRetrieve', 'chatRoomId', chatRoomId)
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesRetrieve', 'id', id)
+            const localVarPath = `/api/v1/chats/rooms/{chat_room_id}/messages/{id}/`
+                .replace(`{${"chat_room_id"}}`, encodeURIComponent(String(chatRoomId)))
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} id 
+         * @param {MessageUpdate} messageUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsMessagesUpdate: async (chatRoomId: string, id: string, messageUpdate: MessageUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'chatRoomId' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesUpdate', 'chatRoomId', chatRoomId)
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesUpdate', 'id', id)
+            // verify required parameter 'messageUpdate' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesUpdate', 'messageUpdate', messageUpdate)
+            const localVarPath = `/api/v1/chats/rooms/{chat_room_id}/messages/{id}/`
+                .replace(`{${"chat_room_id"}}`, encodeURIComponent(String(chatRoomId)))
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(messageUpdate, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13156,29 +13382,6 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Delete a message from chat room
-         * @param {string} id 
-         * @param {string} messageId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatRoomsDeleteMessage(id: string, messageId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsDeleteMessage(id, messageId, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Edit a message in chat room
-         * @param {string} id 
-         * @param {string} messageId 
-         * @param {PatchedChatRoom} [patchedChatRoom] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatRoomsEditMessage(id: string, messageId: string, patchedChatRoom?: PatchedChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsEditMessage(id, messageId, patchedChatRoom, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
          * Leave a chat room
          * @param {string} id 
          * @param {ChatRoom} chatRoom 
@@ -13187,32 +13390,6 @@ export const V1ApiFp = function(configuration?: Configuration) {
          */
         async v1ChatRoomsLeave(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsLeave(id, chatRoom, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * List all messages in a chat room with filtering and search
-         * @param {string} id 
-         * @param {string} [messageType] Filter by message type
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] Search in message content
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatRoomsMessages(id: string, messageType?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedMessageList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsMessages(id, messageType, ordering, page, pageSize, search, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Send message to chat room
-         * @param {string} id 
-         * @param {MessageCreate} messageCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatRoomsSendMessage(id: string, messageCreate: MessageCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Message>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsSendMessage(id, messageCreate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -13246,6 +13423,77 @@ export const V1ApiFp = function(configuration?: Configuration) {
          */
         async v1ChatsRoomsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedChatRoomList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsList(ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {MessageCreate} messageCreate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreate: MessageCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageCreate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesCreate(chatRoomId, messageCreate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatsRoomsMessagesDestroy(chatRoomId: string, id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesDestroy(chatRoomId, id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatsRoomsMessagesList(chatRoomId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedMessageList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesList(chatRoomId, ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} id 
+         * @param {PatchedMessage} [patchedMessage] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessage?: PatchedMessage, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Message>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, patchedMessage, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatsRoomsMessagesRetrieve(chatRoomId: string, id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Message>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesRetrieve(chatRoomId, id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} id 
+         * @param {MessageUpdate} messageUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdate: MessageUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesUpdate(chatRoomId, id, messageUpdate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14822,27 +15070,6 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ChatRoomsAddParticipants(id, chatRoom, options).then((request) => request(axios, basePath));
         },
         /**
-         * Delete a message from chat room
-         * @param {string} id 
-         * @param {string} messageId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsDeleteMessage(id: string, messageId: string, options?: any): AxiosPromise<void> {
-            return localVarFp.v1ChatRoomsDeleteMessage(id, messageId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Edit a message in chat room
-         * @param {string} id 
-         * @param {string} messageId 
-         * @param {PatchedChatRoom} [patchedChatRoom] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsEditMessage(id: string, messageId: string, patchedChatRoom?: PatchedChatRoom, options?: any): AxiosPromise<ChatRoom> {
-            return localVarFp.v1ChatRoomsEditMessage(id, messageId, patchedChatRoom, options).then((request) => request(axios, basePath));
-        },
-        /**
          * Leave a chat room
          * @param {string} id 
          * @param {ChatRoom} chatRoom 
@@ -14851,30 +15078,6 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          */
         v1ChatRoomsLeave(id: string, chatRoom: ChatRoom, options?: any): AxiosPromise<ChatRoom> {
             return localVarFp.v1ChatRoomsLeave(id, chatRoom, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * List all messages in a chat room with filtering and search
-         * @param {string} id 
-         * @param {string} [messageType] Filter by message type
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] Search in message content
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsMessages(id: string, messageType?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedMessageList> {
-            return localVarFp.v1ChatRoomsMessages(id, messageType, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Send message to chat room
-         * @param {string} id 
-         * @param {MessageCreate} messageCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsSendMessage(id: string, messageCreate: MessageCreate, options?: any): AxiosPromise<Message> {
-            return localVarFp.v1ChatRoomsSendMessage(id, messageCreate, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing chat rooms
@@ -14905,6 +15108,71 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          */
         v1ChatsRoomsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedChatRoomList> {
             return localVarFp.v1ChatsRoomsList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {MessageCreate} messageCreate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreate: MessageCreate, options?: any): AxiosPromise<MessageCreate> {
+            return localVarFp.v1ChatsRoomsMessagesCreate(chatRoomId, messageCreate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsMessagesDestroy(chatRoomId: string, id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.v1ChatsRoomsMessagesDestroy(chatRoomId, id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsMessagesList(chatRoomId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedMessageList> {
+            return localVarFp.v1ChatsRoomsMessagesList(chatRoomId, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} id 
+         * @param {PatchedMessage} [patchedMessage] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessage?: PatchedMessage, options?: any): AxiosPromise<Message> {
+            return localVarFp.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, patchedMessage, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsMessagesRetrieve(chatRoomId: string, id: string, options?: any): AxiosPromise<Message> {
+            return localVarFp.v1ChatsRoomsMessagesRetrieve(chatRoomId, id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} chatRoomId 
+         * @param {string} id 
+         * @param {MessageUpdate} messageUpdate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdate: MessageUpdate, options?: any): AxiosPromise<MessageUpdate> {
+            return localVarFp.v1ChatsRoomsMessagesUpdate(chatRoomId, id, messageUpdate, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing chat rooms
@@ -16357,27 +16625,6 @@ export interface V1ApiInterface {
     v1ChatRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
 
     /**
-     * Delete a message from chat room
-     * @param {string} id 
-     * @param {string} messageId 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1ChatRoomsDeleteMessage(id: string, messageId: string, options?: AxiosRequestConfig): AxiosPromise<void>;
-
-    /**
-     * Edit a message in chat room
-     * @param {string} id 
-     * @param {string} messageId 
-     * @param {PatchedChatRoom} [patchedChatRoom] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1ChatRoomsEditMessage(id: string, messageId: string, patchedChatRoom?: PatchedChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
-
-    /**
      * Leave a chat room
      * @param {string} id 
      * @param {ChatRoom} chatRoom 
@@ -16386,30 +16633,6 @@ export interface V1ApiInterface {
      * @memberof V1ApiInterface
      */
     v1ChatRoomsLeave(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
-
-    /**
-     * List all messages in a chat room with filtering and search
-     * @param {string} id 
-     * @param {string} [messageType] Filter by message type
-     * @param {string} [ordering] Which field to use when ordering the results.
-     * @param {number} [page] A page number within the paginated result set.
-     * @param {number} [pageSize] Number of results to return per page.
-     * @param {string} [search] Search in message content
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1ChatRoomsMessages(id: string, messageType?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedMessageList>;
-
-    /**
-     * Send message to chat room
-     * @param {string} id 
-     * @param {MessageCreate} messageCreate 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1ChatRoomsSendMessage(id: string, messageCreate: MessageCreate, options?: AxiosRequestConfig): AxiosPromise<Message>;
 
     /**
      * ViewSet for managing chat rooms
@@ -16440,6 +16663,71 @@ export interface V1ApiInterface {
      * @memberof V1ApiInterface
      */
     v1ChatsRoomsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedChatRoomList>;
+
+    /**
+     * 
+     * @param {string} chatRoomId 
+     * @param {MessageCreate} messageCreate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreate: MessageCreate, options?: AxiosRequestConfig): AxiosPromise<MessageCreate>;
+
+    /**
+     * 
+     * @param {string} chatRoomId 
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatsRoomsMessagesDestroy(chatRoomId: string, id: string, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * 
+     * @param {string} chatRoomId 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatsRoomsMessagesList(chatRoomId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedMessageList>;
+
+    /**
+     * 
+     * @param {string} chatRoomId 
+     * @param {string} id 
+     * @param {PatchedMessage} [patchedMessage] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessage?: PatchedMessage, options?: AxiosRequestConfig): AxiosPromise<Message>;
+
+    /**
+     * 
+     * @param {string} chatRoomId 
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatsRoomsMessagesRetrieve(chatRoomId: string, id: string, options?: AxiosRequestConfig): AxiosPromise<Message>;
+
+    /**
+     * 
+     * @param {string} chatRoomId 
+     * @param {string} id 
+     * @param {MessageUpdate} messageUpdate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdate: MessageUpdate, options?: AxiosRequestConfig): AxiosPromise<MessageUpdate>;
 
     /**
      * ViewSet for managing chat rooms
@@ -18116,55 +18404,6 @@ export interface V1ApiV1ChatRoomsAddParticipantsRequest {
 }
 
 /**
- * Request parameters for v1ChatRoomsDeleteMessage operation in V1Api.
- * @export
- * @interface V1ApiV1ChatRoomsDeleteMessageRequest
- */
-export interface V1ApiV1ChatRoomsDeleteMessageRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatRoomsDeleteMessage
-     */
-    readonly id: string
-
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatRoomsDeleteMessage
-     */
-    readonly messageId: string
-}
-
-/**
- * Request parameters for v1ChatRoomsEditMessage operation in V1Api.
- * @export
- * @interface V1ApiV1ChatRoomsEditMessageRequest
- */
-export interface V1ApiV1ChatRoomsEditMessageRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatRoomsEditMessage
-     */
-    readonly id: string
-
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatRoomsEditMessage
-     */
-    readonly messageId: string
-
-    /**
-     * 
-     * @type {PatchedChatRoom}
-     * @memberof V1ApiV1ChatRoomsEditMessage
-     */
-    readonly patchedChatRoom?: PatchedChatRoom
-}
-
-/**
  * Request parameters for v1ChatRoomsLeave operation in V1Api.
  * @export
  * @interface V1ApiV1ChatRoomsLeaveRequest
@@ -18183,76 +18422,6 @@ export interface V1ApiV1ChatRoomsLeaveRequest {
      * @memberof V1ApiV1ChatRoomsLeave
      */
     readonly chatRoom: ChatRoom
-}
-
-/**
- * Request parameters for v1ChatRoomsMessages operation in V1Api.
- * @export
- * @interface V1ApiV1ChatRoomsMessagesRequest
- */
-export interface V1ApiV1ChatRoomsMessagesRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatRoomsMessages
-     */
-    readonly id: string
-
-    /**
-     * Filter by message type
-     * @type {string}
-     * @memberof V1ApiV1ChatRoomsMessages
-     */
-    readonly messageType?: string
-
-    /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1ChatRoomsMessages
-     */
-    readonly ordering?: string
-
-    /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1ChatRoomsMessages
-     */
-    readonly page?: number
-
-    /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1ChatRoomsMessages
-     */
-    readonly pageSize?: number
-
-    /**
-     * Search in message content
-     * @type {string}
-     * @memberof V1ApiV1ChatRoomsMessages
-     */
-    readonly search?: string
-}
-
-/**
- * Request parameters for v1ChatRoomsSendMessage operation in V1Api.
- * @export
- * @interface V1ApiV1ChatRoomsSendMessageRequest
- */
-export interface V1ApiV1ChatRoomsSendMessageRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatRoomsSendMessage
-     */
-    readonly id: string
-
-    /**
-     * 
-     * @type {MessageCreate}
-     * @memberof V1ApiV1ChatRoomsSendMessage
-     */
-    readonly messageCreate: MessageCreate
 }
 
 /**
@@ -18316,6 +18485,167 @@ export interface V1ApiV1ChatsRoomsListRequest {
      * @memberof V1ApiV1ChatsRoomsList
      */
     readonly search?: string
+}
+
+/**
+ * Request parameters for v1ChatsRoomsMessagesCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatsRoomsMessagesCreateRequest
+ */
+export interface V1ApiV1ChatsRoomsMessagesCreateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesCreate
+     */
+    readonly chatRoomId: string
+
+    /**
+     * 
+     * @type {MessageCreate}
+     * @memberof V1ApiV1ChatsRoomsMessagesCreate
+     */
+    readonly messageCreate: MessageCreate
+}
+
+/**
+ * Request parameters for v1ChatsRoomsMessagesDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatsRoomsMessagesDestroyRequest
+ */
+export interface V1ApiV1ChatsRoomsMessagesDestroyRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesDestroy
+     */
+    readonly chatRoomId: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesDestroy
+     */
+    readonly id: string
+}
+
+/**
+ * Request parameters for v1ChatsRoomsMessagesList operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatsRoomsMessagesListRequest
+ */
+export interface V1ApiV1ChatsRoomsMessagesListRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesList
+     */
+    readonly chatRoomId: string
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1ChatsRoomsMessagesList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1ChatsRoomsMessagesList
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesList
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for v1ChatsRoomsMessagesPartialUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatsRoomsMessagesPartialUpdateRequest
+ */
+export interface V1ApiV1ChatsRoomsMessagesPartialUpdateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesPartialUpdate
+     */
+    readonly chatRoomId: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesPartialUpdate
+     */
+    readonly id: string
+
+    /**
+     * 
+     * @type {PatchedMessage}
+     * @memberof V1ApiV1ChatsRoomsMessagesPartialUpdate
+     */
+    readonly patchedMessage?: PatchedMessage
+}
+
+/**
+ * Request parameters for v1ChatsRoomsMessagesRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatsRoomsMessagesRetrieveRequest
+ */
+export interface V1ApiV1ChatsRoomsMessagesRetrieveRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesRetrieve
+     */
+    readonly chatRoomId: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesRetrieve
+     */
+    readonly id: string
+}
+
+/**
+ * Request parameters for v1ChatsRoomsMessagesUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatsRoomsMessagesUpdateRequest
+ */
+export interface V1ApiV1ChatsRoomsMessagesUpdateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesUpdate
+     */
+    readonly chatRoomId: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesUpdate
+     */
+    readonly id: string
+
+    /**
+     * 
+     * @type {MessageUpdate}
+     * @memberof V1ApiV1ChatsRoomsMessagesUpdate
+     */
+    readonly messageUpdate: MessageUpdate
 }
 
 /**
@@ -21184,28 +21514,6 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Delete a message from chat room
-     * @param {V1ApiV1ChatRoomsDeleteMessageRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatRoomsDeleteMessage(requestParameters: V1ApiV1ChatRoomsDeleteMessageRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatRoomsDeleteMessage(requestParameters.id, requestParameters.messageId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Edit a message in chat room
-     * @param {V1ApiV1ChatRoomsEditMessageRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatRoomsEditMessage(requestParameters: V1ApiV1ChatRoomsEditMessageRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatRoomsEditMessage(requestParameters.id, requestParameters.messageId, requestParameters.patchedChatRoom, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * Leave a chat room
      * @param {V1ApiV1ChatRoomsLeaveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -21214,28 +21522,6 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      */
     public v1ChatRoomsLeave(requestParameters: V1ApiV1ChatRoomsLeaveRequest, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1ChatRoomsLeave(requestParameters.id, requestParameters.chatRoom, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * List all messages in a chat room with filtering and search
-     * @param {V1ApiV1ChatRoomsMessagesRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatRoomsMessages(requestParameters: V1ApiV1ChatRoomsMessagesRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatRoomsMessages(requestParameters.id, requestParameters.messageType, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Send message to chat room
-     * @param {V1ApiV1ChatRoomsSendMessageRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatRoomsSendMessage(requestParameters: V1ApiV1ChatRoomsSendMessageRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatRoomsSendMessage(requestParameters.id, requestParameters.messageCreate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -21269,6 +21555,72 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      */
     public v1ChatsRoomsList(requestParameters: V1ApiV1ChatsRoomsListRequest = {}, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1ChatsRoomsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1ChatsRoomsMessagesCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatsRoomsMessagesCreate(requestParameters: V1ApiV1ChatsRoomsMessagesCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesCreate(requestParameters.chatRoomId, requestParameters.messageCreate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1ChatsRoomsMessagesDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatsRoomsMessagesDestroy(requestParameters: V1ApiV1ChatsRoomsMessagesDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesDestroy(requestParameters.chatRoomId, requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1ChatsRoomsMessagesListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatsRoomsMessagesList(requestParameters: V1ApiV1ChatsRoomsMessagesListRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesList(requestParameters.chatRoomId, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1ChatsRoomsMessagesPartialUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatsRoomsMessagesPartialUpdate(requestParameters: V1ApiV1ChatsRoomsMessagesPartialUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesPartialUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.patchedMessage, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1ChatsRoomsMessagesRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatsRoomsMessagesRetrieve(requestParameters: V1ApiV1ChatsRoomsMessagesRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesRetrieve(requestParameters.chatRoomId, requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1ChatsRoomsMessagesUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatsRoomsMessagesUpdate(requestParameters: V1ApiV1ChatsRoomsMessagesUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.messageUpdate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

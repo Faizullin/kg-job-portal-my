@@ -134,9 +134,9 @@ export function MasterForm() {
 
         const languagesData = Array.isArray(profileData.languages)
           ? profileData.languages.map((langName: string) =>
-              LANGUAGES.find(l => l.label.toLowerCase() === langName.toLowerCase()) ||
-              LANGUAGES.find(l => l.value.toLowerCase() === langName.toLowerCase())
-            ).filter((lang): lang is SelectOption => lang !== undefined)
+            LANGUAGES.find(l => l.label.toLowerCase() === langName.toLowerCase()) ||
+            LANGUAGES.find(l => l.value.toLowerCase() === langName.toLowerCase())
+          ).filter((lang): lang is SelectOption => lang !== undefined)
           : [];
 
         form.reset({
@@ -236,7 +236,7 @@ export function MasterForm() {
                     value={field.value || undefined}
                     valueKey="id"
                     multiple={false}
-                    renderText={(profession) => profession.name}
+                    renderLabel={(profession) => profession.name}
                     searchFn={searchProfessions}
                     onChange={field.onChange}
                   />
@@ -307,7 +307,7 @@ export function MasterForm() {
                     value={field.value}
                     valueKey="id"
                     multiple
-                    renderText={(service) => service.name}
+                    renderLabel={(service) => service.name}
                     searchFn={searchServiceSubcategories}
                     onChange={field.onChange}
                     badgeRenderType="outside"
@@ -345,7 +345,7 @@ export function MasterForm() {
                     value={field.value}
                     valueKey="id"
                     multiple
-                    renderText={(area) => area.name}
+                    renderLabel={(area) => area.name}
                     searchFn={searchServiceAreas}
                     onChange={field.onChange}
                     badgeRenderType="outside"
@@ -579,7 +579,7 @@ export function MasterForm() {
                     value={field.value}
                     valueKey="value"
                     multiple
-                    renderText={(lang) => lang.label}
+                    renderLabel={(lang) => lang.label}
                     searchFn={searchLanguages}
                     onChange={field.onChange}
                     badgeRenderType="inside"

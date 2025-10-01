@@ -140,7 +140,7 @@ export function ClientProfileForm() {
                     value={field.value}
                     valueKey="id"
                     multiple
-                    renderText={(service) => service.name}
+                    renderLabel={(service) => service.name}
                     searchFn={searchServiceSubcategories}
                     onChange={field.onChange}
                     badgeRenderType="outside"
@@ -178,7 +178,7 @@ export function ClientProfileForm() {
                     value={field.value}
                     valueKey="id"
                     multiple
-                    renderText={(master) => master.user.username}
+                    renderLabel={(master) => master.user.username}
                     searchFn={searchMasters}
                     onChange={field.onChange}
                     badgeRenderType="outside"

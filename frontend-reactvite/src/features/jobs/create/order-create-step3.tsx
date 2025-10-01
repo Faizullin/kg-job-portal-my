@@ -41,7 +41,7 @@ export function OrderCreateStep3() {
             const orderId = (data as any).id
             if (orderId) {
                 setOrderId(orderId)
-                navigate({ to: '/app/orders/create/review' })
+                navigate({ to: '/app/jobs/create/review' })
             } else {
                 console.error('No order ID returned from create order API')
             }
@@ -61,7 +61,7 @@ export function OrderCreateStep3() {
     }
 
     const handleBack = () => {
-        navigate({ to: '/app/orders/create/service' })
+        navigate({ to: '/app/jobs/create/service' })
     }
 
     return (

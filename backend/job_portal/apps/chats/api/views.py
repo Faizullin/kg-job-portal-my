@@ -3,24 +3,32 @@ from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
 from django.db import models
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
-from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from ..models import (
+    ChatAttachment,
+    ChatMessage,
+    ChatParticipant,
+    ChatRole,
+    ChatRoom,
+    MessageType,
+)
+from ..utils import get_chat_channel_name
+from .permissions import IsChatMessageOwner, IsChatOwner
 from .serializers import (
-    MessageSerializer,
-    MessageCreateSerializer,
-    MessageUpdateSerializer,
     ChatRoomCreateSerializer,
     ChatRoomSerializer,
+    MessageCreateSerializer,
+    MessageSerializer,
+    MessageUpdateSerializer,
 )
-from ..models import ChatMessage, ChatParticipant, ChatRoom, MessageType, ChatAttachment
-from ..utils import get_chat_channel_name
 
 UserModel = get_user_model()
 
@@ -30,7 +38,7 @@ def get_participant_from_user(chat_room: ChatRoom, user: UserModel) -> ChatParti
         participant = ChatParticipant.objects.get(chat_room=chat_room, user=user)
         return participant
     except ChatParticipant.DoesNotExist:
-        raise PermissionDenied('Not a participant in this chat room')
+        raise PermissionDenied("Not a participant in this chat room")
 
 
 class ChatRoomAPIViewSet(ModelViewSet):
@@ -40,19 +48,21 @@ class ChatRoomAPIViewSet(ModelViewSet):
 
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    search_fields = ['title']
+    search_fields = ["title"]
     filterset_fields = ["chat_type", "is_active"]
-    ordering_fields = ['created_at', 'last_message_at']
-    ordering = ['-last_message_at', '-created_at']
+    ordering_fields = ["created_at", "last_message_at"]
+    ordering = ["-last_message_at", "-created_at"]
 
     def get_queryset(self):
         """Return chat rooms where user is a participant"""
 
-        qs = ChatRoom.objects.filter(
-            participants=self.request.user,
-            is_active=True,
-        ).select_related('job').prefetch_related(
-            'participants__user', 'participant_status'
+        qs = (
+            ChatRoom.objects.select_related("job")
+            .prefetch_related("participants", "participant_status")
+            .filter(
+                participants=self.request.user,
+                # is_active=True,
+            )
         )
         return qs
 
@@ -63,21 +73,24 @@ class ChatRoomAPIViewSet(ModelViewSet):
                 id=self.kwargs["pk"],
             )
         except ChatRoom.DoesNotExist:
-            raise NotFound('Chat room not found or access denied')
+            raise NotFound("Chat room not found or access denied")
         self.check_object_permissions(self.request, obj)
         return obj
 
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action == "create":
             return ChatRoomCreateSerializer
         return ChatRoomSerializer
 
-    @extend_schema(
-        description="Leave a chat room",
-        operation_id="v1_chat_rooms_leave"
-    )
-    @action(detail=True, methods=['post'])
-    def leave(self, request, pk=None):
+    def get_permissions(self):
+        perms = super().get_permissions()
+        if self.action == "delete":
+            perms.append(IsChatOwner())
+        return perms
+
+    @extend_schema(description="Leave a chat room", operation_id="v1_chat_rooms_leave")
+    @action(detail=True, methods=["post"])
+    def leave(self, request, _pk=None):
         """Leave a chat room"""
         chat_room = self.get_object()
 
@@ -86,171 +99,174 @@ class ChatRoomAPIViewSet(ModelViewSet):
                 chat_room=chat_room, user=request.user
             )
         except ChatParticipant.DoesNotExist:
-            raise ValidationError(
-                "Current user not found in chat"
-            )
+            raise ValidationError("Current user not found in chat")
         participant.delete()
         self._broadcast_user_left(chat_room, request.user)
-        return Response({'message': 'Successfully left chat room'})
+        return Response({"message": "Successfully left chat room"})
 
     @extend_schema(
         description="Add participants to chat room",
-        operation_id="v1_chat_rooms_add_participants"
+        operation_id="v1_chat_rooms_add_participants",
     )
     @action(detail=True, methods=["post"])
-    def add_participants(self, request, pk=None):
+    def add_participants(self, request, _pk=None):
         chat_room = self.get_object()
 
         user_ids = request.data.get("user_ids", [])
         try:
-            requester = ChatParticipant.objects.get(chat_room=chat_room, user=request.user)
-            if requester.role not in ["admin", "moderator"]:
-                return Response({
-                    "error": "Only admins can add participants"},
+            requester = ChatParticipant.objects.get(
+                chat_room=chat_room, user=request.user
+            )
+            if requester.role not in [ChatRole.ADMIN, ChatRole.MODERATOR]:
+                return Response(
+                    {"error": "Only admins can add participants"},
                     status=status.HTTP_403_FORBIDDEN,
                 )
         except ChatParticipant.DoesNotExist:
-            return Response({"error": "Not a participant"}, status=status.HTTP_403_FORBIDDEN, )
+            return Response(
+                {"error": "Not a participant"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         added = []
         for uid in user_ids:
             try:
                 user = UserModel.objects.get(id=uid)
-                _, created = ChatParticipant.objects.get_or_create(chat_room=chat_room, user=user,
-                                                                   defaults={"role": "member"})
+                _, created = ChatParticipant.objects.get_or_create(
+                    chat_room=chat_room, user=user, defaults={"role": "member"}
+                )
                 if created:
-                    added.append({
-                        "id": user.id,
-                        "name": f"{user.first_name} {user.last_name}".strip() or user.username})
+                    added.append(
+                        {
+                            "id": user.id,
+                            "name": f"{user.first_name} {user.last_name}".strip()
+                            or user.username,
+                        }
+                    )
             except UserModel.DoesNotExist:
                 continue
 
         return Response({"message": f"Added {len(added)} users", "users": added})
 
-    @extend_schema(
-        description="List all messages in a chat room with filtering and search",
-        parameters=[
-            OpenApiParameter(name='search', description='Search in message content', type=str),
-            OpenApiParameter(name='message_type', description='Filter by message type', type=str),
-        ],
-        responses={200: MessageSerializer(many=True)},
-        operation_id="v1_chat_rooms_messages"
-    )
-    @action(detail=True, methods=['get'])
-    def messages(self, request, pk=None):
-        """List all messages in a chat room with filtering and search."""
-        chat_room = self.get_object()
-        get_participant_from_user(chat_room, request.user)
-        queryset = ChatMessage.objects.filter(
-            chat_room=chat_room,
-        ).select_related(
-            'sender',
-            'reply_to__sender'
-        ).prefetch_related(
-            'attachments'
-        ).order_by('created_at')
+    def _broadcast_user_left(self, chat_room, user):
+        """Broadcast user left event via WebSocket."""
 
-        # Search in content
-        search_query = request.query_params.get('search', '').strip()
-        if search_query:
-            queryset = queryset.filter(content__icontains=search_query)
+        channel_layer = get_channel_layer()
+        chat_room_channel_name = get_chat_channel_name(chat_room)
 
-        # Filter by message type
-        message_type = request.query_params.get('message_type')
-        if message_type:
-            queryset = queryset.filter(message_type=message_type)
+        async_to_sync(channel_layer.group_send)(
+            chat_room_channel_name,
+            {
+                "type": "user_left",
+                "user_id": user.id,
+                "username": user.get_full_name() or user.username,
+            },
+        )
 
-        serializer = MessageSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data)
 
-    @extend_schema(
-        description="Send message to chat room",
-        request=MessageCreateSerializer,
-        responses={
-            200: MessageSerializer,
-        },
-        operation_id="v1_chat_rooms_send_message"
-    )
-    @action(detail=True, methods=["post"])
-    def send_message(self, request, pk=None):
-        """Custom action to send a message in a conversation."""
+class ChatContextDto:
+    chat_room: ChatRoom
+    participant: ChatParticipant
 
-        chat_room = self.get_object()
-        serializer = MessageCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        message_content = serializer.validated_data.get('message', '')
-        message_type = serializer.validated_data.get('message_type')
-        attachment_file = serializer.validated_data.pop('attachment_file', None)
-        print("send", "attachment_files", attachment_file)
+    def __init__(self, chat_room: ChatRoom, participant: ChatParticipant):
+        self.chat_room = chat_room
+        self.participant = participant
 
-        if not message_content and attachment_file and message_type == MessageType.IMAGE:
+
+class ChatRoomMessageAPIViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    search_fields = ["content"]
+    filterset_fields = ["message_type", "is_read"]
+    ordering_fields = ["created_at"]
+    ordering = ["-created_at"]
+
+    def _get_chat_context(self):
+        """
+        Fetches the Chat object and caches it on the request object.
+        It checks for the cached value first to avoid repeating the DB query.
+        """
+        if hasattr(self.request, "_chat_context_dto"):
+            return self.request._chat_context_dto
+
+        chat_room_id = self.kwargs.get("chat_room_id")
+        try:
+            chat = ChatRoom.objects.prefetch_related("participants").get(
+                id=chat_room_id
+            )
+        except ChatRoom.DoesNotExist:
+            raise NotFound("Chat not found.")
+
+        participant = get_participant_from_user(chat, self.request.user)
+        self.request._chat_context_dto = ChatContextDto(
+            chat_room=chat, participant=participant
+        )
+        return self.request._chat_context_dto
+
+    def get_queryset(self):
+        chat_context = self._get_chat_context()
+        return ChatMessage.objects.select_related("sender", "chat_room").filter(
+            chat_room=chat_context.chat_room
+        )
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return MessageCreateSerializer
+        elif self.action == "update":
+            return MessageUpdateSerializer
+        return MessageSerializer
+
+    def get_permissions(self):
+        perms = super().get_permissions()
+        if self.action in ["update", "destroy"]:
+            perms.append(IsChatMessageOwner())
+        return perms
+
+    def perform_create(self, serializer):
+        chat_context = self._get_chat_context()
+        user = self.request.user
+        message_content = serializer.validated_data.get("content", "")
+        message_type = serializer.validated_data.get("message_type")
+        attachment_file = serializer.validated_data.pop("attachment_file", None)
+        if (
+            not message_content
+            and attachment_file
+            and message_type == MessageType.IMAGE
+        ):
             message_content = "📷 Image"
 
-        chat_message = ChatMessage.objects.create(
-            chat_room=chat_room,
-            sender=request.user,
+        chat_message = serializer.save(
+            chat_room=chat_context.chat_room,
+            sender=user,
             content=message_content,
             message_type=message_type,
         )
 
         if attachment_file is not None:
-            ChatAttachment.objects.create(
-                message=chat_message,
-                file=attachment_file
-            )
+            ChatAttachment.objects.create(message=chat_message, file=attachment_file)
 
-        ChatParticipant.objects.filter(
-            chat_room=chat_room
-        ).exclude(user=request.user).update(
-            unread_count=models.F('unread_count') + 1
+        ChatParticipant.objects.filter(chat_room=chat_context.chat_room).exclude(
+            user=user
+        ).update(unread_count=models.F("unread_count") + 1)
+        chat_context.chat_room.last_message_at = chat_message.created_at
+        chat_context.chat_room.save(update_fields=["last_message_at"])
+        self._broadcast_message_add(chat_context.chat_room, chat_message, self.request)
+        return Response(
+            MessageSerializer(chat_message, context={"request": self.request}).data
         )
-        chat_room.last_message_at = chat_message.created_at
-        chat_room.save(update_fields=['last_message_at'])
 
-        self._broadcast_message_add(chat_room, chat_message, request)
-        return Response(MessageSerializer(chat_message, context={'request': request}).data)
-
-    @extend_schema(
-        description="Edit a message in chat room",
-        operation_id="v1_chat_rooms_edit_message"
-    )
-    @action(detail=True, methods=['patch'], url_path="messages/(?P<message_id>[^/.]+)/edit")
-    def edit_message(self, request, pk=None, message_id=None):
-        """Edit an existing message in the chat room."""
-
-        chat_room = self.get_object()
-        try:
-            message = ChatMessage.objects.get(id=message_id, chat_room=chat_room, sender=request.user)
-        except ChatMessage.DoesNotExist:
-            return Response({"detail": "Message not found or no permission."},
-                            status=status.HTTP_404_NOT_FOUND)
-
-        serializer = MessageUpdateSerializer(message, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
+    def perform_update(self, serializer):
+        chat_context = self._get_chat_context()
         serializer.save()
-        self._broadcast_message_edit(chat_room, message, request)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        self._broadcast_message_edit(
+            chat_context.chat_room, serializer.instance, self.request
+        )
 
-    @extend_schema(
-        description="Delete a message from chat room",
-        operation_id="v1_chat_rooms_delete_message"
-    )
-    @action(detail=True, methods=['delete'], url_path="messages/(?P<message_id>[^/.]+)")
-    def delete_message(self, request, pk=None, message_id=None):
-        """Remove message"""
-
-        chat_room = self.get_object()
-        try:
-            message = ChatMessage.objects.get(id=message_id, chat_room=chat_room, sender=request.user)
-        except ChatMessage.DoesNotExist:
-            return Response({"detail": "Message not found or no permission."},
-                            status=status.HTTP_404_NOT_FOUND)
-
-        message.delete()
-        self._broadcast_message_deletion(chat_room, message, request)
-        return Response({
-            "message": "Successfully deleted"
-        }, status=status.HTTP_200_OK)
+    def perform_destroy(self, instance):
+        chat_context = self._get_chat_context()
+        instance.delete()
+        super().perform_destroy(instance)
+        self._broadcast_message_deletion(chat_context.chat_room, instance, self.request)
 
     def _broadcast_message_add(self, chat_room, message, request):
         """Broadcast new message via WebSocket."""
@@ -260,29 +276,31 @@ class ChatRoomAPIViewSet(ModelViewSet):
         # Prepare attachments data
         attachments = []
         for attachment in message.attachments.all():
-            attachments.append({
-                'id': attachment.id,
-                'name': attachment.original_filename,
-                'url': request.build_absolute_uri(attachment.file.url),
-                'size': attachment.size,
-                'type': attachment.file_type
-            })
+            attachments.append(
+                {
+                    "id": attachment.id,
+                    "name": attachment.original_filename,
+                    "url": request.build_absolute_uri(attachment.file.url),
+                    "size": attachment.size,
+                    "type": attachment.file_type,
+                }
+            )
 
         async_to_sync(channel_layer.group_send)(
             chat_room_channel_name,
             {
-                'type': 'chat_message',
-                'message_id': message.id,
-                'message_type': message.message_type,
-                'content': message.content,
-                'sender': {
-                    'id': request.user.id,
-                    'full_name': request.user.get_full_name() or request.user.username,
+                "type": "chat_message",
+                "message_id": message.id,
+                "message_type": message.message_type,
+                "content": message.content,
+                "sender": {
+                    "id": request.user.id,
+                    "full_name": request.user.get_full_name() or request.user.username,
                 },
-                'attachments': attachments,
-                'created_at': message.created_at.isoformat(),
-                'updated_at': message.updated_at.isoformat(),
-            }
+                "attachments": attachments,
+                "created_at": message.created_at.isoformat(),
+                "updated_at": message.updated_at.isoformat(),
+            },
         )
 
     def _broadcast_message_edit(self, chat_room, message, request):
@@ -293,12 +311,12 @@ class ChatRoomAPIViewSet(ModelViewSet):
         async_to_sync(channel_layer.group_send)(
             chat_room_channel_name,
             {
-                'type': 'message_edited',
-                'message_id': message.id,
-                'content': message.content,
-                'created_at': message.created_at.isoformat(),
-                'updated_at': message.updated_at.isoformat(),
-            }
+                "type": "message_edited",
+                "message_id": message.id,
+                "content": message.content,
+                "created_at": message.created_at.isoformat(),
+                "updated_at": message.updated_at.isoformat(),
+            },
         )
 
     def _broadcast_message_deletion(self, chat_room, message, request):
@@ -310,25 +328,10 @@ class ChatRoomAPIViewSet(ModelViewSet):
         async_to_sync(channel_layer.group_send)(
             chat_room_channel_name,
             {
-                'type': 'message_deleted',
-                'message_id': message.id,
-                'deleted_by': request.user.id,
-                'created_at': message.created_at.isoformat(),
-                'updated_at': message.updated_at.isoformat(),
-            }
-        )
-
-    def _broadcast_user_left(self, chat_room, user):
-        """Broadcast user left event via WebSocket."""
-
-        channel_layer = get_channel_layer()
-        chat_room_channel_name = get_chat_channel_name(chat_room)
-
-        async_to_sync(channel_layer.group_send)(
-            chat_room_channel_name,
-            {
-                'type': 'user_left',
-                'user_id': user.id,
-                'username': user.get_full_name() or user.username,
-            }
+                "type": "message_deleted",
+                "message_id": message.id,
+                "deleted_by": request.user.id,
+                "created_at": message.created_at.isoformat(),
+                "updated_at": message.updated_at.isoformat(),
+            },
         )

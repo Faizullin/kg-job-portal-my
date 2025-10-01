@@ -473,7 +473,7 @@ class ActiveField(models.BooleanField):
     """Custom BooleanField for active status with default verbose name and value."""
 
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('default', False)
+        kwargs.setdefault('default', True)
         kwargs.setdefault('verbose_name', _("Active"))
         super().__init__(*args, **kwargs)
 

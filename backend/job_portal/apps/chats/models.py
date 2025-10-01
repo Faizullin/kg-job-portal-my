@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -80,10 +81,13 @@ def attachment_storage_upload_to(instance, filename):
     """Generate upload path for attachments."""
 
     current_datetime = timezone.now().strftime('%Y/%m/%d')
-    if not instance.pk:
-        raise ValueError("Instance must have a primary key before uploading.")
-    updated_filename = f"{current_datetime}_{filename}"
-    return f'chat_attachments/attachment_{instance.pk}/{updated_filename}'
+    
+    # Generate a unique identifier for the file
+    unique_id = uuid.uuid4().hex[:8]
+    updated_filename = f"{current_datetime}_{unique_id}_{filename}"
+    
+    # If instance has pk, use it; otherwise use the unique_id
+    return f'chat_attachments/attachment_{unique_id}/{updated_filename}'
 
 
 class ChatAttachment(AbstractSoftDeleteModel, AbstractTimestampedModel):
