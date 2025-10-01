@@ -1,81 +1,97 @@
-import { Badge } from "@/components/ui/badge";
+import ComboBox2 from "@/components/combobox";
 import { Button } from "@/components/ui/button";
-import { MultiCombobox } from "@/components/ui/combobox";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Separator } from "@/components/ui/separator";
+import type { PublicMasterProfile, ServiceSubcategory } from "@/lib/api/axios-client/api";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, MapPin, Save } from "lucide-react";
-import React, { useMemo } from "react";
+import { Briefcase, Heart, Loader2, Save } from "lucide-react";
+import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const clientProfileSchema = z.object({
-  preferred_services: z.array(z.string()),
+  preferred_services: z.array(z.custom<ServiceSubcategory>()),
+  favorite_masters: z.array(z.custom<PublicMasterProfile>()),
 });
 
 type ClientProfileFormData = z.infer<typeof clientProfileSchema>;
 
-const loadClientProfileQueryKey = "client-profile";
+const CLIENT_PROFILE_QUERY_KEY = "client-profile";
 
 export function ClientProfileForm() {
   const queryClient = useQueryClient();
 
   const loadClientProfileQuery = useQuery({
-    queryKey: [loadClientProfileQueryKey],
+    queryKey: [CLIENT_PROFILE_QUERY_KEY],
     queryFn: async () => {
       const response = await myApi.v1UsersMyEmployerRetrieve();
       return response.data;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
     retry: 1,
   });
-
-  // Fetch service categories for preferred areas
-  const loadServiceCategoriesQuery = useQuery({
-    queryKey: ["service-subcategories"],
-    queryFn: async () => {
-      const response = await myApi.v1CoreServiceSubcategoriesList();
-      return response.data.results;
-    },
-  });
-  const serviceCategoryOptions = useMemo(() => {
-    return loadServiceCategoriesQuery.data?.map((category) => ({
-      label: `${category.name} [#${category.id}]`,
-      value: category.id.toString(),
-    })) || [];
-  }, [loadServiceCategoriesQuery.data]);
 
   const form = useForm<ClientProfileFormData>({
     resolver: zodResolver(clientProfileSchema),
     defaultValues: {
       preferred_services: [],
+      favorite_masters: [],
     },
   });
 
-  React.useEffect(() => {
+  const searchServiceSubcategories = useCallback(async (search: string, offset: number, limit: number) => {
+    const response = await myApi.v1CoreServiceSubcategoriesList({
+      search,
+      page: Math.floor(offset / limit) + 1,
+      pageSize: limit,
+    });
+    return response.data.results || [];
+  }, []);
+
+  const searchMasters = useCallback(async (search: string, offset: number, limit: number) => {
+    const response = await myApi.v1UsersMastersList({
+      search,
+      page: Math.floor(offset / limit) + 1,
+      pageSize: limit,
+    });
+    return response.data.results || [];
+  }, []);
+
+  useEffect(() => {
     const profileData = loadClientProfileQuery.data;
     if (profileData) {
-      form.reset({
-        preferred_services: (profileData.preferred_services || []).map(i => i.toString()),
-      });
+      const loadRelatedData = async () => {
+        const [servicesData, mastersData] = await Promise.all([
+          profileData.preferred_services?.length ? myApi.v1CoreServiceSubcategoriesList({ idIn: profileData.preferred_services }).then((r) => r.data.results).catch(() => []) : Promise.resolve([]),
+          profileData.favorite_masters?.length ? myApi.v1UsersMastersList({ idIn: profileData.favorite_masters }).then((r) => r.data.results).catch(() => []) : Promise.resolve([])
+        ]);
+
+        form.reset({
+          preferred_services: servicesData || [],
+          favorite_masters: mastersData || [],
+        });
+      };
+
+      loadRelatedData();
     }
   }, [loadClientProfileQuery.data, form]);
 
   const updateClientMutation = useMutation({
     mutationFn: async (data: ClientProfileFormData) => {
       const transformedData = {
-        ...data,
-        preferred_services: data.preferred_services.map(i => parseInt(i))
-      }
+        preferred_services: data.preferred_services.map(service => service.id),
+        favorite_masters: data.favorite_masters.map(master => master.id),
+      };
       const response = await myApi.v1UsersMyEmployerPartialUpdate({ 
         patchedEmployerProfileCreateUpdate: transformedData 
       });
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+      queryClient.invalidateQueries({ queryKey: [CLIENT_PROFILE_QUERY_KEY] });
       toast.success("Client profile updated successfully");
     },
     onError: (error: any) => {
@@ -98,12 +114,19 @@ export function ClientProfileForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Preferred Services */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
-            Preferred Service Areas
-          </h3>
+          <div>
+            <h3 className="text-lg font-medium flex items-center gap-2">
+              <Briefcase className="h-5 w-5" />
+              Preferred Services
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Services you're interested in hiring for
+            </p>
+          </div>
+          <Separator />
 
           <FormField
             control={form.control}
@@ -112,55 +135,80 @@ export function ClientProfileForm() {
               <FormItem>
                 <FormLabel>Select Preferred Services</FormLabel>
                 <FormControl>
-                  <MultiCombobox
-                    options={serviceCategoryOptions}
+                  <ComboBox2<ServiceSubcategory>
+                    title="Select services..."
                     value={field.value}
-                    onValueChange={field.onChange}
-                    placeholder="Select service areas..."
-                    searchPlaceholder="Search services..."
-                    emptyText="No services found."
+                    valueKey="id"
+                    multiple
+                    renderText={(service) => service.name}
+                    searchFn={searchServiceSubcategories}
+                    onChange={field.onChange}
+                    badgeRenderType="outside"
                   />
                 </FormControl>
+                <FormDescription>Services you frequently need or are interested in</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          {form.watch("preferred_services")?.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Selected services:</p>
-              <div className="flex flex-wrap gap-2">
-                {form.watch("preferred_services")?.map((areaId) => {
-                  const category = serviceCategoryOptions?.find((cat) => cat.value === areaId);
-                  return (
-                    <Badge key={areaId} variant="secondary" className="flex items-center gap-1">
-                      {category?.label}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const currentAreas = form.getValues("preferred_services") || [];
-                          form.setValue("preferred_services", currentAreas.filter(id => id !== areaId));
-                        }}
-                        className="ml-1 hover:text-destructive"
-                      >
-                        ×
-                      </button>
-                    </Badge>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
 
-        <div className="flex justify-end">
-          <Button type="submit" disabled={updateClientMutation.isPending}>
-            {updateClientMutation.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
+        {/* Favorite Masters */}
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-medium flex items-center gap-2">
+              <Heart className="h-5 w-5" />
+              Favorite Service Providers
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Your preferred service providers for quick access
+            </p>
+          </div>
+          <Separator />
+
+          <FormField
+            control={form.control}
+            name="favorite_masters"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Select Favorite Masters</FormLabel>
+                <FormControl>
+                  <ComboBox2<PublicMasterProfile>
+                    title="Select masters..."
+                    value={field.value}
+                    valueKey="id"
+                    multiple
+                    renderText={(master) => master.user.username}
+                    searchFn={searchMasters}
+                    onChange={field.onChange}
+                    badgeRenderType="outside"
+                  />
+                </FormControl>
+                <FormDescription>Masters you've worked with and trust</FormDescription>
+                <FormMessage />
+              </FormItem>
             )}
-            {updateClientMutation.isPending ? "Saving..." : "Save Changes"}
+          />
+        </div>
+
+        {/* Save Button */}
+        <div className="flex justify-end pt-6 border-t">
+          <Button 
+            type="submit" 
+            disabled={updateClientMutation.isPending}
+            className="min-w-32"
+          >
+            {updateClientMutation.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Save Changes
+              </>
+            )}
           </Button>
         </div>
       </form>

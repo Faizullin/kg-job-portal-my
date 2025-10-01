@@ -1,16 +1,9 @@
 from django.urls import path
-from .api.views import (
-    ClientDashboardApiView, 
-    # ProviderDashboardApiView,
-    ServiceProviderSearchAPIView,
-    OrderSearchAPIView
-)
+from .api.views import MasterSearchAPIView, JobSearchAPIView
 
-app_name = 'dashboard'
+app_name = 'search'
 
 urlpatterns = [
-    path('api/v1/dashboard/my/client/', ClientDashboardApiView.as_view(), name='client-dashboard'),
-    # path('api/v1/dashboard/my/provider/', ProviderDashboardApiView.as_view(), name='provider-dashboard'),
-    path('api/v1/search/providers/', ServiceProviderSearchAPIView.as_view(), name='provider-search'),
-    path('api/v1/search/orders/', OrderSearchAPIView.as_view(), name='order-search'),
+    path('api/v1/search/masters/', MasterSearchAPIView.as_view(), name='master-search'),
+    path('api/v1/search/jobs/', JobSearchAPIView.as_view(), name='job-search'),
 ]

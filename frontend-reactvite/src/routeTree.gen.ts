@@ -21,7 +21,6 @@ import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
-import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSearchIndexRouteImport } from './routes/_authenticated/search/index'
 import { Route as AuthenticatedReviewsIndexRouteImport } from './routes/_authenticated/reviews/index'
 import { Route as AuthenticatedPaymentsIndexRouteImport } from './routes/_authenticated/payments/index'
@@ -29,8 +28,6 @@ import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
-import { Route as AuthenticatedAnalyticsIndexRouteImport } from './routes/_authenticated/analytics/index'
-import { Route as AuthenticatedSettingsUserProfileRouteImport } from './routes/_authenticated/settings/user-profile'
 import { Route as AuthenticatedSettingsProfileRouteImport } from './routes/_authenticated/settings/profile'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsMasterRouteImport } from './routes/_authenticated/settings/master'
@@ -114,11 +111,6 @@ const AuthenticatedSettingsRouteRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
-  id: '/tasks/',
-  path: '/tasks/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedSearchIndexRoute =
   AuthenticatedSearchIndexRouteImport.update({
     id: '/search/',
@@ -158,18 +150,6 @@ const AuthenticatedAppsIndexRoute = AuthenticatedAppsIndexRouteImport.update({
   path: '/apps/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAnalyticsIndexRoute =
-  AuthenticatedAnalyticsIndexRouteImport.update({
-    id: '/analytics/',
-    path: '/analytics/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedSettingsUserProfileRoute =
-  AuthenticatedSettingsUserProfileRouteImport.update({
-    id: '/user-profile',
-    path: '/user-profile',
-    getParentRoute: () => AuthenticatedSettingsRouteRoute,
-  } as any)
 const AuthenticatedSettingsProfileRoute =
   AuthenticatedSettingsProfileRouteImport.update({
     id: '/profile',
@@ -328,8 +308,6 @@ export interface FileRoutesByFullPath {
   '/settings/master': typeof AuthenticatedSettingsMasterRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
-  '/settings/user-profile': typeof AuthenticatedSettingsUserProfileRoute
-  '/analytics': typeof AuthenticatedAnalyticsIndexRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
@@ -337,7 +315,6 @@ export interface FileRoutesByFullPath {
   '/payments': typeof AuthenticatedPaymentsIndexRoute
   '/reviews': typeof AuthenticatedReviewsIndexRoute
   '/search': typeof AuthenticatedSearchIndexRoute
-  '/tasks': typeof AuthenticatedTasksIndexRoute
   '/app/masters/$providerId': typeof AuthenticatedAppMastersProviderIdRoute
   '/app/masters': typeof AuthenticatedAppMastersIndexRoute
   '/app/jobs/create/datetime': typeof AuthenticatedAppJobsCreateDatetimeRoute
@@ -373,8 +350,6 @@ export interface FileRoutesByTo {
   '/settings/master': typeof AuthenticatedSettingsMasterRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
-  '/settings/user-profile': typeof AuthenticatedSettingsUserProfileRoute
-  '/analytics': typeof AuthenticatedAnalyticsIndexRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
@@ -382,7 +357,6 @@ export interface FileRoutesByTo {
   '/payments': typeof AuthenticatedPaymentsIndexRoute
   '/reviews': typeof AuthenticatedReviewsIndexRoute
   '/search': typeof AuthenticatedSearchIndexRoute
-  '/tasks': typeof AuthenticatedTasksIndexRoute
   '/app/masters/$providerId': typeof AuthenticatedAppMastersProviderIdRoute
   '/app/masters': typeof AuthenticatedAppMastersIndexRoute
   '/app/jobs/create/datetime': typeof AuthenticatedAppJobsCreateDatetimeRoute
@@ -420,8 +394,6 @@ export interface FileRoutesById {
   '/_authenticated/settings/master': typeof AuthenticatedSettingsMasterRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/profile': typeof AuthenticatedSettingsProfileRoute
-  '/_authenticated/settings/user-profile': typeof AuthenticatedSettingsUserProfileRoute
-  '/_authenticated/analytics/': typeof AuthenticatedAnalyticsIndexRoute
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
@@ -429,7 +401,6 @@ export interface FileRoutesById {
   '/_authenticated/payments/': typeof AuthenticatedPaymentsIndexRoute
   '/_authenticated/reviews/': typeof AuthenticatedReviewsIndexRoute
   '/_authenticated/search/': typeof AuthenticatedSearchIndexRoute
-  '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/app/masters/$providerId': typeof AuthenticatedAppMastersProviderIdRoute
   '/_authenticated/app/masters/': typeof AuthenticatedAppMastersIndexRoute
   '/_authenticated/app/jobs/create/datetime': typeof AuthenticatedAppJobsCreateDatetimeRoute
@@ -467,8 +438,6 @@ export interface FileRouteTypes {
     | '/settings/master'
     | '/settings/notifications'
     | '/settings/profile'
-    | '/settings/user-profile'
-    | '/analytics'
     | '/apps'
     | '/chats'
     | '/help-center'
@@ -476,7 +445,6 @@ export interface FileRouteTypes {
     | '/payments'
     | '/reviews'
     | '/search'
-    | '/tasks'
     | '/app/masters/$providerId'
     | '/app/masters'
     | '/app/jobs/create/datetime'
@@ -512,8 +480,6 @@ export interface FileRouteTypes {
     | '/settings/master'
     | '/settings/notifications'
     | '/settings/profile'
-    | '/settings/user-profile'
-    | '/analytics'
     | '/apps'
     | '/chats'
     | '/help-center'
@@ -521,7 +487,6 @@ export interface FileRouteTypes {
     | '/payments'
     | '/reviews'
     | '/search'
-    | '/tasks'
     | '/app/masters/$providerId'
     | '/app/masters'
     | '/app/jobs/create/datetime'
@@ -558,8 +523,6 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/master'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/profile'
-    | '/_authenticated/settings/user-profile'
-    | '/_authenticated/analytics/'
     | '/_authenticated/apps/'
     | '/_authenticated/chats/'
     | '/_authenticated/help-center/'
@@ -567,7 +530,6 @@ export interface FileRouteTypes {
     | '/_authenticated/payments/'
     | '/_authenticated/reviews/'
     | '/_authenticated/search/'
-    | '/_authenticated/tasks/'
     | '/_authenticated/app/masters/$providerId'
     | '/_authenticated/app/masters/'
     | '/_authenticated/app/jobs/create/datetime'
@@ -675,13 +637,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/tasks/': {
-      id: '/_authenticated/tasks/'
-      path: '/tasks'
-      fullPath: '/tasks'
-      preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/search/': {
       id: '/_authenticated/search/'
       path: '/search'
@@ -730,20 +685,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/apps'
       preLoaderRoute: typeof AuthenticatedAppsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/analytics/': {
-      id: '/_authenticated/analytics/'
-      path: '/analytics'
-      fullPath: '/analytics'
-      preLoaderRoute: typeof AuthenticatedAnalyticsIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/settings/user-profile': {
-      id: '/_authenticated/settings/user-profile'
-      path: '/user-profile'
-      fullPath: '/settings/user-profile'
-      preLoaderRoute: typeof AuthenticatedSettingsUserProfileRouteImport
-      parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
     '/_authenticated/settings/profile': {
       id: '/_authenticated/settings/profile'
@@ -909,7 +850,6 @@ interface AuthenticatedSettingsRouteRouteChildren {
   AuthenticatedSettingsMasterRoute: typeof AuthenticatedSettingsMasterRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsProfileRoute: typeof AuthenticatedSettingsProfileRoute
-  AuthenticatedSettingsUserProfileRoute: typeof AuthenticatedSettingsUserProfileRoute
 }
 
 const AuthenticatedSettingsRouteRouteChildren: AuthenticatedSettingsRouteRouteChildren =
@@ -922,8 +862,6 @@ const AuthenticatedSettingsRouteRouteChildren: AuthenticatedSettingsRouteRouteCh
     AuthenticatedSettingsNotificationsRoute:
       AuthenticatedSettingsNotificationsRoute,
     AuthenticatedSettingsProfileRoute: AuthenticatedSettingsProfileRoute,
-    AuthenticatedSettingsUserProfileRoute:
-      AuthenticatedSettingsUserProfileRoute,
   }
 
 const AuthenticatedSettingsRouteRouteWithChildren =
@@ -944,7 +882,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedJobsJobIdRoute: typeof AuthenticatedJobsJobIdRoute
   AuthenticatedPaymentsInvoicesRoute: typeof AuthenticatedPaymentsInvoicesRoute
-  AuthenticatedAnalyticsIndexRoute: typeof AuthenticatedAnalyticsIndexRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
@@ -952,7 +889,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPaymentsIndexRoute: typeof AuthenticatedPaymentsIndexRoute
   AuthenticatedReviewsIndexRoute: typeof AuthenticatedReviewsIndexRoute
   AuthenticatedSearchIndexRoute: typeof AuthenticatedSearchIndexRoute
-  AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedAppMastersProviderIdRoute: typeof AuthenticatedAppMastersProviderIdRoute
   AuthenticatedAppMastersIndexRoute: typeof AuthenticatedAppMastersIndexRoute
   AuthenticatedAppJobsCreateDatetimeRoute: typeof AuthenticatedAppJobsCreateDatetimeRoute
@@ -976,7 +912,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedJobsJobIdRoute: AuthenticatedJobsJobIdRoute,
   AuthenticatedPaymentsInvoicesRoute: AuthenticatedPaymentsInvoicesRoute,
-  AuthenticatedAnalyticsIndexRoute: AuthenticatedAnalyticsIndexRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
@@ -984,7 +919,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPaymentsIndexRoute: AuthenticatedPaymentsIndexRoute,
   AuthenticatedReviewsIndexRoute: AuthenticatedReviewsIndexRoute,
   AuthenticatedSearchIndexRoute: AuthenticatedSearchIndexRoute,
-  AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedAppMastersProviderIdRoute:
     AuthenticatedAppMastersProviderIdRoute,
   AuthenticatedAppMastersIndexRoute: AuthenticatedAppMastersIndexRoute,

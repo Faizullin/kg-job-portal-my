@@ -1,23 +1,19 @@
 from rest_framework import serializers
 
 from job_portal.apps.core.models import ServiceCategory, ServiceSubcategory
+from job_portal.apps.jobs.models import Job
+from job_portal.apps.users.models import Master, MasterStatistics
 from job_portal.apps.users.api.serializers import (
-    AdvancedUserProfileRetrieveUpdateSerializer,
-    PortfolioItemCreateUpdateSerializer,
+    UserDetailChildSerializer,
     ProfessionSerializer,
-    ProviderStatisticsSerializer,
-)
-from job_portal.apps.users.models import (
-    Skill,
-    ProviderStatistics,
-    ServiceProviderProfile,
-    ServiceProviderSkill,
-    UserProfile,
+    MasterStatisticsSerializer,
+    MasterSkillSerializer,
+    PortfolioItemSerializer,
 )
 
 
 class ServiceCategorySerializer(serializers.ModelSerializer):
-    """Serializer for service categories in dashboard."""
+    """Serializer for service categories in search results."""
 
     class Meta:
         model = ServiceCategory
@@ -27,13 +23,11 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
             "icon",
             "color",
             "description",
-            "featured",
-            "sort_order",
         ]
 
 
 class ServiceSubcategorySerializer(serializers.ModelSerializer):
-    """Serializer for service subcategories."""
+    """Serializer for service subcategories in search results."""
 
     category = ServiceCategorySerializer(read_only=True)
 
@@ -42,164 +36,165 @@ class ServiceSubcategorySerializer(serializers.ModelSerializer):
         fields = ["id", "name", "category"]
 
 
-class ServiceProviderProfileSerializer(serializers.ModelSerializer):
-    """Nested serializer for service provider profile data."""
+class MasterSearchSerializer(serializers.ModelSerializer):
+    """Optimized serializer for master search results."""
 
-    user_profile = AdvancedUserProfileRetrieveUpdateSerializer(read_only=True)
+    user = UserDetailChildSerializer(read_only=True)
     profession = ProfessionSerializer(read_only=True)
-    statistics = ProviderStatisticsSerializer(read_only=True)
+    statistics = serializers.SerializerMethodField()
+    skills = MasterSkillSerializer(many=True, read_only=True, source='master_skills')
+    portfolio_items = PortfolioItemSerializer(many=True, read_only=True)
+    services_offered = ServiceSubcategorySerializer(many=True, read_only=True)
+    display_name = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
+    is_online_display = serializers.SerializerMethodField()
 
     class Meta:
-        model = ServiceProviderProfile
+        model = Master
         fields = [
             "id",
-            "user_profile",
+            "user",
+            "display_name",
             "profession",
             "statistics",
-            "hourly_rate",
-            "is_online",
-            "current_location",
-            "response_time_hours",
-            "is_top_master",
-            "is_verified_provider",
-        ]
-
-
-class MasterSkillSerializer(serializers.ModelSerializer):
-    """Serializer for master skills."""
-
-    class Meta:
-        model = Skill
-        fields = ["id", "name", "description"]
-
-
-class ServiceProviderSkillSerializer(serializers.ModelSerializer):
-    """Serializer for service provider skills with nested skill data."""
-
-    skill = MasterSkillSerializer(read_only=True)
-
-    class Meta:
-        model = ServiceProviderSkill
-        fields = [
-            "id",
-            "skill",
-            "proficiency_level",
-            "years_of_experience",
-            "is_primary_skill",
-        ]
-
-
-class ServiceProviderSearchListSerializer(serializers.ModelSerializer):
-    """Serializer for service provider search results - detailed fields for search page."""
-
-    profession = ProfessionSerializer(read_only=True)
-    statistics = ProviderStatisticsSerializer(read_only=True)
-    provider_skills = ServiceProviderSkillSerializer(many=True, read_only=True)
-    portfolio_items = PortfolioItemCreateUpdateSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = ServiceProviderProfile
-        fields = [
-            "id",
-            "profession",
-            "statistics",
-            "provider_skills",
+            "rating",
+            "skills",
             "portfolio_items",
+            "services_offered",
             "hourly_rate",
             "is_online",
+            "is_online_display",
             "current_location",
             "response_time_hours",
             "is_top_master",
             "is_verified_provider",
+            "works_remotely",
+            "travels_to_clients",
+            "accepts_clients_at_location",
         ]
 
+    def get_statistics(self, obj):
+        """Get master statistics."""
+        try:
+            stats = obj.statistics
+            return {
+                "total_jobs_completed": stats.total_jobs_completed,
+                "average_rating": float(stats.average_rating),
+                "total_reviews": stats.total_reviews,
+                "on_time_percentage": float(stats.on_time_percentage),
+                "repeat_customer_percentage": float(stats.repeat_customer_percentage),
+            }
+        except MasterStatistics.DoesNotExist:
+            return {
+                "total_jobs_completed": 0,
+                "average_rating": 0.0,
+                "total_reviews": 0,
+                "on_time_percentage": 0.0,
+                "repeat_customer_percentage": 0.0,
+            }
 
-class OrderSerializer(serializers.ModelSerializer):
-    """Serializer for orders in dashboard."""
+    def get_display_name(self, obj):
+        """Get display name for master."""
+        user = obj.user
+        full_name = f"{user.first_name} {user.last_name}".strip()
+        return full_name or user.username
+
+    def get_rating(self, obj):
+        """Get average rating."""
+        try:
+            return float(obj.statistics.average_rating)
+        except (MasterStatistics.DoesNotExist, AttributeError):
+            return 0.0
+
+    def get_is_online_display(self, obj):
+        """Get online status display."""
+        return "Online" if obj.is_online else "Offline"
+
+
+class JobSearchSerializer(serializers.ModelSerializer):
+    """Optimized serializer for job search results."""
 
     service_subcategory = ServiceSubcategorySerializer(read_only=True)
+    employer_name = serializers.SerializerMethodField()
+    employer_avatar = serializers.SerializerMethodField()
+    budget_display = serializers.SerializerMethodField()
+    urgency_display = serializers.SerializerMethodField()
+    status_display = serializers.SerializerMethodField()
+    time_since_posted = serializers.SerializerMethodField()
 
     class Meta:
-        model = Order
+        model = Job
         fields = [
             "id",
             "title",
+            "description",
             "status",
-            "created_at",
+            "status_display",
+            "employer_name",
+            "employer_avatar",
+            "service_subcategory",
+            "location",
+            "city",
+            "service_date",
+            "service_time",
+            "urgency",
+            "urgency_display",
             "budget_min",
             "budget_max",
+            "budget_display",
             "final_price",
-            "urgency",
-            "city",
-            "service_subcategory",
+            "special_requirements",
+            "time_since_posted",
+            "created_at",
         ]
 
+    def get_employer_name(self, obj):
+        """Get employer display name."""
+        user = obj.employer.user
+        full_name = f"{user.first_name} {user.last_name}".strip()
+        return full_name or user.username
 
-class PlatformStatsSerializer(serializers.Serializer):
-    """Serializer for platform statistics."""
+    def get_employer_avatar(self, obj):
+        """Get employer avatar."""
+        return obj.employer.user.photo_url
 
-    total_providers = serializers.IntegerField()
-    total_categories = serializers.IntegerField()
-    average_rating = serializers.FloatField()
-    response_time_hours = serializers.IntegerField()
+    def get_budget_display(self, obj):
+        """Get formatted budget display."""
+        if obj.budget_min and obj.budget_max:
+            return f"{obj.budget_min}₸ - {obj.budget_max}₸"
+        elif obj.budget_min:
+            return f"From {obj.budget_min}₸"
+        elif obj.budget_max:
+            return f"Up to {obj.budget_max}₸"
+        return "Negotiable"
 
+    def get_urgency_display(self, obj):
+        """Get urgency display."""
+        urgency_map = {
+            "low": "Low Priority",
+            "medium": "Medium Priority", 
+            "high": "High Priority",
+            "urgent": "Urgent",
+        }
+        return urgency_map.get(obj.urgency, "Medium Priority")
 
-class ClientDashboardResponseSerializer(serializers.Serializer):
-    """Serializer for client dashboard response."""
+    def get_status_display(self, obj):
+        """Get status display."""
+        status_map = {
+            "draft": "Draft",
+            "published": "Published",
+            "bidding": "Bidding",
+            "assigned": "Assigned",
+            "in_progress": "In Progress",
+            "completed": "Completed",
+            "cancelled": "Cancelled",
+        }
+        return status_map.get(obj.status, "Unknown")
 
-    featured_categories = ServiceCategorySerializer(many=True)
-    top_providers = ServiceProviderProfileSerializer(many=True)
-    recent_orders = OrderSerializer(many=True)
-    platform_stats = PlatformStatsSerializer()
-
-# class ClientUserSerializer(serializers.ModelSerializer):
-#     """Serializer for client user data."""
-
-#     class Meta:
-#         model = UserModel
-#         fields = ["id", "first_name", "last_name", "username", "photo_url"]
-
-
-# class ReviewSerializer(serializers.ModelSerializer):
-#     """Serializer for reviews in provider dashboard."""
-
-#     reviewer = ClientUserSerializer(read_only=True)
-
-#     class Meta:
-#         model = Review
-#         fields = [
-#             "id",
-#             "reviewer",
-#             "overall_rating",
-#             "comment",
-#             "created_at",
-#             "title",
-#             "is_verified",
-#         ]
-
-
-# class CertificateSerializer(serializers.ModelSerializer):
-#     """Serializer for certificates."""
-
-#     class Meta:
-#         model = Certificate
-#         fields = [
-#             "id",
-#             "name",
-#             "issuing_organization",
-#             "certificate_number",
-#             "issue_date",
-#             "expiry_date",
-#             "certificate_file",
-#             "is_verified",
-#         ]
-
-
-# class ProviderDashboardResponseSerializer(serializers.Serializer):
-#     """Serializer for provider dashboard response."""
-
-#     provider_info = ServiceProviderProfileSerializer(read_only=True)
-#     statistics = ProviderStatisticsSerializer(read_only=True)
-#     recent_reviews = ReviewSerializer(many=True)
-#     skills = ServiceProviderSkillSerializer(many=True)
-#     certificates = CertificateSerializer(many=True)
+    def get_time_since_posted(self, obj):
+        """Get time since job was posted."""
+        from django.utils import timezone
+        from django.utils.timesince import timesince
+        
+        now = timezone.now()
+        return timesince(obj.created_at, now) + " ago"

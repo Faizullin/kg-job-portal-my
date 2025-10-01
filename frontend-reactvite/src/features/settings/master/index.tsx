@@ -1,8 +1,8 @@
+import { Button } from "@/components/ui/button";
+import myApi from "@/lib/api/my-api";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ContentSection } from "../_components/content-section";
 import { MasterForm } from "./master-form";
-import myApi from "@/lib/api/my-api";
-import { Button } from "@/components/ui/button";
-import { useMutation, useQuery } from "@tanstack/react-query";
 
 const loadMasterProfileQueryKey = "master-profile";
 
@@ -18,15 +18,11 @@ export function SettingsMaster() {
   const loadMasterProfileQuery = useQuery({
     queryKey: [loadMasterProfileQueryKey],
     queryFn: async () => {
-      try {
-        const res = await myApi.v1UsersMyMasterRetrieve();
-        return { exists: true, data: res.data } as const;
-      } catch {
-        return { exists: false } as const;
-      }
+      const response = await myApi.v1UsersMyMasterRetrieve();
+      return response.data;
     }
   });
-  const masterProfileExists = loadMasterProfileQuery.data && loadMasterProfileQuery.data.exists;
+  const masterProfileExists = loadMasterProfileQuery.data && loadMasterProfileQuery.data.id !== null;
   return (
     <ContentSection
       title="Master Profile"

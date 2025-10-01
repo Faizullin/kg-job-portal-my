@@ -3,17 +3,18 @@ from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework import generics, status
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .permissions import HasMasterProfile, HasEmployerProfile
 from .serializers import (
     EmployerProfileCreateUpdateSerializer,
     MasterProfileCreateUpdateSerializer, MasterSkillSerializer, PortfolioItemSerializer, SkillDetailSerializer,
-    CertificateSerializer, ProfessionSerializer, PublicMasterProfileDetailSerializer,
+    CertificateSerializer, ProfessionSerializer, PublicMasterProfileDetailSerializer, PublicMasterProfileSerializer,
 )
 from ..models import (
     Employer, Skill, Profession, Master,
@@ -143,19 +144,43 @@ class PublicSkillListAPIView(generics.ListAPIView):
         return Skill.objects.filter(is_active=True).select_related("category")
 
 
-class PublicProfessionListAPIView(generics.ListAPIView):
-    """List all available professions."""
-
+class PublicProfessionAPIViewSet(ReadOnlyModelViewSet):
     serializer_class = ProfessionSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ["category", "is_active"]
+    filterset_fields = {
+        "category": ["exact"],
+        "is_active": ["exact"],
+        "id": ["in"],
+    }
     search_fields = ["name", "description"]
     ordering_fields = ["name", "created_at"]
     ordering = ["name"]
 
     def get_queryset(self):
         return Profession.objects.filter(is_active=True).select_related("category")
+
+
+class PublicMasterProfileAPIViewSet(ReadOnlyModelViewSet):
+    serializer_class = PublicMasterProfileSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = {
+        "id": ["in"],
+    }
+
+    def get_queryset(self):
+        return Master.objects.select_related('user', 'profession').filter(user__is_active=True)
+
+    @extend_schema(
+        description="Master Profile Details",
+        responses={200: PublicMasterProfileDetailSerializer(many=True)},
+        operation_id="v1_users_masters_details"
+    )
+    @action(detail=True, methods=['get'])
+    def details(self, request):
+        obj = self.get_object()
+        return Response(PublicMasterProfileDetailSerializer(instance=obj).data)
 
 
 class MasterUpdateOnlineStatusAPIView(APIView):
@@ -188,17 +213,3 @@ class MasterUpdateOnlineStatusAPIView(APIView):
             'is_online': is_online,
             'last_seen': provider_profile.last_seen
         }, status=status.HTTP_200_OK)
-
-
-class PublicMasterProfileRetrieveAPIView(generics.RetrieveAPIView):
-    """Retrieve public service provider profile."""
-
-    serializer_class = PublicMasterProfileDetailSerializer
-    permission_classes = [IsAuthenticated]
-    lookup_field = "id"
-
-    def get_queryset(self):
-        return Master.objects.filter(user__is_active=True).select_related('user', 'profession').prefetch_related(
-            'service_areas', 'service_offered', 'master_skills__skill', 'portfolio_items__skill_used', 'certificates',
-            'statistics'
-        )

@@ -143,7 +143,6 @@ class ChatRoomAPIViewSet(ModelViewSet):
         get_participant_from_user(chat_room, request.user)
         queryset = ChatMessage.objects.filter(
             chat_room=chat_room,
-            is_deleted=False
         ).select_related(
             'sender',
             'reply_to__sender'

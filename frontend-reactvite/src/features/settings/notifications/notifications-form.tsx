@@ -20,11 +20,9 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const notificationsFormSchema = z.object({
-  // General notification preferences
   email_notifications: z.boolean(),
   push_notifications: z.boolean(),
   sms_notifications: z.boolean(),
-  task_notifications: z.boolean(),
 });
 
 type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;

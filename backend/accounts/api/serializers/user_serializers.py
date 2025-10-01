@@ -57,4 +57,4 @@ class UserNotificationSettingsSerializer(serializers.ModelSerializer):
             'quiet_hours_enabled', 'quiet_hours_start', 'quiet_hours_end',
             'created_at', 'updated_at'
         )
-        read_only_fields = ('created_at', 'updated_at')
+        read_only_fields = ('id', 'created_at', 'updated_at')

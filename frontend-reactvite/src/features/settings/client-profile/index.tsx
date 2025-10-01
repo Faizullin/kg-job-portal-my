@@ -18,15 +18,11 @@ export function SettingsClientProfile() {
   const loadClientProfileQuery = useQuery({
     queryKey: [loadClientProfileQueryKey],
     queryFn: async () => {
-      try {
-        const res = await myApi.v1UsersMyEmployerRetrieve();
-        return { exists: true, data: res.data };
-      } catch {
-        return { exists: false };
-      }
+      const response = await myApi.v1UsersMyEmployerRetrieve();
+      return response.data;
     }
   });
-  const clientProfileExists = loadClientProfileQuery.data && loadClientProfileQuery.data.exists;
+  const clientProfileExists = loadClientProfileQuery.data && loadClientProfileQuery.data.id !== null;
   return (
     <ContentSection
       title="Client Profile"

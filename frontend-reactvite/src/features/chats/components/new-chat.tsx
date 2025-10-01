@@ -42,7 +42,7 @@ export function NewChat({ onOpenChange, open, control, onCreated, orderId }: New
   const loadChatUserSearchQuery = useQuery({
     queryKey: [CHAT_USER_SEARCH_QUERY_KEY, search],
     queryFn: async () => {
-      const response = await myApi.v1UsersLis({
+      const response = await myApi.v1UsersList({
         search,
         pageSize: 20
       });

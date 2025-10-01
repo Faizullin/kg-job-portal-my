@@ -18,11 +18,15 @@ from ..models import Language, ServiceCategory, ServiceSubcategory, ServiceArea,
 class LanguageReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet):
     """Languages - Read-only (managed via admin/fixtures)."""
 
-    queryset = Language.objects.all()
+    queryset = Language.objects.filter(is_active=True)
     serializer_class = LanguageSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['is_active', 'is_default']
+    filterset_fields = {
+        "is_default": ["exact"],
+        "is_active": ["exact"],
+        "id": ["in"],
+    }
     search_fields = ['code', 'name', 'native_name']
     ordering_fields = ['name', 'code', 'created_at']
     ordering = ['name']
@@ -59,7 +63,12 @@ class ServiceSubcategoryViewSet(viewsets.ModelViewSet):
 
     queryset = ServiceSubcategory.objects.all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['category', 'is_active', 'featured']
+    filterset_fields = {
+        'category': ["exact"],
+        'featured': ["exact"],
+        "is_active": ["exact"],
+        'id': ['in'],
+    }
     search_fields = ['name', 'description', 'slug']
     ordering_fields = ['name', 'sort_order', 'created_at']
     ordering = ['sort_order', 'name']
@@ -84,7 +93,10 @@ class ServiceAreaViewSet(viewsets.ModelViewSet):
 
     queryset = ServiceArea.objects.all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['is_active']
+    filterset_fields = {
+        "is_active": ["exact"],
+        'id': ['in'],
+    }
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'created_at']
     ordering = ['name']

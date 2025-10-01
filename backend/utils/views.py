@@ -37,16 +37,19 @@ class BaseActionAPIView(APIView):
         """Perform action based on 'action' parameter in request data."""
 
         action_name = request.GET.get("action", None)
-        if action_name not in self.available_actions:
+        action_index = -1
+        for i, action in enumerate(self.available_actions):
+            if action.name == action_name:
+                action_index = i
+                break
+        if action_index == -1:
             return Response(
-                {"success": 0, "message": "`action` is invalid"},
+                {"success": 0, "message": f"action={action_name} is invalid"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
-            use_action = self.available_actions[
-                self.available_actions.index(action_name)
-            ]
+            use_action = self.available_actions[action_index]
             response = use_action.apply(request)
             return Response(response, status=status.HTTP_200_OK)
         except ActionRequestException as err:

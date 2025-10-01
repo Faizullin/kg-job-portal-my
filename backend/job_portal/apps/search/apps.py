@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 
 
-class DashboardConfig(AppConfig):
+class SearchConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'job_portal.apps.dashboard'
-    verbose_name = 'Dashboard'
+    name = 'job_portal.apps.search'
+    verbose_name = 'Search'

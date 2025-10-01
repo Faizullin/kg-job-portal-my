@@ -21,7 +21,7 @@ export class AuthClient {
   static async signInWithEmailPassword(email: string, password: string) {
     try {
       const firebaseUser = await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
-      await this.authenticateWithBackend(firebaseUser.user);
+      await this._authenticateWithBackend(firebaseUser.user);
 
       return {
         success: true,
@@ -42,7 +42,7 @@ export class AuthClient {
   static async signUpWithEmailPassword(email: string, password: string) {
     try {
       const firebaseUser = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
-      await this.authenticateWithBackend(firebaseUser.user);
+      await this._authenticateWithBackend(firebaseUser.user);
 
       return {
         success: true,
@@ -63,7 +63,7 @@ export class AuthClient {
   static async signInWithGoogle() {
     try {
       const result = await signInWithPopup(getFirebaseAuth(), getGoogleProvider());
-      await this.authenticateWithBackend(result.user);
+      await this._authenticateWithBackend(result.user);
 
       return {
         success: true,
@@ -123,7 +123,7 @@ export class AuthClient {
   /**
    * Private method to handle backend authentication
    */
-  private static async authenticateWithBackend(firebaseUser: FirebaseUser) {
+  private static async _authenticateWithBackend(firebaseUser: FirebaseUser) {
     const authStore = useAuthStore.getState();
     await authStore.authenticateWithBackend(firebaseUser);
   }

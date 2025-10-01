@@ -1,13 +1,8 @@
-import copy
-import inspect
-
-from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rest_framework.fields import _UnvalidatedField
+
 from utils.serializers import (
     AbstractTimestampedModelSerializer,
 )
-
 from ..models import (
     AppVersion,
     Language,
@@ -35,8 +30,6 @@ class LanguageSerializer(AbstractTimestampedModelSerializer):
 
 
 class ServiceSubcategorySerializer(AbstractTimestampedModelSerializer):
-    complexity_level_display = serializers.SerializerMethodField()
-
     class Meta:
         model = ServiceSubcategory
         fields = [
@@ -50,12 +43,7 @@ class ServiceSubcategorySerializer(AbstractTimestampedModelSerializer):
             "featured",
             "base_price",
             "complexity_level",
-            "complexity_level_display",
         ]
-
-    @extend_schema_field(serializers.CharField())
-    def get_complexity_level_display(self, obj):
-        return self.get_choice_display(obj, "complexity_level")
 
 
 class ServiceCategorySerializer(AbstractTimestampedModelSerializer):
@@ -80,8 +68,6 @@ class ServiceCategorySerializer(AbstractTimestampedModelSerializer):
 
 
 class ServiceAreaSerializer(AbstractTimestampedModelSerializer):
-    coordinates = serializers.SerializerMethodField()
-
     class Meta:
         model = ServiceArea
         fields = [
@@ -95,20 +81,11 @@ class ServiceAreaSerializer(AbstractTimestampedModelSerializer):
             "is_active",
             "base_price_multiplier",
             "travel_fee",
-            "coordinates",
             "service_categories",
         ]
 
-    @extend_schema_field(serializers.CharField())
-    def get_coordinates(self, obj):
-        if obj.latitude and obj.longitude:
-            return f"{obj.latitude:.4f}, {obj.longitude:.4f}"
-        return None
-
 
 class SystemSettingsSerializer(AbstractTimestampedModelSerializer):
-    setting_type_display = serializers.SerializerMethodField()
-
     class Meta:
         model = SystemSettings
         fields = [
@@ -119,19 +96,10 @@ class SystemSettingsSerializer(AbstractTimestampedModelSerializer):
             "is_public",
             "is_active",
             "setting_type",
-            "setting_type_display",
         ]
-
-    @extend_schema_field(serializers.CharField())
-    def get_setting_type_display(self, obj):
-        return self.get_choice_display(obj, "setting_type")
 
 
 class SupportFAQSerializer(AbstractTimestampedModelSerializer):
-    """Serializer for support FAQ items."""
-
-    category_display = serializers.SerializerMethodField()
-
     class Meta:
         model = SupportFAQ
         fields = [
@@ -139,7 +107,6 @@ class SupportFAQSerializer(AbstractTimestampedModelSerializer):
             "question",
             "answer",
             "category",
-            "category_display",
             "language",
             "sort_order",
             "is_popular",
@@ -147,10 +114,6 @@ class SupportFAQSerializer(AbstractTimestampedModelSerializer):
             "view_count",
             "created_at",
         ]
-
-    @extend_schema_field(serializers.CharField())
-    def get_category_display(self, obj):
-        return self.get_choice_display(obj, "category")
 
 
 # CRUD Serializers for Create/Update operations
@@ -288,17 +251,3 @@ class SupportFAQCreateUpdateSerializer(serializers.ModelSerializer):
             "is_popular",
             "is_active",
         ]
-
-
-class ResponseDataWrapperSerializer(serializers.Serializer):
-    message = serializers.CharField(read_only=True)
-    data = _UnvalidatedField(read_only=True)
-
-    def __init__(self, **kwargs):
-        self.data = kwargs.pop("data", copy.deepcopy(self.data))
-        assert not inspect.isclass(self.data), "`data` has not been instantiated."
-        assert self.data.source is None, (
-            "The `source` argument is not meaningful when applied to a `data=` field. "
-            "Remove `source=` from the field declaration."
-        )
-        super().__init__(**kwargs)

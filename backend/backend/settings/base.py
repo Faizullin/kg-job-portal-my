@@ -1,8 +1,8 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import firebase_admin
-from django.utils import timezone
 from firebase_admin import credentials
 
 from .jazzmin_admin import JAZZMIN_SETTINGS  # noqa
@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "job_portal.apps.notifications",
     "job_portal.apps.reviews",
     "job_portal.apps.attachments",
-    "job_portal.apps.dashboard",
+    "job_portal.apps.search",
     "job_portal.apps.resumes",
     "job_portal.apps.locations",
     "job_portal.apps.contacts",
@@ -80,7 +80,7 @@ TEMPLATES = [
 
 ASGI_APPLICATION = "backend.asgi.application"
 
-AUTH_TOKEN_VALIDITY = timezone.timedelta(days=1)
+AUTH_TOKEN_VALIDITY = timedelta(days=1)
 
 REST_FRAMEWORK = {
     "NON_FIELD_ERRORS_KEY": "errors",
@@ -102,14 +102,6 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 20,
     "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
 }
-
-# Security Settings
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = "DENY"
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
 
 DATABASES = {
     "default": {
@@ -143,11 +135,10 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = []  # Empty for production - static files are collected to STATIC_ROOT
+STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "mediafiles"
+MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

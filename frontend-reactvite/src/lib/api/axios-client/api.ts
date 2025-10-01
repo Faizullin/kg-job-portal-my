@@ -22,31 +22,6 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError } from './base';
 
 /**
- * 
- * @export
- * @interface ActionResponse
- */
-export interface ActionResponse {
-    /**
-     * 
-     * @type {Status524Enum}
-     * @memberof ActionResponse
-     */
-    'status': Status524Enum;
-    /**
-     * A message describing the result of the operation.
-     * @type {string}
-     * @memberof ActionResponse
-     */
-    'message': string;
-    /**
-     * 
-     * @type {any}
-     * @memberof ActionResponse
-     */
-    'data': any;
-}
-/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface AssignmentMaster
@@ -107,6 +82,25 @@ export interface AssignmentMasterUser {
      * @memberof AssignmentMasterUser
      */
     'photo_url': string | null;
+}
+/**
+ * 
+ * @export
+ * @interface CResponse
+ */
+export interface CResponse {
+    /**
+     * A message describing the result of the operation.
+     * @type {string}
+     * @memberof CResponse
+     */
+    'message': string;
+    /**
+     * 
+     * @type {any}
+     * @memberof CResponse
+     */
+    'data': any;
 }
 /**
  * * `general` - Основная информация * `specialist` - Specialist * `reviews` - Reviews * `account` - Аккаунт * `search` - Найти * `safety` - Safety
@@ -413,7 +407,7 @@ export enum ChatTypeEnum {
 
 
 /**
- * Serializer for models with timestamp fields.
+ * Serializer for City model.
  * @export
  * @interface City
  */
@@ -438,10 +432,96 @@ export interface City {
     'code': string;
     /**
      * 
-     * @type {number}
+     * @type {CityCountry}
      * @memberof City
      */
-    'country'?: number | null;
+    'country': CityCountry;
+    /**
+     * 
+     * @type {string}
+     * @memberof City
+     */
+    'country_name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof City
+     */
+    'created_at': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof City
+     */
+    'updated_at': string;
+}
+/**
+ * 
+ * @export
+ * @interface CityCountry
+ */
+export interface CityCountry {
+    /**
+     * 
+     * @type {number}
+     * @memberof CityCountry
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CityCountry
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CityCountry
+     */
+    'code': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CityCountry
+     */
+    'created_at': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CityCountry
+     */
+    'updated_at': string;
+}
+/**
+ * Simplified serializer for city lists.
+ * @export
+ * @interface CityList
+ */
+export interface CityList {
+    /**
+     * 
+     * @type {number}
+     * @memberof CityList
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CityList
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CityList
+     */
+    'code': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CityList
+     */
+    'country_name': string;
 }
 /**
  * * `beginner` - Beginner * `intermediate` - Intermediate * `advanced` - Advanced * `expert` - Expert
@@ -458,7 +538,7 @@ export enum ComplexityLevelEnum {
 
 
 /**
- * Serializer for models with timestamp fields.
+ * Serializer for Country model.
  * @export
  * @interface Country
  */
@@ -474,13 +554,25 @@ export interface Country {
      * @type {string}
      * @memberof Country
      */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Country
+     */
     'code': string;
     /**
      * 
      * @type {string}
      * @memberof Country
      */
-    'name': string;
+    'created_at': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Country
+     */
+    'updated_at': string;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -626,10 +718,10 @@ export interface Job {
     'description': string;
     /**
      * 
-     * @type {JobStatusEnum}
+     * @type {Status30eEnum}
      * @memberof Job
      */
-    'status'?: JobStatusEnum;
+    'status'?: Status30eEnum;
     /**
      * 
      * @type {string}
@@ -703,12 +795,6 @@ export interface Job {
  * @interface JobApiAction
  */
 export interface JobApiAction {
-    /**
-     * 
-     * @type {Status524Enum}
-     * @memberof JobApiAction
-     */
-    'status': Status524Enum;
     /**
      * A message describing the result of the operation.
      * @type {string}
@@ -796,12 +882,6 @@ export interface JobApplication {
  */
 export interface JobApplicationApiAction {
     /**
-     * 
-     * @type {Status524Enum}
-     * @memberof JobApplicationApiAction
-     */
-    'status': Status524Enum;
-    /**
      * A message describing the result of the operation.
      * @type {string}
      * @memberof JobApplicationApiAction
@@ -865,10 +945,10 @@ export interface JobApplicationJob {
     'description': string;
     /**
      * 
-     * @type {JobStatusEnum}
+     * @type {Status30eEnum}
      * @memberof JobApplicationJob
      */
-    'status'?: JobStatusEnum;
+    'status'?: Status30eEnum;
     /**
      * 
      * @type {string}
@@ -1174,12 +1254,6 @@ export interface JobAssignmentAcceptedApplication {
  */
 export interface JobAssignmentApiAction {
     /**
-     * 
-     * @type {Status524Enum}
-     * @memberof JobAssignmentApiAction
-     */
-    'status': Status524Enum;
-    /**
      * A message describing the result of the operation.
      * @type {string}
      * @memberof JobAssignmentApiAction
@@ -1239,21 +1313,205 @@ export enum JobAssignmentStatusEnum {
 
 
 /**
- * * `draft` - Draft * `published` - Published * `assigned` - Assigned * `in_progress` - In Progress * `completed` - Completed * `cancelled` - Cancelled
+ * Optimized serializer for job search results.
  * @export
- * @enum {string}
+ * @interface JobSearch
  */
-
-export enum JobStatusEnum {
-    draft = 'draft',
-    published = 'published',
-    assigned = 'assigned',
-    in_progress = 'in_progress',
-    completed = 'completed',
-    cancelled = 'cancelled'
+export interface JobSearch {
+    /**
+     * 
+     * @type {number}
+     * @memberof JobSearch
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'description': string;
+    /**
+     * 
+     * @type {Status30eEnum}
+     * @memberof JobSearch
+     */
+    'status'?: Status30eEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'status_display': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'employer_name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'employer_avatar': string;
+    /**
+     * 
+     * @type {JobSearchServiceSubcategory}
+     * @memberof JobSearch
+     */
+    'service_subcategory': JobSearchServiceSubcategory;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'location': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof JobSearch
+     */
+    'city'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'service_date'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'service_time'?: string | null;
+    /**
+     * 
+     * @type {UrgencyEnum}
+     * @memberof JobSearch
+     */
+    'urgency'?: UrgencyEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'urgency_display': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'budget_min'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'budget_max'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'budget_display': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'final_price'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'special_requirements'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'time_since_posted': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearch
+     */
+    'created_at': string;
 }
-
-
+/**
+ * 
+ * @export
+ * @interface JobSearchServiceSubcategory
+ */
+export interface JobSearchServiceSubcategory {
+    /**
+     * 
+     * @type {number}
+     * @memberof JobSearchServiceSubcategory
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearchServiceSubcategory
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearchServiceSubcategory
+     */
+    'description': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearchServiceSubcategory
+     */
+    'icon'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof JobSearchServiceSubcategory
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof JobSearchServiceSubcategory
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearchServiceSubcategory
+     */
+    'image'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof JobSearchServiceSubcategory
+     */
+    'featured'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobSearchServiceSubcategory
+     */
+    'base_price'?: string | null;
+    /**
+     * 
+     * @type {ComplexityLevelEnum}
+     * @memberof JobSearchServiceSubcategory
+     */
+    'complexity_level'?: ComplexityLevelEnum;
+}
 /**
  * Serializer for models with timestamp fields.
  * @export
@@ -1437,6 +1695,18 @@ export interface MasterProfileCreateUpdate {
      * @memberof MasterProfileCreateUpdate
      */
     'current_location'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterProfileCreateUpdate
+     */
+    'is_verified_provider': boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterProfileCreateUpdate
+     */
+    'is_top_master': boolean;
 }
 /**
  * 
@@ -1500,6 +1770,146 @@ export enum MasterResumeStatusEnum {
 }
 
 
+/**
+ * Optimized serializer for master search results.
+ * @export
+ * @interface MasterSearch
+ */
+export interface MasterSearch {
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterSearch
+     */
+    'id': number;
+    /**
+     * 
+     * @type {AssignmentMasterUser}
+     * @memberof MasterSearch
+     */
+    'user': AssignmentMasterUser;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterSearch
+     */
+    'display_name': string;
+    /**
+     * 
+     * @type {MasterSearchProfession}
+     * @memberof MasterSearch
+     */
+    'profession': MasterSearchProfession;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterSearch
+     */
+    'statistics': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterSearch
+     */
+    'rating': string;
+    /**
+     * 
+     * @type {Array<MasterSkill>}
+     * @memberof MasterSearch
+     */
+    'skills': Array<MasterSkill>;
+    /**
+     * 
+     * @type {Array<PortfolioItem>}
+     * @memberof MasterSearch
+     */
+    'portfolio_items': Array<PortfolioItem>;
+    /**
+     * 
+     * @type {Array<ServiceSubcategory>}
+     * @memberof MasterSearch
+     */
+    'services_offered': Array<ServiceSubcategory>;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterSearch
+     */
+    'hourly_rate'?: string | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterSearch
+     */
+    'is_online'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterSearch
+     */
+    'is_online_display': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterSearch
+     */
+    'current_location'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterSearch
+     */
+    'response_time_hours'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterSearch
+     */
+    'is_top_master'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterSearch
+     */
+    'is_verified_provider'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterSearch
+     */
+    'works_remotely'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterSearch
+     */
+    'travels_to_clients'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterSearch
+     */
+    'accepts_clients_at_location'?: boolean;
+}
+/**
+ * 
+ * @export
+ * @interface MasterSearchProfession
+ */
+export interface MasterSearchProfession {
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterSearchProfession
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterSearchProfession
+     */
+    'name': string;
+}
 /**
  * Serializer for models with timestamp fields.
  * @export
@@ -1966,33 +2376,33 @@ export interface PaginatedChatRoomList {
 /**
  * 
  * @export
- * @interface PaginatedCityList
+ * @interface PaginatedCityListList
  */
-export interface PaginatedCityList {
+export interface PaginatedCityListList {
     /**
      * 
      * @type {number}
-     * @memberof PaginatedCityList
+     * @memberof PaginatedCityListList
      */
     'count'?: number;
     /**
      * 
      * @type {string}
-     * @memberof PaginatedCityList
+     * @memberof PaginatedCityListList
      */
     'next'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PaginatedCityList
+     * @memberof PaginatedCityListList
      */
     'previous'?: string | null;
     /**
      * 
-     * @type {Array<City>}
-     * @memberof PaginatedCityList
+     * @type {Array<CityList>}
+     * @memberof PaginatedCityListList
      */
-    'results'?: Array<City>;
+    'results'?: Array<CityList>;
 }
 /**
  * 
@@ -2121,6 +2531,37 @@ export interface PaginatedJobList {
 /**
  * 
  * @export
+ * @interface PaginatedJobSearchList
+ */
+export interface PaginatedJobSearchList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedJobSearchList
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedJobSearchList
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedJobSearchList
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<JobSearch>}
+     * @memberof PaginatedJobSearchList
+     */
+    'results'?: Array<JobSearch>;
+}
+/**
+ * 
+ * @export
  * @interface PaginatedLanguageList
  */
 export interface PaginatedLanguageList {
@@ -2179,6 +2620,37 @@ export interface PaginatedMasterResumeList {
      * @memberof PaginatedMasterResumeList
      */
     'results'?: Array<MasterResume>;
+}
+/**
+ * 
+ * @export
+ * @interface PaginatedMasterSearchList
+ */
+export interface PaginatedMasterSearchList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedMasterSearchList
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedMasterSearchList
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedMasterSearchList
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<MasterSearch>}
+     * @memberof PaginatedMasterSearchList
+     */
+    'results'?: Array<MasterSearch>;
 }
 /**
  * 
@@ -2334,6 +2806,68 @@ export interface PaginatedProfessionList {
      * @memberof PaginatedProfessionList
      */
     'results'?: Array<Profession>;
+}
+/**
+ * 
+ * @export
+ * @interface PaginatedPublicMasterProfileDetailList
+ */
+export interface PaginatedPublicMasterProfileDetailList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedPublicMasterProfileDetailList
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedPublicMasterProfileDetailList
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedPublicMasterProfileDetailList
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<PublicMasterProfileDetail>}
+     * @memberof PaginatedPublicMasterProfileDetailList
+     */
+    'results'?: Array<PublicMasterProfileDetail>;
+}
+/**
+ * 
+ * @export
+ * @interface PaginatedPublicMasterProfileList
+ */
+export interface PaginatedPublicMasterProfileList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedPublicMasterProfileList
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedPublicMasterProfileList
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedPublicMasterProfileList
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<PublicMasterProfile>}
+     * @memberof PaginatedPublicMasterProfileList
+     */
+    'results'?: Array<PublicMasterProfile>;
 }
 /**
  * 
@@ -2638,6 +3172,92 @@ export interface PatchedChatRoom {
     'updated_at'?: string;
 }
 /**
+ * Serializer for City model.
+ * @export
+ * @interface PatchedCity
+ */
+export interface PatchedCity {
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedCity
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedCity
+     */
+    'name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedCity
+     */
+    'code'?: string;
+    /**
+     * 
+     * @type {CityCountry}
+     * @memberof PatchedCity
+     */
+    'country'?: CityCountry;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedCity
+     */
+    'country_name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedCity
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedCity
+     */
+    'updated_at'?: string;
+}
+/**
+ * Serializer for Country model.
+ * @export
+ * @interface PatchedCountry
+ */
+export interface PatchedCountry {
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedCountry
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedCountry
+     */
+    'name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedCountry
+     */
+    'code'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedCountry
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedCountry
+     */
+    'updated_at'?: string;
+}
+/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface PatchedEmployerProfileCreateUpdate
@@ -2700,10 +3320,10 @@ export interface PatchedJob {
     'description'?: string;
     /**
      * 
-     * @type {JobStatusEnum}
+     * @type {Status30eEnum}
      * @memberof PatchedJob
      */
-    'status'?: JobStatusEnum;
+    'status'?: Status30eEnum;
     /**
      * 
      * @type {string}
@@ -3019,6 +3639,18 @@ export interface PatchedMasterProfileCreateUpdate {
      * @memberof PatchedMasterProfileCreateUpdate
      */
     'current_location'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedMasterProfileCreateUpdate
+     */
+    'is_verified_provider'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PatchedMasterProfileCreateUpdate
+     */
+    'is_top_master'?: boolean;
 }
 /**
  * 
@@ -3859,6 +4491,127 @@ export enum ProficiencyLevelEnum {
 
 
 /**
+ * 
+ * @export
+ * @interface PublicMasterProfile
+ */
+export interface PublicMasterProfile {
+    /**
+     * 
+     * @type {number}
+     * @memberof PublicMasterProfile
+     */
+    'id': number;
+    /**
+     * 
+     * @type {AssignmentMasterUser}
+     * @memberof PublicMasterProfile
+     */
+    'user': AssignmentMasterUser;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PublicMasterProfile
+     */
+    'works_remotely'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PublicMasterProfile
+     */
+    'accepts_clients_at_location'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PublicMasterProfile
+     */
+    'travels_to_clients'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PublicMasterProfile
+     */
+    'is_available'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof PublicMasterProfile
+     */
+    'hourly_rate'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof PublicMasterProfile
+     */
+    'response_time_hours'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof PublicMasterProfile
+     */
+    'work_experience_start_year'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PublicMasterProfile
+     */
+    'education_institution'?: string;
+    /**
+     * e.g., 2005-2009
+     * @type {string}
+     * @memberof PublicMasterProfile
+     */
+    'education_years'?: string;
+    /**
+     * List of languages spoken
+     * @type {any}
+     * @memberof PublicMasterProfile
+     */
+    'languages'?: any;
+    /**
+     * 
+     * @type {string}
+     * @memberof PublicMasterProfile
+     */
+    'about_description'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PublicMasterProfile
+     */
+    'current_location'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PublicMasterProfile
+     */
+    'is_online'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof PublicMasterProfile
+     */
+    'last_seen'?: string | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PublicMasterProfile
+     */
+    'is_verified_provider'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PublicMasterProfile
+     */
+    'is_top_master'?: boolean;
+    /**
+     * 
+     * @type {MasterSearchProfession}
+     * @memberof PublicMasterProfile
+     */
+    'profession': MasterSearchProfession;
+}
+/**
  * Detailed serializer for service provider profile.
  * @export
  * @interface PublicMasterProfileDetail
@@ -3974,10 +4727,10 @@ export interface PublicMasterProfileDetail {
     'is_top_master'?: boolean;
     /**
      * 
-     * @type {PublicMasterProfileDetailProfession}
+     * @type {MasterSearchProfession}
      * @memberof PublicMasterProfileDetail
      */
-    'profession': PublicMasterProfileDetailProfession;
+    'profession': MasterSearchProfession;
     /**
      * 
      * @type {Array<MasterSkill>}
@@ -4002,25 +4755,6 @@ export interface PublicMasterProfileDetail {
      * @memberof PublicMasterProfileDetail
      */
     'statistics': PublicMasterProfileDetailStatistics;
-}
-/**
- * 
- * @export
- * @interface PublicMasterProfileDetailProfession
- */
-export interface PublicMasterProfileDetailProfession {
-    /**
-     * 
-     * @type {number}
-     * @memberof PublicMasterProfileDetailProfession
-     */
-    'id': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PublicMasterProfileDetailProfession
-     */
-    'name': string;
 }
 /**
  * 
@@ -4684,14 +5418,18 @@ export interface SkillDetail {
     'is_active'?: boolean;
 }
 /**
- * * `success` - success * `error` - error
+ * * `draft` - Draft * `published` - Published * `assigned` - Assigned * `in_progress` - In Progress * `completed` - Completed * `cancelled` - Cancelled
  * @export
  * @enum {string}
  */
 
-export enum Status524Enum {
-    success = 'success',
-    error = 'error'
+export enum Status30eEnum {
+    draft = 'draft',
+    published = 'published',
+    assigned = 'assigned',
+    in_progress = 'in_progress',
+    completed = 'completed',
+    cancelled = 'cancelled'
 }
 
 
@@ -4710,7 +5448,7 @@ export enum StatusC50Enum {
 
 
 /**
- * Serializer for support FAQ items.
+ * Serializer for models with timestamp fields.
  * @export
  * @interface SupportFAQ
  */
@@ -4739,12 +5477,6 @@ export interface SupportFAQ {
      * @memberof SupportFAQ
      */
     'category'?: CategoryEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof SupportFAQ
-     */
-    'category_display': string;
     /**
      * 
      * @type {number}
@@ -4873,12 +5605,6 @@ export interface SystemSettings {
      * @memberof SystemSettings
      */
     'setting_type'?: SettingTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof SystemSettings
-     */
-    'setting_type_display': string;
 }
 /**
  * Serializer for creating and updating system settings.
@@ -6391,11 +7117,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsAddParticipants: async (id: string, chatRoom: ChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatRoomsAddParticipants: async (id: string, chatRoom: ChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatsRoomsAddParticipants', 'id', id)
+            assertParamExists('v1ChatRoomsAddParticipants', 'id', id)
             // verify required parameter 'chatRoom' is not null or undefined
-            assertParamExists('v1ChatsRoomsAddParticipants', 'chatRoom', chatRoom)
+            assertParamExists('v1ChatRoomsAddParticipants', 'chatRoom', chatRoom)
             const localVarPath = `/api/v1/chats/rooms/{id}/add_participants/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -6422,6 +7148,245 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(chatRoom, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Delete a message from chat room
+         * @param {string} id 
+         * @param {string} messageId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatRoomsDeleteMessage: async (id: string, messageId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ChatRoomsDeleteMessage', 'id', id)
+            // verify required parameter 'messageId' is not null or undefined
+            assertParamExists('v1ChatRoomsDeleteMessage', 'messageId', messageId)
+            const localVarPath = `/api/v1/chats/rooms/{id}/messages/{message_id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
+                .replace(`{${"message_id"}}`, encodeURIComponent(String(messageId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Edit a message in chat room
+         * @param {string} id 
+         * @param {string} messageId 
+         * @param {PatchedChatRoom} [patchedChatRoom] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatRoomsEditMessage: async (id: string, messageId: string, patchedChatRoom?: PatchedChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ChatRoomsEditMessage', 'id', id)
+            // verify required parameter 'messageId' is not null or undefined
+            assertParamExists('v1ChatRoomsEditMessage', 'messageId', messageId)
+            const localVarPath = `/api/v1/chats/rooms/{id}/messages/{message_id}/edit/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
+                .replace(`{${"message_id"}}`, encodeURIComponent(String(messageId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedChatRoom, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Leave a chat room
+         * @param {string} id 
+         * @param {ChatRoom} chatRoom 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatRoomsLeave: async (id: string, chatRoom: ChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ChatRoomsLeave', 'id', id)
+            // verify required parameter 'chatRoom' is not null or undefined
+            assertParamExists('v1ChatRoomsLeave', 'chatRoom', chatRoom)
+            const localVarPath = `/api/v1/chats/rooms/{id}/leave/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(chatRoom, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * List all messages in a chat room with filtering and search
+         * @param {string} id 
+         * @param {string} [messageType] Filter by message type
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] Search in message content
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatRoomsMessages: async (id: string, messageType?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ChatRoomsMessages', 'id', id)
+            const localVarPath = `/api/v1/chats/rooms/{id}/messages/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (messageType !== undefined) {
+                localVarQueryParameter['message_type'] = messageType;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Send message to chat room
+         * @param {string} id 
+         * @param {MessageCreate} messageCreate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatRoomsSendMessage: async (id: string, messageCreate: MessageCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ChatRoomsSendMessage', 'id', id)
+            // verify required parameter 'messageCreate' is not null or undefined
+            assertParamExists('v1ChatRoomsSendMessage', 'messageCreate', messageCreate)
+            const localVarPath = `/api/v1/chats/rooms/{id}/send_message/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(messageCreate, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -6469,48 +7434,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Delete a message from chat room
-         * @param {string} id 
-         * @param {string} messageId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatsRoomsDeleteMessage: async (id: string, messageId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatsRoomsDeleteMessage', 'id', id)
-            // verify required parameter 'messageId' is not null or undefined
-            assertParamExists('v1ChatsRoomsDeleteMessage', 'messageId', messageId)
-            const localVarPath = `/api/v1/chats/rooms/{id}/messages/{message_id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
-                .replace(`{${"message_id"}}`, encodeURIComponent(String(messageId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * ViewSet for managing chat rooms
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -6549,96 +7472,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Edit a message in chat room
-         * @param {string} id 
-         * @param {string} messageId 
-         * @param {PatchedChatRoom} [patchedChatRoom] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatsRoomsEditMessage: async (id: string, messageId: string, patchedChatRoom?: PatchedChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatsRoomsEditMessage', 'id', id)
-            // verify required parameter 'messageId' is not null or undefined
-            assertParamExists('v1ChatsRoomsEditMessage', 'messageId', messageId)
-            const localVarPath = `/api/v1/chats/rooms/{id}/messages/{message_id}/edit/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
-                .replace(`{${"message_id"}}`, encodeURIComponent(String(messageId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedChatRoom, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Leave a chat room
-         * @param {string} id 
-         * @param {ChatRoom} chatRoom 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatsRoomsLeave: async (id: string, chatRoom: ChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatsRoomsLeave', 'id', id)
-            // verify required parameter 'chatRoom' is not null or undefined
-            assertParamExists('v1ChatsRoomsLeave', 'chatRoom', chatRoom)
-            const localVarPath = `/api/v1/chats/rooms/{id}/leave/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(chatRoom, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * ViewSet for managing chat rooms
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -6664,69 +7497,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
             // authentication tokenAuth required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-            if (search !== undefined) {
-                localVarQueryParameter['search'] = search;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * List all messages in a chat room with filtering and search
-         * @param {string} id 
-         * @param {string} [messageType] Filter by message type
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] Search in message content
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatsRoomsMessages: async (id: string, messageType?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatsRoomsMessages', 'id', id)
-            const localVarPath = `/api/v1/chats/rooms/{id}/messages/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (messageType !== undefined) {
-                localVarQueryParameter['message_type'] = messageType;
-            }
 
             if (ordering !== undefined) {
                 localVarQueryParameter['ordering'] = ordering;
@@ -6836,50 +7606,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Send message to chat room
-         * @param {string} id 
-         * @param {MessageCreate} messageCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatsRoomsSendMessage: async (id: string, messageCreate: MessageCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatsRoomsSendMessage', 'id', id)
-            // verify required parameter 'messageCreate' is not null or undefined
-            assertParamExists('v1ChatsRoomsSendMessage', 'messageCreate', messageCreate)
-            const localVarPath = `/api/v1/chats/rooms/{id}/send_message/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(messageCreate, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * ViewSet for managing chat rooms
          * @param {string} id 
          * @param {ChatRoom} chatRoom 
@@ -6925,6 +7651,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Languages - Read-only (managed via admin/fixtures).
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
          * @param {boolean} [isActive] 
          * @param {boolean} [isDefault] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -6934,7 +7661,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreLanguagesList: async (isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreLanguagesList: async (idIn?: Array<number>, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/core/languages/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -6951,6 +7678,10 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
             // authentication tokenAuth required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (idIn) {
+                localVarQueryParameter['id__in'] = idIn.join(COLLECTION_FORMATS.csv);
+            }
 
             if (isActive !== undefined) {
                 localVarQueryParameter['is_active'] = isActive;
@@ -7105,6 +7836,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Service Areas - Full CRUD with authenticated access.
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -7113,7 +7845,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceAreasList: async (isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreServiceAreasList: async (idIn?: Array<number>, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/core/service-areas/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7130,6 +7862,10 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
             // authentication tokenAuth required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (idIn) {
+                localVarQueryParameter['id__in'] = idIn.join(COLLECTION_FORMATS.csv);
+            }
 
             if (isActive !== undefined) {
                 localVarQueryParameter['is_active'] = isActive;
@@ -7634,6 +8370,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * Service Subcategories - Full CRUD with authenticated access.
          * @param {number} [category] 
          * @param {boolean} [featured] 
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -7642,7 +8379,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceSubcategoriesList: async (category?: number, featured?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreServiceSubcategoriesList: async (category?: number, featured?: boolean, idIn?: Array<number>, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/core/service-subcategories/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7666,6 +8403,10 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
             if (featured !== undefined) {
                 localVarQueryParameter['featured'] = featured;
+            }
+
+            if (idIn) {
+                localVarQueryParameter['id__in'] = idIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (isActive !== undefined) {
@@ -8936,8 +9677,87 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * ViewSet for managing cities.
+         * @param {City} city 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCitiesCreate: async (city: City, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'city' is not null or undefined
+            assertParamExists('v1LocationsCitiesCreate', 'city', city)
+            const localVarPath = `/api/v1/locations/cities/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(city, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * ViewSet for managing cities.
+         * @param {number} id A unique integer value identifying this City.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCitiesDestroy: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1LocationsCitiesDestroy', 'id', id)
+            const localVarPath = `/api/v1/locations/cities/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * ViewSet for managing cities.
          * @param {number} [country] 
+         * @param {boolean} [isDeleted] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -8945,7 +9765,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCitiesList: async (country?: number, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1LocationsCitiesList: async (country?: number, isDeleted?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/locations/cities/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -8965,6 +9785,10 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
             if (country !== undefined) {
                 localVarQueryParameter['country'] = country;
+            }
+
+            if (isDeleted !== undefined) {
+                localVarQueryParameter['is_deleted'] = isDeleted;
             }
 
             if (ordering !== undefined) {
@@ -8995,7 +9819,49 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * ViewSet for managing cities.
+         * @param {number} id A unique integer value identifying this City.
+         * @param {PatchedCity} [patchedCity] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCitiesPartialUpdate: async (id: number, patchedCity?: PatchedCity, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1LocationsCitiesPartialUpdate', 'id', id)
+            const localVarPath = `/api/v1/locations/cities/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedCity, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * ViewSet for managing cities.
          * @param {number} id A unique integer value identifying this City.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9033,7 +9899,130 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * ViewSet for managing cities.
+         * @param {number} id A unique integer value identifying this City.
+         * @param {City} city 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCitiesUpdate: async (id: number, city: City, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1LocationsCitiesUpdate', 'id', id)
+            // verify required parameter 'city' is not null or undefined
+            assertParamExists('v1LocationsCitiesUpdate', 'city', city)
+            const localVarPath = `/api/v1/locations/cities/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(city, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {Country} country 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCountriesCreate: async (country: Country, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'country' is not null or undefined
+            assertParamExists('v1LocationsCountriesCreate', 'country', country)
+            const localVarPath = `/api/v1/locations/countries/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(country, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {number} id A unique integer value identifying this Country.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCountriesDestroy: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1LocationsCountriesDestroy', 'id', id)
+            const localVarPath = `/api/v1/locations/countries/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {boolean} [isDeleted] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -9041,7 +10030,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCountriesList: async (ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1LocationsCountriesList: async (isDeleted?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/locations/countries/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9058,6 +10047,10 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
             // authentication tokenAuth required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (isDeleted !== undefined) {
+                localVarQueryParameter['is_deleted'] = isDeleted;
+            }
 
             if (ordering !== undefined) {
                 localVarQueryParameter['ordering'] = ordering;
@@ -9087,7 +10080,49 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * ViewSet for managing countries.
+         * @param {number} id A unique integer value identifying this Country.
+         * @param {PatchedCountry} [patchedCountry] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCountriesPartialUpdate: async (id: number, patchedCountry?: PatchedCountry, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1LocationsCountriesPartialUpdate', 'id', id)
+            const localVarPath = `/api/v1/locations/countries/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedCountry, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * ViewSet for managing countries.
          * @param {number} id A unique integer value identifying this Country.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9118,6 +10153,50 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {number} id A unique integer value identifying this Country.
+         * @param {Country} country 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCountriesUpdate: async (id: number, country: Country, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1LocationsCountriesUpdate', 'id', id)
+            // verify required parameter 'country' is not null or undefined
+            assertParamExists('v1LocationsCountriesUpdate', 'country', country)
+            const localVarPath = `/api/v1/locations/countries/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(country, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9654,16 +10733,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Base Action
-         * @param {string} action 
-         * @param {{ [key: string]: any; }} [requestBody] 
+         * Perform action based on \'action\' parameter in request data.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfileAvatarCreate: async (action: string, requestBody?: { [key: string]: any; }, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'action' is not null or undefined
-            assertParamExists('v1ProfileAvatarCreate', 'action', action)
-            const localVarPath = `/api/v1/profile/avatar`;
+        v1ProfileControlCreate: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/profile/control/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -9680,18 +10755,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             // authentication tokenAuth required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-            if (action !== undefined) {
-                localVarQueryParameter['action'] = action;
-            }
-
 
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(requestBody, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9705,7 +10773,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @throws {RequiredError}
          */
         v1ProfileNotificationSettingsPartialUpdate: async (patchedUserNotificationSettings?: PatchedUserNotificationSettings, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/profile/notification-settings`;
+            const localVarPath = `/api/v1/profile/notification-settings/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -9742,7 +10810,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @throws {RequiredError}
          */
         v1ProfileNotificationSettingsRetrieve: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/profile/notification-settings`;
+            const localVarPath = `/api/v1/profile/notification-settings/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -9777,7 +10845,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @throws {RequiredError}
          */
         v1ProfileNotificationSettingsUpdate: async (userNotificationSettings?: UserNotificationSettings, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/profile/notification-settings`;
+            const localVarPath = `/api/v1/profile/notification-settings/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -9809,7 +10877,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Retrieve or update authenticated user\'s profile, including profile image upload.
          * @param {PatchedUserUpdate} [patchedUserUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9847,7 +10915,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Retrieve or update authenticated user\'s profile, including profile image upload.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -9881,7 +10949,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * 
+         * Retrieve or update authenticated user\'s profile, including profile image upload.
          * @param {UserUpdate} [userUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -10263,15 +11331,300 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Retrieve public service provider profile.
-         * @param {number} id 
+         * Search jobs with optimized search serializer.
+         * @param {number} [budgetMaxLte] 
+         * @param {number} [budgetMinGte] 
+         * @param {number} [city] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceSubcategoryCategory] 
+         * @param {'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published'} [status] * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMastersDetailsRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1SearchJobsList: async (budgetMaxLte?: number, budgetMinGte?: number, city?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategoryCategory?: number, status?: 'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/search/jobs/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (budgetMaxLte !== undefined) {
+                localVarQueryParameter['budget_max__lte'] = budgetMaxLte;
+            }
+
+            if (budgetMinGte !== undefined) {
+                localVarQueryParameter['budget_min__gte'] = budgetMinGte;
+            }
+
+            if (city !== undefined) {
+                localVarQueryParameter['city'] = city;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            if (serviceSubcategoryCategory !== undefined) {
+                localVarQueryParameter['service_subcategory__category'] = serviceSubcategoryCategory;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            if (urgency !== undefined) {
+                localVarQueryParameter['urgency'] = urgency;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Search masters with optimized search serializer.
+         * @param {boolean} [isAvailable] 
+         * @param {boolean} [isTopMaster] 
+         * @param {boolean} [isVerifiedProvider] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [profession] 
+         * @param {string} [search] A search term.
+         * @param {number} [servicesOfferedCategory] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1SearchMastersList: async (isAvailable?: boolean, isTopMaster?: boolean, isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, profession?: number, search?: string, servicesOfferedCategory?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/search/masters/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (isAvailable !== undefined) {
+                localVarQueryParameter['is_available'] = isAvailable;
+            }
+
+            if (isTopMaster !== undefined) {
+                localVarQueryParameter['is_top_master'] = isTopMaster;
+            }
+
+            if (isVerifiedProvider !== undefined) {
+                localVarQueryParameter['is_verified_provider'] = isVerifiedProvider;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (profession !== undefined) {
+                localVarQueryParameter['profession'] = profession;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            if (servicesOfferedCategory !== undefined) {
+                localVarQueryParameter['services_offered__category'] = servicesOfferedCategory;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Master Profile Details
+         * @param {number} id A unique integer value identifying this Master Profile.
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMastersDetails: async (id: number, idIn?: Array<number>, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1UsersMastersDetailsRetrieve', 'id', id)
+            assertParamExists('v1UsersMastersDetails', 'id', id)
             const localVarPath = `/api/v1/users/masters/{id}/details/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (idIn) {
+                localVarQueryParameter['id__in'] = idIn.join(COLLECTION_FORMATS.csv);
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMastersList: async (idIn?: Array<number>, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/users/masters/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (idIn) {
+                localVarQueryParameter['id__in'] = idIn.join(COLLECTION_FORMATS.csv);
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id A unique integer value identifying this Master Profile.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMastersRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1UsersMastersRetrieve', 'id', id)
+            const localVarPath = `/api/v1/users/masters/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11399,8 +12752,9 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * List all available professions.
+         * 
          * @param {number} [category] 
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -11409,7 +12763,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersProfessionsList: async (category?: number, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersProfessionsList: async (category?: number, idIn?: Array<number>, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/users/professions/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11431,6 +12785,10 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
                 localVarQueryParameter['category'] = category;
             }
 
+            if (idIn) {
+                localVarQueryParameter['id__in'] = idIn.join(COLLECTION_FORMATS.csv);
+            }
+
             if (isActive !== undefined) {
                 localVarQueryParameter['is_active'] = isActive;
             }
@@ -11450,6 +12808,44 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             if (search !== undefined) {
                 localVarQueryParameter['search'] = search;
             }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id A unique integer value identifying this Profession.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProfessionsRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1UsersProfessionsRetrieve', 'id', id)
+            const localVarPath = `/api/v1/users/professions/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
     
@@ -11693,7 +13089,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsRateCreate(id: number, rating?: Rating, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ActionResponse>> {
+        async v1AssignmentsRateCreate(id: number, rating?: Rating, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsRateCreate(id, rating, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -11755,18 +13151,8 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsAddParticipants(id, chatRoom, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * ViewSet for managing chat rooms
-         * @param {ChatRoomCreate} chatRoomCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatsRoomsCreate(chatRoomCreate: ChatRoomCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoomCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsCreate(chatRoomCreate, options);
+        async v1ChatRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsAddParticipants(id, chatRoom, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -11776,18 +13162,8 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsDeleteMessage(id: string, messageId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsDeleteMessage(id, messageId, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * ViewSet for managing chat rooms
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatsRoomsDestroy(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsDestroy(id, options);
+        async v1ChatRoomsDeleteMessage(id: string, messageId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsDeleteMessage(id, messageId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -11798,8 +13174,8 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsEditMessage(id: string, messageId: string, patchedChatRoom?: PatchedChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsEditMessage(id, messageId, patchedChatRoom, options);
+        async v1ChatRoomsEditMessage(id: string, messageId: string, patchedChatRoom?: PatchedChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsEditMessage(id, messageId, patchedChatRoom, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -11809,21 +13185,8 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsLeave(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsLeave(id, chatRoom, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * ViewSet for managing chat rooms
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatsRoomsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedChatRoomList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsList(ordering, page, pageSize, search, options);
+        async v1ChatRoomsLeave(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsLeave(id, chatRoom, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -11837,8 +13200,52 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsMessages(id: string, messageType?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedMessageList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessages(id, messageType, ordering, page, pageSize, search, options);
+        async v1ChatRoomsMessages(id: string, messageType?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedMessageList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsMessages(id, messageType, ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Send message to chat room
+         * @param {string} id 
+         * @param {MessageCreate} messageCreate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatRoomsSendMessage(id: string, messageCreate: MessageCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Message>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsSendMessage(id, messageCreate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for managing chat rooms
+         * @param {ChatRoomCreate} chatRoomCreate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatsRoomsCreate(chatRoomCreate: ChatRoomCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoomCreate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsCreate(chatRoomCreate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for managing chat rooms
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatsRoomsDestroy(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsDestroy(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for managing chat rooms
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatsRoomsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedChatRoomList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsList(ordering, page, pageSize, search, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -11863,17 +13270,6 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Send message to chat room
-         * @param {string} id 
-         * @param {MessageCreate} messageCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatsRoomsSendMessage(id: string, messageCreate: MessageCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Message>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsSendMessage(id, messageCreate, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
          * ViewSet for managing chat rooms
          * @param {string} id 
          * @param {ChatRoom} chatRoom 
@@ -11886,6 +13282,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * Languages - Read-only (managed via admin/fixtures).
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
          * @param {boolean} [isActive] 
          * @param {boolean} [isDefault] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -11895,8 +13292,8 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreLanguagesList(isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedLanguageList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreLanguagesList(isActive, isDefault, ordering, page, pageSize, search, options);
+        async v1CoreLanguagesList(idIn?: Array<number>, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedLanguageList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreLanguagesList(idIn, isActive, isDefault, ordering, page, pageSize, search, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -11931,6 +13328,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * Service Areas - Full CRUD with authenticated access.
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -11939,8 +13337,8 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreServiceAreasList(isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedServiceAreaList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasList(isActive, ordering, page, pageSize, search, options);
+        async v1CoreServiceAreasList(idIn?: Array<number>, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedServiceAreaList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasList(idIn, isActive, ordering, page, pageSize, search, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -12066,6 +13464,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * Service Subcategories - Full CRUD with authenticated access.
          * @param {number} [category] 
          * @param {boolean} [featured] 
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -12074,8 +13473,8 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreServiceSubcategoriesList(category?: number, featured?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedServiceSubcategoryList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesList(category, featured, isActive, ordering, page, pageSize, search, options);
+        async v1CoreServiceSubcategoriesList(category?: number, featured?: boolean, idIn?: Array<number>, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedServiceSubcategoryList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesList(category, featured, idIn, isActive, ordering, page, pageSize, search, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -12285,7 +13684,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobsBookmark(id: number, job: Job, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ActionResponse>> {
+        async v1JobsBookmark(id: number, job: Job, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsBookmark(id, job, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -12327,7 +13726,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobsFavorite(id: number, job: Job, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ActionResponse>> {
+        async v1JobsFavorite(id: number, job: Job, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsFavorite(id, job, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -12391,31 +13790,29 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
-         * @param {number} [country] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
+         * ViewSet for managing cities.
+         * @param {City} city 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1LocationsCitiesList(country?: number, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedCityList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesList(country, ordering, page, pageSize, search, options);
+        async v1LocationsCitiesCreate(city: City, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<City>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesCreate(city, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * ViewSet for managing cities.
          * @param {number} id A unique integer value identifying this City.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1LocationsCitiesRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<City>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesRetrieve(id, options);
+        async v1LocationsCitiesDestroy(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesDestroy(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * ViewSet for managing cities.
+         * @param {number} [country] 
+         * @param {boolean} [isDeleted] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -12423,18 +13820,106 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1LocationsCountriesList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedCountryList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesList(ordering, page, pageSize, search, options);
+        async v1LocationsCitiesList(country?: number, isDeleted?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedCityListList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesList(country, isDeleted, ordering, page, pageSize, search, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * ViewSet for managing cities.
+         * @param {number} id A unique integer value identifying this City.
+         * @param {PatchedCity} [patchedCity] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1LocationsCitiesPartialUpdate(id: number, patchedCity?: PatchedCity, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<City>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesPartialUpdate(id, patchedCity, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for managing cities.
+         * @param {number} id A unique integer value identifying this City.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1LocationsCitiesRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CityList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for managing cities.
+         * @param {number} id A unique integer value identifying this City.
+         * @param {City} city 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1LocationsCitiesUpdate(id: number, city: City, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<City>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesUpdate(id, city, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {Country} country 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1LocationsCountriesCreate(country: Country, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Country>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesCreate(country, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {number} id A unique integer value identifying this Country.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1LocationsCountriesDestroy(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesDestroy(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {boolean} [isDeleted] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1LocationsCountriesList(isDeleted?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedCountryList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesList(isDeleted, ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {number} id A unique integer value identifying this Country.
+         * @param {PatchedCountry} [patchedCountry] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1LocationsCountriesPartialUpdate(id: number, patchedCountry?: PatchedCountry, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Country>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesPartialUpdate(id, patchedCountry, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for managing countries.
          * @param {number} id A unique integer value identifying this Country.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         async v1LocationsCountriesRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Country>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {number} id A unique integer value identifying this Country.
+         * @param {Country} country 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1LocationsCountriesUpdate(id: number, country: Country, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Country>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesUpdate(id, country, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -12571,14 +14056,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Base Action
-         * @param {string} action 
-         * @param {{ [key: string]: any; }} [requestBody] 
+         * Perform action based on \'action\' parameter in request data.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ProfileAvatarCreate(action: string, requestBody?: { [key: string]: any; }, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ActionResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfileAvatarCreate(action, requestBody, options);
+        async v1ProfileControlCreate(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfileControlCreate(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -12611,7 +14094,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Retrieve or update authenticated user\'s profile, including profile image upload.
          * @param {PatchedUserUpdate} [patchedUserUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12621,7 +14104,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Retrieve or update authenticated user\'s profile, including profile image upload.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -12630,7 +14113,7 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
+         * Retrieve or update authenticated user\'s profile, including profile image upload.
          * @param {UserUpdate} [userUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12727,13 +14210,79 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Retrieve public service provider profile.
-         * @param {number} id 
+         * Search jobs with optimized search serializer.
+         * @param {number} [budgetMaxLte] 
+         * @param {number} [budgetMinGte] 
+         * @param {number} [city] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceSubcategoryCategory] 
+         * @param {'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published'} [status] * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMastersDetailsRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PublicMasterProfileDetail>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMastersDetailsRetrieve(id, options);
+        async v1SearchJobsList(budgetMaxLte?: number, budgetMinGte?: number, city?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategoryCategory?: number, status?: 'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedJobSearchList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1SearchJobsList(budgetMaxLte, budgetMinGte, city, ordering, page, pageSize, search, serviceSubcategoryCategory, status, urgency, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Search masters with optimized search serializer.
+         * @param {boolean} [isAvailable] 
+         * @param {boolean} [isTopMaster] 
+         * @param {boolean} [isVerifiedProvider] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [profession] 
+         * @param {string} [search] A search term.
+         * @param {number} [servicesOfferedCategory] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1SearchMastersList(isAvailable?: boolean, isTopMaster?: boolean, isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, profession?: number, search?: string, servicesOfferedCategory?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedMasterSearchList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1SearchMastersList(isAvailable, isTopMaster, isVerifiedProvider, ordering, page, pageSize, profession, search, servicesOfferedCategory, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Master Profile Details
+         * @param {number} id A unique integer value identifying this Master Profile.
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersMastersDetails(id: number, idIn?: Array<number>, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPublicMasterProfileDetailList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMastersDetails(id, idIn, ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersMastersList(idIn?: Array<number>, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPublicMasterProfileList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMastersList(idIn, ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {number} id A unique integer value identifying this Master Profile.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersMastersRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PublicMasterProfile>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMastersRetrieve(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -13019,8 +14568,9 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * List all available professions.
+         * 
          * @param {number} [category] 
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -13029,8 +14579,18 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersProfessionsList(category?: number, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedProfessionList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProfessionsList(category, isActive, ordering, page, pageSize, search, options);
+        async v1UsersProfessionsList(category?: number, idIn?: Array<number>, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedProfessionList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProfessionsList(category, idIn, isActive, ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {number} id A unique integer value identifying this Profession.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersProfessionsRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Profession>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersProfessionsRetrieve(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -13202,7 +14762,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsRateCreate(id: number, rating?: Rating, options?: any): AxiosPromise<ActionResponse> {
+        v1AssignmentsRateCreate(id: number, rating?: Rating, options?: any): AxiosPromise<CResponse> {
             return localVarFp.v1AssignmentsRateCreate(id, rating, options).then((request) => request(axios, basePath));
         },
         /**
@@ -13258,17 +14818,8 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: any): AxiosPromise<ChatRoom> {
-            return localVarFp.v1ChatsRoomsAddParticipants(id, chatRoom, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * ViewSet for managing chat rooms
-         * @param {ChatRoomCreate} chatRoomCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatsRoomsCreate(chatRoomCreate: ChatRoomCreate, options?: any): AxiosPromise<ChatRoomCreate> {
-            return localVarFp.v1ChatsRoomsCreate(chatRoomCreate, options).then((request) => request(axios, basePath));
+        v1ChatRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: any): AxiosPromise<ChatRoom> {
+            return localVarFp.v1ChatRoomsAddParticipants(id, chatRoom, options).then((request) => request(axios, basePath));
         },
         /**
          * Delete a message from chat room
@@ -13277,17 +14828,8 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsDeleteMessage(id: string, messageId: string, options?: any): AxiosPromise<void> {
-            return localVarFp.v1ChatsRoomsDeleteMessage(id, messageId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * ViewSet for managing chat rooms
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatsRoomsDestroy(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.v1ChatsRoomsDestroy(id, options).then((request) => request(axios, basePath));
+        v1ChatRoomsDeleteMessage(id: string, messageId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.v1ChatRoomsDeleteMessage(id, messageId, options).then((request) => request(axios, basePath));
         },
         /**
          * Edit a message in chat room
@@ -13297,8 +14839,8 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsEditMessage(id: string, messageId: string, patchedChatRoom?: PatchedChatRoom, options?: any): AxiosPromise<ChatRoom> {
-            return localVarFp.v1ChatsRoomsEditMessage(id, messageId, patchedChatRoom, options).then((request) => request(axios, basePath));
+        v1ChatRoomsEditMessage(id: string, messageId: string, patchedChatRoom?: PatchedChatRoom, options?: any): AxiosPromise<ChatRoom> {
+            return localVarFp.v1ChatRoomsEditMessage(id, messageId, patchedChatRoom, options).then((request) => request(axios, basePath));
         },
         /**
          * Leave a chat room
@@ -13307,20 +14849,8 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsLeave(id: string, chatRoom: ChatRoom, options?: any): AxiosPromise<ChatRoom> {
-            return localVarFp.v1ChatsRoomsLeave(id, chatRoom, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * ViewSet for managing chat rooms
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatsRoomsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedChatRoomList> {
-            return localVarFp.v1ChatsRoomsList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1ChatRoomsLeave(id: string, chatRoom: ChatRoom, options?: any): AxiosPromise<ChatRoom> {
+            return localVarFp.v1ChatRoomsLeave(id, chatRoom, options).then((request) => request(axios, basePath));
         },
         /**
          * List all messages in a chat room with filtering and search
@@ -13333,8 +14863,48 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessages(id: string, messageType?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedMessageList> {
-            return localVarFp.v1ChatsRoomsMessages(id, messageType, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1ChatRoomsMessages(id: string, messageType?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedMessageList> {
+            return localVarFp.v1ChatRoomsMessages(id, messageType, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Send message to chat room
+         * @param {string} id 
+         * @param {MessageCreate} messageCreate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatRoomsSendMessage(id: string, messageCreate: MessageCreate, options?: any): AxiosPromise<Message> {
+            return localVarFp.v1ChatRoomsSendMessage(id, messageCreate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for managing chat rooms
+         * @param {ChatRoomCreate} chatRoomCreate 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsCreate(chatRoomCreate: ChatRoomCreate, options?: any): AxiosPromise<ChatRoomCreate> {
+            return localVarFp.v1ChatsRoomsCreate(chatRoomCreate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for managing chat rooms
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsDestroy(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.v1ChatsRoomsDestroy(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for managing chat rooms
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedChatRoomList> {
+            return localVarFp.v1ChatsRoomsList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing chat rooms
@@ -13356,16 +14926,6 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ChatsRoomsRetrieve(id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Send message to chat room
-         * @param {string} id 
-         * @param {MessageCreate} messageCreate 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatsRoomsSendMessage(id: string, messageCreate: MessageCreate, options?: any): AxiosPromise<Message> {
-            return localVarFp.v1ChatsRoomsSendMessage(id, messageCreate, options).then((request) => request(axios, basePath));
-        },
-        /**
          * ViewSet for managing chat rooms
          * @param {string} id 
          * @param {ChatRoom} chatRoom 
@@ -13377,6 +14937,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * Languages - Read-only (managed via admin/fixtures).
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
          * @param {boolean} [isActive] 
          * @param {boolean} [isDefault] 
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -13386,8 +14947,8 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreLanguagesList(isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedLanguageList> {
-            return localVarFp.v1CoreLanguagesList(isActive, isDefault, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1CoreLanguagesList(idIn?: Array<number>, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedLanguageList> {
+            return localVarFp.v1CoreLanguagesList(idIn, isActive, isDefault, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
          * Languages - Read-only (managed via admin/fixtures).
@@ -13418,6 +14979,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * Service Areas - Full CRUD with authenticated access.
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -13426,8 +14988,8 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceAreasList(isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedServiceAreaList> {
-            return localVarFp.v1CoreServiceAreasList(isActive, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1CoreServiceAreasList(idIn?: Array<number>, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedServiceAreaList> {
+            return localVarFp.v1CoreServiceAreasList(idIn, isActive, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
          * Service Areas - Full CRUD with authenticated access.
@@ -13541,6 +15103,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * Service Subcategories - Full CRUD with authenticated access.
          * @param {number} [category] 
          * @param {boolean} [featured] 
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -13549,8 +15112,8 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceSubcategoriesList(category?: number, featured?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedServiceSubcategoryList> {
-            return localVarFp.v1CoreServiceSubcategoriesList(category, featured, isActive, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1CoreServiceSubcategoriesList(category?: number, featured?: boolean, idIn?: Array<number>, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedServiceSubcategoryList> {
+            return localVarFp.v1CoreServiceSubcategoriesList(category, featured, idIn, isActive, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
          * Service Subcategories - Full CRUD with authenticated access.
@@ -13741,7 +15304,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsBookmark(id: number, job: Job, options?: any): AxiosPromise<ActionResponse> {
+        v1JobsBookmark(id: number, job: Job, options?: any): AxiosPromise<CResponse> {
             return localVarFp.v1JobsBookmark(id, job, options).then((request) => request(axios, basePath));
         },
         /**
@@ -13779,7 +15342,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsFavorite(id: number, job: Job, options?: any): AxiosPromise<ActionResponse> {
+        v1JobsFavorite(id: number, job: Job, options?: any): AxiosPromise<CResponse> {
             return localVarFp.v1JobsFavorite(id, job, options).then((request) => request(axios, basePath));
         },
         /**
@@ -13837,29 +15400,27 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1JobsUpdate(id, job, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
-         * @param {number} [country] 
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
+         * ViewSet for managing cities.
+         * @param {City} city 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCitiesList(country?: number, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedCityList> {
-            return localVarFp.v1LocationsCitiesList(country, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1LocationsCitiesCreate(city: City, options?: any): AxiosPromise<City> {
+            return localVarFp.v1LocationsCitiesCreate(city, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * ViewSet for managing cities.
          * @param {number} id A unique integer value identifying this City.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCitiesRetrieve(id: number, options?: any): AxiosPromise<City> {
-            return localVarFp.v1LocationsCitiesRetrieve(id, options).then((request) => request(axios, basePath));
+        v1LocationsCitiesDestroy(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.v1LocationsCitiesDestroy(id, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * ViewSet for managing cities.
+         * @param {number} [country] 
+         * @param {boolean} [isDeleted] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
@@ -13867,17 +15428,97 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCountriesList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedCountryList> {
-            return localVarFp.v1LocationsCountriesList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1LocationsCitiesList(country?: number, isDeleted?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedCityListList> {
+            return localVarFp.v1LocationsCitiesList(country, isDeleted, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * ViewSet for managing cities.
+         * @param {number} id A unique integer value identifying this City.
+         * @param {PatchedCity} [patchedCity] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCitiesPartialUpdate(id: number, patchedCity?: PatchedCity, options?: any): AxiosPromise<City> {
+            return localVarFp.v1LocationsCitiesPartialUpdate(id, patchedCity, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for managing cities.
+         * @param {number} id A unique integer value identifying this City.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCitiesRetrieve(id: number, options?: any): AxiosPromise<CityList> {
+            return localVarFp.v1LocationsCitiesRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for managing cities.
+         * @param {number} id A unique integer value identifying this City.
+         * @param {City} city 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCitiesUpdate(id: number, city: City, options?: any): AxiosPromise<City> {
+            return localVarFp.v1LocationsCitiesUpdate(id, city, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {Country} country 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCountriesCreate(country: Country, options?: any): AxiosPromise<Country> {
+            return localVarFp.v1LocationsCountriesCreate(country, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {number} id A unique integer value identifying this Country.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCountriesDestroy(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.v1LocationsCountriesDestroy(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {boolean} [isDeleted] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCountriesList(isDeleted?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedCountryList> {
+            return localVarFp.v1LocationsCountriesList(isDeleted, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {number} id A unique integer value identifying this Country.
+         * @param {PatchedCountry} [patchedCountry] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCountriesPartialUpdate(id: number, patchedCountry?: PatchedCountry, options?: any): AxiosPromise<Country> {
+            return localVarFp.v1LocationsCountriesPartialUpdate(id, patchedCountry, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for managing countries.
          * @param {number} id A unique integer value identifying this Country.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         v1LocationsCountriesRetrieve(id: number, options?: any): AxiosPromise<Country> {
             return localVarFp.v1LocationsCountriesRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for managing countries.
+         * @param {number} id A unique integer value identifying this Country.
+         * @param {Country} country 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1LocationsCountriesUpdate(id: number, country: Country, options?: any): AxiosPromise<Country> {
+            return localVarFp.v1LocationsCountriesUpdate(id, country, options).then((request) => request(axios, basePath));
         },
         /**
          * Get notification counts for current user
@@ -14001,14 +15642,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1NotificationsUpdate(id, notificationUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * Base Action
-         * @param {string} action 
-         * @param {{ [key: string]: any; }} [requestBody] 
+         * Perform action based on \'action\' parameter in request data.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfileAvatarCreate(action: string, requestBody?: { [key: string]: any; }, options?: any): AxiosPromise<ActionResponse> {
-            return localVarFp.v1ProfileAvatarCreate(action, requestBody, options).then((request) => request(axios, basePath));
+        v1ProfileControlCreate(options?: any): AxiosPromise<void> {
+            return localVarFp.v1ProfileControlCreate(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -14037,7 +15676,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ProfileNotificationSettingsUpdate(userNotificationSettings, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Retrieve or update authenticated user\'s profile, including profile image upload.
          * @param {PatchedUserUpdate} [patchedUserUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -14046,7 +15685,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ProfilePartialUpdate(patchedUserUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Retrieve or update authenticated user\'s profile, including profile image upload.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -14054,7 +15693,7 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ProfileRetrieve(options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Retrieve or update authenticated user\'s profile, including profile image upload.
          * @param {UserUpdate} [userUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -14142,13 +15781,75 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ResumesUpdate(id, masterResume, options).then((request) => request(axios, basePath));
         },
         /**
-         * Retrieve public service provider profile.
-         * @param {number} id 
+         * Search jobs with optimized search serializer.
+         * @param {number} [budgetMaxLte] 
+         * @param {number} [budgetMinGte] 
+         * @param {number} [city] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceSubcategoryCategory] 
+         * @param {'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published'} [status] * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMastersDetailsRetrieve(id: number, options?: any): AxiosPromise<PublicMasterProfileDetail> {
-            return localVarFp.v1UsersMastersDetailsRetrieve(id, options).then((request) => request(axios, basePath));
+        v1SearchJobsList(budgetMaxLte?: number, budgetMinGte?: number, city?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategoryCategory?: number, status?: 'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: any): AxiosPromise<PaginatedJobSearchList> {
+            return localVarFp.v1SearchJobsList(budgetMaxLte, budgetMinGte, city, ordering, page, pageSize, search, serviceSubcategoryCategory, status, urgency, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Search masters with optimized search serializer.
+         * @param {boolean} [isAvailable] 
+         * @param {boolean} [isTopMaster] 
+         * @param {boolean} [isVerifiedProvider] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [profession] 
+         * @param {string} [search] A search term.
+         * @param {number} [servicesOfferedCategory] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1SearchMastersList(isAvailable?: boolean, isTopMaster?: boolean, isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, profession?: number, search?: string, servicesOfferedCategory?: number, options?: any): AxiosPromise<PaginatedMasterSearchList> {
+            return localVarFp.v1SearchMastersList(isAvailable, isTopMaster, isVerifiedProvider, ordering, page, pageSize, profession, search, servicesOfferedCategory, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Master Profile Details
+         * @param {number} id A unique integer value identifying this Master Profile.
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMastersDetails(id: number, idIn?: Array<number>, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedPublicMasterProfileDetailList> {
+            return localVarFp.v1UsersMastersDetails(id, idIn, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMastersList(idIn?: Array<number>, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedPublicMasterProfileList> {
+            return localVarFp.v1UsersMastersList(idIn, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id A unique integer value identifying this Master Profile.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMastersRetrieve(id: number, options?: any): AxiosPromise<PublicMasterProfile> {
+            return localVarFp.v1UsersMastersRetrieve(id, options).then((request) => request(axios, basePath));
         },
         /**
          * Crud for certificates.
@@ -14406,8 +16107,9 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1UsersMyStatusCreate(options).then((request) => request(axios, basePath));
         },
         /**
-         * List all available professions.
+         * 
          * @param {number} [category] 
+         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
          * @param {boolean} [isActive] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
@@ -14416,8 +16118,17 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersProfessionsList(category?: number, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedProfessionList> {
-            return localVarFp.v1UsersProfessionsList(category, isActive, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1UsersProfessionsList(category?: number, idIn?: Array<number>, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedProfessionList> {
+            return localVarFp.v1UsersProfessionsList(category, idIn, isActive, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id A unique integer value identifying this Profession.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersProfessionsRetrieve(id: number, options?: any): AxiosPromise<Profession> {
+            return localVarFp.v1UsersProfessionsRetrieve(id, options).then((request) => request(axios, basePath));
         },
         /**
          * List all available skills.
@@ -14587,7 +16298,7 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsRateCreate(id: number, rating?: Rating, options?: AxiosRequestConfig): AxiosPromise<ActionResponse>;
+    v1AssignmentsRateCreate(id: number, rating?: Rating, options?: AxiosRequestConfig): AxiosPromise<CResponse>;
 
     /**
      * 
@@ -14643,16 +16354,7 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
-
-    /**
-     * ViewSet for managing chat rooms
-     * @param {ChatRoomCreate} chatRoomCreate 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1ChatsRoomsCreate(chatRoomCreate: ChatRoomCreate, options?: AxiosRequestConfig): AxiosPromise<ChatRoomCreate>;
+    v1ChatRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
 
     /**
      * Delete a message from chat room
@@ -14662,16 +16364,7 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsDeleteMessage(id: string, messageId: string, options?: AxiosRequestConfig): AxiosPromise<void>;
-
-    /**
-     * ViewSet for managing chat rooms
-     * @param {string} id 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1ChatsRoomsDestroy(id: string, options?: AxiosRequestConfig): AxiosPromise<void>;
+    v1ChatRoomsDeleteMessage(id: string, messageId: string, options?: AxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * Edit a message in chat room
@@ -14682,7 +16375,7 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsEditMessage(id: string, messageId: string, patchedChatRoom?: PatchedChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
+    v1ChatRoomsEditMessage(id: string, messageId: string, patchedChatRoom?: PatchedChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
 
     /**
      * Leave a chat room
@@ -14692,19 +16385,7 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsLeave(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
-
-    /**
-     * ViewSet for managing chat rooms
-     * @param {string} [ordering] Which field to use when ordering the results.
-     * @param {number} [page] A page number within the paginated result set.
-     * @param {number} [pageSize] Number of results to return per page.
-     * @param {string} [search] A search term.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1ChatsRoomsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedChatRoomList>;
+    v1ChatRoomsLeave(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
 
     /**
      * List all messages in a chat room with filtering and search
@@ -14718,7 +16399,47 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsMessages(id: string, messageType?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedMessageList>;
+    v1ChatRoomsMessages(id: string, messageType?: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedMessageList>;
+
+    /**
+     * Send message to chat room
+     * @param {string} id 
+     * @param {MessageCreate} messageCreate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatRoomsSendMessage(id: string, messageCreate: MessageCreate, options?: AxiosRequestConfig): AxiosPromise<Message>;
+
+    /**
+     * ViewSet for managing chat rooms
+     * @param {ChatRoomCreate} chatRoomCreate 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatsRoomsCreate(chatRoomCreate: ChatRoomCreate, options?: AxiosRequestConfig): AxiosPromise<ChatRoomCreate>;
+
+    /**
+     * ViewSet for managing chat rooms
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatsRoomsDestroy(id: string, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * ViewSet for managing chat rooms
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatsRoomsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedChatRoomList>;
 
     /**
      * ViewSet for managing chat rooms
@@ -14740,16 +16461,6 @@ export interface V1ApiInterface {
     v1ChatsRoomsRetrieve(id: string, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
 
     /**
-     * Send message to chat room
-     * @param {string} id 
-     * @param {MessageCreate} messageCreate 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1ChatsRoomsSendMessage(id: string, messageCreate: MessageCreate, options?: AxiosRequestConfig): AxiosPromise<Message>;
-
-    /**
      * ViewSet for managing chat rooms
      * @param {string} id 
      * @param {ChatRoom} chatRoom 
@@ -14761,6 +16472,7 @@ export interface V1ApiInterface {
 
     /**
      * Languages - Read-only (managed via admin/fixtures).
+     * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
      * @param {boolean} [isActive] 
      * @param {boolean} [isDefault] 
      * @param {string} [ordering] Which field to use when ordering the results.
@@ -14771,7 +16483,7 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreLanguagesList(isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedLanguageList>;
+    v1CoreLanguagesList(idIn?: Array<number>, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedLanguageList>;
 
     /**
      * Languages - Read-only (managed via admin/fixtures).
@@ -14802,6 +16514,7 @@ export interface V1ApiInterface {
 
     /**
      * Service Areas - Full CRUD with authenticated access.
+     * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
      * @param {boolean} [isActive] 
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {number} [page] A page number within the paginated result set.
@@ -14811,7 +16524,7 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreServiceAreasList(isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceAreaList>;
+    v1CoreServiceAreasList(idIn?: Array<number>, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceAreaList>;
 
     /**
      * Service Areas - Full CRUD with authenticated access.
@@ -14925,6 +16638,7 @@ export interface V1ApiInterface {
      * Service Subcategories - Full CRUD with authenticated access.
      * @param {number} [category] 
      * @param {boolean} [featured] 
+     * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
      * @param {boolean} [isActive] 
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {number} [page] A page number within the paginated result set.
@@ -14934,7 +16648,7 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreServiceSubcategoriesList(category?: number, featured?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceSubcategoryList>;
+    v1CoreServiceSubcategoriesList(category?: number, featured?: boolean, idIn?: Array<number>, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedServiceSubcategoryList>;
 
     /**
      * Service Subcategories - Full CRUD with authenticated access.
@@ -15126,7 +16840,7 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobsBookmark(id: number, job: Job, options?: AxiosRequestConfig): AxiosPromise<ActionResponse>;
+    v1JobsBookmark(id: number, job: Job, options?: AxiosRequestConfig): AxiosPromise<CResponse>;
 
     /**
      * Cancel a job. Only allowed if job is in PUBLISHED or ASSIGNED state.
@@ -15164,7 +16878,7 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobsFavorite(id: number, job: Job, options?: AxiosRequestConfig): AxiosPromise<ActionResponse>;
+    v1JobsFavorite(id: number, job: Job, options?: AxiosRequestConfig): AxiosPromise<CResponse>;
 
     /**
      * ViewSet for managing jobs.
@@ -15221,29 +16935,27 @@ export interface V1ApiInterface {
     v1JobsUpdate(id: number, job: Job, options?: AxiosRequestConfig): AxiosPromise<Job>;
 
     /**
-     * 
-     * @param {number} [country] 
-     * @param {string} [ordering] Which field to use when ordering the results.
-     * @param {number} [page] A page number within the paginated result set.
-     * @param {number} [pageSize] Number of results to return per page.
-     * @param {string} [search] A search term.
+     * ViewSet for managing cities.
+     * @param {City} city 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1LocationsCitiesList(country?: number, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedCityList>;
+    v1LocationsCitiesCreate(city: City, options?: AxiosRequestConfig): AxiosPromise<City>;
 
     /**
-     * 
+     * ViewSet for managing cities.
      * @param {number} id A unique integer value identifying this City.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1LocationsCitiesRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<City>;
+    v1LocationsCitiesDestroy(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
 
     /**
-     * 
+     * ViewSet for managing cities.
+     * @param {number} [country] 
+     * @param {boolean} [isDeleted] 
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {number} [page] A page number within the paginated result set.
      * @param {number} [pageSize] Number of results to return per page.
@@ -15252,16 +16964,96 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1LocationsCountriesList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedCountryList>;
+    v1LocationsCitiesList(country?: number, isDeleted?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedCityListList>;
 
     /**
-     * 
+     * ViewSet for managing cities.
+     * @param {number} id A unique integer value identifying this City.
+     * @param {PatchedCity} [patchedCity] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1LocationsCitiesPartialUpdate(id: number, patchedCity?: PatchedCity, options?: AxiosRequestConfig): AxiosPromise<City>;
+
+    /**
+     * ViewSet for managing cities.
+     * @param {number} id A unique integer value identifying this City.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1LocationsCitiesRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<CityList>;
+
+    /**
+     * ViewSet for managing cities.
+     * @param {number} id A unique integer value identifying this City.
+     * @param {City} city 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1LocationsCitiesUpdate(id: number, city: City, options?: AxiosRequestConfig): AxiosPromise<City>;
+
+    /**
+     * ViewSet for managing countries.
+     * @param {Country} country 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1LocationsCountriesCreate(country: Country, options?: AxiosRequestConfig): AxiosPromise<Country>;
+
+    /**
+     * ViewSet for managing countries.
+     * @param {number} id A unique integer value identifying this Country.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1LocationsCountriesDestroy(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * ViewSet for managing countries.
+     * @param {boolean} [isDeleted] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1LocationsCountriesList(isDeleted?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedCountryList>;
+
+    /**
+     * ViewSet for managing countries.
+     * @param {number} id A unique integer value identifying this Country.
+     * @param {PatchedCountry} [patchedCountry] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1LocationsCountriesPartialUpdate(id: number, patchedCountry?: PatchedCountry, options?: AxiosRequestConfig): AxiosPromise<Country>;
+
+    /**
+     * ViewSet for managing countries.
      * @param {number} id A unique integer value identifying this Country.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
     v1LocationsCountriesRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<Country>;
+
+    /**
+     * ViewSet for managing countries.
+     * @param {number} id A unique integer value identifying this Country.
+     * @param {Country} country 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1LocationsCountriesUpdate(id: number, country: Country, options?: AxiosRequestConfig): AxiosPromise<Country>;
 
     /**
      * Get notification counts for current user
@@ -15385,14 +17177,12 @@ export interface V1ApiInterface {
     v1NotificationsUpdate(id: string, notificationUpdate?: NotificationUpdate, options?: AxiosRequestConfig): AxiosPromise<NotificationUpdate>;
 
     /**
-     * Base Action
-     * @param {string} action 
-     * @param {{ [key: string]: any; }} [requestBody] 
+     * Perform action based on \'action\' parameter in request data.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ProfileAvatarCreate(action: string, requestBody?: { [key: string]: any; }, options?: AxiosRequestConfig): AxiosPromise<ActionResponse>;
+    v1ProfileControlCreate(options?: AxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * 
@@ -15421,7 +17211,7 @@ export interface V1ApiInterface {
     v1ProfileNotificationSettingsUpdate(userNotificationSettings?: UserNotificationSettings, options?: AxiosRequestConfig): AxiosPromise<UserNotificationSettings>;
 
     /**
-     * 
+     * Retrieve or update authenticated user\'s profile, including profile image upload.
      * @param {PatchedUserUpdate} [patchedUserUpdate] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -15430,7 +17220,7 @@ export interface V1ApiInterface {
     v1ProfilePartialUpdate(patchedUserUpdate?: PatchedUserUpdate, options?: AxiosRequestConfig): AxiosPromise<UserUpdate>;
 
     /**
-     * 
+     * Retrieve or update authenticated user\'s profile, including profile image upload.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
@@ -15438,7 +17228,7 @@ export interface V1ApiInterface {
     v1ProfileRetrieve(options?: AxiosRequestConfig): AxiosPromise<UserDetail>;
 
     /**
-     * 
+     * Retrieve or update authenticated user\'s profile, including profile image upload.
      * @param {UserUpdate} [userUpdate] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -15526,13 +17316,75 @@ export interface V1ApiInterface {
     v1ResumesUpdate(id: number, masterResume: MasterResume, options?: AxiosRequestConfig): AxiosPromise<MasterResume>;
 
     /**
-     * Retrieve public service provider profile.
-     * @param {number} id 
+     * Search jobs with optimized search serializer.
+     * @param {number} [budgetMaxLte] 
+     * @param {number} [budgetMinGte] 
+     * @param {number} [city] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {number} [serviceSubcategoryCategory] 
+     * @param {'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published'} [status] * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled
+     * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMastersDetailsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<PublicMasterProfileDetail>;
+    v1SearchJobsList(budgetMaxLte?: number, budgetMinGte?: number, city?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategoryCategory?: number, status?: 'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): AxiosPromise<PaginatedJobSearchList>;
+
+    /**
+     * Search masters with optimized search serializer.
+     * @param {boolean} [isAvailable] 
+     * @param {boolean} [isTopMaster] 
+     * @param {boolean} [isVerifiedProvider] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {number} [profession] 
+     * @param {string} [search] A search term.
+     * @param {number} [servicesOfferedCategory] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1SearchMastersList(isAvailable?: boolean, isTopMaster?: boolean, isVerifiedProvider?: boolean, ordering?: string, page?: number, pageSize?: number, profession?: number, search?: string, servicesOfferedCategory?: number, options?: AxiosRequestConfig): AxiosPromise<PaginatedMasterSearchList>;
+
+    /**
+     * Master Profile Details
+     * @param {number} id A unique integer value identifying this Master Profile.
+     * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersMastersDetails(id: number, idIn?: Array<number>, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedPublicMasterProfileDetailList>;
+
+    /**
+     * 
+     * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersMastersList(idIn?: Array<number>, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedPublicMasterProfileList>;
+
+    /**
+     * 
+     * @param {number} id A unique integer value identifying this Master Profile.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersMastersRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<PublicMasterProfile>;
 
     /**
      * Crud for certificates.
@@ -15790,8 +17642,9 @@ export interface V1ApiInterface {
     v1UsersMyStatusCreate(options?: AxiosRequestConfig): AxiosPromise<any>;
 
     /**
-     * List all available professions.
+     * 
      * @param {number} [category] 
+     * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
      * @param {boolean} [isActive] 
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {number} [page] A page number within the paginated result set.
@@ -15801,7 +17654,16 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersProfessionsList(category?: number, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedProfessionList>;
+    v1UsersProfessionsList(category?: number, idIn?: Array<number>, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedProfessionList>;
+
+    /**
+     * 
+     * @param {number} id A unique integer value identifying this Profession.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersProfessionsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<Profession>;
 
     /**
      * List all available skills.
@@ -16233,24 +18095,164 @@ export interface V1ApiV1AuthFirebaseCreateRequest {
 }
 
 /**
- * Request parameters for v1ChatsRoomsAddParticipants operation in V1Api.
+ * Request parameters for v1ChatRoomsAddParticipants operation in V1Api.
  * @export
- * @interface V1ApiV1ChatsRoomsAddParticipantsRequest
+ * @interface V1ApiV1ChatRoomsAddParticipantsRequest
  */
-export interface V1ApiV1ChatsRoomsAddParticipantsRequest {
+export interface V1ApiV1ChatRoomsAddParticipantsRequest {
     /**
      * 
      * @type {string}
-     * @memberof V1ApiV1ChatsRoomsAddParticipants
+     * @memberof V1ApiV1ChatRoomsAddParticipants
      */
     readonly id: string
 
     /**
      * 
      * @type {ChatRoom}
-     * @memberof V1ApiV1ChatsRoomsAddParticipants
+     * @memberof V1ApiV1ChatRoomsAddParticipants
      */
     readonly chatRoom: ChatRoom
+}
+
+/**
+ * Request parameters for v1ChatRoomsDeleteMessage operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatRoomsDeleteMessageRequest
+ */
+export interface V1ApiV1ChatRoomsDeleteMessageRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatRoomsDeleteMessage
+     */
+    readonly id: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatRoomsDeleteMessage
+     */
+    readonly messageId: string
+}
+
+/**
+ * Request parameters for v1ChatRoomsEditMessage operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatRoomsEditMessageRequest
+ */
+export interface V1ApiV1ChatRoomsEditMessageRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatRoomsEditMessage
+     */
+    readonly id: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatRoomsEditMessage
+     */
+    readonly messageId: string
+
+    /**
+     * 
+     * @type {PatchedChatRoom}
+     * @memberof V1ApiV1ChatRoomsEditMessage
+     */
+    readonly patchedChatRoom?: PatchedChatRoom
+}
+
+/**
+ * Request parameters for v1ChatRoomsLeave operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatRoomsLeaveRequest
+ */
+export interface V1ApiV1ChatRoomsLeaveRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatRoomsLeave
+     */
+    readonly id: string
+
+    /**
+     * 
+     * @type {ChatRoom}
+     * @memberof V1ApiV1ChatRoomsLeave
+     */
+    readonly chatRoom: ChatRoom
+}
+
+/**
+ * Request parameters for v1ChatRoomsMessages operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatRoomsMessagesRequest
+ */
+export interface V1ApiV1ChatRoomsMessagesRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatRoomsMessages
+     */
+    readonly id: string
+
+    /**
+     * Filter by message type
+     * @type {string}
+     * @memberof V1ApiV1ChatRoomsMessages
+     */
+    readonly messageType?: string
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1ChatRoomsMessages
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1ChatRoomsMessages
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1ChatRoomsMessages
+     */
+    readonly pageSize?: number
+
+    /**
+     * Search in message content
+     * @type {string}
+     * @memberof V1ApiV1ChatRoomsMessages
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for v1ChatRoomsSendMessage operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatRoomsSendMessageRequest
+ */
+export interface V1ApiV1ChatRoomsSendMessageRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatRoomsSendMessage
+     */
+    readonly id: string
+
+    /**
+     * 
+     * @type {MessageCreate}
+     * @memberof V1ApiV1ChatRoomsSendMessage
+     */
+    readonly messageCreate: MessageCreate
 }
 
 /**
@@ -16268,27 +18270,6 @@ export interface V1ApiV1ChatsRoomsCreateRequest {
 }
 
 /**
- * Request parameters for v1ChatsRoomsDeleteMessage operation in V1Api.
- * @export
- * @interface V1ApiV1ChatsRoomsDeleteMessageRequest
- */
-export interface V1ApiV1ChatsRoomsDeleteMessageRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsDeleteMessage
-     */
-    readonly id: string
-
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsDeleteMessage
-     */
-    readonly messageId: string
-}
-
-/**
  * Request parameters for v1ChatsRoomsDestroy operation in V1Api.
  * @export
  * @interface V1ApiV1ChatsRoomsDestroyRequest
@@ -16300,55 +18281,6 @@ export interface V1ApiV1ChatsRoomsDestroyRequest {
      * @memberof V1ApiV1ChatsRoomsDestroy
      */
     readonly id: string
-}
-
-/**
- * Request parameters for v1ChatsRoomsEditMessage operation in V1Api.
- * @export
- * @interface V1ApiV1ChatsRoomsEditMessageRequest
- */
-export interface V1ApiV1ChatsRoomsEditMessageRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsEditMessage
-     */
-    readonly id: string
-
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsEditMessage
-     */
-    readonly messageId: string
-
-    /**
-     * 
-     * @type {PatchedChatRoom}
-     * @memberof V1ApiV1ChatsRoomsEditMessage
-     */
-    readonly patchedChatRoom?: PatchedChatRoom
-}
-
-/**
- * Request parameters for v1ChatsRoomsLeave operation in V1Api.
- * @export
- * @interface V1ApiV1ChatsRoomsLeaveRequest
- */
-export interface V1ApiV1ChatsRoomsLeaveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsLeave
-     */
-    readonly id: string
-
-    /**
-     * 
-     * @type {ChatRoom}
-     * @memberof V1ApiV1ChatsRoomsLeave
-     */
-    readonly chatRoom: ChatRoom
 }
 
 /**
@@ -16382,55 +18314,6 @@ export interface V1ApiV1ChatsRoomsListRequest {
      * A search term.
      * @type {string}
      * @memberof V1ApiV1ChatsRoomsList
-     */
-    readonly search?: string
-}
-
-/**
- * Request parameters for v1ChatsRoomsMessages operation in V1Api.
- * @export
- * @interface V1ApiV1ChatsRoomsMessagesRequest
- */
-export interface V1ApiV1ChatsRoomsMessagesRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsMessages
-     */
-    readonly id: string
-
-    /**
-     * Filter by message type
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsMessages
-     */
-    readonly messageType?: string
-
-    /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsMessages
-     */
-    readonly ordering?: string
-
-    /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1ChatsRoomsMessages
-     */
-    readonly page?: number
-
-    /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1ChatsRoomsMessages
-     */
-    readonly pageSize?: number
-
-    /**
-     * Search in message content
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsMessages
      */
     readonly search?: string
 }
@@ -16471,27 +18354,6 @@ export interface V1ApiV1ChatsRoomsRetrieveRequest {
 }
 
 /**
- * Request parameters for v1ChatsRoomsSendMessage operation in V1Api.
- * @export
- * @interface V1ApiV1ChatsRoomsSendMessageRequest
- */
-export interface V1ApiV1ChatsRoomsSendMessageRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsSendMessage
-     */
-    readonly id: string
-
-    /**
-     * 
-     * @type {MessageCreate}
-     * @memberof V1ApiV1ChatsRoomsSendMessage
-     */
-    readonly messageCreate: MessageCreate
-}
-
-/**
  * Request parameters for v1ChatsRoomsUpdate operation in V1Api.
  * @export
  * @interface V1ApiV1ChatsRoomsUpdateRequest
@@ -16518,6 +18380,13 @@ export interface V1ApiV1ChatsRoomsUpdateRequest {
  * @interface V1ApiV1CoreLanguagesListRequest
  */
 export interface V1ApiV1CoreLanguagesListRequest {
+    /**
+     * Несколько значений могут быть разделены запятыми.
+     * @type {Array<number>}
+     * @memberof V1ApiV1CoreLanguagesList
+     */
+    readonly idIn?: Array<number>
+
     /**
      * 
      * @type {boolean}
@@ -16609,6 +18478,13 @@ export interface V1ApiV1CoreServiceAreasDestroyRequest {
  * @interface V1ApiV1CoreServiceAreasListRequest
  */
 export interface V1ApiV1CoreServiceAreasListRequest {
+    /**
+     * Несколько значений могут быть разделены запятыми.
+     * @type {Array<number>}
+     * @memberof V1ApiV1CoreServiceAreasList
+     */
+    readonly idIn?: Array<number>
+
     /**
      * 
      * @type {boolean}
@@ -16881,6 +18757,13 @@ export interface V1ApiV1CoreServiceSubcategoriesListRequest {
      * @memberof V1ApiV1CoreServiceSubcategoriesList
      */
     readonly featured?: boolean
+
+    /**
+     * Несколько значений могут быть разделены запятыми.
+     * @type {Array<number>}
+     * @memberof V1ApiV1CoreServiceSubcategoriesList
+     */
+    readonly idIn?: Array<number>
 
     /**
      * 
@@ -17535,6 +19418,34 @@ export interface V1ApiV1JobsUpdateRequest {
 }
 
 /**
+ * Request parameters for v1LocationsCitiesCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1LocationsCitiesCreateRequest
+ */
+export interface V1ApiV1LocationsCitiesCreateRequest {
+    /**
+     * 
+     * @type {City}
+     * @memberof V1ApiV1LocationsCitiesCreate
+     */
+    readonly city: City
+}
+
+/**
+ * Request parameters for v1LocationsCitiesDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1LocationsCitiesDestroyRequest
+ */
+export interface V1ApiV1LocationsCitiesDestroyRequest {
+    /**
+     * A unique integer value identifying this City.
+     * @type {number}
+     * @memberof V1ApiV1LocationsCitiesDestroy
+     */
+    readonly id: number
+}
+
+/**
  * Request parameters for v1LocationsCitiesList operation in V1Api.
  * @export
  * @interface V1ApiV1LocationsCitiesListRequest
@@ -17546,6 +19457,13 @@ export interface V1ApiV1LocationsCitiesListRequest {
      * @memberof V1ApiV1LocationsCitiesList
      */
     readonly country?: number
+
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1LocationsCitiesList
+     */
+    readonly isDeleted?: boolean
 
     /**
      * Which field to use when ordering the results.
@@ -17574,6 +19492,27 @@ export interface V1ApiV1LocationsCitiesListRequest {
      * @memberof V1ApiV1LocationsCitiesList
      */
     readonly search?: string
+}
+
+/**
+ * Request parameters for v1LocationsCitiesPartialUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1LocationsCitiesPartialUpdateRequest
+ */
+export interface V1ApiV1LocationsCitiesPartialUpdateRequest {
+    /**
+     * A unique integer value identifying this City.
+     * @type {number}
+     * @memberof V1ApiV1LocationsCitiesPartialUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {PatchedCity}
+     * @memberof V1ApiV1LocationsCitiesPartialUpdate
+     */
+    readonly patchedCity?: PatchedCity
 }
 
 /**
@@ -17591,11 +19530,67 @@ export interface V1ApiV1LocationsCitiesRetrieveRequest {
 }
 
 /**
+ * Request parameters for v1LocationsCitiesUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1LocationsCitiesUpdateRequest
+ */
+export interface V1ApiV1LocationsCitiesUpdateRequest {
+    /**
+     * A unique integer value identifying this City.
+     * @type {number}
+     * @memberof V1ApiV1LocationsCitiesUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {City}
+     * @memberof V1ApiV1LocationsCitiesUpdate
+     */
+    readonly city: City
+}
+
+/**
+ * Request parameters for v1LocationsCountriesCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1LocationsCountriesCreateRequest
+ */
+export interface V1ApiV1LocationsCountriesCreateRequest {
+    /**
+     * 
+     * @type {Country}
+     * @memberof V1ApiV1LocationsCountriesCreate
+     */
+    readonly country: Country
+}
+
+/**
+ * Request parameters for v1LocationsCountriesDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1LocationsCountriesDestroyRequest
+ */
+export interface V1ApiV1LocationsCountriesDestroyRequest {
+    /**
+     * A unique integer value identifying this Country.
+     * @type {number}
+     * @memberof V1ApiV1LocationsCountriesDestroy
+     */
+    readonly id: number
+}
+
+/**
  * Request parameters for v1LocationsCountriesList operation in V1Api.
  * @export
  * @interface V1ApiV1LocationsCountriesListRequest
  */
 export interface V1ApiV1LocationsCountriesListRequest {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1LocationsCountriesList
+     */
+    readonly isDeleted?: boolean
+
     /**
      * Which field to use when ordering the results.
      * @type {string}
@@ -17626,6 +19621,27 @@ export interface V1ApiV1LocationsCountriesListRequest {
 }
 
 /**
+ * Request parameters for v1LocationsCountriesPartialUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1LocationsCountriesPartialUpdateRequest
+ */
+export interface V1ApiV1LocationsCountriesPartialUpdateRequest {
+    /**
+     * A unique integer value identifying this Country.
+     * @type {number}
+     * @memberof V1ApiV1LocationsCountriesPartialUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {PatchedCountry}
+     * @memberof V1ApiV1LocationsCountriesPartialUpdate
+     */
+    readonly patchedCountry?: PatchedCountry
+}
+
+/**
  * Request parameters for v1LocationsCountriesRetrieve operation in V1Api.
  * @export
  * @interface V1ApiV1LocationsCountriesRetrieveRequest
@@ -17637,6 +19653,27 @@ export interface V1ApiV1LocationsCountriesRetrieveRequest {
      * @memberof V1ApiV1LocationsCountriesRetrieve
      */
     readonly id: number
+}
+
+/**
+ * Request parameters for v1LocationsCountriesUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1LocationsCountriesUpdateRequest
+ */
+export interface V1ApiV1LocationsCountriesUpdateRequest {
+    /**
+     * A unique integer value identifying this Country.
+     * @type {number}
+     * @memberof V1ApiV1LocationsCountriesUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {Country}
+     * @memberof V1ApiV1LocationsCountriesUpdate
+     */
+    readonly country: Country
 }
 
 /**
@@ -17892,27 +19929,6 @@ export interface V1ApiV1NotificationsUpdateRequest {
 }
 
 /**
- * Request parameters for v1ProfileAvatarCreate operation in V1Api.
- * @export
- * @interface V1ApiV1ProfileAvatarCreateRequest
- */
-export interface V1ApiV1ProfileAvatarCreateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ProfileAvatarCreate
-     */
-    readonly action: string
-
-    /**
-     * 
-     * @type {{ [key: string]: any; }}
-     * @memberof V1ApiV1ProfileAvatarCreate
-     */
-    readonly requestBody?: { [key: string]: any; }
-}
-
-/**
  * Request parameters for v1ProfileNotificationSettingsPartialUpdate operation in V1Api.
  * @export
  * @interface V1ApiV1ProfileNotificationSettingsPartialUpdateRequest
@@ -18130,15 +20146,253 @@ export interface V1ApiV1ResumesUpdateRequest {
 }
 
 /**
- * Request parameters for v1UsersMastersDetailsRetrieve operation in V1Api.
+ * Request parameters for v1SearchJobsList operation in V1Api.
  * @export
- * @interface V1ApiV1UsersMastersDetailsRetrieveRequest
+ * @interface V1ApiV1SearchJobsListRequest
  */
-export interface V1ApiV1UsersMastersDetailsRetrieveRequest {
+export interface V1ApiV1SearchJobsListRequest {
     /**
      * 
      * @type {number}
-     * @memberof V1ApiV1UsersMastersDetailsRetrieve
+     * @memberof V1ApiV1SearchJobsList
+     */
+    readonly budgetMaxLte?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1SearchJobsList
+     */
+    readonly budgetMinGte?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1SearchJobsList
+     */
+    readonly city?: number
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1SearchJobsList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1SearchJobsList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1SearchJobsList
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1SearchJobsList
+     */
+    readonly search?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1SearchJobsList
+     */
+    readonly serviceSubcategoryCategory?: number
+
+    /**
+     * * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled
+     * @type {'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published'}
+     * @memberof V1ApiV1SearchJobsList
+     */
+    readonly status?: 'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published'
+
+    /**
+     * * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+     * @type {'high' | 'low' | 'medium' | 'urgent'}
+     * @memberof V1ApiV1SearchJobsList
+     */
+    readonly urgency?: 'high' | 'low' | 'medium' | 'urgent'
+}
+
+/**
+ * Request parameters for v1SearchMastersList operation in V1Api.
+ * @export
+ * @interface V1ApiV1SearchMastersListRequest
+ */
+export interface V1ApiV1SearchMastersListRequest {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1SearchMastersList
+     */
+    readonly isAvailable?: boolean
+
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1SearchMastersList
+     */
+    readonly isTopMaster?: boolean
+
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1SearchMastersList
+     */
+    readonly isVerifiedProvider?: boolean
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1SearchMastersList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1SearchMastersList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1SearchMastersList
+     */
+    readonly pageSize?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1SearchMastersList
+     */
+    readonly profession?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1SearchMastersList
+     */
+    readonly search?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1SearchMastersList
+     */
+    readonly servicesOfferedCategory?: number
+}
+
+/**
+ * Request parameters for v1UsersMastersDetails operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersMastersDetailsRequest
+ */
+export interface V1ApiV1UsersMastersDetailsRequest {
+    /**
+     * A unique integer value identifying this Master Profile.
+     * @type {number}
+     * @memberof V1ApiV1UsersMastersDetails
+     */
+    readonly id: number
+
+    /**
+     * Несколько значений могут быть разделены запятыми.
+     * @type {Array<number>}
+     * @memberof V1ApiV1UsersMastersDetails
+     */
+    readonly idIn?: Array<number>
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1UsersMastersDetails
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1UsersMastersDetails
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1UsersMastersDetails
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1UsersMastersDetails
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for v1UsersMastersList operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersMastersListRequest
+ */
+export interface V1ApiV1UsersMastersListRequest {
+    /**
+     * Несколько значений могут быть разделены запятыми.
+     * @type {Array<number>}
+     * @memberof V1ApiV1UsersMastersList
+     */
+    readonly idIn?: Array<number>
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1UsersMastersList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1UsersMastersList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1UsersMastersList
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1UsersMastersList
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for v1UsersMastersRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersMastersRetrieveRequest
+ */
+export interface V1ApiV1UsersMastersRetrieveRequest {
+    /**
+     * A unique integer value identifying this Master Profile.
+     * @type {number}
+     * @memberof V1ApiV1UsersMastersRetrieve
      */
     readonly id: number
 }
@@ -18598,6 +20852,13 @@ export interface V1ApiV1UsersProfessionsListRequest {
     readonly category?: number
 
     /**
+     * Несколько значений могут быть разделены запятыми.
+     * @type {Array<number>}
+     * @memberof V1ApiV1UsersProfessionsList
+     */
+    readonly idIn?: Array<number>
+
+    /**
      * 
      * @type {boolean}
      * @memberof V1ApiV1UsersProfessionsList
@@ -18631,6 +20892,20 @@ export interface V1ApiV1UsersProfessionsListRequest {
      * @memberof V1ApiV1UsersProfessionsList
      */
     readonly search?: string
+}
+
+/**
+ * Request parameters for v1UsersProfessionsRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersProfessionsRetrieveRequest
+ */
+export interface V1ApiV1UsersProfessionsRetrieveRequest {
+    /**
+     * A unique integer value identifying this Profession.
+     * @type {number}
+     * @memberof V1ApiV1UsersProfessionsRetrieve
+     */
+    readonly id: number
 }
 
 /**
@@ -18899,13 +21174,68 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
 
     /**
      * Add participants to chat room
-     * @param {V1ApiV1ChatsRoomsAddParticipantsRequest} requestParameters Request parameters.
+     * @param {V1ApiV1ChatRoomsAddParticipantsRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1ChatsRoomsAddParticipants(requestParameters: V1ApiV1ChatsRoomsAddParticipantsRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsAddParticipants(requestParameters.id, requestParameters.chatRoom, options).then((request) => request(this.axios, this.basePath));
+    public v1ChatRoomsAddParticipants(requestParameters: V1ApiV1ChatRoomsAddParticipantsRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatRoomsAddParticipants(requestParameters.id, requestParameters.chatRoom, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Delete a message from chat room
+     * @param {V1ApiV1ChatRoomsDeleteMessageRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatRoomsDeleteMessage(requestParameters: V1ApiV1ChatRoomsDeleteMessageRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatRoomsDeleteMessage(requestParameters.id, requestParameters.messageId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Edit a message in chat room
+     * @param {V1ApiV1ChatRoomsEditMessageRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatRoomsEditMessage(requestParameters: V1ApiV1ChatRoomsEditMessageRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatRoomsEditMessage(requestParameters.id, requestParameters.messageId, requestParameters.patchedChatRoom, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Leave a chat room
+     * @param {V1ApiV1ChatRoomsLeaveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatRoomsLeave(requestParameters: V1ApiV1ChatRoomsLeaveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatRoomsLeave(requestParameters.id, requestParameters.chatRoom, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * List all messages in a chat room with filtering and search
+     * @param {V1ApiV1ChatRoomsMessagesRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatRoomsMessages(requestParameters: V1ApiV1ChatRoomsMessagesRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatRoomsMessages(requestParameters.id, requestParameters.messageType, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Send message to chat room
+     * @param {V1ApiV1ChatRoomsSendMessageRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatRoomsSendMessage(requestParameters: V1ApiV1ChatRoomsSendMessageRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatRoomsSendMessage(requestParameters.id, requestParameters.messageCreate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -18920,17 +21250,6 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Delete a message from chat room
-     * @param {V1ApiV1ChatsRoomsDeleteMessageRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatsRoomsDeleteMessage(requestParameters: V1ApiV1ChatsRoomsDeleteMessageRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsDeleteMessage(requestParameters.id, requestParameters.messageId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * ViewSet for managing chat rooms
      * @param {V1ApiV1ChatsRoomsDestroyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -18942,28 +21261,6 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Edit a message in chat room
-     * @param {V1ApiV1ChatsRoomsEditMessageRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatsRoomsEditMessage(requestParameters: V1ApiV1ChatsRoomsEditMessageRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsEditMessage(requestParameters.id, requestParameters.messageId, requestParameters.patchedChatRoom, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Leave a chat room
-     * @param {V1ApiV1ChatsRoomsLeaveRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatsRoomsLeave(requestParameters: V1ApiV1ChatsRoomsLeaveRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsLeave(requestParameters.id, requestParameters.chatRoom, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * ViewSet for managing chat rooms
      * @param {V1ApiV1ChatsRoomsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -18972,17 +21269,6 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      */
     public v1ChatsRoomsList(requestParameters: V1ApiV1ChatsRoomsListRequest = {}, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1ChatsRoomsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * List all messages in a chat room with filtering and search
-     * @param {V1ApiV1ChatsRoomsMessagesRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatsRoomsMessages(requestParameters: V1ApiV1ChatsRoomsMessagesRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsMessages(requestParameters.id, requestParameters.messageType, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -19008,17 +21294,6 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Send message to chat room
-     * @param {V1ApiV1ChatsRoomsSendMessageRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatsRoomsSendMessage(requestParameters: V1ApiV1ChatsRoomsSendMessageRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsSendMessage(requestParameters.id, requestParameters.messageCreate, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * ViewSet for managing chat rooms
      * @param {V1ApiV1ChatsRoomsUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -19037,7 +21312,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreLanguagesList(requestParameters: V1ApiV1CoreLanguagesListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreLanguagesList(requestParameters.isActive, requestParameters.isDefault, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreLanguagesList(requestParameters.idIn, requestParameters.isActive, requestParameters.isDefault, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -19081,7 +21356,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreServiceAreasList(requestParameters: V1ApiV1CoreServiceAreasListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreServiceAreasList(requestParameters.isActive, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreServiceAreasList(requestParameters.idIn, requestParameters.isActive, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -19213,7 +21488,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreServiceSubcategoriesList(requestParameters: V1ApiV1CoreServiceSubcategoriesListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesList(requestParameters.category, requestParameters.featured, requestParameters.isActive, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesList(requestParameters.category, requestParameters.featured, requestParameters.idIn, requestParameters.isActive, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -19525,18 +21800,51 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * 
+     * ViewSet for managing cities.
+     * @param {V1ApiV1LocationsCitiesCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1LocationsCitiesCreate(requestParameters: V1ApiV1LocationsCitiesCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1LocationsCitiesCreate(requestParameters.city, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * ViewSet for managing cities.
+     * @param {V1ApiV1LocationsCitiesDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1LocationsCitiesDestroy(requestParameters: V1ApiV1LocationsCitiesDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1LocationsCitiesDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * ViewSet for managing cities.
      * @param {V1ApiV1LocationsCitiesListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
     public v1LocationsCitiesList(requestParameters: V1ApiV1LocationsCitiesListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1LocationsCitiesList(requestParameters.country, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1LocationsCitiesList(requestParameters.country, requestParameters.isDeleted, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * 
+     * ViewSet for managing cities.
+     * @param {V1ApiV1LocationsCitiesPartialUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1LocationsCitiesPartialUpdate(requestParameters: V1ApiV1LocationsCitiesPartialUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1LocationsCitiesPartialUpdate(requestParameters.id, requestParameters.patchedCity, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * ViewSet for managing cities.
      * @param {V1ApiV1LocationsCitiesRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -19547,18 +21855,62 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * 
+     * ViewSet for managing cities.
+     * @param {V1ApiV1LocationsCitiesUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1LocationsCitiesUpdate(requestParameters: V1ApiV1LocationsCitiesUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1LocationsCitiesUpdate(requestParameters.id, requestParameters.city, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * ViewSet for managing countries.
+     * @param {V1ApiV1LocationsCountriesCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1LocationsCountriesCreate(requestParameters: V1ApiV1LocationsCountriesCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1LocationsCountriesCreate(requestParameters.country, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * ViewSet for managing countries.
+     * @param {V1ApiV1LocationsCountriesDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1LocationsCountriesDestroy(requestParameters: V1ApiV1LocationsCountriesDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1LocationsCountriesDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * ViewSet for managing countries.
      * @param {V1ApiV1LocationsCountriesListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
     public v1LocationsCountriesList(requestParameters: V1ApiV1LocationsCountriesListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1LocationsCountriesList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1LocationsCountriesList(requestParameters.isDeleted, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * 
+     * ViewSet for managing countries.
+     * @param {V1ApiV1LocationsCountriesPartialUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1LocationsCountriesPartialUpdate(requestParameters: V1ApiV1LocationsCountriesPartialUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1LocationsCountriesPartialUpdate(requestParameters.id, requestParameters.patchedCountry, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * ViewSet for managing countries.
      * @param {V1ApiV1LocationsCountriesRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -19566,6 +21918,17 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      */
     public v1LocationsCountriesRetrieve(requestParameters: V1ApiV1LocationsCountriesRetrieveRequest, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1LocationsCountriesRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * ViewSet for managing countries.
+     * @param {V1ApiV1LocationsCountriesUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1LocationsCountriesUpdate(requestParameters: V1ApiV1LocationsCountriesUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1LocationsCountriesUpdate(requestParameters.id, requestParameters.country, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -19700,14 +22063,13 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Base Action
-     * @param {V1ApiV1ProfileAvatarCreateRequest} requestParameters Request parameters.
+     * Perform action based on \'action\' parameter in request data.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1ProfileAvatarCreate(requestParameters: V1ApiV1ProfileAvatarCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ProfileAvatarCreate(requestParameters.action, requestParameters.requestBody, options).then((request) => request(this.axios, this.basePath));
+    public v1ProfileControlCreate(options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ProfileControlCreate(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -19743,7 +22105,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * 
+     * Retrieve or update authenticated user\'s profile, including profile image upload.
      * @param {V1ApiV1ProfilePartialUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -19754,7 +22116,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * 
+     * Retrieve or update authenticated user\'s profile, including profile image upload.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
@@ -19764,7 +22126,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * 
+     * Retrieve or update authenticated user\'s profile, including profile image upload.
      * @param {V1ApiV1ProfileUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -19863,14 +22225,58 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Retrieve public service provider profile.
-     * @param {V1ApiV1UsersMastersDetailsRetrieveRequest} requestParameters Request parameters.
+     * Search jobs with optimized search serializer.
+     * @param {V1ApiV1SearchJobsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1UsersMastersDetailsRetrieve(requestParameters: V1ApiV1UsersMastersDetailsRetrieveRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMastersDetailsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    public v1SearchJobsList(requestParameters: V1ApiV1SearchJobsListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1SearchJobsList(requestParameters.budgetMaxLte, requestParameters.budgetMinGte, requestParameters.city, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, requestParameters.serviceSubcategoryCategory, requestParameters.status, requestParameters.urgency, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Search masters with optimized search serializer.
+     * @param {V1ApiV1SearchMastersListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1SearchMastersList(requestParameters: V1ApiV1SearchMastersListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1SearchMastersList(requestParameters.isAvailable, requestParameters.isTopMaster, requestParameters.isVerifiedProvider, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.profession, requestParameters.search, requestParameters.servicesOfferedCategory, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Master Profile Details
+     * @param {V1ApiV1UsersMastersDetailsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersMastersDetails(requestParameters: V1ApiV1UsersMastersDetailsRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersMastersDetails(requestParameters.id, requestParameters.idIn, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1UsersMastersListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersMastersList(requestParameters: V1ApiV1UsersMastersListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersMastersList(requestParameters.idIn, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1UsersMastersRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersMastersRetrieve(requestParameters: V1ApiV1UsersMastersRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersMastersRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -20168,14 +22574,25 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * List all available professions.
+     * 
      * @param {V1ApiV1UsersProfessionsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
     public v1UsersProfessionsList(requestParameters: V1ApiV1UsersProfessionsListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersProfessionsList(requestParameters.category, requestParameters.isActive, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersProfessionsList(requestParameters.category, requestParameters.idIn, requestParameters.isActive, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1UsersProfessionsRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersProfessionsRetrieve(requestParameters: V1ApiV1UsersProfessionsRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersProfessionsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

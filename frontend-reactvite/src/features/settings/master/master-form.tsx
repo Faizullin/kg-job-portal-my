@@ -1,24 +1,33 @@
-import { Badge } from "@/components/ui/badge";
+import ComboBox2 from "@/components/combobox";
 import { Button } from "@/components/ui/button";
-import { MultiCombobox } from "@/components/ui/combobox";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import type { Profession, ServiceArea, ServiceSubcategory } from "@/lib/api/axios-client/api";
 import myApi from "@/lib/api/my-api";
+import type { SelectOption } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Briefcase, Clock, Loader2, MapPin, Save } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { Briefcase, DollarSign, GraduationCap, Languages, Loader2, MapPin, Save, User } from "lucide-react";
+import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const masterSchema = z.object({
-  business_name: z.string().min(2, "Business name must be at least 2 characters").optional(),
-  business_description: z.string().max(1000, "Description must be less than 1000 characters").optional(),
-  service_areas: z.array(z.string()),
-  services_offered: z.array(z.string()),
+  profession: z.custom<Profession>().nullable().optional(),
+  service_areas: z.array(z.custom<ServiceArea>()),
+  services_offered: z.array(z.custom<ServiceSubcategory>()),
+  about_description: z.string().optional(),
+  current_location: z.string().optional(),
+  hourly_rate: z.string().optional(),
+  response_time_hours: z.number().optional(),
+  work_experience_start_year: z.number().nullable().optional(),
+  education_institution: z.string().optional(),
+  education_years: z.string().optional(),
+  languages: z.array(z.custom<SelectOption>()),
   works_remotely: z.boolean().optional(),
   accepts_clients_at_location: z.boolean().optional(),
   travels_to_clients: z.boolean().optional(),
@@ -27,46 +36,51 @@ const masterSchema = z.object({
 
 type MasterFormData = z.infer<typeof masterSchema>;
 
-const loadMasterQueryKey = "master-profile";
+const MASTER_PROFILE_QUERY_KEY = "master-profile";
+
+// Predefined language options
+const LANGUAGES: SelectOption[] = [
+  { value: "english", label: "English" },
+  { value: "spanish", label: "Spanish" },
+  { value: "french", label: "French" },
+  { value: "german", label: "German" },
+  { value: "chinese", label: "Chinese" },
+  { value: "arabic", label: "Arabic" },
+  { value: "russian", label: "Russian" },
+  { value: "portuguese", label: "Portuguese" },
+  { value: "japanese", label: "Japanese" },
+  { value: "korean", label: "Korean" },
+  { value: "italian", label: "Italian" },
+  { value: "turkish", label: "Turkish" },
+];
 
 export function MasterForm() {
   const queryClient = useQueryClient();
 
   const loadMasterProfileQuery = useQuery({
-    queryKey: [loadMasterQueryKey],
+    queryKey: [MASTER_PROFILE_QUERY_KEY],
     queryFn: async () => {
       const response = await myApi.v1UsersMyMasterRetrieve();
       return response.data;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
     retry: 1,
-  });
-
-  // Fetch service categories for services offered
-  const { data: serviceCategories } = useQuery({
-    queryKey: ["service-subcategories"],
-    queryFn: async () => {
-      const response = await myApi.v1CoreServiceSubcategoriesList();
-      return response.data.results;
-    },
-  });
-
-  // Fetch service areas for location-based services
-  const { data: serviceAreas } = useQuery({
-    queryKey: ["service-areas"],
-    queryFn: async () => {
-      const response = await myApi.v1CoreServiceAreasList();
-      return response.data.results;
-    },
   });
 
   const form = useForm<MasterFormData>({
     resolver: zodResolver(masterSchema),
     defaultValues: {
-      business_name: "",
-      business_description: "",
+      profession: null,
       service_areas: [],
       services_offered: [],
+      about_description: "",
+      current_location: "",
+      hourly_rate: "",
+      response_time_hours: 24,
+      work_experience_start_year: null,
+      education_institution: "",
+      education_years: "",
+      languages: [],
       works_remotely: false,
       accepts_clients_at_location: false,
       travels_to_clients: false,
@@ -74,79 +88,107 @@ export function MasterForm() {
     },
   });
 
-  const watchedServicesOffered = form.watch("services_offered");
-  const watchedServiceAreas = form.watch("service_areas");
+  const searchProfessions = useCallback(async (search: string, offset: number, limit: number) => {
+    const response = await myApi.v1UsersProfessionsList({
+      search,
+      page: Math.floor(offset / limit) + 1,
+      pageSize: limit,
+    });
+    return response.data.results || [];
+  }, []);
 
-  const serviceCategoryOptions = useMemo(() => {
-    const allOptions = serviceCategories?.map((category) => ({
-      label: `${category.name} [#${category.id}]`,
-      value: category.id.toString(),
-    })) || [];
+  const searchServiceSubcategories = useCallback(async (search: string, offset: number, limit: number) => {
+    const response = await myApi.v1CoreServiceSubcategoriesList({
+      search,
+      page: Math.floor(offset / limit) + 1,
+      pageSize: limit,
+    });
+    return response.data.results || [];
+  }, []);
 
-    const userPreferences = watchedServicesOffered;
-    const availableOptions = allOptions.filter(
-      option => !userPreferences.includes(option.value)
+  const searchServiceAreas = useCallback(async (search: string, offset: number, limit: number) => {
+    const response = await myApi.v1CoreServiceAreasList({
+      search,
+      page: Math.floor(offset / limit) + 1,
+      pageSize: limit,
+    });
+    return response.data.results || [];
+  }, []);
+
+  const searchLanguages = useCallback(async (search: string) => {
+    const filtered = LANGUAGES.filter((lang) =>
+      lang.label.toLowerCase().includes(search.toLowerCase())
     );
-    const userPreferenceOptions = allOptions.filter(
-      option => userPreferences.includes(option.value)
-    );
-
-    return {
-      available: availableOptions,
-      userPreferences: userPreferenceOptions,
-      all: allOptions
-    };
-  }, [serviceCategories, watchedServicesOffered]);
-
-  const serviceAreaOptions = useMemo(() => {
-    const allOptions = serviceAreas?.map((area) => ({
-      label: `${area.name} [#${area.id}]`,
-      value: area.id.toString(),
-    })) || [];
-
-    const userPreferences = watchedServiceAreas;
-    const availableOptions = allOptions.filter(
-      option => !userPreferences.includes(option.value)
-    );
-    const userPreferenceOptions = allOptions.filter(
-      option => userPreferences.includes(option.value)
-    );
-
-    return {
-      available: availableOptions,
-      userPreferences: userPreferenceOptions,
-      all: allOptions
-    };
-  }, [serviceAreas, watchedServiceAreas]);
+    return Promise.resolve(filtered);
+  }, []);
 
   useEffect(() => {
     const profileData = loadMasterProfileQuery.data;
-    console.log(profileData);
     if (profileData) {
-      form.reset({
-        service_areas: (profileData.service_areas || []).map((id: number) => id.toString()),
-        services_offered: (profileData.services_offered || []).map((id: number) => id.toString()),
-        works_remotely: profileData.works_remotely || false,
-        accepts_clients_at_location: profileData.accepts_clients_at_location || false,
-        travels_to_clients: profileData.travels_to_clients || false,
-        is_available: profileData.is_available || true,
-      });
+      const loadRelatedData = async () => {
+        const [professionData, areasData, servicesData] = await Promise.all([
+          profileData.profession ? myApi.v1UsersProfessionsRetrieve({ id: profileData.profession }).then((r) => r.data).catch(() => null) : Promise.resolve(null),
+          profileData.service_areas?.length ? myApi.v1CoreServiceAreasList({ idIn: profileData.service_areas }).then((r) => r.data.results).catch(() => []) : Promise.resolve([]),
+          profileData.services_offered?.length ? myApi.v1CoreServiceSubcategoriesList({ idIn: profileData.services_offered }).then((r) => r.data.results).catch(() => []) : Promise.resolve([])
+        ]);
+
+        const languagesData = Array.isArray(profileData.languages)
+          ? profileData.languages.map((langName: string) =>
+              LANGUAGES.find(l => l.label.toLowerCase() === langName.toLowerCase()) ||
+              LANGUAGES.find(l => l.value.toLowerCase() === langName.toLowerCase())
+            ).filter((lang): lang is SelectOption => lang !== undefined)
+          : [];
+
+        form.reset({
+          profession: professionData,
+          service_areas: areasData || [],
+          services_offered: servicesData || [],
+          about_description: profileData.about_description || "",
+          current_location: profileData.current_location || "",
+          hourly_rate: profileData.hourly_rate || "",
+          response_time_hours: profileData.response_time_hours || 24,
+          work_experience_start_year: profileData.work_experience_start_year || null,
+          education_institution: profileData.education_institution || "",
+          education_years: profileData.education_years || "",
+          languages: languagesData,
+          works_remotely: profileData.works_remotely || false,
+          accepts_clients_at_location: profileData.accepts_clients_at_location || false,
+          travels_to_clients: profileData.travels_to_clients || false,
+          is_available: profileData.is_available !== undefined ? profileData.is_available : true,
+        });
+      };
+
+      loadRelatedData();
     }
   }, [loadMasterProfileQuery.data, form]);
 
   const updateProviderMutation = useMutation({
     mutationFn: async (data: MasterFormData) => {
       const transformedData = {
-        ...data,
-        service_areas: data.service_areas.map(id => parseInt(id)),
-        services_offered: data.services_offered.map(id => parseInt(id))
+        profession: data.profession?.id || null,
+        service_areas: data.service_areas.map(area => area.id),
+        services_offered: data.services_offered.map(service => service.id),
+        about_description: data.about_description,
+        current_location: data.current_location,
+        hourly_rate: data.hourly_rate || null,
+        response_time_hours: data.response_time_hours,
+        work_experience_start_year: data.work_experience_start_year,
+        education_institution: data.education_institution,
+        education_years: data.education_years,
+        languages: data.languages.map(lang => lang.value),
+        works_remotely: data.works_remotely,
+        accepts_clients_at_location: data.accepts_clients_at_location,
+        travels_to_clients: data.travels_to_clients,
+        is_available: data.is_available,
       };
-      const response = await myApi.v1UsersMyMasterPartialUpdate({ patchedMasterProfileCreateUpdate: transformedData });
+      const response = await myApi.v1UsersMyMasterPartialUpdate({
+        patchedMasterProfileCreateUpdate: transformedData
+      });
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [loadMasterQueryKey] });
-      toast.success("Service provider profile updated successfully");
+      queryClient.invalidateQueries({ queryKey: [MASTER_PROFILE_QUERY_KEY] });
+      toast.success("Master profile updated successfully");
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Failed to update profile");
@@ -168,206 +210,167 @@ export function MasterForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Professional Information */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium flex items-center gap-2">
-            <Briefcase className="h-5 w-5" />
-            Business Information
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormField
-              control={form.control}
-              name="business_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Business Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter your business name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+          <div>
+            <h3 className="text-lg font-medium flex items-center gap-2">
+              <User className="h-5 w-5" />
+              Professional Information
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Your professional details and credentials
+            </p>
           </div>
+          <Separator />
 
           <FormField
             control={form.control}
-            name="business_description"
+            name="profession"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Business Description</FormLabel>
+                <FormLabel>Profession</FormLabel>
+                <FormControl>
+                  <ComboBox2<Profession>
+                    title="Select profession..."
+                    value={field.value || undefined}
+                    valueKey="id"
+                    multiple={false}
+                    renderText={(profession) => profession.name}
+                    searchFn={searchProfessions}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormDescription>Your primary profession or occupation</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="about_description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>About Me</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Describe your business and services..."
-                    className="min-h-[100px]"
+                    placeholder="Tell clients about yourself, your experience, and what makes you unique..."
+                    className="min-h-32"
                     {...field}
                   />
                 </FormControl>
+                <FormDescription>A brief description of your professional background</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="current_location"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Current Location</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., New York, NY" {...field} />
+                </FormControl>
+                <FormDescription>Your city and country</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
 
+        {/* Services & Specialization */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium flex items-center gap-2">
-            <Briefcase className="h-5 w-5" />
-            Services Offered
-          </h3>
+          <div>
+            <h3 className="text-lg font-medium flex items-center gap-2">
+              <Briefcase className="h-5 w-5" />
+              Services & Specialization
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Define the services you offer
+            </p>
+          </div>
+          <Separator />
 
           <FormField
             control={form.control}
             name="services_offered"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Select Services You Offer</FormLabel>
+                <FormLabel>Services Offered</FormLabel>
                 <FormControl>
-                  <MultiCombobox
-                    options={serviceCategoryOptions?.available || []}
+                  <ComboBox2<ServiceSubcategory>
+                    title="Select services..."
                     value={field.value}
-                    onValueChange={field.onChange}
-                    placeholder="Select services..."
-                    searchPlaceholder="Search services..."
-                    emptyText="No services found."
+                    valueKey="id"
+                    multiple
+                    renderText={(service) => service.name}
+                    searchFn={searchServiceSubcategories}
+                    onChange={field.onChange}
+                    badgeRenderType="outside"
                   />
                 </FormControl>
+                <FormDescription>Select all services you can provide</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          {form.watch("services_offered").length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Selected services:</p>
-              <div className="flex flex-wrap gap-2">
-                {serviceCategoryOptions?.userPreferences?.map((service) => (
-                  <Badge key={service.value} variant="secondary" className="flex items-center gap-1">
-                    {service.label}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const currentServices = form.getValues("services_offered");
-                        form.setValue("services_offered", currentServices.filter(id => id !== service.value));
-                      }}
-                      className="ml-1 hover:text-destructive"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
+        {/* Service Areas & Availability */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
-            Service Areas
-          </h3>
+          <div>
+            <h3 className="text-lg font-medium flex items-center gap-2">
+              <MapPin className="h-5 w-5" />
+              Service Areas & Availability
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Where and how you provide your services
+            </p>
+          </div>
+          <Separator />
 
           <FormField
             control={form.control}
             name="service_areas"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Select Service Areas</FormLabel>
+                <FormLabel>Service Areas</FormLabel>
                 <FormControl>
-                  <MultiCombobox
-                    options={serviceAreaOptions?.available || []}
+                  <ComboBox2<ServiceArea>
+                    title="Select service areas..."
                     value={field.value}
-                    onValueChange={field.onChange}
-                    placeholder="Select service areas..."
-                    searchPlaceholder="Search areas..."
-                    emptyText="No areas found."
+                    valueKey="id"
+                    multiple
+                    renderText={(area) => area.name}
+                    searchFn={searchServiceAreas}
+                    onChange={field.onChange}
+                    badgeRenderType="outside"
                   />
                 </FormControl>
+                <FormDescription>Geographic areas where you provide services</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {form.watch("service_areas").length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Selected areas:</p>
-              <div className="flex flex-wrap gap-2">
-                {serviceAreaOptions?.userPreferences?.map((area) => (
-                  <Badge key={area.value} variant="secondary" className="flex items-center gap-1">
-                    {area.label}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const currentAreas = form.getValues("service_areas");
-                        form.setValue("service_areas", currentAreas.filter(id => id !== area.value));
-                      }}
-                      className="ml-1 hover:text-destructive"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            Availability
-          </h3>
-
-          <FormField
-            control={form.control}
-            name="is_available"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">
-                    Available for Work
-                  </FormLabel>
-                  <p className="text-sm text-muted-foreground">
-                    Toggle your availability for new service requests
-                  </p>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            Availability Options
-          </h3>
-
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="works_remotely"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Works Remotely
-                    </FormLabel>
-                    <div className="text-sm text-muted-foreground">
-                      I can provide services remotely/online
-                    </div>
+                    <FormLabel className="text-base">Works Remotely</FormLabel>
+                    <FormDescription className="text-sm">
+                      Provide services online
+                    </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}
@@ -379,18 +382,13 @@ export function MasterForm() {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Accepts Clients at My Location
-                    </FormLabel>
-                    <div className="text-sm text-muted-foreground">
-                      Clients can come to my business location
-                    </div>
+                    <FormLabel className="text-base">At My Location</FormLabel>
+                    <FormDescription className="text-sm">
+                      Clients come to me
+                    </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}
@@ -402,18 +400,31 @@ export function MasterForm() {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Travels to Clients
-                    </FormLabel>
-                    <div className="text-sm text-muted-foreground">
-                      I can travel to client locations for services
-                    </div>
+                    <FormLabel className="text-base">Travel to Clients</FormLabel>
+                    <FormDescription className="text-sm">
+                      I travel to client location
+                    </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="is_available"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Available for Work</FormLabel>
+                    <FormDescription className="text-sm">
+                      Accept new requests
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}
@@ -421,14 +432,184 @@ export function MasterForm() {
           </div>
         </div>
 
-        <div className="flex justify-end">
-          <Button type="submit" disabled={updateProviderMutation.isPending}>
-            {updateProviderMutation.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
+        {/* Pricing & Response Time */}
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-medium flex items-center gap-2">
+              <DollarSign className="h-5 w-5" />
+              Pricing & Response Time
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Your rates and response time
+            </p>
+          </div>
+          <Separator />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="hourly_rate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hourly Rate</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="50.00"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>Your hourly rate in USD</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="response_time_hours"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Response Time (hours)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="24"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormDescription>Typical response time in hours</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        {/* Experience & Education */}
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-medium flex items-center gap-2">
+              <GraduationCap className="h-5 w-5" />
+              Experience & Education
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Your work experience and educational background
+            </p>
+          </div>
+          <Separator />
+
+          <FormField
+            control={form.control}
+            name="work_experience_start_year"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Work Experience Start Year</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="2015"
+                    {...field}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                    value={field.value || ""}
+                  />
+                </FormControl>
+                <FormDescription>Year you started in this profession</FormDescription>
+                <FormMessage />
+              </FormItem>
             )}
-            {updateProviderMutation.isPending ? "Saving..." : "Save Changes"}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="education_institution"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Educational Institution</FormLabel>
+                  <FormControl>
+                    <Input placeholder="University of..." {...field} />
+                  </FormControl>
+                  <FormDescription>School or university name</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="education_years"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Education Years</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., 2010-2014" {...field} />
+                  </FormControl>
+                  <FormDescription>Years attended</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        {/* Languages */}
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-medium flex items-center gap-2">
+              <Languages className="h-5 w-5" />
+              Languages
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Languages you can communicate in
+            </p>
+          </div>
+          <Separator />
+
+          <FormField
+            control={form.control}
+            name="languages"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Languages Spoken</FormLabel>
+                <FormControl>
+                  <ComboBox2<SelectOption>
+                    title="Select languages..."
+                    value={field.value}
+                    valueKey="value"
+                    multiple
+                    renderText={(lang) => lang.label}
+                    searchFn={searchLanguages}
+                    onChange={field.onChange}
+                    badgeRenderType="inside"
+                  />
+                </FormControl>
+                <FormDescription>Select all languages you can communicate in</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Save Button */}
+        <div className="flex justify-end pt-6 border-t">
+          <Button
+            type="submit"
+            disabled={updateProviderMutation.isPending}
+            className="min-w-32"
+          >
+            {updateProviderMutation.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Save Changes
+              </>
+            )}
           </Button>
         </div>
       </form>

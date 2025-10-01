@@ -78,6 +78,8 @@ class MasterProfileCreateUpdateSerializer(AbstractTimestampedModelSerializer):
             "languages",
             "about_description",
             "current_location",
+            "is_verified_provider",
+            "is_top_master",
         )
         read_only_fields = ("id", "is_verified_provider", "is_top_master")
 
@@ -91,7 +93,7 @@ class MasterProfileCreateUpdateSerializer(AbstractTimestampedModelSerializer):
         if service_areas:
             master_profile.service_areas.set(service_areas)
         if services_offered:
-            master_profile.service_offered.set(services_offered)
+            master_profile.services_offered.set(services_offered)
         return master_profile
 
     def update(self, instance, validated_data):
@@ -102,7 +104,7 @@ class MasterProfileCreateUpdateSerializer(AbstractTimestampedModelSerializer):
         if service_areas is not None:
             instance.service_areas.set(service_areas)
         if services_offered is not None:
-            instance.service_offered.set(services_offered)
+            instance.services_offered.set(services_offered)
         instance.save()
         return instance
 
@@ -224,6 +226,35 @@ class MasterStatisticsSerializer(AbstractTimestampedModelSerializer):
             "repeat_customer_percentage",
             "average_rating",
             "total_reviews",
+        )
+
+
+class PublicMasterProfileSerializer(serializers.ModelSerializer):
+    user = UserDetailChildSerializer(read_only=True)
+    profession = ProfessionSerializer(read_only=True)
+
+    class Meta:
+        model = Master
+        fields = (
+            "id",
+            "user",
+            "works_remotely",
+            "accepts_clients_at_location",
+            "travels_to_clients",
+            "is_available",
+            "hourly_rate",
+            "response_time_hours",
+            "work_experience_start_year",
+            "education_institution",
+            "education_years",
+            "languages",
+            "about_description",
+            "current_location",
+            "is_online",
+            "last_seen",
+            "is_verified_provider",
+            "is_top_master",
+            "profession",
         )
 
 

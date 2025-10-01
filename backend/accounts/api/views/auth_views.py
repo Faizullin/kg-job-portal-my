@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 
 from accounts.api.serializers import FireBaseAuthSerializer, FirebaseAuthResponseSerializer, UserProfileSerializer, \
     UserDetailSerializer, LogoutResponseSerializer
-from accounts.models import LoginSession
+from accounts.models import LoginSession, UserNotificationSettings, UserTypes
 
 UserModel = get_user_model()
 
@@ -129,8 +129,9 @@ class FirebaseAuthView(APIView):
                 email=email,
                 photo_url=photo_url,
                 is_active=True,
-                user_type='free',
+                user_type=UserTypes.FREE,
             )
+            UserNotificationSettings.objects.create(user=user_obj)
             user_obj.set_password(secure_password)
             user_obj.save()
             return user_obj

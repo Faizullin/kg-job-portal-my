@@ -31,8 +31,8 @@ services:
       - kg-job-portal-my-back-dev
     volumes:
       - ./backend/:/home/app/
-      - kg-job-portal-my-static-volume:/home/app/staticfiles
-      - kg-job-portal-my-media-volume:/home/app/mediafiles
+      - kg-job-portal-my-static-volume:/home/app/static
+      - kg-job-portal-my-media-volume:/home/app/media
       - ./backend/config/firebase:/home/app/config/firebase:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"

@@ -81,21 +81,23 @@ export function ProfileForm() {
   const uploadAvatar = async (file: File) => {
     const formData = new FormData();
     formData.append("photo", file);
-    await myApi.axios.post(`/api/v1/profile/avatar?action=upload_photo`, formData, {
+    await myApi.axios.post(`/api/v1/profile/control/?action=upload_photo`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     await queryClient.invalidateQueries({ queryKey: [loadUserProfileQueryKey] });
     toast.success("Profile image uploaded");
   };
 
-  // const resetAvatar = async () => {
-  //   await myApi.axios.delete("/api/v1/profile/");
-  //   await queryClient.invalidateQueries({ queryKey: [loadUserProfileQueryKey] });
-  //   toast.success("Profile image reset");
-  // };
-
   const onSubmit = async (data: ProfileFormData) => {
     await updateProfileMutation.mutateAsync(data);
+  };
+
+  const resetAvatar = async () => {
+    await myApi.axios.post(`/api/v1/profile/control/?action=remove_photo`, {
+      reset: true,
+    });
+    await queryClient.invalidateQueries({ queryKey: [loadUserProfileQueryKey] });
+    toast.success("Profile image reset");
   };
 
   const fullName = useMemo(() => {
@@ -123,7 +125,7 @@ export function ProfileForm() {
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-4">
                 <Avatar className="size-16">
-                  <AvatarImage src={loadUserProfileQuery.data?.photo_url ?? undefined} className="object-cover" />
+                  <AvatarImage src={loadUserProfileQuery.data?.photo_url || undefined} className="object-cover" />
                   <AvatarFallback>{(fullName || "").slice(0, 1)}</AvatarFallback>
                 </Avatar>
                 <div className="flex items-center gap-2">
@@ -131,9 +133,9 @@ export function ProfileForm() {
                     const file = e.target.files?.[0];
                     if (file) uploadAvatar(file);
                   }} />
-                  {/* {loadUserProfileAdvancedQuery.data?.photo && (
+                  {loadUserProfileQuery.data?.photo && (
                       <Button type="button" variant="outline" onClick={resetAvatar}>Reset</Button>
-                    )} */}
+                    )}
                 </div>
               </div>
             </div>
