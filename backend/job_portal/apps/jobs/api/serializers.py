@@ -3,20 +3,41 @@ from rest_framework import serializers
 from job_portal.apps.jobs.models import Job, JobApplication, JobStatus, JobAssignment
 from job_portal.apps.users.api.serializers import UserDetailChildSerializer
 from job_portal.apps.users.models import Master
+from job_portal.apps.attachments.models import Attachment
 from utils.serializers import (
     AbstractTimestampedModelSerializer
 )
 
 
+class AttachmentSerializer(serializers.ModelSerializer):
+    """Serializer for generic attachments."""
+
+    file_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Attachment
+        fields = ['id', 'original_filename', 'file_url', 'size', 'file_type', 'mime_type', 'uploaded_by', 'description', 'is_public', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+    def get_file_url(self, obj):
+        request = self.context.get('request')
+        if request and obj.file:
+            return request.build_absolute_uri(obj.file.url)
+        return obj.file.url if obj.file else None
+
+
 class JobSerializer(AbstractTimestampedModelSerializer):
+    attachments = AttachmentSerializer(many=True, read_only=True)
+    
     class Meta:
         model = Job
         fields = [
             'id', 'employer', 'service_subcategory', 'title', 'description', 'status',
             'location', 'city', 'service_date', 'service_time',
             'urgency', 'budget_min', 'budget_max', 'final_price',
-            'special_requirements', 'created_at', 'updated_at'
+            'special_requirements', 'attachments', 'created_at', 'updated_at'
         ]
+        read_only_fields = ["id", "employer", 'created_at', 'updated_at']
 
 
 class JobApplicationSerializer(AbstractTimestampedModelSerializer):
@@ -63,13 +84,14 @@ class JobAssignmentSerializer(AbstractTimestampedModelSerializer):
     job = JobSerializer(read_only=True)
     master = AssignmentMasterSerializer(read_only=True)
     accepted_application = JobApplicationSerializer(read_only=True)
+    attachments = AttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = JobAssignment
         fields = [
             'id', 'status', 'assigned_at', 'started_at', 'completed_at', 'progress_notes',
             'completion_notes', 'client_rating', 'client_review',
-            'job', 'master', 'accepted_application'
+            'job', 'master', 'accepted_application', 'attachments'
         ]
         read_only_fields = ['id', 'assigned_at']
 
@@ -93,3 +115,33 @@ class RatingSerializer(serializers.ModelSerializer):
         model = JobAssignment
         fields = ['id', 'client_rating', 'client_review']
         read_only_fields = ["id", ]
+
+
+class JobAssignmentCompletionSerializer(serializers.ModelSerializer):
+    """Serializer for completing job assignments with rating and review."""
+    
+    completion_notes = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text="Notes about the completion"
+    )
+    
+    client_rating = serializers.IntegerField(
+        required=False,
+        min_value=1,
+        max_value=5,
+        help_text="Rating for the client (1-5 stars)"
+    )
+    
+    client_review = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text="Review text for the client"
+    )
+    
+    attachments = AttachmentSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = JobAssignment
+        fields = ['id', 'completion_notes', 'client_rating', 'client_review', 'attachments']
+        read_only_fields = ['id']

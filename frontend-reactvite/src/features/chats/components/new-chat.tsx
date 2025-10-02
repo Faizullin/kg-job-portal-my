@@ -24,7 +24,7 @@ type NewChatProps = {
   job?: Partial<Job>
 };
 
-export function NewChat({ onOpenChange, open, control, onCreated, job }: NewChatProps) {
+export function NewChatDialog({ onOpenChange, open, control, onCreated, job }: NewChatProps) {
   const [selectedUsers, setSelectedUsers] = useState<PublicMasterProfile[]>([]);
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
@@ -44,18 +44,13 @@ export function NewChat({ onOpenChange, open, control, onCreated, job }: NewChat
     mutationFn: async () => {
       if (selectedUsers.length === 0) throw new Error('No users selected');
 
-      const chatRoomCreate: ChatRoomCreate = {
-        id: 0, // Will be set by backend
-        title: selectedUsers.map((u) => u.user.username).join(", ") || (job ? 'Order Chat' : 'New Chat'),
-        chat_type: job ? ChatTypeEnum.job_chat : ChatTypeEnum.general_chat,
-        participants_users_ids: selectedUsers.map(u => u.user.id),
-        job: job?.id || null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-
       const response = await myApi.v1ChatsRoomsCreate({
-        chatRoomCreate
+        chatRoomCreate: {
+          title: selectedUsers.map((u) => u.user.username).join(", ") || (job ? 'Order Chat' : 'New Chat'),
+          chat_type: job ? ChatTypeEnum.job_chat : ChatTypeEnum.general_chat,
+          participants_users_ids: selectedUsers.map(u => u.user.id),
+          job: job?.id || null,
+        } as any
       });
 
       return response.data;

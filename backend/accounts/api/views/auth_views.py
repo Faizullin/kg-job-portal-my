@@ -40,65 +40,61 @@ class FirebaseAuthView(APIView):
             return Response({'error': 'id_token is required'}, status=400)
 
         try:
-            # Verify Firebase ID token
+            decoded_token = auth.verify_id_token(id_token)
+            firebase_user_id = decoded_token['uid']
+            firebase_user = auth.get_user(firebase_user_id)
+
+        except InvalidIdTokenError:
+            return Response({'error': 'Invalid Firebase ID token'}, status=400)
+        except Exception as firebase_error:
+            return Response({'error': f'Firebase verification failed: {str(firebase_error)}'}, status=400)
+
+        # Try to get active user first (manager automatically filters deleted users)
+        try:
+            user = UserModel.objects.get(firebase_user_id=firebase_user_id)
+            if not user.is_active:
+                return Response({'error': 'User account is deactivated'}, status=403)
+
+            token, created = Token.objects.get_or_create(user=user)
+            serializer = FirebaseAuthResponseSerializer({
+                "token": token.key,
+                "user": user,
+                "message": "Authentication successful"
+            })
+            return Response(serializer.data)
+
+        except UserModel.DoesNotExist:
+            # Check if user was soft-deleted
             try:
-                decoded_token = auth.verify_id_token(id_token)
-                firebase_user_id = decoded_token['uid']
-                firebase_user = auth.get_user(firebase_user_id)
-
-            except InvalidIdTokenError:
-                return Response({'error': 'Invalid Firebase ID token'}, status=400)
-            except Exception as firebase_error:
-                return Response({'error': f'Firebase verification failed: {str(firebase_error)}'}, status=400)
-
-            # Try to get active user first (manager automatically filters deleted users)
-            try:
-                user = UserModel.objects.get(firebase_user_id=firebase_user_id)
-                if not user.is_active:
-                    return Response({'error': 'User account is deactivated'}, status=403)
-
-                token, created = Token.objects.get_or_create(user=user)
-                serializer = FirebaseAuthResponseSerializer({
-                    "token": token.key,
-                    "user": UserProfileSerializer(user).data,
-                    "message": "Authentication successful"
-                })
-                return Response(serializer.data)
-
+                # Use all_with_deleted to check for deleted users
+                deleted_user = UserModel.objects.all_with_deleted().get(firebase_user_id=firebase_user_id)
+                if deleted_user.is_deleted:
+                    return Response({
+                        'error': 'User account has been deleted',
+                        'deleted_at': deleted_user.deleted_at
+                    }, status=410)
             except UserModel.DoesNotExist:
-                # Check if user was soft-deleted
-                try:
-                    # Use all_with_deleted to check for deleted users
-                    deleted_user = UserModel.objects.all_with_deleted().get(firebase_user_id=firebase_user_id)
-                    if deleted_user.is_deleted:
-                        return Response({
-                            'error': 'User account has been deleted',
-                            'deleted_at': deleted_user.deleted_at
-                        }, status=410)
-                except UserModel.DoesNotExist:
-                    pass
+                pass
 
-                # User doesn't exist - create new user from Firebase data
-                # Firebase user is already verified above
-                user_profile = self._create_user_from_firebase(firebase_user)
+            # User doesn't exist - create new user from Firebase data
+            # Firebase user is already verified above
+            user_profile = self._create_user_from_firebase(firebase_user)
 
-                # Generate token for new user
-                token, created = Token.objects.get_or_create(user=user_profile)
+            # Generate token for new user
+            token, created = Token.objects.get_or_create(user=user_profile)
 
-                # Use UserProfileSerializer for consistent response
-                user_serializer = UserDetailSerializer(user_profile)
-                response_data = {
-                    'token': token.key,
-                    'user': user_serializer.data,
-                    'message': 'User registered and authenticated successfully'
-                }
+            # Use UserProfileSerializer for consistent response
+            user_serializer = UserDetailSerializer(user_profile)
+            response_data = {
+                'token': token.key,
+                'user': user_serializer.data,
+                'message': 'User registered and authenticated successfully'
+            }
 
-                # Serialize the response for OpenAPI documentation
-                serializer = FirebaseAuthResponseSerializer(response_data)
-                return Response(serializer.data, status=201)
+            # Serialize the response for OpenAPI documentation
+            serializer = FirebaseAuthResponseSerializer(response_data)
+            return Response(serializer.data, status=201)
 
-        except Exception as e:
-            return Response({'error': str(e)}, status=500)
 
     def _create_user_from_firebase(self, firebase_user):
         """Create a new user from Firebase user data."""

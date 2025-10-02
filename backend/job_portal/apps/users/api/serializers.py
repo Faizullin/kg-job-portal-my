@@ -3,12 +3,30 @@ from rest_framework.exceptions import ValidationError
 
 from accounts.models import UserModel
 from utils.serializers import AbstractTimestampedModelSerializer
+from job_portal.apps.attachments.models import Attachment
 from ..models import (
     Employer,
     Skill,
     PortfolioItem,
     Master, MasterSkill, Certificate, Profession, MasterStatistics,
 )
+
+
+class AttachmentSerializer(serializers.ModelSerializer):
+    """Serializer for generic attachments."""
+
+    file_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Attachment
+        fields = ['id', 'original_filename', 'file_url', 'size', 'file_type', 'mime_type', 'uploaded_by', 'description', 'is_public', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+    def get_file_url(self, obj):
+        request = self.context.get('request')
+        if request and obj.file:
+            return request.build_absolute_uri(obj.file.url)
+        return obj.file.url if obj.file else None
 
 
 class UserRetrieveUpdateSerializer(serializers.ModelSerializer):
@@ -29,7 +47,7 @@ class UserRetrieveUpdateSerializer(serializers.ModelSerializer):
 class EmployerProfileCreateUpdateSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = Employer
-        fields = ("id", "preferred_services", "favorite_masters",)
+        fields = ("id", "contact_phone", "preferred_services", "favorite_masters",)
         read_only_fields = ("id",)
 
     def create(self, validated_data):
@@ -152,6 +170,7 @@ class PortfolioItemSerializer(AbstractTimestampedModelSerializer):
         write_only=True, required=False,
         allow_null=True
     )
+    attachments = AttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = PortfolioItem
@@ -162,7 +181,7 @@ class PortfolioItemSerializer(AbstractTimestampedModelSerializer):
             "skill_used",
             "skill_used_id",
             "is_featured",
-            "image",
+            "attachments",
             "created_at",
         )
         read_only_fields = ("id", "created_at")
@@ -259,7 +278,7 @@ class PublicMasterProfileSerializer(serializers.ModelSerializer):
 
 
 class PublicMasterProfileDetailSerializer(serializers.ModelSerializer):
-    """Detailed serializer for service provider profile."""
+    """Detailed serializer for master profile."""
 
     user = UserDetailChildSerializer(read_only=True)
     profession = ProfessionSerializer(read_only=True)
@@ -296,3 +315,17 @@ class PublicMasterProfileDetailSerializer(serializers.ModelSerializer):
             "certificates",
             "statistics",
         )
+
+
+class MasterOnlineStatusRequestSerializer(serializers.Serializer):
+    """Serializer for master online status update request."""
+    
+    is_online = serializers.BooleanField(help_text="Online status to set", default=False)
+
+
+class MasterOnlineStatusResponseSerializer(serializers.Serializer):
+    """Serializer for master online status update response."""
+    
+    message = serializers.CharField(help_text="Success message")
+    is_online = serializers.BooleanField(help_text="Current online status")
+    last_seen = serializers.DateTimeField(help_text="Last seen timestamp")

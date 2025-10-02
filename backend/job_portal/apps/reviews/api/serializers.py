@@ -1,30 +1,35 @@
 from rest_framework import serializers
-from drf_spectacular.utils import extend_schema_field
 from utils.serializers import AbstractTimestampedModelSerializer
+from job_portal.apps.users.api.serializers import UserDetailChildSerializer
+from job_portal.apps.jobs.api.serializers import JobSerializer
+from job_portal.apps.users.models import Master
 from ..models import Review, AppFeedback
 
 
-class ReviewSerializer(AbstractTimestampedModelSerializer):
-    """Serializer for reading review data with OpenAPI support."""
+class MasterBasicSerializer(serializers.ModelSerializer):
+    """Basic master serializer for review data."""
+    user = UserDetailChildSerializer(read_only=True)
+    
+    class Meta:
+        model = Master
+        fields = ['id', 'user']
 
-    reviewer_name = serializers.SerializerMethodField()
-    reviewer_email = serializers.SerializerMethodField()
-    provider_name = serializers.SerializerMethodField()
-    provider_email = serializers.SerializerMethodField()
-    order_id = serializers.SerializerMethodField()
-    order_title = serializers.SerializerMethodField()
+
+class ReviewSerializer(AbstractTimestampedModelSerializer):
+    """Serializer for reading review data with nested serializers."""
+
+    reviewer = UserDetailChildSerializer(read_only=True)
+    master = MasterBasicSerializer(read_only=True)
+    job = JobSerializer(read_only=True)
 
     class Meta:
         model = Review
         fields = [
             "id",
-            "order_id",
-            "order_title",
-            "reviewer_name",
-            "reviewer_email",
-            "provider_name",
-            "provider_email",
-            "overall_rating",
+            "job",
+            "reviewer",
+            "master",
+            "rating",
             "title",
             "comment",
             "is_verified",
@@ -33,58 +38,15 @@ class ReviewSerializer(AbstractTimestampedModelSerializer):
         ]
         read_only_fields = ["id", "is_verified", "created_at", "updated_at"]
 
-    @extend_schema_field(serializers.CharField())
-    def get_reviewer_name(self, obj):
-        return (
-            obj.reviewer.get_full_name() or obj.reviewer.username
-            if obj.reviewer
-            else "Unknown"
-        )
-
-    @extend_schema_field(serializers.EmailField())
-    def get_reviewer_email(self, obj):
-        return obj.reviewer.email if obj.reviewer else None
-
-    @extend_schema_field(serializers.CharField())
-    def get_provider_name(self, obj):
-        if (
-            obj.provider
-            and obj.provider.user_profile
-            and obj.provider.user_profile.user
-        ):
-            return (
-                obj.provider.user_profile.user.get_full_name()
-                or obj.provider.user_profile.user.username
-            )
-        return "Unknown Provider"
-
-    @extend_schema_field(serializers.EmailField())
-    def get_provider_email(self, obj):
-        if (
-            obj.provider
-            and obj.provider.user_profile
-            and obj.provider.user_profile.user
-        ):
-            return obj.provider.user_profile.user.email
-        return None
-
-    @extend_schema_field(serializers.IntegerField())
-    def get_order_id(self, obj):
-        return obj.order.id if obj.order else None
-
-    @extend_schema_field(serializers.CharField())
-    def get_order_title(self, obj):
-        return obj.order.title if obj.order else None
-
 
 class ReviewCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating new reviews with OpenAPI documentation."""
 
     class Meta:
         model = Review
-        fields = ["order", "provider", "overall_rating", "title", "comment"]
+        fields = ["job", "master", "rating", "title", "comment"]
         extra_kwargs = {
-            "overall_rating": {
+            "rating": {
                 "help_text": "Rating from 1 to 5 stars",
                 "min_value": 1,
                 "max_value": 5,
@@ -93,41 +55,30 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
             "comment": {"help_text": "Detailed review comment", "max_length": 1000},
         }
 
-    def validate_overall_rating(self, value):
-        """Validate overall rating is between 1 and 5."""
+    def validate_rating(self, value):
+        """Validate rating is between 1 and 5."""
         if not (1 <= value <= 5):
-            raise serializers.ValidationError("Overall rating must be between 1 and 5.")
+            raise serializers.ValidationError("Rating must be between 1 and 5.")
         return value
 
     def validate(self, attrs):
-        """Validate that the order belongs to the provider and user can review it."""
-        order = attrs.get("order")
-        provider = attrs.get("provider")
+        """Validate that the job belongs to the master and user can review it."""
+        job = attrs.get("job")
+        master = attrs.get("master")
 
-        if order and provider:
-            # Check if the order has an assignment and belongs to the provider
-            if not hasattr(order, "assignment") or not order.assignment:
+        if job and master:
+            # Check if the job is completed
+            if job.status != "completed":
                 raise serializers.ValidationError(
-                    "The order has not been assigned to any provider."
+                    "You can only review completed jobs."
                 )
 
-            if order.assignment.provider != provider:
-                raise serializers.ValidationError(
-                    "The order does not belong to the specified provider."
-                )
-
-            # Check if the order is completed
-            if order.status != "completed":
-                raise serializers.ValidationError(
-                    "You can only review completed orders."
-                )
-
-            # Check if review already exists for this order
+            # Check if review already exists for this job
             if Review.objects.filter(
-                order=order, reviewer=self.context["request"].user
+                job=job, reviewer=self.context["request"].user
             ).exists():
                 raise serializers.ValidationError(
-                    "You have already reviewed this order."
+                    "You have already reviewed this job."
                 )
 
         return attrs
@@ -138,12 +89,12 @@ class ReviewUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ["overall_rating", "title", "comment"]
+        fields = ["rating", "title", "comment"]
 
-    def validate_overall_rating(self, value):
-        """Validate overall rating is between 1 and 5."""
+    def validate_rating(self, value):
+        """Validate rating is between 1 and 5."""
         if not (1 <= value <= 5):
-            raise serializers.ValidationError("Overall rating must be between 1 and 5.")
+            raise serializers.ValidationError("Rating must be between 1 and 5.")
         return value
 
 
@@ -179,12 +130,12 @@ class ClientRatingSerializer(serializers.Serializer):
         return value
 
 
-class OrderAssignmentReviewSerializer(serializers.Serializer):
-    """Serializer for order assignment with review data."""
+class JobAssignmentReviewSerializer(serializers.Serializer):
+    """Serializer for job assignment with review data."""
 
-    order_id = serializers.IntegerField(help_text="Order ID")
-    order_title = serializers.CharField(help_text="Order title")
-    provider_name = serializers.CharField(help_text="Provider name")
+    job_id = serializers.IntegerField(help_text="Job ID")
+    job_title = serializers.CharField(help_text="Job title")
+    master_name = serializers.CharField(help_text="Master name")
     client_name = serializers.CharField(help_text="Client name")
     client_rating = serializers.IntegerField(
         allow_null=True, help_text="Client rating (1-5 stars)"
@@ -192,28 +143,25 @@ class OrderAssignmentReviewSerializer(serializers.Serializer):
     client_review = serializers.CharField(
         allow_null=True, allow_blank=True, help_text="Client review text"
     )
-    provider_rating = serializers.IntegerField(
-        allow_null=True, help_text="Provider rating (1-5 stars)"
+    master_rating = serializers.IntegerField(
+        allow_null=True, help_text="Master rating (1-5 stars)"
     )
-    provider_review = serializers.CharField(
-        allow_null=True, allow_blank=True, help_text="Provider review text"
+    master_review = serializers.CharField(
+        allow_null=True, allow_blank=True, help_text="Master review text"
     )
-    completed_at = serializers.DateTimeField(help_text="Order completion date")
+    completed_at = serializers.DateTimeField(help_text="Job completion date")
 
 
 class AppFeedbackSerializer(AbstractTimestampedModelSerializer):
     """Serializer for app feedback and rating system."""
 
-    user_name = serializers.CharField(source="user.username", read_only=True)
-    user_email = serializers.EmailField(source="user.email", read_only=True)
+    user = UserDetailChildSerializer(read_only=True)
 
     class Meta:
         model = AppFeedback
         fields = (
             "id",
             "user",
-            "user_name",
-            "user_email",
             "general_opinion",
             "detailed_feedback",
             "overall_rating",

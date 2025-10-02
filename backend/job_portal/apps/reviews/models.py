@@ -15,7 +15,7 @@ class AppPlatform(models.TextChoices):
 
 
 class Review(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Simple review and rating system for service providers."""
+    """Simple review and rating system for masters."""
 
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='reviews')
     reviewer = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='reviews_given')

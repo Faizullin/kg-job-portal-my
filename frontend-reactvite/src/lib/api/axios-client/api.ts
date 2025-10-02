@@ -22,6 +22,49 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError } from './base';
 
 /**
+ * Serializer for job assignment completion attachments.
+ * @export
+ * @interface AssignmentAttachment
+ */
+export interface AssignmentAttachment {
+    /**
+     * 
+     * @type {number}
+     * @memberof AssignmentAttachment
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof AssignmentAttachment
+     */
+    'original_filename': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AssignmentAttachment
+     */
+    'file_url': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof AssignmentAttachment
+     */
+    'size': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof AssignmentAttachment
+     */
+    'file_type'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AssignmentAttachment
+     */
+    'created_at': string;
+}
+/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface AssignmentMaster
@@ -400,6 +443,146 @@ export interface ChatRoomCreate {
     'updated_at': string;
 }
 /**
+ * 
+ * @export
+ * @interface ChatRoomForSearchResponse
+ */
+export interface ChatRoomForSearchResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatRoomForSearchResponse
+     */
+    'id': number;
+    /**
+     * 
+     * @type {ChatRoomForSearchResponseMaster}
+     * @memberof ChatRoomForSearchResponse
+     */
+    'master': ChatRoomForSearchResponseMaster;
+}
+/**
+ * 
+ * @export
+ * @interface ChatRoomForSearchResponseMaster
+ */
+export interface ChatRoomForSearchResponseMaster {
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'id': number;
+    /**
+     * 
+     * @type {AssignmentMasterUser}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'user': AssignmentMasterUser;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'works_remotely'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'accepts_clients_at_location'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'travels_to_clients'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'is_available'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'hourly_rate'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'response_time_hours'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'work_experience_start_year'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'education_institution'?: string;
+    /**
+     * e.g., 2005-2009
+     * @type {string}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'education_years'?: string;
+    /**
+     * List of languages spoken
+     * @type {any}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'languages'?: any;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'about_description'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'current_location'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'is_online'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'last_seen'?: string | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'is_verified_provider'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'is_top_master'?: boolean;
+    /**
+     * 
+     * @type {PublicMasterProfileProfession}
+     * @memberof ChatRoomForSearchResponseMaster
+     */
+    'profession': PublicMasterProfileProfession;
+}
+/**
  * * `job_chat` - Job Chat * `support_chat` - Support Chat * `general_chat` - General Chat
  * @export
  * @enum {string}
@@ -594,6 +777,12 @@ export interface EmployerProfileCreateUpdate {
     'id': number;
     /**
      * 
+     * @type {string}
+     * @memberof EmployerProfileCreateUpdate
+     */
+    'contact_phone'?: string;
+    /**
+     * 
      * @type {Array<number>}
      * @memberof EmployerProfileCreateUpdate
      */
@@ -681,10 +870,47 @@ export interface FirebaseAuthResponseUser {
     'photo_url'?: string | null;
     /**
      * 
-     * @type {Array<string>}
+     * @type {string}
      * @memberof FirebaseAuthResponseUser
      */
-    'groups': Array<string>;
+    'groups': string;
+}
+/**
+ * Comprehensive serializer for home page data with proper OpenAPI documentation.
+ * @export
+ * @interface HomePageData
+ */
+export interface HomePageData {
+    /**
+     * Featured service categories
+     * @type {Array<ServiceCategoryWithCount>}
+     * @memberof HomePageData
+     */
+    'featured_categories': Array<ServiceCategoryWithCount>;
+    /**
+     * Recommended masters for the user
+     * @type {Array<MasterRecommendation>}
+     * @memberof HomePageData
+     */
+    'recommended_masters': Array<MasterRecommendation>;
+    /**
+     * Current user location
+     * @type {string}
+     * @memberof HomePageData
+     */
+    'user_location': string;
+    /**
+     * Total number of available masters
+     * @type {number}
+     * @memberof HomePageData
+     */
+    'total_masters_count': number;
+    /**
+     * Total number of published jobs
+     * @type {number}
+     * @memberof HomePageData
+     */
+    'total_jobs_count': number;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -1185,6 +1411,12 @@ export interface JobAssignment {
      * @memberof JobAssignment
      */
     'accepted_application': JobAssignmentAcceptedApplication;
+    /**
+     * 
+     * @type {Array<AssignmentAttachment>}
+     * @memberof JobAssignment
+     */
+    'attachments': Array<AssignmentAttachment>;
 }
 /**
  * 
@@ -1286,6 +1518,37 @@ export interface JobAssignmentApiActionData {
     'assignment': WrapperAssignment;
 }
 /**
+ * Serializer for completing job assignments with rating and review.
+ * @export
+ * @interface JobAssignmentCompletion
+ */
+export interface JobAssignmentCompletion {
+    /**
+     * 
+     * @type {number}
+     * @memberof JobAssignmentCompletion
+     */
+    'id': number;
+    /**
+     * Notes about the completion
+     * @type {string}
+     * @memberof JobAssignmentCompletion
+     */
+    'completion_notes'?: string;
+    /**
+     * Rating for the client (1-5 stars)
+     * @type {number}
+     * @memberof JobAssignmentCompletion
+     */
+    'client_rating'?: number;
+    /**
+     * Review text for the client
+     * @type {string}
+     * @memberof JobAssignmentCompletion
+     */
+    'client_review'?: string;
+}
+/**
  * 
  * @export
  * @interface JobAssignmentMaster
@@ -1305,6 +1568,67 @@ export interface JobAssignmentMaster {
     'user': AssignmentMasterUser;
 }
 /**
+ * Serializer for job assignment with review data.
+ * @export
+ * @interface JobAssignmentReview
+ */
+export interface JobAssignmentReview {
+    /**
+     * Job ID
+     * @type {number}
+     * @memberof JobAssignmentReview
+     */
+    'job_id': number;
+    /**
+     * Job title
+     * @type {string}
+     * @memberof JobAssignmentReview
+     */
+    'job_title': string;
+    /**
+     * Master name
+     * @type {string}
+     * @memberof JobAssignmentReview
+     */
+    'master_name': string;
+    /**
+     * Client name
+     * @type {string}
+     * @memberof JobAssignmentReview
+     */
+    'client_name': string;
+    /**
+     * Client rating (1-5 stars)
+     * @type {number}
+     * @memberof JobAssignmentReview
+     */
+    'client_rating': number | null;
+    /**
+     * Client review text
+     * @type {string}
+     * @memberof JobAssignmentReview
+     */
+    'client_review': string | null;
+    /**
+     * Master rating (1-5 stars)
+     * @type {number}
+     * @memberof JobAssignmentReview
+     */
+    'master_rating': number | null;
+    /**
+     * Master review text
+     * @type {string}
+     * @memberof JobAssignmentReview
+     */
+    'master_review': string | null;
+    /**
+     * Job completion date
+     * @type {string}
+     * @memberof JobAssignmentReview
+     */
+    'completed_at': string;
+}
+/**
  * * `assigned` - Assigned * `in_progress` - In Progress * `completed` - Completed * `cancelled` - Cancelled
  * @export
  * @enum {string}
@@ -1319,7 +1643,7 @@ export enum JobAssignmentStatusEnum {
 
 
 /**
- * Optimized serializer for job search results.
+ * Simplified serializer for job search results using nested serializers.
  * @export
  * @interface JobSearch
  */
@@ -1348,24 +1672,6 @@ export interface JobSearch {
      * @memberof JobSearch
      */
     'status'?: Status30eEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobSearch
-     */
-    'status_display': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobSearch
-     */
-    'employer_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobSearch
-     */
-    'employer_avatar': string;
     /**
      * 
      * @type {JobSearchServiceSubcategory}
@@ -1407,12 +1713,6 @@ export interface JobSearch {
      * @type {string}
      * @memberof JobSearch
      */
-    'urgency_display': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobSearch
-     */
     'budget_min'?: string | null;
     /**
      * 
@@ -1425,12 +1725,6 @@ export interface JobSearch {
      * @type {string}
      * @memberof JobSearch
      */
-    'budget_display': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobSearch
-     */
     'final_price'?: string | null;
     /**
      * 
@@ -1438,12 +1732,6 @@ export interface JobSearch {
      * @memberof JobSearch
      */
     'special_requirements'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobSearch
-     */
-    'time_since_posted': string;
     /**
      * 
      * @type {string}
@@ -1600,6 +1888,63 @@ export interface LogoutResponse {
     'message': string;
 }
 /**
+ * Basic master serializer for review data.
+ * @export
+ * @interface MasterBasic
+ */
+export interface MasterBasic {
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterBasic
+     */
+    'id': number;
+    /**
+     * 
+     * @type {AssignmentMasterUser}
+     * @memberof MasterBasic
+     */
+    'user': AssignmentMasterUser;
+}
+/**
+ * Serializer for master online status update request.
+ * @export
+ * @interface MasterOnlineStatusRequest
+ */
+export interface MasterOnlineStatusRequest {
+    /**
+     * Online status to set
+     * @type {boolean}
+     * @memberof MasterOnlineStatusRequest
+     */
+    'is_online'?: boolean;
+}
+/**
+ * Serializer for master online status update response.
+ * @export
+ * @interface MasterOnlineStatusResponse
+ */
+export interface MasterOnlineStatusResponse {
+    /**
+     * Success message
+     * @type {string}
+     * @memberof MasterOnlineStatusResponse
+     */
+    'message': string;
+    /**
+     * Current online status
+     * @type {boolean}
+     * @memberof MasterOnlineStatusResponse
+     */
+    'is_online': boolean;
+    /**
+     * Last seen timestamp
+     * @type {string}
+     * @memberof MasterOnlineStatusResponse
+     */
+    'last_seen': string;
+}
+/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface MasterProfileCreateUpdate
@@ -1715,6 +2060,153 @@ export interface MasterProfileCreateUpdate {
     'is_top_master': boolean;
 }
 /**
+ * Optimized serializer for master recommendations.
+ * @export
+ * @interface MasterRecommendation
+ */
+export interface MasterRecommendation {
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterRecommendation
+     */
+    'id': number;
+    /**
+     * 
+     * @type {AssignmentMasterUser}
+     * @memberof MasterRecommendation
+     */
+    'user': AssignmentMasterUser;
+    /**
+     * 
+     * @type {MasterRecommendationProfession}
+     * @memberof MasterRecommendation
+     */
+    'profession': MasterRecommendationProfession;
+    /**
+     * 
+     * @type {MasterRecommendationStatistics}
+     * @memberof MasterRecommendation
+     */
+    'statistics': MasterRecommendationStatistics;
+    /**
+     * 
+     * @type {Array<ServiceSubcategoryBasic>}
+     * @memberof MasterRecommendation
+     */
+    'services_offered': Array<ServiceSubcategoryBasic>;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterRecommendation
+     */
+    'hourly_rate'?: string | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterRecommendation
+     */
+    'is_online'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterRecommendation
+     */
+    'current_location'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterRecommendation
+     */
+    'response_time_hours'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterRecommendation
+     */
+    'is_verified_provider'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterRecommendation
+     */
+    'is_top_master'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterRecommendation
+     */
+    'works_remotely'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterRecommendation
+     */
+    'travels_to_clients'?: boolean;
+}
+/**
+ * 
+ * @export
+ * @interface MasterRecommendationProfession
+ */
+export interface MasterRecommendationProfession {
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterRecommendationProfession
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterRecommendationProfession
+     */
+    'name': string;
+}
+/**
+ * 
+ * @export
+ * @interface MasterRecommendationStatistics
+ */
+export interface MasterRecommendationStatistics {
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterRecommendationStatistics
+     */
+    'id': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterRecommendationStatistics
+     */
+    'total_jobs_completed'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterRecommendationStatistics
+     */
+    'on_time_percentage'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterRecommendationStatistics
+     */
+    'repeat_customer_percentage'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterRecommendationStatistics
+     */
+    'average_rating'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterRecommendationStatistics
+     */
+    'total_reviews'?: number;
+}
+/**
  * 
  * @export
  * @interface MasterResume
@@ -1777,7 +2269,7 @@ export enum MasterResumeStatusEnum {
 
 
 /**
- * Optimized serializer for master search results.
+ * Enhanced serializer for master search results matching the image requirements.
  * @export
  * @interface MasterSearch
  */
@@ -1796,46 +2288,34 @@ export interface MasterSearch {
     'user': AssignmentMasterUser;
     /**
      * 
-     * @type {string}
+     * @type {MasterRecommendationProfession}
      * @memberof MasterSearch
      */
-    'display_name': string;
+    'profession': MasterRecommendationProfession;
     /**
      * 
-     * @type {MasterSearchProfession}
+     * @type {MasterRecommendationStatistics}
      * @memberof MasterSearch
      */
-    'profession': MasterSearchProfession;
+    'statistics': MasterRecommendationStatistics;
     /**
      * 
-     * @type {string}
+     * @type {Array<ServiceSubcategoryBasic>}
      * @memberof MasterSearch
      */
-    'statistics': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof MasterSearch
-     */
-    'rating': string;
+    'services_offered': Array<ServiceSubcategoryBasic>;
     /**
      * 
      * @type {Array<MasterSkill>}
      * @memberof MasterSearch
      */
-    'skills': Array<MasterSkill>;
+    'master_skills': Array<MasterSkill>;
     /**
      * 
-     * @type {Array<PortfolioItem>}
+     * @type {Array<PortfolioItemBasic>}
      * @memberof MasterSearch
      */
-    'portfolio_items': Array<PortfolioItem>;
-    /**
-     * 
-     * @type {Array<ServiceSubcategory>}
-     * @memberof MasterSearch
-     */
-    'services_offered': Array<ServiceSubcategory>;
+    'portfolio_items': Array<PortfolioItemBasic>;
     /**
      * 
      * @type {string}
@@ -1848,12 +2328,6 @@ export interface MasterSearch {
      * @memberof MasterSearch
      */
     'is_online'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof MasterSearch
-     */
-    'is_online_display': string;
     /**
      * 
      * @type {string}
@@ -1896,25 +2370,6 @@ export interface MasterSearch {
      * @memberof MasterSearch
      */
     'accepts_clients_at_location'?: boolean;
-}
-/**
- * 
- * @export
- * @interface MasterSearchProfession
- */
-export interface MasterSearchProfession {
-    /**
-     * 
-     * @type {number}
-     * @memberof MasterSearchProfession
-     */
-    'id': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof MasterSearchProfession
-     */
-    'name': string;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -2562,6 +3017,37 @@ export interface PaginatedJobAssignmentList {
 /**
  * 
  * @export
+ * @interface PaginatedJobAssignmentReviewList
+ */
+export interface PaginatedJobAssignmentReviewList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedJobAssignmentReviewList
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedJobAssignmentReviewList
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedJobAssignmentReviewList
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<JobAssignmentReview>}
+     * @memberof PaginatedJobAssignmentReviewList
+     */
+    'results'?: Array<JobAssignmentReview>;
+}
+/**
+ * 
+ * @export
  * @interface PaginatedJobList
  */
 export interface PaginatedJobList {
@@ -2872,37 +3358,6 @@ export interface PaginatedProfessionList {
 /**
  * 
  * @export
- * @interface PaginatedPublicMasterProfileDetailList
- */
-export interface PaginatedPublicMasterProfileDetailList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PaginatedPublicMasterProfileDetailList
-     */
-    'count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedPublicMasterProfileDetailList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PaginatedPublicMasterProfileDetailList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<PublicMasterProfileDetail>}
-     * @memberof PaginatedPublicMasterProfileDetailList
-     */
-    'results'?: Array<PublicMasterProfileDetail>;
-}
-/**
- * 
- * @export
  * @interface PaginatedPublicMasterProfileList
  */
 export interface PaginatedPublicMasterProfileList {
@@ -2930,6 +3385,37 @@ export interface PaginatedPublicMasterProfileList {
      * @memberof PaginatedPublicMasterProfileList
      */
     'results'?: Array<PublicMasterProfile>;
+}
+/**
+ * 
+ * @export
+ * @interface PaginatedReviewList
+ */
+export interface PaginatedReviewList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedReviewList
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedReviewList
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedReviewList
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<Review>}
+     * @memberof PaginatedReviewList
+     */
+    'results'?: Array<Review>;
 }
 /**
  * 
@@ -3333,6 +3819,12 @@ export interface PatchedEmployerProfileCreateUpdate {
     'id'?: number;
     /**
      * 
+     * @type {string}
+     * @memberof PatchedEmployerProfileCreateUpdate
+     */
+    'contact_phone'?: string;
+    /**
+     * 
      * @type {Array<number>}
      * @memberof PatchedEmployerProfileCreateUpdate
      */
@@ -3598,6 +4090,12 @@ export interface PatchedJobAssignment {
      * @memberof PatchedJobAssignment
      */
     'accepted_application'?: JobAssignmentAcceptedApplication;
+    /**
+     * 
+     * @type {Array<AssignmentAttachment>}
+     * @memberof PatchedJobAssignment
+     */
+    'attachments'?: Array<AssignmentAttachment>;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -4599,6 +5097,37 @@ export interface PortfolioItem {
     'created_at': string;
 }
 /**
+ * Basic portfolio item serializer.
+ * @export
+ * @interface PortfolioItemBasic
+ */
+export interface PortfolioItemBasic {
+    /**
+     * 
+     * @type {number}
+     * @memberof PortfolioItemBasic
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PortfolioItemBasic
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PortfolioItemBasic
+     */
+    'image': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PortfolioItemBasic
+     */
+    'description'?: string;
+}
+/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface Profession
@@ -4614,6 +5143,25 @@ export interface Profession {
      * 
      * @type {string}
      * @memberof Profession
+     */
+    'name': string;
+}
+/**
+ * Basic profession information.
+ * @export
+ * @interface ProfessionBasic
+ */
+export interface ProfessionBasic {
+    /**
+     * 
+     * @type {number}
+     * @memberof ProfessionBasic
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProfessionBasic
      */
     'name': string;
 }
@@ -4747,13 +5295,13 @@ export interface PublicMasterProfile {
     'is_top_master'?: boolean;
     /**
      * 
-     * @type {MasterSearchProfession}
+     * @type {PublicMasterProfileProfession}
      * @memberof PublicMasterProfile
      */
-    'profession': MasterSearchProfession;
+    'profession': PublicMasterProfileProfession;
 }
 /**
- * Detailed serializer for service provider profile.
+ * Detailed serializer for master profile.
  * @export
  * @interface PublicMasterProfileDetail
  */
@@ -4868,10 +5416,10 @@ export interface PublicMasterProfileDetail {
     'is_top_master'?: boolean;
     /**
      * 
-     * @type {MasterSearchProfession}
+     * @type {PublicMasterProfileProfession}
      * @memberof PublicMasterProfileDetail
      */
-    'profession': MasterSearchProfession;
+    'profession': PublicMasterProfileProfession;
     /**
      * 
      * @type {Array<MasterSkill>}
@@ -4892,53 +5440,29 @@ export interface PublicMasterProfileDetail {
     'certificates': Array<Certificate>;
     /**
      * 
-     * @type {PublicMasterProfileDetailStatistics}
+     * @type {MasterRecommendationStatistics}
      * @memberof PublicMasterProfileDetail
      */
-    'statistics': PublicMasterProfileDetailStatistics;
+    'statistics': MasterRecommendationStatistics;
 }
 /**
  * 
  * @export
- * @interface PublicMasterProfileDetailStatistics
+ * @interface PublicMasterProfileProfession
  */
-export interface PublicMasterProfileDetailStatistics {
+export interface PublicMasterProfileProfession {
     /**
      * 
      * @type {number}
-     * @memberof PublicMasterProfileDetailStatistics
+     * @memberof PublicMasterProfileProfession
      */
     'id': number;
     /**
      * 
-     * @type {number}
-     * @memberof PublicMasterProfileDetailStatistics
-     */
-    'total_jobs_completed'?: number;
-    /**
-     * 
      * @type {string}
-     * @memberof PublicMasterProfileDetailStatistics
+     * @memberof PublicMasterProfileProfession
      */
-    'on_time_percentage'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PublicMasterProfileDetailStatistics
-     */
-    'repeat_customer_percentage'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PublicMasterProfileDetailStatistics
-     */
-    'average_rating'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof PublicMasterProfileDetailStatistics
-     */
-    'total_reviews'?: number;
+    'name': string;
 }
 /**
  * 
@@ -4964,6 +5488,117 @@ export interface Rating {
      * @memberof Rating
      */
     'client_review'?: string;
+}
+/**
+ * Serializer for reading review data with nested serializers.
+ * @export
+ * @interface Review
+ */
+export interface Review {
+    /**
+     * 
+     * @type {number}
+     * @memberof Review
+     */
+    'id': number;
+    /**
+     * 
+     * @type {JobApplicationJob}
+     * @memberof Review
+     */
+    'job': JobApplicationJob;
+    /**
+     * 
+     * @type {AssignmentMasterUser}
+     * @memberof Review
+     */
+    'reviewer': AssignmentMasterUser;
+    /**
+     * 
+     * @type {ReviewMaster}
+     * @memberof Review
+     */
+    'master': ReviewMaster;
+    /**
+     * 
+     * @type {number}
+     * @memberof Review
+     */
+    'rating': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Review
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Review
+     */
+    'comment'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Review
+     */
+    'is_verified': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof Review
+     */
+    'created_at': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Review
+     */
+    'updated_at': string;
+}
+/**
+ * Serializer for review analytics data with OpenAPI support.
+ * @export
+ * @interface ReviewAnalytics
+ */
+export interface ReviewAnalytics {
+    /**
+     * Total number of reviews
+     * @type {number}
+     * @memberof ReviewAnalytics
+     */
+    'total_reviews': number;
+    /**
+     * Average rating across all reviews
+     * @type {string}
+     * @memberof ReviewAnalytics
+     */
+    'average_rating': string;
+    /**
+     * Distribution of ratings (1-5 stars)
+     * @type {Array<{ [key: string]: any; }>}
+     * @memberof ReviewAnalytics
+     */
+    'rating_distribution': Array<{ [key: string]: any; }>;
+}
+/**
+ * 
+ * @export
+ * @interface ReviewMaster
+ */
+export interface ReviewMaster {
+    /**
+     * 
+     * @type {number}
+     * @memberof ReviewMaster
+     */
+    'id': number;
+    /**
+     * 
+     * @type {AssignmentMasterUser}
+     * @memberof ReviewMaster
+     */
+    'user': AssignmentMasterUser;
 }
 /**
  * * `member` - Member * `admin` - Admin * `moderator` - Moderator
@@ -5331,6 +5966,49 @@ export interface ServiceCategoryCreateUpdate {
     'requires_background_check'?: boolean;
 }
 /**
+ * Service category with master count for home page.
+ * @export
+ * @interface ServiceCategoryWithCount
+ */
+export interface ServiceCategoryWithCount {
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceCategoryWithCount
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryWithCount
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryWithCount
+     */
+    'icon'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryWithCount
+     */
+    'color'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryWithCount
+     */
+    'banner_image'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceCategoryWithCount
+     */
+    'master_count': number;
+}
+/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface ServiceSubcategory
@@ -5396,6 +6074,25 @@ export interface ServiceSubcategory {
      * @memberof ServiceSubcategory
      */
     'complexity_level'?: ComplexityLevelEnum;
+}
+/**
+ * Basic service subcategory serializer.
+ * @export
+ * @interface ServiceSubcategoryBasic
+ */
+export interface ServiceSubcategoryBasic {
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceSubcategoryBasic
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryBasic
+     */
+    'name': string;
 }
 /**
  * Serializer for creating and updating service subcategories.
@@ -6115,10 +6812,10 @@ export interface UserProfile {
     'photo_url'?: string | null;
     /**
      * 
-     * @type {Array<string>}
+     * @type {string}
      * @memberof UserProfile
      */
-    'groups': Array<string>;
+    'groups': string;
 }
 /**
  * Serializer for updating user profile - enhanced version of api_users EditUserSettingsView
@@ -6248,6 +6945,12 @@ export interface WrapperAssignment {
      * @memberof WrapperAssignment
      */
     'accepted_application': JobAssignmentAcceptedApplication;
+    /**
+     * 
+     * @type {Array<AssignmentAttachment>}
+     * @memberof WrapperAssignment
+     */
+    'attachments': Array<AssignmentAttachment>;
 }
 
 /**
@@ -6881,11 +7584,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsDestroy: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1AssignmentsDestroy: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1AssignmentsDestroy', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/`
@@ -6973,12 +7676,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {PatchedJobAssignment} [patchedJobAssignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsPartialUpdate: async (id: number, patchedJobAssignment?: PatchedJobAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1AssignmentsPartialUpdate: async (id: string, patchedJobAssignment?: PatchedJobAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1AssignmentsPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/`
@@ -7015,12 +7718,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Rate a completed job assignment
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {Rating} [rating] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsRateCreate: async (id: number, rating?: Rating, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1AssignmentsRateCreate: async (id: string, rating?: Rating, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1AssignmentsRateCreate', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/rate/`
@@ -7057,11 +7760,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1AssignmentsRetrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1AssignmentsRetrieve', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/`
@@ -7095,12 +7798,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {JobAssignment} [jobAssignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsUpdate: async (id: number, jobAssignment?: JobAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1AssignmentsUpdate: async (id: string, jobAssignment?: JobAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1AssignmentsUpdate', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/`
@@ -7137,12 +7840,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Update progress notes for an assignment
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {PatchedProgressUpdate} [patchedProgressUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsUpdateProgressPartialUpdate: async (id: number, patchedProgressUpdate?: PatchedProgressUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1AssignmentsUpdateProgressPartialUpdate: async (id: string, patchedProgressUpdate?: PatchedProgressUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1AssignmentsUpdateProgressPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/update_progress/`
@@ -7258,56 +7961,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatRoomsAddParticipants: async (id: string, chatRoom: ChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsAddParticipants: async (id: string, chatRoom: ChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatRoomsAddParticipants', 'id', id)
+            assertParamExists('v1ChatsRoomsAddParticipants', 'id', id)
             // verify required parameter 'chatRoom' is not null or undefined
-            assertParamExists('v1ChatRoomsAddParticipants', 'chatRoom', chatRoom)
+            assertParamExists('v1ChatsRoomsAddParticipants', 'chatRoom', chatRoom)
             const localVarPath = `/api/v1/chats/rooms/{id}/add_participants/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(chatRoom, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Leave a chat room
-         * @param {string} id 
-         * @param {ChatRoom} chatRoom 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsLeave: async (id: string, chatRoom: ChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatRoomsLeave', 'id', id)
-            // verify required parameter 'chatRoom' is not null or undefined
-            assertParamExists('v1ChatRoomsLeave', 'chatRoom', chatRoom)
-            const localVarPath = `/api/v1/chats/rooms/{id}/leave/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7411,6 +8070,91 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get chats for master
+         * @param {number} masterId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsForMaster: async (masterId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'masterId' is not null or undefined
+            assertParamExists('v1ChatsRoomsForMaster', 'masterId', masterId)
+            const localVarPath = `/api/v1/chats/rooms/for_master/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (masterId !== undefined) {
+                localVarQueryParameter['master_id'] = masterId;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Leave a chat room
+         * @param {string} id 
+         * @param {ChatRoom} chatRoom 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsLeave: async (id: string, chatRoom: ChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ChatsRoomsLeave', 'id', id)
+            // verify required parameter 'chatRoom' is not null or undefined
+            assertParamExists('v1ChatsRoomsLeave', 'chatRoom', chatRoom)
+            const localVarPath = `/api/v1/chats/rooms/{id}/leave/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(chatRoom, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9328,13 +10072,48 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Complete an assignment
-         * @param {number} id A unique integer value identifying this Job Assignment.
-         * @param {JobAssignment} [jobAssignment] 
+         * Returns featured categories, recommended masters, and statistics for the home page. Prioritizes top masters first, then fills with additional masters if needed.
+         * @summary Get home page data with master recommendations
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobAssignmentsComplete: async (id: number, jobAssignment?: JobAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1HomeClientRetrieve: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/home/client`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Complete an assignment with optional rating and review
+         * @param {string} id 
+         * @param {JobAssignmentCompletion} [jobAssignmentCompletion] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobAssignmentsComplete: async (id: string, jobAssignmentCompletion?: JobAssignmentCompletion, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1JobAssignmentsComplete', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/complete/`
@@ -9362,7 +10141,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(jobAssignment, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobAssignmentCompletion, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9371,12 +10150,12 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Start an assignment
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {JobAssignment} [jobAssignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobAssignmentsStart: async (id: number, jobAssignment?: JobAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1JobAssignmentsStart: async (id: string, jobAssignment?: JobAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1JobAssignmentsStart', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/start/`
@@ -11557,6 +12336,386 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
+         * Get review analytics for a specific master
+         * @param {number} masterId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ReviewsAnalyticsRetrieve: async (masterId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'masterId' is not null or undefined
+            assertParamExists('v1ReviewsAnalyticsRetrieve', 'masterId', masterId)
+            const localVarPath = `/api/v1/reviews/analytics/{master_id}/`
+                .replace(`{${"master_id"}}`, encodeURIComponent(String(masterId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get review data from job assignments
+         * @param {boolean} [isVerified] 
+         * @param {number} [job] 
+         * @param {number} [master] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [rating] 
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ReviewsAssignmentsList: async (isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/reviews/assignments/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (isVerified !== undefined) {
+                localVarQueryParameter['is_verified'] = isVerified;
+            }
+
+            if (job !== undefined) {
+                localVarQueryParameter['job'] = job;
+            }
+
+            if (master !== undefined) {
+                localVarQueryParameter['master'] = master;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (rating !== undefined) {
+                localVarQueryParameter['rating'] = rating;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get all reviews for a specific job
+         * @param {number} jobId 
+         * @param {boolean} [isVerified] 
+         * @param {number} [job] 
+         * @param {number} [master] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [rating] 
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ReviewsJobList: async (jobId: number, isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'jobId' is not null or undefined
+            assertParamExists('v1ReviewsJobList', 'jobId', jobId)
+            const localVarPath = `/api/v1/reviews/job/{job_id}/`
+                .replace(`{${"job_id"}}`, encodeURIComponent(String(jobId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (isVerified !== undefined) {
+                localVarQueryParameter['is_verified'] = isVerified;
+            }
+
+            if (job !== undefined) {
+                localVarQueryParameter['job'] = job;
+            }
+
+            if (master !== undefined) {
+                localVarQueryParameter['master'] = master;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (rating !== undefined) {
+                localVarQueryParameter['rating'] = rating;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Comprehensive review management with additional actions.
+         * @param {boolean} [isVerified] 
+         * @param {number} [job] 
+         * @param {number} [master] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [rating] 
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ReviewsList: async (isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/reviews/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (isVerified !== undefined) {
+                localVarQueryParameter['is_verified'] = isVerified;
+            }
+
+            if (job !== undefined) {
+                localVarQueryParameter['job'] = job;
+            }
+
+            if (master !== undefined) {
+                localVarQueryParameter['master'] = master;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (rating !== undefined) {
+                localVarQueryParameter['rating'] = rating;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get all reviews for a specific master
+         * @param {number} masterId 
+         * @param {boolean} [isVerified] 
+         * @param {number} [job] 
+         * @param {number} [master] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [rating] 
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ReviewsMasterList: async (masterId: number, isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'masterId' is not null or undefined
+            assertParamExists('v1ReviewsMasterList', 'masterId', masterId)
+            const localVarPath = `/api/v1/reviews/master/{master_id}/`
+                .replace(`{${"master_id"}}`, encodeURIComponent(String(masterId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (isVerified !== undefined) {
+                localVarQueryParameter['is_verified'] = isVerified;
+            }
+
+            if (job !== undefined) {
+                localVarQueryParameter['job'] = job;
+            }
+
+            if (master !== undefined) {
+                localVarQueryParameter['master'] = master;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (rating !== undefined) {
+                localVarQueryParameter['rating'] = rating;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Comprehensive review management with additional actions.
+         * @param {number} id A unique integer value identifying this Review.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ReviewsRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ReviewsRetrieve', 'id', id)
+            const localVarPath = `/api/v1/reviews/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Search jobs with optimized search serializer.
          * @param {number} [budgetMaxLte] 
          * @param {number} [budgetMinGte] 
@@ -11641,7 +12800,8 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Search masters with optimized search serializer.
+         * Search masters by keywords, profession, location, and other criteria. Returns paginated list of master profiles with portfolio items and skills.
+         * @summary Search for masters
          * @param {boolean} [isAvailable] 
          * @param {boolean} [isTopMaster] 
          * @param {boolean} [isVerifiedProvider] 
@@ -11722,15 +12882,10 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Master Profile Details
          * @param {number} id A unique integer value identifying this Master Profile.
-         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMastersDetails: async (id: number, idIn?: Array<number>, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMastersDetails: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1UsersMastersDetails', 'id', id)
             const localVarPath = `/api/v1/users/masters/{id}/details/`
@@ -11750,26 +12905,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
             // authentication tokenAuth required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (idIn) {
-                localVarQueryParameter['id__in'] = idIn.join(COLLECTION_FORMATS.csv);
-            }
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page_size'] = pageSize;
-            }
-
-            if (search !== undefined) {
-                localVarQueryParameter['search'] = search;
-            }
 
 
     
@@ -11873,6 +13008,44 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update online status for master
+         * @param {MasterOnlineStatusRequest} [masterOnlineStatusRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMastersUpdateOnlineStatus: async (masterOnlineStatusRequest?: MasterOnlineStatusRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/users/my/status`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(masterOnlineStatusRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12944,40 +14117,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Update online status
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1UsersMyStatusCreate: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/users/my/status`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * 
          * @param {number} [category] 
          * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
@@ -13276,11 +14415,11 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsDestroy(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async v1AssignmentsDestroy(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsDestroy(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -13299,55 +14438,55 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {PatchedJobAssignment} [patchedJobAssignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsPartialUpdate(id: number, patchedJobAssignment?: PatchedJobAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignment>> {
+        async v1AssignmentsPartialUpdate(id: string, patchedJobAssignment?: PatchedJobAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignment>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsPartialUpdate(id, patchedJobAssignment, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Rate a completed job assignment
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {Rating} [rating] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsRateCreate(id: number, rating?: Rating, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CResponse>> {
+        async v1AssignmentsRateCreate(id: string, rating?: Rating, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsRateCreate(id, rating, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * 
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignment>> {
+        async v1AssignmentsRetrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignment>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsRetrieve(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * 
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {JobAssignment} [jobAssignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsUpdate(id: number, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignment>> {
+        async v1AssignmentsUpdate(id: string, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignment>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsUpdate(id, jobAssignment, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Update progress notes for an assignment
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {PatchedProgressUpdate} [patchedProgressUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsUpdateProgressPartialUpdate(id: number, patchedProgressUpdate?: PatchedProgressUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignmentApiAction>> {
+        async v1AssignmentsUpdateProgressPartialUpdate(id: string, patchedProgressUpdate?: PatchedProgressUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignmentApiAction>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsUpdateProgressPartialUpdate(id, patchedProgressUpdate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -13377,19 +14516,8 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsAddParticipants(id, chatRoom, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Leave a chat room
-         * @param {string} id 
-         * @param {ChatRoom} chatRoom 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatRoomsLeave(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatRoomsLeave(id, chatRoom, options);
+        async v1ChatsRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsAddParticipants(id, chatRoom, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -13410,6 +14538,27 @@ export const V1ApiFp = function(configuration?: Configuration) {
          */
         async v1ChatsRoomsDestroy(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsDestroy(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get chats for master
+         * @param {number} masterId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatsRoomsForMaster(masterId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ChatRoomForSearchResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsForMaster(masterId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Leave a chat room
+         * @param {string} id 
+         * @param {ChatRoom} chatRoom 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatsRoomsLeave(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsLeave(id, chatRoom, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -13893,24 +15042,34 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Complete an assignment
-         * @param {number} id A unique integer value identifying this Job Assignment.
-         * @param {JobAssignment} [jobAssignment] 
+         * Returns featured categories, recommended masters, and statistics for the home page. Prioritizes top masters first, then fills with additional masters if needed.
+         * @summary Get home page data with master recommendations
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobAssignmentsComplete(id: number, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignmentApiAction>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobAssignmentsComplete(id, jobAssignment, options);
+        async v1HomeClientRetrieve(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<HomePageData>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1HomeClientRetrieve(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Complete an assignment with optional rating and review
+         * @param {string} id 
+         * @param {JobAssignmentCompletion} [jobAssignmentCompletion] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1JobAssignmentsComplete(id: string, jobAssignmentCompletion?: JobAssignmentCompletion, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignmentApiAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobAssignmentsComplete(id, jobAssignmentCompletion, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Start an assignment
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {JobAssignment} [jobAssignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobAssignmentsStart(id: number, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignmentApiAction>> {
+        async v1JobAssignmentsStart(id: string, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignmentApiAction>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobAssignmentsStart(id, jobAssignment, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -14458,6 +15617,96 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Get review analytics for a specific master
+         * @param {number} masterId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ReviewsAnalyticsRetrieve(masterId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ReviewAnalytics>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ReviewsAnalyticsRetrieve(masterId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get review data from job assignments
+         * @param {boolean} [isVerified] 
+         * @param {number} [job] 
+         * @param {number} [master] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [rating] 
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ReviewsAssignmentsList(isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedJobAssignmentReviewList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ReviewsAssignmentsList(isVerified, job, master, ordering, page, pageSize, rating, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get all reviews for a specific job
+         * @param {number} jobId 
+         * @param {boolean} [isVerified] 
+         * @param {number} [job] 
+         * @param {number} [master] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [rating] 
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ReviewsJobList(jobId: number, isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedReviewList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ReviewsJobList(jobId, isVerified, job, master, ordering, page, pageSize, rating, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Comprehensive review management with additional actions.
+         * @param {boolean} [isVerified] 
+         * @param {number} [job] 
+         * @param {number} [master] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [rating] 
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ReviewsList(isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedReviewList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ReviewsList(isVerified, job, master, ordering, page, pageSize, rating, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get all reviews for a specific master
+         * @param {number} masterId 
+         * @param {boolean} [isVerified] 
+         * @param {number} [job] 
+         * @param {number} [master] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [rating] 
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ReviewsMasterList(masterId: number, isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedReviewList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ReviewsMasterList(masterId, isVerified, job, master, ordering, page, pageSize, rating, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Comprehensive review management with additional actions.
+         * @param {number} id A unique integer value identifying this Review.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ReviewsRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Review>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ReviewsRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Search jobs with optimized search serializer.
          * @param {number} [budgetMaxLte] 
          * @param {number} [budgetMinGte] 
@@ -14477,7 +15726,8 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Search masters with optimized search serializer.
+         * Search masters by keywords, profession, location, and other criteria. Returns paginated list of master profiles with portfolio items and skills.
+         * @summary Search for masters
          * @param {boolean} [isAvailable] 
          * @param {boolean} [isTopMaster] 
          * @param {boolean} [isVerifiedProvider] 
@@ -14497,16 +15747,11 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Master Profile Details
          * @param {number} id A unique integer value identifying this Master Profile.
-         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMastersDetails(id: number, idIn?: Array<number>, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPublicMasterProfileDetailList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMastersDetails(id, idIn, ordering, page, pageSize, search, options);
+        async v1UsersMastersDetails(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PublicMasterProfileDetail>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMastersDetails(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14531,6 +15776,16 @@ export const V1ApiFp = function(configuration?: Configuration) {
          */
         async v1UsersMastersRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PublicMasterProfile>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMastersRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Update online status for master
+         * @param {MasterOnlineStatusRequest} [masterOnlineStatusRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequest?: MasterOnlineStatusRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterOnlineStatusResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14807,15 +16062,6 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Update online status
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1UsersMyStatusCreate(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<any>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyStatusCreate(options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
          * 
          * @param {number} [category] 
          * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
@@ -14974,11 +16220,11 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * 
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsDestroy(id: number, options?: any): AxiosPromise<void> {
+        v1AssignmentsDestroy(id: string, options?: any): AxiosPromise<void> {
             return localVarFp.v1AssignmentsDestroy(id, options).then((request) => request(axios, basePath));
         },
         /**
@@ -14995,51 +16241,51 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * 
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {PatchedJobAssignment} [patchedJobAssignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsPartialUpdate(id: number, patchedJobAssignment?: PatchedJobAssignment, options?: any): AxiosPromise<JobAssignment> {
+        v1AssignmentsPartialUpdate(id: string, patchedJobAssignment?: PatchedJobAssignment, options?: any): AxiosPromise<JobAssignment> {
             return localVarFp.v1AssignmentsPartialUpdate(id, patchedJobAssignment, options).then((request) => request(axios, basePath));
         },
         /**
          * Rate a completed job assignment
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {Rating} [rating] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsRateCreate(id: number, rating?: Rating, options?: any): AxiosPromise<CResponse> {
+        v1AssignmentsRateCreate(id: string, rating?: Rating, options?: any): AxiosPromise<CResponse> {
             return localVarFp.v1AssignmentsRateCreate(id, rating, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsRetrieve(id: number, options?: any): AxiosPromise<JobAssignment> {
+        v1AssignmentsRetrieve(id: string, options?: any): AxiosPromise<JobAssignment> {
             return localVarFp.v1AssignmentsRetrieve(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {JobAssignment} [jobAssignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsUpdate(id: number, jobAssignment?: JobAssignment, options?: any): AxiosPromise<JobAssignment> {
+        v1AssignmentsUpdate(id: string, jobAssignment?: JobAssignment, options?: any): AxiosPromise<JobAssignment> {
             return localVarFp.v1AssignmentsUpdate(id, jobAssignment, options).then((request) => request(axios, basePath));
         },
         /**
          * Update progress notes for an assignment
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {PatchedProgressUpdate} [patchedProgressUpdate] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsUpdateProgressPartialUpdate(id: number, patchedProgressUpdate?: PatchedProgressUpdate, options?: any): AxiosPromise<JobAssignmentApiAction> {
+        v1AssignmentsUpdateProgressPartialUpdate(id: string, patchedProgressUpdate?: PatchedProgressUpdate, options?: any): AxiosPromise<JobAssignmentApiAction> {
             return localVarFp.v1AssignmentsUpdateProgressPartialUpdate(id, patchedProgressUpdate, options).then((request) => request(axios, basePath));
         },
         /**
@@ -15066,18 +16312,8 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: any): AxiosPromise<ChatRoom> {
-            return localVarFp.v1ChatRoomsAddParticipants(id, chatRoom, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Leave a chat room
-         * @param {string} id 
-         * @param {ChatRoom} chatRoom 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatRoomsLeave(id: string, chatRoom: ChatRoom, options?: any): AxiosPromise<ChatRoom> {
-            return localVarFp.v1ChatRoomsLeave(id, chatRoom, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: any): AxiosPromise<ChatRoom> {
+            return localVarFp.v1ChatsRoomsAddParticipants(id, chatRoom, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing chat rooms
@@ -15096,6 +16332,25 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          */
         v1ChatsRoomsDestroy(id: string, options?: any): AxiosPromise<void> {
             return localVarFp.v1ChatsRoomsDestroy(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get chats for master
+         * @param {number} masterId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsForMaster(masterId: number, options?: any): AxiosPromise<Array<ChatRoomForSearchResponse>> {
+            return localVarFp.v1ChatsRoomsForMaster(masterId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Leave a chat room
+         * @param {string} id 
+         * @param {ChatRoom} chatRoom 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsLeave(id: string, chatRoom: ChatRoom, options?: any): AxiosPromise<ChatRoom> {
+            return localVarFp.v1ChatsRoomsLeave(id, chatRoom, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing chat rooms
@@ -15536,23 +16791,32 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1CoreSystemSettingsUpdate(id, systemSettingsCreateUpdate, options).then((request) => request(axios, basePath));
         },
         /**
-         * Complete an assignment
-         * @param {number} id A unique integer value identifying this Job Assignment.
-         * @param {JobAssignment} [jobAssignment] 
+         * Returns featured categories, recommended masters, and statistics for the home page. Prioritizes top masters first, then fills with additional masters if needed.
+         * @summary Get home page data with master recommendations
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobAssignmentsComplete(id: number, jobAssignment?: JobAssignment, options?: any): AxiosPromise<JobAssignmentApiAction> {
-            return localVarFp.v1JobAssignmentsComplete(id, jobAssignment, options).then((request) => request(axios, basePath));
+        v1HomeClientRetrieve(options?: any): AxiosPromise<HomePageData> {
+            return localVarFp.v1HomeClientRetrieve(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Complete an assignment with optional rating and review
+         * @param {string} id 
+         * @param {JobAssignmentCompletion} [jobAssignmentCompletion] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobAssignmentsComplete(id: string, jobAssignmentCompletion?: JobAssignmentCompletion, options?: any): AxiosPromise<JobAssignmentApiAction> {
+            return localVarFp.v1JobAssignmentsComplete(id, jobAssignmentCompletion, options).then((request) => request(axios, basePath));
         },
         /**
          * Start an assignment
-         * @param {number} id A unique integer value identifying this Job Assignment.
+         * @param {string} id 
          * @param {JobAssignment} [jobAssignment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobAssignmentsStart(id: number, jobAssignment?: JobAssignment, options?: any): AxiosPromise<JobAssignmentApiAction> {
+        v1JobAssignmentsStart(id: string, jobAssignment?: JobAssignment, options?: any): AxiosPromise<JobAssignmentApiAction> {
             return localVarFp.v1JobAssignmentsStart(id, jobAssignment, options).then((request) => request(axios, basePath));
         },
         /**
@@ -16049,6 +17313,90 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ResumesUpdate(id, masterResume, options).then((request) => request(axios, basePath));
         },
         /**
+         * Get review analytics for a specific master
+         * @param {number} masterId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ReviewsAnalyticsRetrieve(masterId: number, options?: any): AxiosPromise<ReviewAnalytics> {
+            return localVarFp.v1ReviewsAnalyticsRetrieve(masterId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get review data from job assignments
+         * @param {boolean} [isVerified] 
+         * @param {number} [job] 
+         * @param {number} [master] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [rating] 
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ReviewsAssignmentsList(isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options?: any): AxiosPromise<PaginatedJobAssignmentReviewList> {
+            return localVarFp.v1ReviewsAssignmentsList(isVerified, job, master, ordering, page, pageSize, rating, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get all reviews for a specific job
+         * @param {number} jobId 
+         * @param {boolean} [isVerified] 
+         * @param {number} [job] 
+         * @param {number} [master] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [rating] 
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ReviewsJobList(jobId: number, isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options?: any): AxiosPromise<PaginatedReviewList> {
+            return localVarFp.v1ReviewsJobList(jobId, isVerified, job, master, ordering, page, pageSize, rating, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Comprehensive review management with additional actions.
+         * @param {boolean} [isVerified] 
+         * @param {number} [job] 
+         * @param {number} [master] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [rating] 
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ReviewsList(isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options?: any): AxiosPromise<PaginatedReviewList> {
+            return localVarFp.v1ReviewsList(isVerified, job, master, ordering, page, pageSize, rating, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get all reviews for a specific master
+         * @param {number} masterId 
+         * @param {boolean} [isVerified] 
+         * @param {number} [job] 
+         * @param {number} [master] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {number} [rating] 
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ReviewsMasterList(masterId: number, isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options?: any): AxiosPromise<PaginatedReviewList> {
+            return localVarFp.v1ReviewsMasterList(masterId, isVerified, job, master, ordering, page, pageSize, rating, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Comprehensive review management with additional actions.
+         * @param {number} id A unique integer value identifying this Review.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ReviewsRetrieve(id: number, options?: any): AxiosPromise<Review> {
+            return localVarFp.v1ReviewsRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Search jobs with optimized search serializer.
          * @param {number} [budgetMaxLte] 
          * @param {number} [budgetMinGte] 
@@ -16067,7 +17415,8 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1SearchJobsList(budgetMaxLte, budgetMinGte, city, ordering, page, pageSize, search, serviceSubcategoryCategory, status, urgency, options).then((request) => request(axios, basePath));
         },
         /**
-         * Search masters with optimized search serializer.
+         * Search masters by keywords, profession, location, and other criteria. Returns paginated list of master profiles with portfolio items and skills.
+         * @summary Search for masters
          * @param {boolean} [isAvailable] 
          * @param {boolean} [isTopMaster] 
          * @param {boolean} [isVerifiedProvider] 
@@ -16086,16 +17435,11 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Master Profile Details
          * @param {number} id A unique integer value identifying this Master Profile.
-         * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {number} [page] A page number within the paginated result set.
-         * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMastersDetails(id: number, idIn?: Array<number>, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedPublicMasterProfileDetailList> {
-            return localVarFp.v1UsersMastersDetails(id, idIn, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1UsersMastersDetails(id: number, options?: any): AxiosPromise<PublicMasterProfileDetail> {
+            return localVarFp.v1UsersMastersDetails(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -16118,6 +17462,15 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          */
         v1UsersMastersRetrieve(id: number, options?: any): AxiosPromise<PublicMasterProfile> {
             return localVarFp.v1UsersMastersRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update online status for master
+         * @param {MasterOnlineStatusRequest} [masterOnlineStatusRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequest?: MasterOnlineStatusRequest, options?: any): AxiosPromise<MasterOnlineStatusResponse> {
+            return localVarFp.v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Crud for certificates.
@@ -16367,14 +17720,6 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1UsersMySkillsUpdate(id, masterSkill, options).then((request) => request(axios, basePath));
         },
         /**
-         * Update online status
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1UsersMyStatusCreate(options?: any): AxiosPromise<any> {
-            return localVarFp.v1UsersMyStatusCreate(options).then((request) => request(axios, basePath));
-        },
-        /**
          * 
          * @param {number} [category] 
          * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
@@ -16529,12 +17874,12 @@ export interface V1ApiInterface {
 
     /**
      * 
-     * @param {number} id A unique integer value identifying this Job Assignment.
+     * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsDestroy(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
+    v1AssignmentsDestroy(id: string, options?: AxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * 
@@ -16550,52 +17895,52 @@ export interface V1ApiInterface {
 
     /**
      * 
-     * @param {number} id A unique integer value identifying this Job Assignment.
+     * @param {string} id 
      * @param {PatchedJobAssignment} [patchedJobAssignment] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsPartialUpdate(id: number, patchedJobAssignment?: PatchedJobAssignment, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
+    v1AssignmentsPartialUpdate(id: string, patchedJobAssignment?: PatchedJobAssignment, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
 
     /**
      * Rate a completed job assignment
-     * @param {number} id A unique integer value identifying this Job Assignment.
+     * @param {string} id 
      * @param {Rating} [rating] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsRateCreate(id: number, rating?: Rating, options?: AxiosRequestConfig): AxiosPromise<CResponse>;
+    v1AssignmentsRateCreate(id: string, rating?: Rating, options?: AxiosRequestConfig): AxiosPromise<CResponse>;
 
     /**
      * 
-     * @param {number} id A unique integer value identifying this Job Assignment.
+     * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
+    v1AssignmentsRetrieve(id: string, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
 
     /**
      * 
-     * @param {number} id A unique integer value identifying this Job Assignment.
+     * @param {string} id 
      * @param {JobAssignment} [jobAssignment] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsUpdate(id: number, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
+    v1AssignmentsUpdate(id: string, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
 
     /**
      * Update progress notes for an assignment
-     * @param {number} id A unique integer value identifying this Job Assignment.
+     * @param {string} id 
      * @param {PatchedProgressUpdate} [patchedProgressUpdate] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsUpdateProgressPartialUpdate(id: number, patchedProgressUpdate?: PatchedProgressUpdate, options?: AxiosRequestConfig): AxiosPromise<JobAssignmentApiAction>;
+    v1AssignmentsUpdateProgressPartialUpdate(id: string, patchedProgressUpdate?: PatchedProgressUpdate, options?: AxiosRequestConfig): AxiosPromise<JobAssignmentApiAction>;
 
     /**
      * Authenticate or register a user using Firebase ID token.
@@ -16622,17 +17967,7 @@ export interface V1ApiInterface {
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
-
-    /**
-     * Leave a chat room
-     * @param {string} id 
-     * @param {ChatRoom} chatRoom 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1ChatRoomsLeave(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
+    v1ChatsRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
 
     /**
      * ViewSet for managing chat rooms
@@ -16651,6 +17986,25 @@ export interface V1ApiInterface {
      * @memberof V1ApiInterface
      */
     v1ChatsRoomsDestroy(id: string, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Get chats for master
+     * @param {number} masterId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatsRoomsForMaster(masterId: number, options?: AxiosRequestConfig): AxiosPromise<Array<ChatRoomForSearchResponse>>;
+
+    /**
+     * Leave a chat room
+     * @param {string} id 
+     * @param {ChatRoom} chatRoom 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatsRoomsLeave(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
 
     /**
      * ViewSet for managing chat rooms
@@ -17091,24 +18445,33 @@ export interface V1ApiInterface {
     v1CoreSystemSettingsUpdate(id: number, systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SystemSettingsCreateUpdate>;
 
     /**
-     * Complete an assignment
-     * @param {number} id A unique integer value identifying this Job Assignment.
-     * @param {JobAssignment} [jobAssignment] 
+     * Returns featured categories, recommended masters, and statistics for the home page. Prioritizes top masters first, then fills with additional masters if needed.
+     * @summary Get home page data with master recommendations
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobAssignmentsComplete(id: number, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): AxiosPromise<JobAssignmentApiAction>;
+    v1HomeClientRetrieve(options?: AxiosRequestConfig): AxiosPromise<HomePageData>;
+
+    /**
+     * Complete an assignment with optional rating and review
+     * @param {string} id 
+     * @param {JobAssignmentCompletion} [jobAssignmentCompletion] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1JobAssignmentsComplete(id: string, jobAssignmentCompletion?: JobAssignmentCompletion, options?: AxiosRequestConfig): AxiosPromise<JobAssignmentApiAction>;
 
     /**
      * Start an assignment
-     * @param {number} id A unique integer value identifying this Job Assignment.
+     * @param {string} id 
      * @param {JobAssignment} [jobAssignment] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobAssignmentsStart(id: number, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): AxiosPromise<JobAssignmentApiAction>;
+    v1JobAssignmentsStart(id: string, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): AxiosPromise<JobAssignmentApiAction>;
 
     /**
      * Apply to a job.
@@ -17604,6 +18967,90 @@ export interface V1ApiInterface {
     v1ResumesUpdate(id: number, masterResume: MasterResume, options?: AxiosRequestConfig): AxiosPromise<MasterResume>;
 
     /**
+     * Get review analytics for a specific master
+     * @param {number} masterId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsAnalyticsRetrieve(masterId: number, options?: AxiosRequestConfig): AxiosPromise<ReviewAnalytics>;
+
+    /**
+     * Get review data from job assignments
+     * @param {boolean} [isVerified] 
+     * @param {number} [job] 
+     * @param {number} [master] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {number} [rating] 
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsAssignmentsList(isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedJobAssignmentReviewList>;
+
+    /**
+     * Get all reviews for a specific job
+     * @param {number} jobId 
+     * @param {boolean} [isVerified] 
+     * @param {number} [job] 
+     * @param {number} [master] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {number} [rating] 
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsJobList(jobId: number, isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedReviewList>;
+
+    /**
+     * Comprehensive review management with additional actions.
+     * @param {boolean} [isVerified] 
+     * @param {number} [job] 
+     * @param {number} [master] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {number} [rating] 
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsList(isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedReviewList>;
+
+    /**
+     * Get all reviews for a specific master
+     * @param {number} masterId 
+     * @param {boolean} [isVerified] 
+     * @param {number} [job] 
+     * @param {number} [master] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {number} [rating] 
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsMasterList(masterId: number, isVerified?: boolean, job?: number, master?: number, ordering?: string, page?: number, pageSize?: number, rating?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedReviewList>;
+
+    /**
+     * Comprehensive review management with additional actions.
+     * @param {number} id A unique integer value identifying this Review.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ReviewsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<Review>;
+
+    /**
      * Search jobs with optimized search serializer.
      * @param {number} [budgetMaxLte] 
      * @param {number} [budgetMinGte] 
@@ -17622,7 +19069,8 @@ export interface V1ApiInterface {
     v1SearchJobsList(budgetMaxLte?: number, budgetMinGte?: number, city?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategoryCategory?: number, status?: 'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): AxiosPromise<PaginatedJobSearchList>;
 
     /**
-     * Search masters with optimized search serializer.
+     * Search masters by keywords, profession, location, and other criteria. Returns paginated list of master profiles with portfolio items and skills.
+     * @summary Search for masters
      * @param {boolean} [isAvailable] 
      * @param {boolean} [isTopMaster] 
      * @param {boolean} [isVerifiedProvider] 
@@ -17641,16 +19089,11 @@ export interface V1ApiInterface {
     /**
      * Master Profile Details
      * @param {number} id A unique integer value identifying this Master Profile.
-     * @param {Array<number>} [idIn] Несколько значений могут быть разделены запятыми.
-     * @param {string} [ordering] Which field to use when ordering the results.
-     * @param {number} [page] A page number within the paginated result set.
-     * @param {number} [pageSize] Number of results to return per page.
-     * @param {string} [search] A search term.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMastersDetails(id: number, idIn?: Array<number>, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedPublicMasterProfileDetailList>;
+    v1UsersMastersDetails(id: number, options?: AxiosRequestConfig): AxiosPromise<PublicMasterProfileDetail>;
 
     /**
      * 
@@ -17673,6 +19116,15 @@ export interface V1ApiInterface {
      * @memberof V1ApiInterface
      */
     v1UsersMastersRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<PublicMasterProfile>;
+
+    /**
+     * Update online status for master
+     * @param {MasterOnlineStatusRequest} [masterOnlineStatusRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequest?: MasterOnlineStatusRequest, options?: AxiosRequestConfig): AxiosPromise<MasterOnlineStatusResponse>;
 
     /**
      * Crud for certificates.
@@ -17920,14 +19372,6 @@ export interface V1ApiInterface {
      * @memberof V1ApiInterface
      */
     v1UsersMySkillsUpdate(id: string, masterSkill: MasterSkill, options?: AxiosRequestConfig): AxiosPromise<MasterSkill>;
-
-    /**
-     * Update online status
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1UsersMyStatusCreate(options?: AxiosRequestConfig): AxiosPromise<any>;
 
     /**
      * 
@@ -18228,11 +19672,11 @@ export interface V1ApiV1AssignmentsCreateRequest {
  */
 export interface V1ApiV1AssignmentsDestroyRequest {
     /**
-     * A unique integer value identifying this Job Assignment.
-     * @type {number}
+     * 
+     * @type {string}
      * @memberof V1ApiV1AssignmentsDestroy
      */
-    readonly id: number
+    readonly id: string
 }
 
 /**
@@ -18277,11 +19721,11 @@ export interface V1ApiV1AssignmentsListRequest {
  */
 export interface V1ApiV1AssignmentsPartialUpdateRequest {
     /**
-     * A unique integer value identifying this Job Assignment.
-     * @type {number}
+     * 
+     * @type {string}
      * @memberof V1ApiV1AssignmentsPartialUpdate
      */
-    readonly id: number
+    readonly id: string
 
     /**
      * 
@@ -18298,11 +19742,11 @@ export interface V1ApiV1AssignmentsPartialUpdateRequest {
  */
 export interface V1ApiV1AssignmentsRateCreateRequest {
     /**
-     * A unique integer value identifying this Job Assignment.
-     * @type {number}
+     * 
+     * @type {string}
      * @memberof V1ApiV1AssignmentsRateCreate
      */
-    readonly id: number
+    readonly id: string
 
     /**
      * 
@@ -18319,11 +19763,11 @@ export interface V1ApiV1AssignmentsRateCreateRequest {
  */
 export interface V1ApiV1AssignmentsRetrieveRequest {
     /**
-     * A unique integer value identifying this Job Assignment.
-     * @type {number}
+     * 
+     * @type {string}
      * @memberof V1ApiV1AssignmentsRetrieve
      */
-    readonly id: number
+    readonly id: string
 }
 
 /**
@@ -18333,11 +19777,11 @@ export interface V1ApiV1AssignmentsRetrieveRequest {
  */
 export interface V1ApiV1AssignmentsUpdateRequest {
     /**
-     * A unique integer value identifying this Job Assignment.
-     * @type {number}
+     * 
+     * @type {string}
      * @memberof V1ApiV1AssignmentsUpdate
      */
-    readonly id: number
+    readonly id: string
 
     /**
      * 
@@ -18354,11 +19798,11 @@ export interface V1ApiV1AssignmentsUpdateRequest {
  */
 export interface V1ApiV1AssignmentsUpdateProgressPartialUpdateRequest {
     /**
-     * A unique integer value identifying this Job Assignment.
-     * @type {number}
+     * 
+     * @type {string}
      * @memberof V1ApiV1AssignmentsUpdateProgressPartialUpdate
      */
-    readonly id: number
+    readonly id: string
 
     /**
      * 
@@ -18383,43 +19827,22 @@ export interface V1ApiV1AuthFirebaseCreateRequest {
 }
 
 /**
- * Request parameters for v1ChatRoomsAddParticipants operation in V1Api.
+ * Request parameters for v1ChatsRoomsAddParticipants operation in V1Api.
  * @export
- * @interface V1ApiV1ChatRoomsAddParticipantsRequest
+ * @interface V1ApiV1ChatsRoomsAddParticipantsRequest
  */
-export interface V1ApiV1ChatRoomsAddParticipantsRequest {
+export interface V1ApiV1ChatsRoomsAddParticipantsRequest {
     /**
      * 
      * @type {string}
-     * @memberof V1ApiV1ChatRoomsAddParticipants
+     * @memberof V1ApiV1ChatsRoomsAddParticipants
      */
     readonly id: string
 
     /**
      * 
      * @type {ChatRoom}
-     * @memberof V1ApiV1ChatRoomsAddParticipants
-     */
-    readonly chatRoom: ChatRoom
-}
-
-/**
- * Request parameters for v1ChatRoomsLeave operation in V1Api.
- * @export
- * @interface V1ApiV1ChatRoomsLeaveRequest
- */
-export interface V1ApiV1ChatRoomsLeaveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatRoomsLeave
-     */
-    readonly id: string
-
-    /**
-     * 
-     * @type {ChatRoom}
-     * @memberof V1ApiV1ChatRoomsLeave
+     * @memberof V1ApiV1ChatsRoomsAddParticipants
      */
     readonly chatRoom: ChatRoom
 }
@@ -18450,6 +19873,41 @@ export interface V1ApiV1ChatsRoomsDestroyRequest {
      * @memberof V1ApiV1ChatsRoomsDestroy
      */
     readonly id: string
+}
+
+/**
+ * Request parameters for v1ChatsRoomsForMaster operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatsRoomsForMasterRequest
+ */
+export interface V1ApiV1ChatsRoomsForMasterRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ChatsRoomsForMaster
+     */
+    readonly masterId: number
+}
+
+/**
+ * Request parameters for v1ChatsRoomsLeave operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatsRoomsLeaveRequest
+ */
+export interface V1ApiV1ChatsRoomsLeaveRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsLeave
+     */
+    readonly id: string
+
+    /**
+     * 
+     * @type {ChatRoom}
+     * @memberof V1ApiV1ChatsRoomsLeave
+     */
+    readonly chatRoom: ChatRoom
 }
 
 /**
@@ -19467,18 +20925,18 @@ export interface V1ApiV1CoreSystemSettingsUpdateRequest {
  */
 export interface V1ApiV1JobAssignmentsCompleteRequest {
     /**
-     * A unique integer value identifying this Job Assignment.
-     * @type {number}
+     * 
+     * @type {string}
      * @memberof V1ApiV1JobAssignmentsComplete
      */
-    readonly id: number
+    readonly id: string
 
     /**
      * 
-     * @type {JobAssignment}
+     * @type {JobAssignmentCompletion}
      * @memberof V1ApiV1JobAssignmentsComplete
      */
-    readonly jobAssignment?: JobAssignment
+    readonly jobAssignmentCompletion?: JobAssignmentCompletion
 }
 
 /**
@@ -19488,11 +20946,11 @@ export interface V1ApiV1JobAssignmentsCompleteRequest {
  */
 export interface V1ApiV1JobAssignmentsStartRequest {
     /**
-     * A unique integer value identifying this Job Assignment.
-     * @type {number}
+     * 
+     * @type {string}
      * @memberof V1ApiV1JobAssignmentsStart
      */
-    readonly id: number
+    readonly id: string
 
     /**
      * 
@@ -20476,6 +21934,300 @@ export interface V1ApiV1ResumesUpdateRequest {
 }
 
 /**
+ * Request parameters for v1ReviewsAnalyticsRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1ReviewsAnalyticsRetrieveRequest
+ */
+export interface V1ApiV1ReviewsAnalyticsRetrieveRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsAnalyticsRetrieve
+     */
+    readonly masterId: number
+}
+
+/**
+ * Request parameters for v1ReviewsAssignmentsList operation in V1Api.
+ * @export
+ * @interface V1ApiV1ReviewsAssignmentsListRequest
+ */
+export interface V1ApiV1ReviewsAssignmentsListRequest {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1ReviewsAssignmentsList
+     */
+    readonly isVerified?: boolean
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsAssignmentsList
+     */
+    readonly job?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsAssignmentsList
+     */
+    readonly master?: number
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1ReviewsAssignmentsList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1ReviewsAssignmentsList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1ReviewsAssignmentsList
+     */
+    readonly pageSize?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsAssignmentsList
+     */
+    readonly rating?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1ReviewsAssignmentsList
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for v1ReviewsJobList operation in V1Api.
+ * @export
+ * @interface V1ApiV1ReviewsJobListRequest
+ */
+export interface V1ApiV1ReviewsJobListRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsJobList
+     */
+    readonly jobId: number
+
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1ReviewsJobList
+     */
+    readonly isVerified?: boolean
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsJobList
+     */
+    readonly job?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsJobList
+     */
+    readonly master?: number
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1ReviewsJobList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1ReviewsJobList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1ReviewsJobList
+     */
+    readonly pageSize?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsJobList
+     */
+    readonly rating?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1ReviewsJobList
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for v1ReviewsList operation in V1Api.
+ * @export
+ * @interface V1ApiV1ReviewsListRequest
+ */
+export interface V1ApiV1ReviewsListRequest {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1ReviewsList
+     */
+    readonly isVerified?: boolean
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsList
+     */
+    readonly job?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsList
+     */
+    readonly master?: number
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1ReviewsList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1ReviewsList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1ReviewsList
+     */
+    readonly pageSize?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsList
+     */
+    readonly rating?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1ReviewsList
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for v1ReviewsMasterList operation in V1Api.
+ * @export
+ * @interface V1ApiV1ReviewsMasterListRequest
+ */
+export interface V1ApiV1ReviewsMasterListRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsMasterList
+     */
+    readonly masterId: number
+
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V1ApiV1ReviewsMasterList
+     */
+    readonly isVerified?: boolean
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsMasterList
+     */
+    readonly job?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsMasterList
+     */
+    readonly master?: number
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1ReviewsMasterList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1ReviewsMasterList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1ReviewsMasterList
+     */
+    readonly pageSize?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ReviewsMasterList
+     */
+    readonly rating?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1ReviewsMasterList
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for v1ReviewsRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1ReviewsRetrieveRequest
+ */
+export interface V1ApiV1ReviewsRetrieveRequest {
+    /**
+     * A unique integer value identifying this Review.
+     * @type {number}
+     * @memberof V1ApiV1ReviewsRetrieve
+     */
+    readonly id: number
+}
+
+/**
  * Request parameters for v1SearchJobsList operation in V1Api.
  * @export
  * @interface V1ApiV1SearchJobsListRequest
@@ -20634,41 +22386,6 @@ export interface V1ApiV1UsersMastersDetailsRequest {
      * @memberof V1ApiV1UsersMastersDetails
      */
     readonly id: number
-
-    /**
-     * Несколько значений могут быть разделены запятыми.
-     * @type {Array<number>}
-     * @memberof V1ApiV1UsersMastersDetails
-     */
-    readonly idIn?: Array<number>
-
-    /**
-     * Which field to use when ordering the results.
-     * @type {string}
-     * @memberof V1ApiV1UsersMastersDetails
-     */
-    readonly ordering?: string
-
-    /**
-     * A page number within the paginated result set.
-     * @type {number}
-     * @memberof V1ApiV1UsersMastersDetails
-     */
-    readonly page?: number
-
-    /**
-     * Number of results to return per page.
-     * @type {number}
-     * @memberof V1ApiV1UsersMastersDetails
-     */
-    readonly pageSize?: number
-
-    /**
-     * A search term.
-     * @type {string}
-     * @memberof V1ApiV1UsersMastersDetails
-     */
-    readonly search?: string
 }
 
 /**
@@ -20725,6 +22442,20 @@ export interface V1ApiV1UsersMastersRetrieveRequest {
      * @memberof V1ApiV1UsersMastersRetrieve
      */
     readonly id: number
+}
+
+/**
+ * Request parameters for v1UsersMastersUpdateOnlineStatus operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersMastersUpdateOnlineStatusRequest
+ */
+export interface V1ApiV1UsersMastersUpdateOnlineStatusRequest {
+    /**
+     * 
+     * @type {MasterOnlineStatusRequest}
+     * @memberof V1ApiV1UsersMastersUpdateOnlineStatus
+     */
+    readonly masterOnlineStatusRequest?: MasterOnlineStatusRequest
 }
 
 /**
@@ -21504,24 +23235,13 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
 
     /**
      * Add participants to chat room
-     * @param {V1ApiV1ChatRoomsAddParticipantsRequest} requestParameters Request parameters.
+     * @param {V1ApiV1ChatsRoomsAddParticipantsRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1ChatRoomsAddParticipants(requestParameters: V1ApiV1ChatRoomsAddParticipantsRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatRoomsAddParticipants(requestParameters.id, requestParameters.chatRoom, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Leave a chat room
-     * @param {V1ApiV1ChatRoomsLeaveRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatRoomsLeave(requestParameters: V1ApiV1ChatRoomsLeaveRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatRoomsLeave(requestParameters.id, requestParameters.chatRoom, options).then((request) => request(this.axios, this.basePath));
+    public v1ChatsRoomsAddParticipants(requestParameters: V1ApiV1ChatsRoomsAddParticipantsRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatsRoomsAddParticipants(requestParameters.id, requestParameters.chatRoom, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -21544,6 +23264,28 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      */
     public v1ChatsRoomsDestroy(requestParameters: V1ApiV1ChatsRoomsDestroyRequest, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1ChatsRoomsDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get chats for master
+     * @param {V1ApiV1ChatsRoomsForMasterRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatsRoomsForMaster(requestParameters: V1ApiV1ChatsRoomsForMasterRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatsRoomsForMaster(requestParameters.masterId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Leave a chat room
+     * @param {V1ApiV1ChatsRoomsLeaveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatsRoomsLeave(requestParameters: V1ApiV1ChatsRoomsLeaveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatsRoomsLeave(requestParameters.id, requestParameters.chatRoom, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -22009,14 +23751,25 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Complete an assignment
+     * Returns featured categories, recommended masters, and statistics for the home page. Prioritizes top masters first, then fills with additional masters if needed.
+     * @summary Get home page data with master recommendations
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1HomeClientRetrieve(options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1HomeClientRetrieve(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Complete an assignment with optional rating and review
      * @param {V1ApiV1JobAssignmentsCompleteRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
     public v1JobAssignmentsComplete(requestParameters: V1ApiV1JobAssignmentsCompleteRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1JobAssignmentsComplete(requestParameters.id, requestParameters.jobAssignment, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1JobAssignmentsComplete(requestParameters.id, requestParameters.jobAssignmentCompletion, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -22577,6 +24330,72 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
+     * Get review analytics for a specific master
+     * @param {V1ApiV1ReviewsAnalyticsRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ReviewsAnalyticsRetrieve(requestParameters: V1ApiV1ReviewsAnalyticsRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ReviewsAnalyticsRetrieve(requestParameters.masterId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get review data from job assignments
+     * @param {V1ApiV1ReviewsAssignmentsListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ReviewsAssignmentsList(requestParameters: V1ApiV1ReviewsAssignmentsListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ReviewsAssignmentsList(requestParameters.isVerified, requestParameters.job, requestParameters.master, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.rating, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get all reviews for a specific job
+     * @param {V1ApiV1ReviewsJobListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ReviewsJobList(requestParameters: V1ApiV1ReviewsJobListRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ReviewsJobList(requestParameters.jobId, requestParameters.isVerified, requestParameters.job, requestParameters.master, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.rating, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Comprehensive review management with additional actions.
+     * @param {V1ApiV1ReviewsListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ReviewsList(requestParameters: V1ApiV1ReviewsListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ReviewsList(requestParameters.isVerified, requestParameters.job, requestParameters.master, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.rating, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get all reviews for a specific master
+     * @param {V1ApiV1ReviewsMasterListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ReviewsMasterList(requestParameters: V1ApiV1ReviewsMasterListRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ReviewsMasterList(requestParameters.masterId, requestParameters.isVerified, requestParameters.job, requestParameters.master, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.rating, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Comprehensive review management with additional actions.
+     * @param {V1ApiV1ReviewsRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ReviewsRetrieve(requestParameters: V1ApiV1ReviewsRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ReviewsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Search jobs with optimized search serializer.
      * @param {V1ApiV1SearchJobsListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -22588,7 +24407,8 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Search masters with optimized search serializer.
+     * Search masters by keywords, profession, location, and other criteria. Returns paginated list of master profiles with portfolio items and skills.
+     * @summary Search for masters
      * @param {V1ApiV1SearchMastersListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -22606,7 +24426,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMastersDetails(requestParameters: V1ApiV1UsersMastersDetailsRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMastersDetails(requestParameters.id, requestParameters.idIn, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMastersDetails(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -22629,6 +24449,17 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      */
     public v1UsersMastersRetrieve(requestParameters: V1ApiV1UsersMastersRetrieveRequest, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1UsersMastersRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update online status for master
+     * @param {V1ApiV1UsersMastersUpdateOnlineStatusRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersMastersUpdateOnlineStatus(requestParameters: V1ApiV1UsersMastersUpdateOnlineStatusRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersMastersUpdateOnlineStatus(requestParameters.masterOnlineStatusRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -22913,16 +24744,6 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      */
     public v1UsersMySkillsUpdate(requestParameters: V1ApiV1UsersMySkillsUpdateRequest, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1UsersMySkillsUpdate(requestParameters.id, requestParameters.masterSkill, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Update online status
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1UsersMyStatusCreate(options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyStatusCreate(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

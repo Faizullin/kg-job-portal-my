@@ -23,6 +23,7 @@ from .serializers import (
     JobApplicationSerializer,
     JobApplySerializer,
     JobAssignmentSerializer,
+    JobAssignmentCompletionSerializer,
     JobSerializer,
     ProgressUpdateSerializer,
     RatingSerializer,
@@ -37,7 +38,8 @@ from ..models import (
     BookmarkJob,
     FavoriteJob,
 )
-from ...chats.models import ChatRoom, ChatParticipant, ChatRole
+from job_portal.apps.chats.models import ChatRoom, ChatParticipant, ChatRole
+from job_portal.apps.attachments.models import Attachment
 
 
 class _JobApiActionSerializer(CResponseSerializer):
@@ -74,7 +76,7 @@ class JobAPIViewSet(ModelViewSet):
         if self.action == "list":
             pass
         elif self.action == "retrieve":
-            perms.append(JobAccessPermission)
+            perms += [JobAccessPermission()]
         elif self.action in [
             "update",
             "partial_update",
@@ -82,17 +84,19 @@ class JobAPIViewSet(ModelViewSet):
             "publish",
             "cancel",
         ]:
-            perms.append(HasSpecificPermission(["jobs.change_job"]))
-            perms.append(JobAccessPermission)
+            perms += [HasSpecificPermission(["jobs.change_job"])(), JobAccessPermission()]
         elif self.action == "create":
-            perms.append(HasSpecificPermission(["jobs.add_job"]))
+            perms += [HasSpecificPermission(["jobs.add_job"])()]
         elif self.action == "apply":
             perms += [
-                IsAuthenticated,
-                HasMasterProfile,
-                HasSpecificPermission(["jobs.add_jobapplication"]),
+                IsAuthenticated(),
+                HasMasterProfile(),
+                HasSpecificPermission(["jobs.add_jobapplication"])(),
             ]
         return perms
+
+    def perform_create(self, serializer):
+        serializer.save(employer=self.request.user.employer_profile)
 
     @extend_schema(
         description="Publish a draft job. Only allowed if job is in DRAFT state.",
@@ -431,19 +435,16 @@ class _JobAssignmentApiActionSerializer(CResponseSerializer):
 
 
 class JobAssignmentViewSet(ModelViewSet):
-    queryset = JobAssignment.objects.select_related(
-        "job", "master", "accepted_application"
-    )
     serializer_class = JobAssignmentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasMasterProfile]
 
     def get_queryset(self):
-        qs = JobAssignment.objects.all()
-        user = self.request.user
-        # if hasattr(user, "employer_profile"):
-        #     qs = qs.filter(
-        #
-        #     )
+        qs = JobAssignment.objects.select_related(
+            "job", "master", "accepted_application"
+        ).filter(
+            master=self.request.user.master_profile
+        )
+        return qs
 
     @extend_schema(
         description="Start an assignment",
@@ -475,7 +476,8 @@ class JobAssignmentViewSet(ModelViewSet):
         )
 
     @extend_schema(
-        description="Complete an assignment",
+        description="Complete an assignment with optional rating and review",
+        request=JobAssignmentCompletionSerializer,
         responses={
             200: _JobAssignmentApiActionSerializer,
         },
@@ -486,19 +488,86 @@ class JobAssignmentViewSet(ModelViewSet):
         assignment = self.get_object()
         if assignment.status != JobAssignmentStatus.IN_PROGRESS:
             raise ValidationError("Assignment must be in progress to complete.")
+        
+        # Validate request data
+        serializer = JobAssignmentCompletionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Extract validated data
+        completion_notes = serializer.validated_data.get('completion_notes', '')
+        client_rating = serializer.validated_data.get('client_rating')
+        client_review = serializer.validated_data.get('client_review', '')
+        
+        # Update assignment
         assignment.status = JobAssignmentStatus.COMPLETED
         assignment.completed_at = timezone.now()
+        assignment.completion_notes = completion_notes
+        
+        # Add rating and review if provided
+        if client_rating is not None:
+            assignment.client_rating = client_rating
+        if client_review:
+            assignment.client_review = client_review
+            
         assignment.save()
 
+        # Update job status
         assignment.job.status = JobStatus.COMPLETED
         assignment.job.completed_at = timezone.now()
         assignment.job.save()
 
         return Response({
-            "message": "Assignment completed",
+            "message": "Assignment completed successfully",
             "data": {
                 "assignment": JobAssignmentSerializer(assignment).data,
             },
+        })
+
+    @extend_schema(
+        description="Upload attachments to a job assignment",
+        responses={
+            200: CResponseSerializer,
+        },
+        operation_id="v1_job_assignments_upload_attachments"
+    )
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated, HasMasterProfile])
+    def upload_attachments(self, request):
+        """Upload attachments to a job assignment."""
+        assignment = self.get_object()
+        
+        # Check if user is the assigned master
+        if assignment.master.user != request.user:
+            return Response(
+                {'error': 'Only the assigned master can upload attachments'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        attachment_files = request.FILES.getlist('attachments', [])
+        if not attachment_files:
+            return Response(
+                {'error': 'No files provided'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        uploaded_attachments = []
+        for attachment_file in attachment_files:
+            attachment = Attachment.objects.create(
+                content_object=assignment,
+                file=attachment_file,
+                uploaded_by=request.user
+            )
+            assignment.attachments.add(attachment)
+            uploaded_attachments.append({
+                'id': attachment.id,
+                'original_filename': attachment.original_filename,
+                'file_type': attachment.file_type,
+                'size': attachment.size,
+                'file_url': request.build_absolute_uri(attachment.file.url) if attachment.file else None
+            })
+        
+        return Response({
+            'message': f'Successfully uploaded {len(uploaded_attachments)} attachments',
+            'attachments': uploaded_attachments
         })
 
     @extend_schema(

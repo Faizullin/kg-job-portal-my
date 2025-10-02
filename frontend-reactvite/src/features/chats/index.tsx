@@ -23,10 +23,13 @@ import myApi from "@/lib/api/my-api";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSearch } from "@tanstack/react-router";
 import { format } from "date-fns";
 import {
   ArrowLeft,
   Edit,
+  File,
+  FileImage,
   ImagePlus,
   MessagesSquare,
   MoreVertical,
@@ -37,18 +40,16 @@ import {
   Send,
   Trash2,
   Video,
-  FileImage,
-  File,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Fragment } from "react/jsx-runtime";
-import { NewChat } from "./components/new-chat";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { NewChatDialog } from "./components/new-chat";
 
 // Query keys
 const CHAT_ROOMS_QUERY_KEY = 'chat-rooms';
 const CHAT_MESSAGES_QUERY_KEY = 'chat-messages';
 
 export function Chats() {
+  const searchParams = useSearch({ from: "/_authenticated/chats/" });
   const [search, setSearch] = useState("");
   const [selectedRoom, setSelectedRoom] = useState<ChatRoomCreate | null>(null);
   const [mobileSelectedRoom, setMobileSelectedRoom] = useState<ChatRoomCreate | null>(null);
@@ -63,7 +64,7 @@ export function Chats() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const auth = useAuthStore();
-  
+
   // Context menu state
   const [contextMenu, setContextMenu] = useState<{
     visible: boolean;
@@ -109,6 +110,18 @@ export function Chats() {
   });
 
   const rooms = useMemo(() => loadChatRoomsQuery.data?.results || [], [loadChatRoomsQuery.data]);
+
+  // Auto-select chat room if chatId is provided in search params
+  useEffect(() => {
+    const chatId = searchParams.chat_room_id;
+    if (chatId && rooms.length > 0 && !selectedRoom) {
+      const room = rooms.find(r => r.id?.toString() === chatId.toString());
+      if (room) {
+        setSelectedRoom(room);
+        setMobileSelectedRoom(room);
+      }
+    }
+  }, [searchParams.chat_room_id, rooms, selectedRoom]);
 
   // Single WebSocket connection for receiving messages
   useEffect(() => {
@@ -254,7 +267,7 @@ export function Chats() {
         isOwnMessage,
       };
     });
-  }, [loadChatMessagesQuery.data]);
+  }, [loadChatMessagesQuery.data, auth.user]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -276,7 +289,7 @@ export function Chats() {
         formData.append('content', content);
         formData.append('message_type', message_type);
         formData.append('attachment_file', attachment);
-        
+
         const response = await myApi.axios.post(
           `/api/v1/chats/rooms/${selectedRoom.id}/messages/`,
           formData,
@@ -316,10 +329,10 @@ export function Chats() {
     },
     onError: (error: any) => {
       console.error('Failed to send message:', error);
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message || 
-                          error.message || 
-                          'Failed to send message';
+      const errorMessage = error.response?.data?.detail ||
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to send message';
       alert(`Error: ${errorMessage}`);
     }
   });
@@ -353,11 +366,11 @@ export function Chats() {
     },
     onError: (error: any) => {
       console.error('Failed to delete message:', error);
-    
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message || 
-                          error.message || 
-                          'Failed to delete message';
+
+      const errorMessage = error.response?.data?.detail ||
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to delete message';
       alert(`Error: ${errorMessage}`);
     }
   });
@@ -402,7 +415,7 @@ export function Chats() {
 
   const sendAttachment = useCallback((file: File) => {
     if (!selectedRoom) return;
-    
+
     // Validate file size (10MB limit)
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
@@ -643,8 +656,8 @@ export function Chats() {
                           <div className="text-sm text-muted-foreground">No messages yet. Start chatting!</div>
                         </div>
                       ) : messages.map((msg, index) => (
-                        <div 
-                          key={`${msg.id}-${index}`} 
+                        <div
+                          key={`${msg.id}-${index}`}
                           className={cn("chat-box max-w-72 px-3 py-2 break-words shadow-lg", msg.isOwnMessage ? "bg-primary/90 text-primary-foreground/75 self-end rounded-[16px_16px_0_16px]" : "bg-muted self-start rounded-[16px_16px_16px_0]")}
                           onContextMenu={msg.isOwnMessage ? (e) => handleContextMenu(e, msg) : undefined}
                         >
@@ -777,7 +790,7 @@ export function Chats() {
             </div>
           )}
         </section>
-        <NewChat
+        <NewChatDialog
           control={newChatControl}
           onCreated={(room) => {
             setSelectedRoom(room);

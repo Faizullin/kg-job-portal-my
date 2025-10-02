@@ -17,10 +17,10 @@
     <title>{% block title %}{{ title }} | {{ jazzmin_settings.site_title }}{% endblock %}</title>
 
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="{% static " vendor /fontawesome-free/css/all.min.css" %}">
+    <link rel="stylesheet" href="{% static 'vendor/fontawesome-free/css/all.min.css' %}">
 
     <!-- Bootstrap and adminLTE -->
-    <link rel="stylesheet" href="{% static " vendor /adminlte/css/adminlte.min.css" %}" id="adminlte-css">
+    <link rel="stylesheet" href="{% static 'vendor/adminlte/css/adminlte.min.css' %}" id="adminlte-css">
 
     <!-- Dropzone -->
     <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
@@ -36,11 +36,11 @@
     {% endif %}
 
     <!-- Custom fixes for django -->
-    <link rel="stylesheet" href="{% static " jazzmin /css/main.css" %}">
+    <link rel="stylesheet" href="{% static 'jazzmin/css/main.css' %}">
 
     {% if jazzmin_settings.custom_css %}
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static jazzmin_settings.custom_css %}">
+    <link rel="stylesheet" href="{% static 'jazzmin_settings.custom_css' %}">
     {% endif %}
 
     <!-- favicons -->
@@ -407,15 +407,15 @@
     {% endif %}
 
     <!-- jQuery -->
-    <script src="{% static " admin/js/vendor/jquery/jquery.js" %}"></script>
+    <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
     <!-- Bootstrap 4 -->
-    <script src="{% static " vendor/bootstrap/js/bootstrap.min.js" %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
     <!-- Dropzone -->
     <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
     <!-- AdminLTE App -->
-    <script src="{% static " vendor/adminlte/js/adminlte.min.js" %}"></script>
+    <script src="{% static 'vendor/adminlte/js/adminlte.min.js' %}"></script>
     <!-- Django customisations -->
-    <script src="{% static " jazzmin/js/main.js" %}"></script>
+    <script src="{% static 'jazzmin/js/main.js' %}"></script>
 
     {% if jazzmin_settings.custom_js %}
     <script src="{% static jazzmin_settings.custom_js %}"></script>
@@ -423,13 +423,9 @@
 
     {% if jazzmin_settings.show_ui_builder %}
     <script>
-        window.ui_changes = {
-            {
-                jazzmin_ui.raw | as_json | safe
-            }
-        };
+        window.ui_changes = `{{ jazzmin_ui.raw | as_json | safe  }}`;
     </script>
-    <script src="{% static " jazzmin/js/ui-builder.js" %}"></script>
+    <script src="{% static 'jazzmin/js/ui-builder.js' %}"></script>
     {% endif %}
 
 </body>

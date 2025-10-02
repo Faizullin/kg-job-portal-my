@@ -44,10 +44,10 @@ export function ClientDashboard() {
   const queryClient = useQueryClient();
 
   // Fetch client dashboard data from backend
-  const { data: dashboardData, isLoading, error } = useQuery({
+  const loadHomeClientQuery = useQuery({
     queryKey: [CLIENT_DASHBOARD_QUERY_KEY, debouncedSearch],
     queryFn: async () => {
-      const response = await myApi.v1DashboardMyClientRetrieve();
+      const response = await myApi.v1HomeClientRetrieve();
       return response.data;
     },
     retry: 2,
@@ -55,29 +55,9 @@ export function ClientDashboard() {
 
   const { user } = useAuthStore();
 
-  // Handle error state
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <h3 className="text-lg font-semibold text-red-600">Ошибка загрузки</h3>
-          <p className="text-sm text-muted-foreground mt-2">
-            Не удалось загрузить данные дашборда
-          </p>
-          <Button
-            onClick={() => queryClient.invalidateQueries({ queryKey: [CLIENT_DASHBOARD_QUERY_KEY] })}
-            className="mt-4"
-          >
-            Попробовать снова
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   // Extract data from backend response
-  const backendFeaturedCategories = dashboardData?.featured_categories || [];
-  const topMasters = dashboardData?.top_providers || [];
+  const backendFeaturedCategories = loadHomeClientQuery.data?.featured_categories || [];
+  const topMasters = loadHomeClientQuery.data?.recommended_masters || [];
 
   // Favorite master mutation
   const favoriteMutation = useMutation({
@@ -146,6 +126,26 @@ export function ClientDashboard() {
     return { name: "Пользователь", location: "Алматы" };
   }, [user]);
 
+
+  // Handle error state
+  if (loadHomeClientQuery.error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-red-600">Ошибка загрузки</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            Не удалось загрузить данные дашборда
+          </p>
+          <Button
+            onClick={() => queryClient.invalidateQueries({ queryKey: [CLIENT_DASHBOARD_QUERY_KEY] })}
+            className="mt-4"
+          >
+            Попробовать снова
+          </Button>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <Header>
@@ -198,7 +198,7 @@ export function ClientDashboard() {
           {/* Service Categories */}
           <div>
             <h2 className="mb-4 text-lg font-semibold">Вас может заинтересовать</h2>
-            {isLoading ? (
+            {loadHomeClientQuery.isLoading ? (
               <div className="grid grid-cols-3 gap-4 sm:grid-cols-6">
                 {[...Array(6)].map((_, i) => (
                   <Card key={i} className="animate-pulse">
@@ -237,13 +237,13 @@ export function ClientDashboard() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold">Топ специалистов</h2>
               <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700" asChild>
-                <Link to="/app/service-providers">
+                <Link to="/app/masters">
                   Видеть всех
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
             </div>
-            {isLoading ? (
+            {loadHomeClientQuery.isLoading ? (
               <div className="space-y-3">
                 {[...Array(3)].map((_, i) => (
                   <Card key={i} className="animate-pulse">
@@ -264,7 +264,7 @@ export function ClientDashboard() {
             ) : (
               <div className="space-y-3">
                 {topMasters.map((master) => {
-                  const userData = master.user_profile.user;
+                  const userData = master.user;
                   const userFullName = userData.first_name && userData.last_name
                     ? `${userData.first_name} ${userData.last_name}`
                     : userData.username;
@@ -273,7 +273,7 @@ export function ClientDashboard() {
                       <CardContent className="p-4">
                         <div className="flex items-center space-x-3">
                           <div className="relative">
-                            <Link to={`/app/service-providers/${master.id}`} className="cursor-pointer">
+                            <Link to={`/app/masters/$masterId`} params={{ masterId: `${master.id}` }} className="cursor-pointer">
                               <Avatar className="h-12 w-12">
                                 <AvatarImage src={userData.photo_url || "/images/avatar.png"} alt={`${userData.first_name} ${userData.last_name}`} />
                                 <AvatarFallback className="bg-blue-100 text-blue-600">

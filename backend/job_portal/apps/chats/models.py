@@ -1,12 +1,9 @@
-import uuid
 from django.db import models
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-import mimetypes
-import os
 
 from accounts.models import UserModel
 from job_portal.apps.jobs.models import Job
+from job_portal.apps.attachments.models import Attachment
 from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedModel, TitleField, ActiveField
 
 
@@ -61,6 +58,7 @@ class ChatMessage(AbstractSoftDeleteModel, AbstractTimestampedModel):
     message_type = models.CharField(_("Message Type"), max_length=20, choices=MessageType.choices,
                                     default=MessageType.TEXT)
     content = models.TextField(_("Message Content"))
+    attachments = models.ManyToManyField(Attachment, related_name='chat_messages', blank=True)
 
     # Message status
     is_read = models.BooleanField(_("Read"), default=False)
@@ -75,72 +73,6 @@ class ChatMessage(AbstractSoftDeleteModel, AbstractTimestampedModel):
     def __str__(self):
         sender_name = f"{self.sender.first_name} {self.sender.last_name}".strip() or self.sender.username
         return f"{sender_name}: {self.content[:50]}... [#{self.id}]"
-
-
-def attachment_storage_upload_to(instance, filename):
-    """Generate upload path for attachments."""
-
-    current_datetime = timezone.now().strftime('%Y/%m/%d')
-    
-    # Generate a unique identifier for the file
-    unique_id = uuid.uuid4().hex[:8]
-    updated_filename = f"{current_datetime}_{unique_id}_{filename}"
-    
-    # If instance has pk, use it; otherwise use the unique_id
-    return f'chat_attachments/attachment_{unique_id}/{updated_filename}'
-
-
-class ChatAttachment(AbstractSoftDeleteModel, AbstractTimestampedModel):
-    """Separate model for chat message attachments."""
-
-    message = models.ForeignKey(
-        ChatMessage,
-        on_delete=models.CASCADE,
-        related_name='attachments'
-    )
-    file = models.FileField(_("File"), upload_to=attachment_storage_upload_to)
-    original_filename = models.CharField(_("File Name"), max_length=255)
-    size = models.PositiveIntegerField(_("File Size (bytes)"))
-    file_type = models.CharField(_("File Type"), max_length=100, blank=True)
-
-    class Meta:
-        verbose_name = _("Chat Attachment")
-        verbose_name_plural = _("Chat Attachments")
-        ordering = ['created_at']
-        indexes = [
-            models.Index(fields=['message', 'created_at']),
-        ]
-
-    def save(self, *args, **kwargs):
-        """Override save to automatically populate fields if not set."""
-        if self.file and not self.original_filename:
-            self.original_filename = os.path.basename(self.file.name)
-        
-        if self.file and not self.size:
-            try:
-                self.size = self.file.size
-            except (OSError, AttributeError):
-                self.size = 0
-        
-        if self.file and not self.file_type:
-            # Get MIME type from file extension
-            mime_type, _ = mimetypes.guess_type(self.original_filename or self.file.name)
-            if mime_type:
-                self.file_type = mime_type
-            else:
-                # Fallback to file extension
-                ext = os.path.splitext(self.original_filename or self.file.name)[1].lower()
-                if ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp']:
-                    self.file_type = 'image'
-                elif ext in ['.pdf', '.doc', '.docx', '.txt']:
-                    self.file_type = 'document'
-                else:
-                    self.file_type = 'file'
-        
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"Attachment: {self.original_filename} for Message [#{self.id}]"
 
 
 class ChatParticipant(AbstractTimestampedModel):

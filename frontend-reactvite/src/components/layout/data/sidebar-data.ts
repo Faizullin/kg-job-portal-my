@@ -3,6 +3,7 @@ import {
   Bell,
   Briefcase,
   Building2,
+  FileText,
   HelpCircle,
   LayoutDashboard,
   MessageCircle,
@@ -13,7 +14,9 @@ import {
   Shield,
   ShoppingBag,
   User,
-  UserCog
+  UserCog,
+  Award,
+  FolderOpen
 } from "lucide-react";
 import { type SidebarData } from "../types";
 
@@ -89,6 +92,26 @@ export const sidebarData: SidebarData = {
           url: "/chats",
           badge: "3",
           icon: MessageCircle,
+        },
+      ],
+    },
+    {
+      title: "Subscribers",
+      items: [
+        {
+          title: "Resume",
+          url: "/subscribers/resume",
+          icon: FileText,
+        },
+        {
+          title: "Skills",
+          url: "/subscribers/skills",
+          icon: Award,
+        },
+        {
+          title: "Portfolio",
+          url: "/subscribers/portfolio",
+          icon: FolderOpen,
         },
       ],
     },

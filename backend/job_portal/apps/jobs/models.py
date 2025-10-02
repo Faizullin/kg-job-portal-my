@@ -1,4 +1,3 @@
-# Django imports
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -8,6 +7,7 @@ from job_portal.apps.core.models import ServiceSubcategory
 from job_portal.apps.locations.models import City
 from job_portal.apps.resumes.models import MasterResume
 from job_portal.apps.users.models import Skill, Master, Employer, Company
+from job_portal.apps.attachments.models import Attachment
 from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedModel, AbstractCascadingSoftDeleteModel, \
     TitleField, AutoSlugField, AvailableField, AdvancedLocationField
 
@@ -54,6 +54,7 @@ class Job(AbstractCascadingSoftDeleteModel, AbstractTimestampedModel):
     city = models.ForeignKey(City, on_delete=models.SET_NULL, related_name='jobs', null=True)
     location = AdvancedLocationField()
     skills = models.ManyToManyField(Skill, related_name='jobs', blank=True)
+    attachments = models.ManyToManyField(Attachment, related_name='jobs', blank=True)
 
     # Service requirements
     service_date = models.DateField(_("Preferred Service Date"), null=True, blank=True)

@@ -113,7 +113,7 @@ class ServiceAreaViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated()]
         else:
             return [
-                HasSpecificPermission(['core.add_servicearea', 'core.change_servicearea', 'core.delete_servicearea'])]
+                HasSpecificPermission(['core.add_servicearea', 'core.change_servicearea', 'core.delete_servicearea'])()]
 
 
 class SystemSettingsViewSet(viewsets.ModelViewSet):
@@ -162,4 +162,4 @@ class SupportFAQViewSet(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return [IsAuthenticated()]
         else:
-            return [HasSpecificPermission(['core.add_supportfaq', 'core.change_supportfaq', 'core.delete_supportfaq'])]
+            return [HasSpecificPermission(['core.add_supportfaq', 'core.change_supportfaq', 'core.delete_supportfaq'])()]

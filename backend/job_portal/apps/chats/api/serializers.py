@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from job_portal.apps.users.api.serializers import UserDetailChildSerializer
+from job_portal.apps.users.api.serializers import UserDetailChildSerializer, PublicMasterProfileSerializer
 from utils.serializers import (
     AbstractTimestampedModelSerializer,
 )
-from ..models import ChatRoom, ChatMessage, ChatParticipant, MessageType, ChatAttachment, ChatRole
+from ..models import ChatRoom, ChatMessage, ChatParticipant, MessageType, ChatRole
+from job_portal.apps.attachments.models import Attachment
 
 UserModel = get_user_model()
 
@@ -101,14 +102,14 @@ class ChatRoomCreateSerializer(serializers.ModelSerializer):
         return chat_room
 
 
-class ChatAttachmentSerializer(serializers.ModelSerializer):
-    """Serializer for chat message attachments."""
+class AttachmentSerializer(serializers.ModelSerializer):
+    """Serializer for generic attachments."""
 
     file_url = serializers.SerializerMethodField()
 
     class Meta:
-        model = ChatAttachment
-        fields = ['id', 'original_filename', 'file_url', 'size', 'file_type', 'created_at']
+        model = Attachment
+        fields = ['id', 'original_filename', 'file_url', 'size', 'file_type', 'mime_type', 'uploaded_by', 'description', 'is_public', 'created_at']
         read_only_fields = ['id', 'created_at']
 
     def get_file_url(self, obj):
@@ -122,7 +123,7 @@ class MessageSerializer(AbstractTimestampedModelSerializer):
     """Serializer for chat messages."""
 
     sender = UserDetailChildSerializer(read_only=True)
-    attachments = ChatAttachmentSerializer(many=True, read_only=True)
+    attachments = AttachmentSerializer(many=True, read_only=True)
     reply_to_sender = serializers.SerializerMethodField()
 
     class Meta:
@@ -179,9 +180,9 @@ class MessageUpdateSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class WebSocketInfoSerializer(serializers.Serializer):
-    """Serializer for WebSocket connection information."""
-    id = serializers.IntegerField(read_only=True, help_text='Response ID')
-    websocket_url = serializers.CharField(help_text='Base WebSocket URL')
-    temp_token = serializers.CharField(help_text='Temporary token for WebSocket connection')
-    user_id = serializers.IntegerField(help_text='User ID for WebSocket connection')
+class ChatRoomForSearchResponseSerializer(serializers.ModelSerializer):
+    master = PublicMasterProfileSerializer(read_only=True)
+
+    class Meta:
+        model = ChatRoom
+        fields = ["id", "master"]

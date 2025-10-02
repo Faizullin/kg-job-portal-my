@@ -1,8 +1,19 @@
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericTabularInline
+
 from .models import (
     Profession, Master, Employer, Skill, MasterSkill, PortfolioItem, 
     Certificate, MasterStatistics, Company
 )
+from job_portal.apps.attachments.models import Attachment
+
+
+class AttachmentInline(GenericTabularInline):
+    """Generic inline for attachments."""
+    model = Attachment
+    extra = 0
+    fields = ('file', 'original_filename', 'file_type', 'uploaded_by', 'is_public')
+    readonly_fields = ('size', 'mime_type', 'file_type')
 
 
 @admin.register(Profession)
@@ -167,21 +178,24 @@ class MasterSkillAdmin(admin.ModelAdmin):
 
 @admin.register(PortfolioItem)
 class PortfolioItemAdmin(admin.ModelAdmin):
-    list_display = ['title', 'master', 'skill_used', 'is_featured', 'created_at']
+    list_display = ['title', 'master', 'skill_used', 'is_featured', 'attachments_count', 'created_at']
     list_filter = ['is_featured', 'skill_used', 'created_at']
     search_fields = ['title', 'description', 'master__user__first_name', 'master__user__last_name']
     ordering = ['-is_featured', '-created_at']
     list_editable = ['is_featured']
     raw_id_fields = ['master', 'skill_used']
+    inlines = [AttachmentInline]
     
     fieldsets = (
         ('Portfolio Information', {
             'fields': ('master', 'title', 'description', 'skill_used', 'is_featured')
         }),
-        ('Media', {
-            'fields': ('image',)
-        }),
     )
+    
+    def attachments_count(self, obj):
+        return obj.attachments.count()
+    
+    attachments_count.short_description = 'Attachments'
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('master__user', 'skill_used')

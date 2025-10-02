@@ -1,7 +1,17 @@
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db.models import Count
 
 from .models import ChatRoom, ChatMessage, ChatParticipant
+from job_portal.apps.attachments.models import Attachment
+
+
+class AttachmentInline(GenericTabularInline):
+    """Generic inline for attachments."""
+    model = Attachment
+    extra = 0
+    fields = ('file', 'original_filename', 'file_type', 'uploaded_by', 'is_public')
+    readonly_fields = ('size', 'mime_type', 'file_type')
 
 
 @admin.register(ChatRoom)
@@ -14,6 +24,7 @@ class ChatRoomAdmin(admin.ModelAdmin):
     search_fields = ['title', 'job__title']
     ordering = ['-created_at']
     raw_id_fields = ['job']
+    inlines = [AttachmentInline]
 
     fieldsets = (
         ('Room Information', {
@@ -49,20 +60,18 @@ class ChatRoomAdmin(admin.ModelAdmin):
 class ChatMessageAdmin(admin.ModelAdmin):
     list_display = [
         'id', 'chat_room', 'sender', 'content_preview', 'message_type',
-        'is_read', 'attachment_info', 'created_at'
+        'is_read', 'attachments_count', 'created_at'
     ]
     list_filter = ['message_type', 'is_read', 'created_at']
     search_fields = ['content', 'sender__first_name', 'chat_room__title']
     ordering = ['-created_at']
     list_editable = ['is_read']
     raw_id_fields = ['chat_room', 'sender', 'reply_to']
+    inlines = [AttachmentInline]
 
     fieldsets = (
         ('Message Information', {
             'fields': ('chat_room', 'sender', 'content', 'message_type')
-        }),
-        ('Attachments', {
-            'fields': ('attachment', 'attachment_name', 'attachment_size')
         }),
         ('Status', {
             'fields': ('is_read', 'read_at')
@@ -83,12 +92,10 @@ class ChatMessageAdmin(admin.ModelAdmin):
 
     content_preview.short_description = 'Content'
 
-    def attachment_info(self, obj):
-        if obj.attachment:
-            return f"{obj.attachment_name} ({obj.attachment_size} bytes)" if obj.attachment_size else obj.attachment_name
-        return 'No attachment'
+    def attachments_count(self, obj):
+        return obj.attachments.count()
 
-    attachment_info.short_description = 'Attachment'
+    attachments_count.short_description = 'Attachments'
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('sender', 'chat_room', 'reply_to')

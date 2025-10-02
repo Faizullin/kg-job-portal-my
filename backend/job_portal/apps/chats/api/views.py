@@ -3,7 +3,8 @@ from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
 from django.db import models
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
@@ -12,15 +13,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from ..models import (
-    ChatAttachment,
-    ChatMessage,
-    ChatParticipant,
-    ChatRole,
-    ChatRoom,
-    MessageType,
-)
-from ..utils import get_chat_channel_name
 from .permissions import IsChatMessageOwner, IsChatOwner
 from .serializers import (
     ChatRoomCreateSerializer,
@@ -28,7 +20,18 @@ from .serializers import (
     MessageCreateSerializer,
     MessageSerializer,
     MessageUpdateSerializer,
+    ChatRoomForSearchResponseSerializer,
 )
+from ..models import (
+    ChatMessage,
+    ChatParticipant,
+    ChatRole,
+    ChatRoom,
+    MessageType,
+)
+from job_portal.apps.attachments.models import Attachment
+from ..utils import get_chat_channel_name
+from ...users.models import Master
 
 UserModel = get_user_model()
 
@@ -49,7 +52,12 @@ class ChatRoomAPIViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     search_fields = ["title"]
-    filterset_fields = ["chat_type", "is_active"]
+    filterset_fields = {
+        "chat_type": ["exact"],
+        "is_active": ["exact"],
+        "id": ["in"],
+        "job": ["exact"],
+    }
     ordering_fields = ["created_at", "last_message_at"]
     ordering = ["-last_message_at", "-created_at"]
 
@@ -88,7 +96,7 @@ class ChatRoomAPIViewSet(ModelViewSet):
             perms.append(IsChatOwner())
         return perms
 
-    @extend_schema(description="Leave a chat room", operation_id="v1_chat_rooms_leave")
+    @extend_schema(description="Leave a chat room", operation_id="v1_chats_rooms_leave")
     @action(detail=True, methods=["post"])
     def leave(self, request, _pk=None):
         """Leave a chat room"""
@@ -106,7 +114,7 @@ class ChatRoomAPIViewSet(ModelViewSet):
 
     @extend_schema(
         description="Add participants to chat room",
-        operation_id="v1_chat_rooms_add_participants",
+        operation_id="v1_chats_rooms_add_participants",
     )
     @action(detail=True, methods=["post"])
     def add_participants(self, request, _pk=None):
@@ -140,13 +148,57 @@ class ChatRoomAPIViewSet(ModelViewSet):
                         {
                             "id": user.id,
                             "name": f"{user.first_name} {user.last_name}".strip()
-                            or user.username,
+                                    or user.username,
                         }
                     )
             except UserModel.DoesNotExist:
                 continue
 
         return Response({"message": f"Added {len(added)} users", "users": added})
+
+    @extend_schema(
+        description="Get chats for master",
+        operation_id="v1_chats_rooms_for_master",
+        parameters=[
+            OpenApiParameter(
+                name='master_id',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,  # Indicates it's a query parameter (e.g., ?master_id=123)
+                required=True
+            ),
+        ],
+        responses={
+            200: ChatRoomForSearchResponseSerializer(many=True),
+        },
+    )
+    @action(
+        detail=False,
+        methods=["get"],
+        pagination_class=None,
+        filter_backends=[],
+    )
+    def for_master(self, request):
+        self.pagination_class = None
+        master_id = request.GET.get("master_id", None)
+        if master_id is None:
+            raise ValidationError("Master ID is required")
+        try:
+            master_id = int(master_id)
+        except ValueError:
+            raise ValidationError("Master ID is not valid")
+        try:
+            master = Master.objects.get(
+                id=master_id,
+            )
+        except Master.DoesNotExist:
+            raise ValidationError("Master not found")
+
+        qs = self.get_queryset().filter(
+            participants__id__in=[self.request.user.id, master.id],
+        )
+        return Response(
+            ChatRoomForSearchResponseSerializer(qs, many=True).data
+        )
 
     def _broadcast_user_left(self, chat_room, user):
         """Broadcast user left event via WebSocket."""
@@ -229,9 +281,9 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
         message_type = serializer.validated_data.get("message_type")
         attachment_file = serializer.validated_data.pop("attachment_file", None)
         if (
-            not message_content
-            and attachment_file
-            and message_type == MessageType.IMAGE
+                not message_content
+                and attachment_file
+                and message_type == MessageType.IMAGE
         ):
             message_content = "📷 Image"
 
@@ -243,7 +295,12 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
         )
 
         if attachment_file is not None:
-            ChatAttachment.objects.create(message=chat_message, file=attachment_file)
+            attachment = Attachment.objects.create(
+                content_object=chat_message,
+                file=attachment_file,
+                uploaded_by=user
+            )
+            chat_message.attachments.add(attachment)
 
         ChatParticipant.objects.filter(chat_room=chat_context.chat_room).exclude(
             user=user

@@ -16,8 +16,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { useDialogControl } from "@/hooks/use-dialog-control";
 import type { Job } from "@/lib/api/axios-client";
+import { UrgencyEnum } from "@/lib/api/axios-client";
 import myApi from "@/lib/api/my-api";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -34,7 +34,7 @@ import {
   Tag,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { JobCreateEditDialog, type JobFormData } from "./components/job-create-edit-dialog";
+import { JobMultiStepDialog } from "./components/job-multi-step-dialog";
 
 
 export function Jobs() {
@@ -50,19 +50,21 @@ export function Jobs() {
       </Header>
 
       <Main>
-        <RenderTable />
+        <JobsTable />
       </Main>
     </>
   );
 }
 
-const loadJobsQueryKey = 'jobs'
+const JOBS_PAGE_QUERY_KEY = 'jobs-page';
 
-const RenderTable = () => {
+const JobsTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const jobDialog = useDialogControl<JobFormData>();
-  const loadJobsQuery = useQuery({
-    queryKey: [loadJobsQueryKey, searchQuery],
+  const [showMultiStepDialog, setShowMultiStepDialog] = useState(false);
+  const [editingJob, setEditingJob] = useState<Job | null>(null);
+  
+  const loadJobsListQuery = useQuery({
+    queryKey: [JOBS_PAGE_QUERY_KEY, searchQuery],
     queryFn: async () => {
       const response = await myApi.v1JobsList({
         search: searchQuery || undefined,
@@ -74,29 +76,23 @@ const RenderTable = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const jobs = loadJobsQuery.data?.results || [];
+  const jobs = useMemo(() => loadJobsListQuery.data?.results || [], [loadJobsListQuery.data?.results]);
 
   const handleCreateJob = useCallback(() => {
-    jobDialog.show();
-  }, [jobDialog]);
+    setEditingJob(null);
+    setShowMultiStepDialog(true);
+  }, []);
+
 
   const handleEditJob = useCallback((job: Job) => {
-    jobDialog.show({
-      id: job.id,
-      title: job.title,
-      description: job.description,
-      service_category: "", // Will be populated by the dialog based on subcategory
-      service_subcategory: "", // Will be populated by the dialog based on subcategory ID
-      location: job.location,
-      city: job.city || "",
-      service_date: job.service_date || "",
-      service_time: job.service_time || "",
-      urgency: job.urgency || "medium",
-      budget_min: job.budget_min ? Number(job.budget_min) : 0,
-      budget_max: job.budget_max ? Number(job.budget_max) : 0,
-      special_requirements: job.special_requirements || ""
-    });
-  }, [jobDialog]);
+    setEditingJob(job);
+    setShowMultiStepDialog(true);
+  }, []);
+
+  const handleMultiStepDialogClose = useCallback(() => {
+    setShowMultiStepDialog(false);
+    setEditingJob(null);
+  }, []);
 
   const getStatusColor = useCallback((status: string) => {
     switch (status) {
@@ -108,9 +104,9 @@ const RenderTable = () => {
     }
   }, []);
 
-  const totalCount = jobs.length;
+  const totalCount = useMemo(() => jobs.length, [jobs]);
 
-  const columns = useMemo<ColumnDef<Job, any>[]>(() => [
+  const columns = useMemo<ColumnDef<Job>[]>(() => [
     {
       accessorKey: "title",
       header: "Title",
@@ -236,7 +232,7 @@ const RenderTable = () => {
     pageCount: Math.ceil(totalCount / 10),
   });
 
-  if (loadJobsQuery.isLoading) {
+  if (loadJobsListQuery.isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="flex items-center gap-2">
@@ -247,18 +243,19 @@ const RenderTable = () => {
     );
   }
 
-  if (loadJobsQuery.error) {
+  if (loadJobsListQuery.error) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <p className="text-destructive">Failed to load jobs</p>
           <p className="text-sm text-muted-foreground mt-1">
-            {loadJobsQuery.error instanceof Error ? loadJobsQuery.error.message : "An error occurred"}
+            {loadJobsListQuery.error instanceof Error ? loadJobsListQuery.error.message : "An error occurred"}
           </p>
         </div>
       </div>
     );
   }
+
 
   return (
     <>
@@ -303,8 +300,24 @@ const RenderTable = () => {
           </div>
 
           {/* Dialogs */}
-          <JobCreateEditDialog
-            control={jobDialog}
+          <JobMultiStepDialog
+            isOpen={showMultiStepDialog}
+            onClose={handleMultiStepDialogClose}
+            initialData={editingJob ? {
+              id: editingJob.id,
+              title: editingJob.title,
+              description: editingJob.description,
+              country: undefined,
+              city: undefined,
+              location: editingJob.location,
+              budget: editingJob.budget_min || "",
+              service_category: undefined,
+              service_subcategory: undefined,
+              service_date: editingJob.service_date || "",
+              service_time: editingJob.service_time || "",
+              urgency: editingJob.urgency || UrgencyEnum.medium,
+            } : undefined}
+            mode={editingJob ? 'edit' : 'create'}
           />
         </div>
       </div>

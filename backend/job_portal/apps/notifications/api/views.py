@@ -57,7 +57,7 @@ class NotificationAPIViewSet(ModelViewSet):
     def get_permissions(self):
         """Set permissions based on action."""
         if self.action == "create":
-            permission_classes = [HasSpecificPermission(["notifications.add_notification"])]
+            permission_classes = [HasSpecificPermission(["notifications.add_notification"])()]
         else:
             permission_classes = [IsAuthenticated]
         return permission_classes

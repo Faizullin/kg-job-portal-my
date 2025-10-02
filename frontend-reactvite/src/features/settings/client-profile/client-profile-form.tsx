@@ -1,18 +1,20 @@
 import ComboBox2 from "@/components/combobox";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import type { PublicMasterProfile, ServiceSubcategory } from "@/lib/api/axios-client/api";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Briefcase, Heart, Loader2, Save } from "lucide-react";
+import { Briefcase, Heart, Loader2, Phone, Save } from "lucide-react";
 import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const clientProfileSchema = z.object({
+  contact_phone: z.string().optional(),
   preferred_services: z.array(z.custom<ServiceSubcategory>()),
   favorite_masters: z.array(z.custom<PublicMasterProfile>()),
 });
@@ -37,6 +39,7 @@ export function ClientProfileForm() {
   const form = useForm<ClientProfileFormData>({
     resolver: zodResolver(clientProfileSchema),
     defaultValues: {
+      contact_phone: "",
       preferred_services: [],
       favorite_masters: [],
     },
@@ -70,6 +73,7 @@ export function ClientProfileForm() {
         ]);
 
         form.reset({
+          contact_phone: profileData.contact_phone || "",
           preferred_services: servicesData || [],
           favorite_masters: mastersData || [],
         });
@@ -82,6 +86,7 @@ export function ClientProfileForm() {
   const updateClientMutation = useMutation({
     mutationFn: async (data: ClientProfileFormData) => {
       const transformedData = {
+        contact_phone: data.contact_phone,
         preferred_services: data.preferred_services.map(service => service.id),
         favorite_masters: data.favorite_masters.map(master => master.id),
       };
@@ -115,6 +120,41 @@ export function ClientProfileForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Contact Information */}
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-medium flex items-center gap-2">
+              <Phone className="h-5 w-5" />
+              Contact Information
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Your contact details for service providers
+            </p>
+          </div>
+          <Separator />
+
+          <FormField
+            control={form.control}
+            name="contact_phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone Number</FormLabel>
+                <FormControl>
+                  <Input
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Your contact phone number for service providers to reach you
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
         {/* Preferred Services */}
         <div className="space-y-4">
           <div>

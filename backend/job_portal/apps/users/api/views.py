@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group, Permission
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -15,9 +15,10 @@ from .serializers import (
     EmployerProfileCreateUpdateSerializer,
     MasterProfileCreateUpdateSerializer, MasterSkillSerializer, PortfolioItemSerializer, SkillDetailSerializer,
     CertificateSerializer, ProfessionSerializer, PublicMasterProfileDetailSerializer, PublicMasterProfileSerializer,
+    MasterOnlineStatusRequestSerializer, MasterOnlineStatusResponseSerializer,
 )
 from ..models import (
-    Employer, Skill, Profession, Master,
+    Employer, MasterStatistics, Skill, Profession, Master,
 )
 
 
@@ -39,15 +40,17 @@ def assign_client_permissions(user):
         user.user_permissions.add(perm)
 
 
-def assign_service_provider_permissions(user):
-    """Assign service provider-specific permissions to user."""
-    provider_group, _ = Group.objects.get_or_create(name="service_provider")
+def assign_master_permissions(user):
+    """Assign master-specific permissions to user."""
+    provider_group, _ = Group.objects.get_or_create(name="master")
     user.groups.add(provider_group)
     permissions = Permission.objects.filter(
         codename__in=["view_order", "add_bid", "view_bid", "change_bid", "view_payment"]
     )
     for perm in permissions:
         user.user_permissions.add(perm)
+
+    MasterStatistics.objects.create(master=user.master_profile)
 
 
 class EmployerProfileCreateAPIView(generics.CreateAPIView):
@@ -79,10 +82,10 @@ class MasterProfileCreateAPIView(
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        """Create service provider profile."""
+        """Create master profile."""
 
         response = super().create(request, *args, **kwargs)
-        assign_service_provider_permissions(request.user)
+        assign_master_permissions(request.user)
         return response
 
 
@@ -170,44 +173,56 @@ class PublicMasterProfileAPIViewSet(ReadOnlyModelViewSet):
     }
 
     def get_queryset(self):
-        return Master.objects.select_related('user', 'profession').filter(user__is_active=True)
+        return Master.objects.select_related(
+            'user', 
+            'profession',
+            'statistics'
+        ).prefetch_related(
+            'skills',
+            'portfolio_items',
+            'certificates',
+        ).filter(user__is_active=True)
 
     @extend_schema(
         description="Master Profile Details",
-        responses={200: PublicMasterProfileDetailSerializer(many=True)},
+        responses={200: PublicMasterProfileDetailSerializer},
         operation_id="v1_users_masters_details"
     )
     @action(detail=True, methods=['get'])
-    def details(self, request):
+    def details(self, request, pk=None):
         obj = self.get_object()
         return Response(PublicMasterProfileDetailSerializer(instance=obj).data)
 
 
 class MasterUpdateOnlineStatusAPIView(APIView):
-    """Update online status for service provider."""
+    """Update online status for master."""
 
     permission_classes = [IsAuthenticated, HasMasterProfile]
 
     @extend_schema(
-        description="Update online status",
+        description="Update online status for master",
+        request=MasterOnlineStatusRequestSerializer,
         responses={
-            200: OpenApiResponse(response={
-                "message": "",
-                "data": {
-
-                }
-            }),
+            200: MasterOnlineStatusResponseSerializer,
         },
+        operation_id="v1_users_masters_update_online_status"
     )
     def post(self, request):
-        """Update online status for service provider."""
+        """Update online status for master."""
 
-        is_online = request.data.get('is_online', False)
+        # Validate request data using serializer
+        serializer = MasterOnlineStatusRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Extract validated data
+        is_online = serializer.validated_data['is_online']
+        
+        # Update master profile
         provider_profile: Master = request.user.master_profile
         provider_profile.is_online = is_online
         provider_profile.last_seen = timezone.now()
         provider_profile.save(update_fields=['is_online', 'last_seen'])
-        provider_profile.save(update_fields=['is_online', 'last_seen'])
+        
         return Response({
             'message': 'Online status updated successfully',
             'is_online': is_online,

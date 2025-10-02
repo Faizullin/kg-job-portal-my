@@ -87,8 +87,8 @@
     "model": "core.supportfaq",
     "pk": 7,
     "fields": {
-      "question": "How to find a service provider?",
-      "answer": "Select a service category, browse provider profiles, read reviews, and choose the right specialist. Then create an order and wait for proposals from service providers.",
+      "question": "How to find a master?",
+      "answer": "Select a service category, browse provider profiles, read reviews, and choose the right specialist. Then create an order and wait for proposals from masters.",
       "category": "general",
       "is_active": true,
       "sort_order": 2,
@@ -102,7 +102,7 @@
     "pk": 8,
     "fields": {
       "question": "How to create an order?",
-      "answer": "Register on the platform, select a service category, fill in the order description, specify budget and deadlines. After creating the order, service providers can submit their proposals.",
+      "answer": "Register on the platform, select a service category, fill in the order description, specify budget and deadlines. After creating the order, masters can submit their proposals.",
       "category": "orders",
       "is_active": true,
       "sort_order": 3,
@@ -115,8 +115,8 @@
     "model": "core.supportfaq",
     "pk": 9,
     "fields": {
-      "question": "How to become a service provider?",
-      "answer": "Register as a service provider, fill in your profile, add portfolio items, specify your skills and certificates. After profile moderation, you will be able to receive orders.",
+      "question": "How to become a master?",
+      "answer": "Register as a master, fill in your profile, add portfolio items, specify your skills and certificates. After profile moderation, you will be able to receive orders.",
       "category": "master",
       "is_active": true,
       "sort_order": 4,
@@ -130,7 +130,7 @@
     "pk": 10,
     "fields": {
       "question": "How does payment work?",
-      "answer": "Payment is processed through a secure payment system. Funds are frozen during order execution and transferred to the service provider after successful completion of work.",
+      "answer": "Payment is processed through a secure payment system. Funds are frozen during order execution and transferred to the master after successful completion of work.",
       "category": "payment",
       "is_active": true,
       "sort_order": 5,

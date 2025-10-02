@@ -7,7 +7,7 @@ UserModel = get_user_model()
 class UserProfileSerializer(serializers.ModelSerializer):
     """Serializer for user profile display"""
 
-    groups = serializers.ListField(child=serializers.CharField())
+    groups = serializers.SerializerMethodField()
 
     class Meta:
         model = UserModel
@@ -15,6 +15,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'id', 'username', 'email', 'description', 'photo_url', "groups",
         ]
         read_only_fields = ['id', 'username']
+
+    def get_groups(self, obj):
+        """Get user groups as a list of group names."""
+        return [group.name for group in obj.groups.all()]
 
 
 class FireBaseAuthSerializer(serializers.Serializer):

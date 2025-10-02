@@ -225,7 +225,7 @@ def setup_groups():
     groups_data = [
         {
             'name': 'Master',
-            'description': 'Service providers who offer services',
+            'description': 'masters who offer services',
             'permissions': [
                 'add_jobapplication', 'change_jobapplication', 'view_jobapplication',
                 'add_master', 'change_master', 'view_master',

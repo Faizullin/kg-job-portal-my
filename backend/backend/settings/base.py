@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     "job_portal.apps.core",
     "job_portal.apps.users",
     "job_portal.apps.jobs",
-    # "job_portal.apps.payments",
     "job_portal.apps.chats",
     "job_portal.apps.notifications",
     "job_portal.apps.reviews",

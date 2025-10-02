@@ -44,6 +44,11 @@ export function AppSidebar() {
         return hasAdminAccess;
       }
 
+      // Subscribers section - only show for masters
+      if (url.startsWith("/subscribers")) {
+        return isProvider;
+      }
+
       if (isProvider) {
         if (url === "/jobs" || url === "/tasks") return false;
         return true;

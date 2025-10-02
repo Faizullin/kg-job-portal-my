@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from job_portal.apps.core.models import ServiceCategory, ServiceArea, ServiceSubcategory
+from job_portal.apps.attachments.models import Attachment
 from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedModel, TitleField, ActiveField, \
     PhoneNumberField
 
@@ -84,6 +85,9 @@ class Employer(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Extended profile for employers."""
 
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='employer_profile')
+    
+    # Contact information
+    contact_phone = PhoneNumberField(blank=True)
 
     preferred_services = models.ManyToManyField(ServiceSubcategory, blank=True,
                                                 related_name='employer_preferences')
@@ -110,8 +114,8 @@ class Skill(AbstractSoftDeleteModel, AbstractTimestampedModel):
     is_active = ActiveField()
 
     class Meta:
-        verbose_name = _("Master Skill")
-        verbose_name_plural = _("Master Skills")
+        verbose_name = _("Skill")
+        verbose_name_plural = _("Skills")
         ordering = ['name']
 
     def __str__(self):
@@ -145,14 +149,6 @@ class MasterSkill(AbstractTimestampedModel):
         return f"{self.master.user.username} - {self.skill.name} [#{self.id}]"
 
 
-def portfolio_attachment_storage_upload_to(instance, filename):
-    """Generate upload path for attachments."""
-
-    current_datetime = timezone.now().strftime('%Y/%m/%d')
-    if not instance.pk:
-        raise ValueError("Instance must have a primary key before uploading.")
-    updated_filename = f"{current_datetime}_{filename}"
-    return f'portfolio_items/attachment_{instance.pk}/{updated_filename}'
 
 
 class PortfolioItem(AbstractSoftDeleteModel, AbstractTimestampedModel):
@@ -161,7 +157,7 @@ class PortfolioItem(AbstractSoftDeleteModel, AbstractTimestampedModel):
     master = models.ForeignKey(Master, on_delete=models.CASCADE, related_name='portfolio_items')
     title = TitleField()
     description = models.TextField(_("Description"), blank=True)
-    image = models.ImageField(_("Portfolio Image"), upload_to=portfolio_attachment_storage_upload_to)
+    attachments = models.ManyToManyField(Attachment, related_name='portfolio_items', blank=True)
     skill_used = models.ForeignKey(Skill, on_delete=models.SET_NULL, null=True, blank=True,
                                    related_name='portfolio_items')
     is_featured = models.BooleanField(_("Featured Item"), default=False)

@@ -1,6 +1,16 @@
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericTabularInline
 
 from .models import Job, JobApplication, JobDispute, BookmarkJob, FavoriteJob, JobAssignment
+from job_portal.apps.attachments.models import Attachment
+
+
+class AttachmentInline(GenericTabularInline):
+    """Generic inline for attachments."""
+    model = Attachment
+    extra = 0
+    fields = ('file', 'original_filename', 'file_type', 'uploaded_by', 'is_public')
+    readonly_fields = ('size', 'mime_type', 'file_type')
 
 
 @admin.register(Job)
@@ -38,6 +48,7 @@ class JobAdmin(admin.ModelAdmin):
     )
 
     filter_horizontal = ['skills']
+    inlines = [AttachmentInline]
 
     def budget_display(self, obj):
         if obj.budget_min and obj.budget_max:
@@ -65,6 +76,7 @@ class JobAssignmentAdmin(admin.ModelAdmin):
     search_fields = ['job__title', 'master__user__first_name', 'master__user__last_name']
     ordering = ['-assigned_at']
     raw_id_fields = ['job', 'master']
+    inlines = [AttachmentInline]
 
     fieldsets = (
         ('Assignment Information', {
@@ -189,3 +201,5 @@ class FavoriteJobAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('user', 'job')
+
+

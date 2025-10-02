@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
 import { TopNav } from "@/components/layout/top-nav";
@@ -9,116 +11,177 @@ import { ProfileDropdown } from "@/components/profile-dropdown";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { ConfigDrawer } from "@/components/config-drawer";
 import myApi from "@/lib/api/my-api";
-import { useQuery } from "@tanstack/react-query";
-import { 
-  Heart,
-  MoreHorizontal,
-  Star,
-  Briefcase,
-  GraduationCap,
-  Globe,
-  Award
+import { useAuthStore } from "@/stores/auth-store";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Job } from "@/lib/api/axios-client/api";
+import { Status30eEnum } from "@/lib/api/axios-client/api";
+import {
+  Bell,
+  Menu,
+  DollarSign,
+  MapPin,
+  Clock,
+  Filter,
+  Calendar,
+  ChevronRight
 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
-interface ProviderDashboardData {
-  provider_info?: {
-    name: string;
-    profession: string;
-    is_top_master: boolean;
-    is_verified: boolean;
-    avatar?: string;
-    location: string;
-    is_online: boolean;
-  };
-  statistics?: {
-    total_orders: number;
-    total_reviews: number;
-    on_time_percentage: number;
-    repeat_customer_percentage: number;
-    completed_jobs: number;
-    hourly_rate: string;
-    response_time: string;
-  };
-  portfolio?: Array<{
-    id: number;
-    title: string;
-    description: string;
-    image_url: string;
-    created_at: string;
-  }>;
-  recent_reviews?: Array<{
-    id: number;
-    client_name: string;
-    rating: number;
-    comment: string;
-    created_at: string;
-    client_avatar?: string;
-  }>;
-  skills?: Array<{
-    id: number;
-    name: string;
-    description: string;
-  }>;
-  certificates?: Array<{
-    id: number;
-    name: string;
-    issuer: string;
-    issue_date: string;
-  }>;
-  professional_info?: {
-    work_experience: string;
-    education: string;
-    education_years: string;
-    languages: string[];
-    about: string;
-  };
-}
+const MASTER_DASHBOARD_QUERY_KEY = 'master-dashboard';
 
 export function MasterDashboard() {
-  const { data: dashboardData, isLoading } = useQuery({
-    queryKey: ['dashboard', 'provider'],
+  const [isOnline, setIsOnline] = useState(true);
+  const [activeTab, setActiveTab] = useState("new");
+  const queryClient = useQueryClient();
+  const { user } = useAuthStore();
+
+  // Fetch master profile data
+  const masterProfileQuery = useQuery({
+    queryKey: [MASTER_DASHBOARD_QUERY_KEY, 'profile'],
     queryFn: async () => {
-      const response = await myApi.axios.get('/api/v1/dashboard/provider/');
-      return response.data as ProviderDashboardData;
+      const response = await myApi.v1UsersMyMasterRetrieve();
+      return response.data;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 
-  const masterStats = dashboardData?.statistics || {
-    total_orders: 0,
-    total_reviews: 0,
-    on_time_percentage: 0,
-    repeat_customer_percentage: 0,
-    completed_jobs: 0,
-    hourly_rate: "Цена договорная",
-    response_time: "24 часа",
+  // Fetch job requests based on status
+  const jobRequestsQuery = useQuery({
+    queryKey: [MASTER_DASHBOARD_QUERY_KEY, 'requests', activeTab],
+    queryFn: async () => {
+      let status: Status30eEnum | undefined;
+
+      switch (activeTab) {
+        case 'new':
+          status = Status30eEnum.published;
+          break;
+        case 'in_progress':
+          status = Status30eEnum.in_progress;
+          break;
+        case 'history':
+          status = Status30eEnum.completed;
+          break;
+        default:
+          status = undefined;
+      }
+
+      const response = await myApi.v1SearchJobsList({
+        ordering: '-created_at',
+        page: 1,
+        pageSize: 20,
+        status: status
+      });
+      return response.data.results;
+    },
+    staleTime: 30 * 1000,
+  });
+
+  // Online status mutation
+  const onlineStatusMutation = useMutation({
+    mutationFn: async (online: boolean) => {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return online;
+    },
+    onSuccess: (online) => {
+      setIsOnline(online);
+      toast.success(online ? "Вы онлайн" : "Вы офлайн");
+    },
+    onError: () => {
+      toast.error("Ошибка при обновлении статуса");
+    }
+  });
+
+  const handleOnlineToggle = (online: boolean) => {
+    onlineStatusMutation.mutate(online);
   };
 
-  const providerInfo = dashboardData?.provider_info || {
-    name: "Мастер",
-    profession: "Специалист",
-    is_top_master: false,
-    is_verified: false,
-    location: "Город",
-    is_online: false,
+  // Get master profile data with fallbacks
+  const masterProfile = useMemo(() => masterProfileQuery.data || null, [masterProfileQuery.data]);
+  const masterName = useMemo(() => {
+    if (user?.first_name && user?.last_name) {
+      return `${user.first_name} ${user.last_name}`;
+    }
+    return user?.username || "";
+  }, [user]);
+  const masterLocation = masterProfile?.current_location || "";
+  const masterAvatar = user?.photo_url;
+
+  const jobRequests = useMemo(() => jobRequestsQuery.data || [], [jobRequestsQuery.data]);
+
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = date.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) {
+      return `Сегодня, ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
+    } else if (diffDays === 1) {
+      return `Завтра, ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
+    } else if (diffDays === 2) {
+      return `Послезавтра, ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
+    } else {
+      return date.toLocaleDateString('ru-RU', {
+        day: 'numeric',
+        month: 'long',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
   };
 
-  const skills = dashboardData?.skills || [];
-  const reviews = dashboardData?.recent_reviews || [];
-  const certificates = dashboardData?.certificates || [];
-  const professionalInfo = dashboardData?.professional_info || {
-    work_experience: "",
-    education: "",
-    education_years: "",
-    languages: [],
-    about: "",
+  const getStatusBadge = (status: Job['status'] | undefined) => {
+    switch (status) {
+      case Status30eEnum.published:
+        return <Badge className="bg-blue-100 text-blue-800">Новый</Badge>;
+      case Status30eEnum.in_progress:
+        return <Badge className="bg-yellow-100 text-yellow-800">В работе</Badge>;
+      case Status30eEnum.completed:
+        return <Badge className="bg-green-100 text-green-800">Завершен</Badge>;
+      case Status30eEnum.cancelled:
+        return <Badge className="bg-red-100 text-red-800">Отменен</Badge>;
+      case Status30eEnum.assigned:
+        return <Badge className="bg-purple-100 text-purple-800">Назначен</Badge>;
+      case Status30eEnum.draft:
+        return <Badge className="bg-gray-100 text-gray-800">Черновик</Badge>;
+      default:
+        return null;
+    }
   };
+
+  // Handle error state
+  if (masterProfileQuery.error || jobRequestsQuery.error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-red-600">Ошибка загрузки</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            Не удалось загрузить данные дашборда
+          </p>
+          <Button
+            onClick={() => queryClient.invalidateQueries({ queryKey: [MASTER_DASHBOARD_QUERY_KEY] })}
+            className="mt-4"
+          >
+            Попробовать снова
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
       <Header>
         <TopNav links={masterTopNav} />
         <div className="ms-auto flex items-center space-x-4">
+          <Button variant="ghost" size="sm" className="relative">
+            <Bell className="h-5 w-5" />
+            <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 text-xs text-white flex items-center justify-center">
+              3
+            </div>
+          </Button>
           <ThemeSwitch />
           <ConfigDrawer />
           <ProfileDropdown />
@@ -127,248 +190,162 @@ export function MasterDashboard() {
 
       <Main>
         <div className="space-y-6">
-          {/* Master Profile Header */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <Avatar className="h-16 w-16">
-                    <AvatarImage src={providerInfo.avatar} alt={providerInfo.name} />
-                    <AvatarFallback>{providerInfo.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h1 className="text-2xl font-bold">{providerInfo.name}</h1>
-                    <p className="text-lg text-muted-foreground">{providerInfo.profession}</p>
+          {/* Mobile Header */}
+          <div className="bg-blue-600 text-white p-6 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={masterAvatar || undefined} alt={masterName} />
+                  <AvatarFallback className="text-lg">{masterName.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium text-lg">Добрый день, {masterName}</p>
+                  <div className="flex items-center space-x-1 mt-1">
+                    <div className="w-2 h-2 bg-blue-300 rounded-full"></div>
+                    <p className="text-sm opacity-90">{masterLocation}</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Button>Выбрать</Button>
-                  {providerInfo.is_top_master && (
-                    <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                      ТОП мастер
-                    </Badge>
-                  )}
-                  <Button variant="ghost" size="sm">
-                    <Heart className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Statistics */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <Card>
-              <CardContent className="p-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">{masterStats.total_orders}</div>
-                  <p className="text-sm text-muted-foreground">Заказов</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">{masterStats.total_reviews}</div>
-                  <p className="text-sm text-muted-foreground">Отзывов</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">{masterStats.on_time_percentage}%</div>
-                  <p className="text-sm text-muted-foreground">В срок</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">{masterStats.repeat_customer_percentage}%</div>
-                  <p className="text-sm text-muted-foreground">Повторно</p>
-                </div>
-              </CardContent>
-            </Card>
+              <div className="flex items-center space-x-3">
+                <Button variant="ghost" size="sm" className="text-white hover:bg-blue-700 p-2">
+                  <Bell className="h-5 w-5" />
+                </Button>
+                <Button variant="ghost" size="sm" className="text-white hover:bg-blue-700 p-2">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
           </div>
 
-          {/* Work Examples - Portfolio */}
-          {dashboardData?.portfolio && dashboardData.portfolio.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Примеры работ</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  {dashboardData.portfolio.map((item: any) => (
-                    <div key={item.id} className="group cursor-pointer">
-                      <div className="aspect-video overflow-hidden rounded-lg bg-muted">
-                        <img
-                          src={item.image_url}
-                          alt={item.title}
-                          className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                        />
-                      </div>
-                      <p className="mt-2 text-sm font-medium">{item.title}</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Skills and Service Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Что умеет</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex flex-wrap gap-2">
-                {skills.map((skill) => (
-                  <Badge key={skill.id} variant="outline">
-                    {skill.name}
-                  </Badge>
-                ))}
-              </div>
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-lg font-semibold">{masterStats.completed_jobs} работ</div>
-                  <p className="text-sm text-muted-foreground">Выполнено</p>
-                </div>
-                <div>
-                  <div className="text-lg font-semibold">{masterStats.hourly_rate} за час</div>
-                  <p className="text-sm text-muted-foreground">Стоимость</p>
-                </div>
-                <div>
-                  <div className="text-lg font-semibold">{masterStats.response_time} скорость ответа</div>
-                  <p className="text-sm text-muted-foreground">Время</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Client Reviews */}
-          <Card>
-            <CardHeader>
+          {/* Online Status */}
+          <Card className="border border-gray-200">
+            <CardContent className="p-5">
               <div className="flex items-center justify-between">
-                <CardTitle>Отзывы клиентов</CardTitle>
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-medium">4.8</span>
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
+                    <span className="font-medium text-base">{isOnline ? 'Онлайн' : 'Офлайн'}</span>
                   </div>
-                  <div className="w-20 h-2 bg-gray-200 rounded-full">
-                    <div className="h-2 bg-blue-500 rounded-full" style={{ width: '80%' }}></div>
-                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {isOnline ? 'Принимаете заказы' : 'Не принимаете заказы'}
+                  </p>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {reviews.map((review) => (
-                <div key={review.id} className="flex space-x-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={review.client_avatar} alt={review.client_name} />
-                    <AvatarFallback>{review.client_name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-medium">{review.client_name}</span>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-3 w-3 ${
-                              i < review.rating
-                                ? "fill-yellow-400 text-yellow-400"
-                                : "text-gray-300"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <p className="mt-1 text-sm text-muted-foreground">{review.comment}</p>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* About the Specialist */}
-          <Card>
-            <CardHeader>
-              <CardTitle>О специалисте</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                {professionalInfo.about || "Информация о специалисте будет добавлена."}
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Professional Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Профессиональная информация</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <Briefcase className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Опыт работы</p>
-                  <p className="text-sm text-muted-foreground">{professionalInfo.work_experience || "Не указано"}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <GraduationCap className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Образование</p>
-                  <p className="text-sm text-muted-foreground">{professionalInfo.education || "Не указано"}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Globe className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Языки</p>
-                  <p className="text-sm text-muted-foreground">{professionalInfo.languages.join(", ") || "Не указано"}</p>
-                </div>
+                <Switch
+                  checked={isOnline}
+                  onCheckedChange={handleOnlineToggle}
+                  disabled={onlineStatusMutation.isPending}
+                  className="data-[state=checked]:bg-green-600"
+                />
               </div>
             </CardContent>
           </Card>
 
-          {/* Certificates */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Сертификаты</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {certificates.map((cert) => (
-                  <Badge key={cert.id} variant="secondary">
-                    <Award className="mr-1 h-3 w-3" />
-                    {cert.name}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Call to Action */}
-          <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-            <CardContent className="p-6">
-              <div className="text-center">
-                <h3 className="mb-2 text-lg font-semibold">Готов к работе</h3>
-                <p className="mb-4 text-muted-foreground">
-                  Расскажите о вашей задаче и получите профессиональную помощь
-                </p>
-                <Button size="lg" className="w-full sm:w-auto">
-                  Рассказать о задаче
+          {/* Filter Bar */}
+          <Card className="border border-gray-200">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-3 overflow-x-auto">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2 whitespace-nowrap border-gray-300 hover:bg-gray-50">
+                  <DollarSign className="h-4 w-4" />
+                  <span>Цена</span>
+                </Button>
+                <Button variant="outline" size="sm" className="flex items-center space-x-2 whitespace-nowrap border-gray-300 hover:bg-gray-50">
+                  <MapPin className="h-4 w-4" />
+                  <span>Расстояние</span>
+                </Button>
+                <Button variant="outline" size="sm" className="flex items-center space-x-2 whitespace-nowrap border-gray-300 hover:bg-gray-50">
+                  <Clock className="h-4 w-4" />
+                  <span>Время</span>
+                </Button>
+                <Button variant="outline" size="sm" className="flex items-center space-x-2 whitespace-nowrap border-gray-300 hover:bg-gray-50 ml-auto">
+                  <Filter className="h-4 w-4" />
                 </Button>
               </div>
             </CardContent>
           </Card>
+
+          {/* Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="new">Новые</TabsTrigger>
+              <TabsTrigger value="in_progress">В работе</TabsTrigger>
+              <TabsTrigger value="history">История</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value={activeTab} className="space-y-4">
+              {jobRequestsQuery.isLoading ? (
+                <div className="space-y-4">
+                  {[...Array(3)].map((_, i) => (
+                    <Card key={i}>
+                      <CardContent className="p-4">
+                        <div className="animate-pulse space-y-3">
+                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                          <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : jobRequests.length === 0 ? (
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <p className="text-muted-foreground">
+                      {activeTab === 'new' && 'Нет новых заявок'}
+                      {activeTab === 'in_progress' && 'Нет заявок в работе'}
+                      {activeTab === 'history' && 'История пуста'}
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-4">
+                  {jobRequests.map((request) => (
+                    <Card key={request.id} className="hover:shadow-md transition-shadow border border-gray-200">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <h3 className="font-semibold text-lg flex-1">{request.title}</h3>
+                          <div className="ml-2">
+                            {getStatusBadge(request.status)}
+                          </div>
+                        </div>
+
+                        <div className="text-blue-600 font-semibold text-lg mb-3">
+                          {request.budget_min && request.budget_max 
+                            ? `${request.budget_min.toLocaleString()} - ${request.budget_max.toLocaleString()} тг`
+                            : request.final_price 
+                            ? `${request.final_price.toLocaleString()} тг`
+                            : 'Цена договорная'
+                          }
+                        </div>
+
+                        <div className="space-y-2 mb-4">
+                          {request.service_date && (
+                            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                              <Calendar className="h-4 w-4" />
+                              <span>{formatDate(request.service_date)}</span>
+                            </div>
+                          )}
+                          {request.location && (
+                            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                              <MapPin className="h-4 w-4" />
+                              <span>{request.location}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <Button 
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white" 
+                          variant={request.status === Status30eEnum.published ? 'default' : 'outline'}
+                        >
+                          Подробнее
+                          <ChevronRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
       </Main>
     </>
@@ -383,26 +360,26 @@ const masterTopNav = [
     disabled: false,
   },
   {
-    title: "Заказы",
-    href: "/jobs",
+    title: "Заявки",
+    href: "/app/requests",
     isActive: false,
     disabled: false,
   },
   {
     title: "Сообщения",
-    href: "/chats",
+    href: "/app/chats",
     isActive: false,
     disabled: false,
   },
   {
-    title: "Отзывы",
-    href: "/reviews",
+    title: "Мои заказы",
+    href: "/app/orders",
     isActive: false,
     disabled: false,
   },
   {
     title: "Профиль",
-    href: "/settings/master",
+    href: "/app/profile",
     isActive: false,
     disabled: false,
   },
