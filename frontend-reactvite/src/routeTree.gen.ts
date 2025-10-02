@@ -29,7 +29,7 @@ import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
 import { Route as AuthenticatedSubscribersSkillsRouteImport } from './routes/_authenticated/subscribers/skills'
-import { Route as AuthenticatedSubscribersResumeRouteImport } from './routes/_authenticated/subscribers/resume'
+import { Route as AuthenticatedSubscribersResumesRouteImport } from './routes/_authenticated/subscribers/resumes'
 import { Route as AuthenticatedSubscribersPortfolioRouteImport } from './routes/_authenticated/subscribers/portfolio'
 import { Route as AuthenticatedSettingsProfileRouteImport } from './routes/_authenticated/settings/profile'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
@@ -155,10 +155,10 @@ const AuthenticatedSubscribersSkillsRoute =
     path: '/subscribers/skills',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedSubscribersResumeRoute =
-  AuthenticatedSubscribersResumeRouteImport.update({
-    id: '/subscribers/resume',
-    path: '/subscribers/resume',
+const AuthenticatedSubscribersResumesRoute =
+  AuthenticatedSubscribersResumesRouteImport.update({
+    id: '/subscribers/resumes',
+    path: '/subscribers/resumes',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSubscribersPortfolioRoute =
@@ -302,7 +302,7 @@ export interface FileRoutesByFullPath {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/subscribers/portfolio': typeof AuthenticatedSubscribersPortfolioRoute
-  '/subscribers/resume': typeof AuthenticatedSubscribersResumeRoute
+  '/subscribers/resumes': typeof AuthenticatedSubscribersResumesRoute
   '/subscribers/skills': typeof AuthenticatedSubscribersSkillsRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
@@ -343,7 +343,7 @@ export interface FileRoutesByTo {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/subscribers/portfolio': typeof AuthenticatedSubscribersPortfolioRoute
-  '/subscribers/resume': typeof AuthenticatedSubscribersResumeRoute
+  '/subscribers/resumes': typeof AuthenticatedSubscribersResumesRoute
   '/subscribers/skills': typeof AuthenticatedSubscribersSkillsRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
@@ -386,7 +386,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/_authenticated/subscribers/portfolio': typeof AuthenticatedSubscribersPortfolioRoute
-  '/_authenticated/subscribers/resume': typeof AuthenticatedSubscribersResumeRoute
+  '/_authenticated/subscribers/resumes': typeof AuthenticatedSubscribersResumesRoute
   '/_authenticated/subscribers/skills': typeof AuthenticatedSubscribersSkillsRoute
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
@@ -429,7 +429,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/settings/profile'
     | '/subscribers/portfolio'
-    | '/subscribers/resume'
+    | '/subscribers/resumes'
     | '/subscribers/skills'
     | '/apps'
     | '/chats'
@@ -470,7 +470,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/settings/profile'
     | '/subscribers/portfolio'
-    | '/subscribers/resume'
+    | '/subscribers/resumes'
     | '/subscribers/skills'
     | '/apps'
     | '/chats'
@@ -512,7 +512,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/profile'
     | '/_authenticated/subscribers/portfolio'
-    | '/_authenticated/subscribers/resume'
+    | '/_authenticated/subscribers/resumes'
     | '/_authenticated/subscribers/skills'
     | '/_authenticated/apps/'
     | '/_authenticated/chats/'
@@ -680,11 +680,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSubscribersSkillsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/subscribers/resume': {
-      id: '/_authenticated/subscribers/resume'
-      path: '/subscribers/resume'
-      fullPath: '/subscribers/resume'
-      preLoaderRoute: typeof AuthenticatedSubscribersResumeRouteImport
+    '/_authenticated/subscribers/resumes': {
+      id: '/_authenticated/subscribers/resumes'
+      path: '/subscribers/resumes'
+      fullPath: '/subscribers/resumes'
+      preLoaderRoute: typeof AuthenticatedSubscribersResumesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/subscribers/portfolio': {
@@ -863,7 +863,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedJobsJobIdRoute: typeof AuthenticatedJobsJobIdRoute
   AuthenticatedPaymentsInvoicesRoute: typeof AuthenticatedPaymentsInvoicesRoute
   AuthenticatedSubscribersPortfolioRoute: typeof AuthenticatedSubscribersPortfolioRoute
-  AuthenticatedSubscribersResumeRoute: typeof AuthenticatedSubscribersResumeRoute
+  AuthenticatedSubscribersResumesRoute: typeof AuthenticatedSubscribersResumesRoute
   AuthenticatedSubscribersSkillsRoute: typeof AuthenticatedSubscribersSkillsRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
@@ -893,7 +893,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPaymentsInvoicesRoute: AuthenticatedPaymentsInvoicesRoute,
   AuthenticatedSubscribersPortfolioRoute:
     AuthenticatedSubscribersPortfolioRoute,
-  AuthenticatedSubscribersResumeRoute: AuthenticatedSubscribersResumeRoute,
+  AuthenticatedSubscribersResumesRoute: AuthenticatedSubscribersResumesRoute,
   AuthenticatedSubscribersSkillsRoute: AuthenticatedSubscribersSkillsRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,

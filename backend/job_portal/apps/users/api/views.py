@@ -2,9 +2,11 @@ from django.contrib.auth.models import Group, Permission
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import generics, status
+from rest_framework import generics, status, mixins, viewsets, parsers
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,11 +17,14 @@ from .serializers import (
     EmployerProfileCreateUpdateSerializer,
     MasterProfileCreateUpdateSerializer, MasterSkillSerializer, PortfolioItemSerializer, SkillDetailSerializer,
     CertificateSerializer, ProfessionSerializer, PublicMasterProfileDetailSerializer, PublicMasterProfileSerializer,
-    MasterOnlineStatusRequestSerializer, MasterOnlineStatusResponseSerializer,
+    MasterOnlineStatusRequestSerializer, MasterOnlineStatusResponseSerializer, PortfolioItemAttachmentUploadSerializer,
 )
 from ..models import (
-    Employer, MasterStatistics, Skill, Profession, Master,
+    Employer, MasterStatistics, Skill, Profession, Master, PortfolioItem,
 )
+from ...attachments.api.permissions import IsAttachmentOwner
+from ...attachments.models import create_attachments
+from ...attachments.serializers import AttachmentSerializer
 
 
 def assign_client_permissions(user):
@@ -118,7 +123,47 @@ class MasterPortfolioAPIViewSet(ModelViewSet):
 
     def get_queryset(self):
         provider_profile = self.request.user.master_profile
-        return provider_profile.portfolio_items.select_related("skill_used")
+        return provider_profile.portfolio_items.select_related("skill_used").prefetch_related("attachments")
+
+
+class MasterPortfolioAttachmentAPIViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+    permission_classes = [IsAuthenticated, IsAttachmentOwner, HasMasterProfile]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+
+    def _get_portfolio_obj(self) -> PortfolioItem:
+        if hasattr(self.request, "_portfolio_obj"):
+            return self.request._portfolio_obj
+        parent_lookup_field = "portfolio_id"
+        portfolio_id = self.kwargs.get(parent_lookup_field)
+        item: PortfolioItem = get_object_or_404(PortfolioItem, id=portfolio_id)
+        if item.master != self.request.user.master_profile:
+            raise PermissionDenied("You are not the owner of this job assignment")
+        self.request._portfolio_obj = item
+        return self.request._portfolio_obj
+
+    def get_queryset(self):
+        item = self._get_portfolio_obj()
+        return item.attachments.all()
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return PortfolioItemAttachmentUploadSerializer
+        return AttachmentSerializer
+
+    def perform_create(self, serializer):
+        item = self._get_portfolio_obj()
+        files = serializer.validated_data["files"]
+        if not files:
+            raise ValidationError("No files provided")
+        attachments = create_attachments(files, self.request.user, item)
+        for a in attachments:
+            item.attachments.add(a)
+        return attachments
 
 
 class CertificateAPIViewSet(ModelViewSet):
@@ -174,7 +219,7 @@ class PublicMasterProfileAPIViewSet(ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return Master.objects.select_related(
-            'user', 
+            'user',
             'profession',
             'statistics'
         ).prefetch_related(
@@ -213,16 +258,16 @@ class MasterUpdateOnlineStatusAPIView(APIView):
         # Validate request data using serializer
         serializer = MasterOnlineStatusRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         # Extract validated data
         is_online = serializer.validated_data['is_online']
-        
+
         # Update master profile
         provider_profile: Master = request.user.master_profile
         provider_profile.is_online = is_online
         provider_profile.last_seen = timezone.now()
         provider_profile.save(update_fields=['is_online', 'last_seen'])
-        
+
         return Response({
             'message': 'Online status updated successfully',
             'is_online': is_online,

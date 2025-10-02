@@ -1,9 +1,10 @@
+from django.core.validators import FileExtensionValidator, get_available_image_extensions
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from accounts.models import UserModel
-from utils.serializers import AbstractTimestampedModelSerializer
 from job_portal.apps.attachments.serializers import AttachmentSerializer
+from utils.serializers import AbstractTimestampedModelSerializer
 from ..models import (
     Employer,
     Skill,
@@ -178,6 +179,38 @@ class PortfolioItemSerializer(AbstractTimestampedModelSerializer):
         )
 
 
+def validate_file_size(file_obj):
+    max_size = 1024 * 1024  # 1MB
+    if file_obj.size > max_size:
+        raise serializers.ValidationError(f"File is larger than {max_size=}")
+
+
+def validate_total_size(file_list):
+    total_size = sum(f.size for f in file_list)
+    max_mb_size = 10
+    max_size = 1024 * 1024 * max_mb_size
+    if total_size > max_size:
+        current_mb = total_size / (1024 * 1024)
+        raise serializers.ValidationError(
+            f"The total size of all attachments ({current_mb:.2f} MB) "
+            f"exceeds the maximum allowed total size of {max_mb_size:.0f} MB."
+        )
+
+
+class PortfolioItemAttachmentUploadSerializer(serializers.Serializer):
+    files = serializers.ListField(
+        child=serializers.FileField(
+            validators=[
+                FileExtensionValidator(allowed_extensions=get_available_image_extensions()),
+                validate_file_size,
+            ],
+        ),
+        allow_empty=False,
+        write_only=True,
+        validators=[validate_total_size]
+    )
+
+
 class CertificateSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = Certificate
@@ -301,13 +334,13 @@ class PublicMasterProfileDetailSerializer(serializers.ModelSerializer):
 
 class MasterOnlineStatusRequestSerializer(serializers.Serializer):
     """Serializer for master online status update request."""
-    
+
     is_online = serializers.BooleanField(help_text="Online status to set", default=False)
 
 
 class MasterOnlineStatusResponseSerializer(serializers.Serializer):
     """Serializer for master online status update response."""
-    
+
     message = serializers.CharField(help_text="Success message")
     is_online = serializers.BooleanField(help_text="Current online status")
     last_seen = serializers.DateTimeField(help_text="Last seen timestamp")

@@ -1,12 +1,17 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import FileExtensionValidator, get_available_image_extensions
 from rest_framework import serializers
 
-from job_portal.apps.users.api.serializers import UserDetailChildSerializer, PublicMasterProfileSerializer
+from job_portal.apps.attachments.serializers import AttachmentSerializer
+from job_portal.apps.users.api.serializers import (
+    PublicMasterProfileSerializer,
+    UserDetailChildSerializer,
+)
 from utils.serializers import (
     AbstractTimestampedModelSerializer,
 )
-from ..models import ChatRoom, ChatMessage, ChatParticipant, MessageType, ChatRole
-from job_portal.apps.attachments.serializers import AttachmentSerializer
+
+from ..models import ChatMessage, ChatParticipant, ChatRole, ChatRoom, MessageType
 
 UserModel = get_user_model()
 
@@ -19,29 +24,39 @@ class ChatParticipantSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatParticipant
         fields = [
-            'id', 'user', 'role', 'is_online', 'last_seen',
-            'unread_count', 'notifications_enabled', 'mute_until',
-            'created_at', 'updated_at'
+            "id",
+            "user",
+            "role",
+            "is_online",
+            "last_seen",
+            "unread_count",
+            "notifications_enabled",
+            "mute_until",
+            "created_at",
+            "updated_at",
         ]
-        read_only_fields = ['id', 'user', 'created_at', 'updated_at']
+        read_only_fields = ["id", "user", "created_at", "updated_at"]
 
 
 class ChatRoomSerializer(serializers.ModelSerializer):
     """Serializer for chat rooms."""
 
-    participants = ChatParticipantSerializer(
-        many=True,
-        read_only=True
-    )
+    participants = ChatParticipantSerializer(many=True, read_only=True)
 
     class Meta:
         model = ChatRoom
         fields = [
-            'id', 'job', 'title', 'is_active', 'chat_type',
-            'last_message_at', 'participants',
-            'created_at', 'updated_at'
+            "id",
+            "job",
+            "title",
+            "is_active",
+            "chat_type",
+            "last_message_at",
+            "participants",
+            "created_at",
+            "updated_at",
         ]
-        read_only_fields = ['id', 'last_message_at', 'created_at', 'updated_at']
+        read_only_fields = ["id", "last_message_at", "created_at", "updated_at"]
 
 
 def add_initial_chat_room_participants(chat_room: ChatRoom, users_ids: list[int]):
@@ -58,9 +73,7 @@ def add_initial_chat_room_participants(chat_room: ChatRoom, users_ids: list[int]
     chat_participants = []
     for u in users:
         c = ChatParticipant.objects.get_or_create(
-            chat_room=chat_room,
-            user=u,
-            defaults={'role': 'member'}
+            chat_room=chat_room, user=u, defaults={"role": "member"}
         )
         chat_participants.append(c)
     return chat_participants
@@ -71,29 +84,34 @@ class ChatRoomCreateSerializer(serializers.ModelSerializer):
 
     participants_users_ids = serializers.ListField(
         child=serializers.IntegerField(),
-        help_text='List of user IDs to add as participants',
+        help_text="List of user IDs to add as participants",
         required=False,
-        default=list
+        default=list,
     )
-    participants = ChatParticipantSerializer(
-        many=True,
-        read_only=True
-    )
+    participants = ChatParticipantSerializer(many=True, read_only=True)
 
     class Meta:
         model = ChatRoom
-        fields = ['id', 'title', 'participants_users_ids', 'participants', 'job', 'chat_type', 'created_at',
-                  'updated_at']
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        fields = [
+            "id",
+            "title",
+            "participants_users_ids",
+            "participants",
+            "job",
+            "chat_type",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
 
     def create(self, validated_data):
-        participants_users_ids = validated_data.pop('participants_users_ids', [])
+        participants_users_ids = validated_data.pop("participants_users_ids", [])
         chat_room = ChatRoom.objects.create(
             **validated_data,
             is_active=True,
         )
         add_initial_chat_room_participants(chat_room, participants_users_ids)
-        user = self.context['request'].user
+        user = self.context["request"].user
         ChatParticipant.objects.create(
             chat_room=chat_room,
             user=user,
@@ -112,29 +130,57 @@ class MessageSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = ChatMessage
         fields = [
-            'id', 'chat_room', 'sender', 'content', 'message_type',
-            'attachments', 'reply_to', 'reply_to_sender',
-            'is_read', 'read_at', 'created_at', 'updated_at'
+            "id",
+            "chat_room",
+            "sender",
+            "content",
+            "message_type",
+            "attachments",
+            "reply_to",
+            "reply_to_sender",
+            "is_read",
+            "read_at",
+            "created_at",
+            "updated_at",
         ]
-        read_only_fields = ['id', 'sender', 'is_read', 'read_at', 'created_at', 'updated_at']
+        read_only_fields = [
+            "id",
+            "sender",
+            "is_read",
+            "read_at",
+            "created_at",
+            "updated_at",
+        ]
 
     def get_reply_to_sender(self, obj):
         if obj.reply_to:
             return {
-                'id': obj.reply_to.sender.id,
-                'full_name': obj.reply_to.sender.get_full_name() or obj.reply_to.sender.username
+                "id": obj.reply_to.sender.id,
+                "full_name": obj.reply_to.sender.get_full_name()
+                or obj.reply_to.sender.username,
             }
         return None
 
 
+def validate_file_size(file_obj):
+    max_size = 1024 * 1024  # 1MB
+    if file_obj.size > max_size:
+        raise serializers.ValidationError(f"File is larger than {max_size=}")
+
+
+def validate_total_size(file_list):
+    total_size = sum(f.size for f in file_list)
+    max_mb_size = 10
+    max_size = 1024 * 1024 * max_mb_size
+    if total_size > max_size:
+        current_mb = total_size / (1024 * 1024)
+        raise serializers.ValidationError(
+            f"The total size of all attachments ({current_mb:.2f} MB) "
+            f"exceeds the maximum allowed total size of {max_mb_size:.0f} MB."
+        )
+
+
 class MessageCreateSerializer(serializers.ModelSerializer):
-    attachment_file = serializers.FileField(
-        required=False,
-        allow_null=True,
-        help_text='File attachment (image or document)',
-        allow_empty_file=False,
-        write_only=True,
-    )
     message_type = serializers.ChoiceField(
         choices=[
             MessageType.TEXT,
@@ -142,19 +188,51 @@ class MessageCreateSerializer(serializers.ModelSerializer):
             MessageType.FILE,
         ]
     )
+    attachments = AttachmentSerializer(many=True, read_only=True)
+    attachments_files = serializers.ListField(
+        child=serializers.FileField(
+            validators=[
+                FileExtensionValidator(
+                    allowed_extensions=get_available_image_extensions()
+                ),
+                validate_file_size,
+            ],
+        ),
+        allow_empty=False,
+        write_only=True,
+        validators=[validate_total_size],
+    )
 
     class Meta:
         model = ChatMessage
-        fields = ["id", "chat_room", "sender", "message_type", "content", "is_read", "read_at", "created_at",
-                  "updated_at",
-                  "attachment_file", ]
-        read_only_fields = ["id", "chat_room", "sender", "is_read", "read_at", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "chat_room",
+            "sender",
+            "message_type",
+            "content",
+            "is_read",
+            "read_at",
+            "created_at",
+            "updated_at",
+            "attachments",
+            "attachments_files",
+        ]
+        read_only_fields = [
+            "id",
+            "chat_room",
+            "sender",
+            "is_read",
+            "read_at",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class MessageUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatMessage
-        fields = ["id", 'chat_room', "content", "created_at", "updated_at"]
+        fields = ["id", "chat_room", "content", "created_at", "updated_at"]
         read_only_fields = ["id", "chat_room"]
 
     def update(self, instance, validated_data):

@@ -22,49 +22,6 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError } from './base';
 
 /**
- * Serializer for job assignment completion attachments.
- * @export
- * @interface AssignmentAttachment
- */
-export interface AssignmentAttachment {
-    /**
-     * 
-     * @type {number}
-     * @memberof AssignmentAttachment
-     */
-    'id': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof AssignmentAttachment
-     */
-    'original_filename': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AssignmentAttachment
-     */
-    'file_url': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof AssignmentAttachment
-     */
-    'size': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof AssignmentAttachment
-     */
-    'file_type'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AssignmentAttachment
-     */
-    'created_at': string;
-}
-/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface AssignmentMaster
@@ -125,6 +82,122 @@ export interface AssignmentMasterUser {
      * @memberof AssignmentMasterUser
      */
     'photo_url': string | null;
+}
+/**
+ * Generic serializer for attachments.
+ * @export
+ * @interface Attachment
+ */
+export interface Attachment {
+    /**
+     * 
+     * @type {number}
+     * @memberof Attachment
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Attachment
+     */
+    'original_filename': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Attachment
+     */
+    'file_url': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Attachment
+     */
+    'size': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Attachment
+     */
+    'file_type'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Attachment
+     */
+    'mime_type'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Attachment
+     */
+    'uploaded_by': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Attachment
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Attachment
+     */
+    'is_public'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof Attachment
+     */
+    'created_at': string;
+}
+/**
+ * Generic serializer for attachments.
+ * @export
+ * @interface AttachmentRequest
+ */
+export interface AttachmentRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof AttachmentRequest
+     */
+    'original_filename': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof AttachmentRequest
+     */
+    'size': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof AttachmentRequest
+     */
+    'file_type'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AttachmentRequest
+     */
+    'mime_type'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof AttachmentRequest
+     */
+    'uploaded_by': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof AttachmentRequest
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AttachmentRequest
+     */
+    'is_public'?: boolean;
 }
 /**
  * 
@@ -205,59 +278,47 @@ export interface Certificate {
     'certificate_number'?: string;
     /**
      * 
-     * @type {string}
-     * @memberof Certificate
-     */
-    'certificate_file'?: string | null;
-    /**
-     * 
      * @type {boolean}
      * @memberof Certificate
      */
     'is_verified': boolean;
 }
 /**
- * Serializer for chat message attachments.
+ * Serializer for models with timestamp fields.
  * @export
- * @interface ChatAttachment
+ * @interface CertificateRequest
  */
-export interface ChatAttachment {
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatAttachment
-     */
-    'id': number;
+export interface CertificateRequest {
     /**
      * 
      * @type {string}
-     * @memberof ChatAttachment
+     * @memberof CertificateRequest
      */
-    'original_filename': string;
+    'name': string;
     /**
      * 
      * @type {string}
-     * @memberof ChatAttachment
+     * @memberof CertificateRequest
      */
-    'file_url': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ChatAttachment
-     */
-    'size': number;
+    'issuing_organization': string;
     /**
      * 
      * @type {string}
-     * @memberof ChatAttachment
+     * @memberof CertificateRequest
      */
-    'file_type'?: string;
+    'issue_date'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof ChatAttachment
+     * @memberof CertificateRequest
      */
-    'created_at': string;
+    'expiry_date'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof CertificateRequest
+     */
+    'certificate_number'?: string;
 }
 /**
  * Serializer for chat participants.
@@ -325,6 +386,49 @@ export interface ChatParticipant {
      * @memberof ChatParticipant
      */
     'updated_at': string;
+}
+/**
+ * Serializer for chat participants.
+ * @export
+ * @interface ChatParticipantRequest
+ */
+export interface ChatParticipantRequest {
+    /**
+     * 
+     * @type {RoleEnum}
+     * @memberof ChatParticipantRequest
+     */
+    'role'?: RoleEnum;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ChatParticipantRequest
+     */
+    'is_online'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatParticipantRequest
+     */
+    'last_seen'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatParticipantRequest
+     */
+    'unread_count'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ChatParticipantRequest
+     */
+    'notifications_enabled'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatParticipantRequest
+     */
+    'mute_until'?: string | null;
 }
 /**
  * Serializer for chat rooms.
@@ -441,6 +545,37 @@ export interface ChatRoomCreate {
      * @memberof ChatRoomCreate
      */
     'updated_at': string;
+}
+/**
+ * Serializer for creating chat rooms.
+ * @export
+ * @interface ChatRoomCreateRequest
+ */
+export interface ChatRoomCreateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatRoomCreateRequest
+     */
+    'title': string;
+    /**
+     * List of user IDs to add as participants
+     * @type {Array<number>}
+     * @memberof ChatRoomCreateRequest
+     */
+    'participants_users_ids'?: Array<number>;
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatRoomCreateRequest
+     */
+    'job'?: number | null;
+    /**
+     * 
+     * @type {ChatTypeEnum}
+     * @memberof ChatRoomCreateRequest
+     */
+    'chat_type'?: ChatTypeEnum;
 }
 /**
  * 
@@ -583,6 +718,37 @@ export interface ChatRoomForSearchResponseMaster {
     'profession': PublicMasterProfileProfession;
 }
 /**
+ * Serializer for chat rooms.
+ * @export
+ * @interface ChatRoomRequest
+ */
+export interface ChatRoomRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatRoomRequest
+     */
+    'job'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatRoomRequest
+     */
+    'title': string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ChatRoomRequest
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {ChatTypeEnum}
+     * @memberof ChatRoomRequest
+     */
+    'chat_type'?: ChatTypeEnum;
+}
+/**
  * * `job_chat` - Job Chat * `support_chat` - Support Chat * `general_chat` - General Chat
  * @export
  * @enum {string}
@@ -713,6 +879,25 @@ export interface CityList {
     'country_name': string;
 }
 /**
+ * Serializer for City model.
+ * @export
+ * @interface CityRequest
+ */
+export interface CityRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof CityRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CityRequest
+     */
+    'code': string;
+}
+/**
  * * `beginner` - Beginner * `intermediate` - Intermediate * `advanced` - Advanced * `expert` - Expert
  * @export
  * @enum {string}
@@ -764,6 +949,87 @@ export interface Country {
     'updated_at': string;
 }
 /**
+ * Serializer for Country model.
+ * @export
+ * @interface CountryRequest
+ */
+export interface CountryRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof CountryRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CountryRequest
+     */
+    'code': string;
+}
+/**
+ * Basic employer information for job serialization.
+ * @export
+ * @interface EmployerBasic
+ */
+export interface EmployerBasic {
+    /**
+     * 
+     * @type {number}
+     * @memberof EmployerBasic
+     */
+    'id': number;
+    /**
+     * 
+     * @type {AssignmentMasterUser}
+     * @memberof EmployerBasic
+     */
+    'user': AssignmentMasterUser;
+    /**
+     * 
+     * @type {number}
+     * @memberof EmployerBasic
+     */
+    'total_orders'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof EmployerBasic
+     */
+    'completed_orders'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof EmployerBasic
+     */
+    'cancelled_orders'?: number;
+}
+/**
+ * Basic employer information for job serialization.
+ * @export
+ * @interface EmployerBasicRequest
+ */
+export interface EmployerBasicRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof EmployerBasicRequest
+     */
+    'total_orders'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof EmployerBasicRequest
+     */
+    'completed_orders'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof EmployerBasicRequest
+     */
+    'cancelled_orders'?: number;
+}
+/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface EmployerProfileCreateUpdate
@@ -795,15 +1061,55 @@ export interface EmployerProfileCreateUpdate {
     'favorite_masters'?: Array<number>;
 }
 /**
+ * Serializer for models with timestamp fields.
+ * @export
+ * @interface EmployerProfileCreateUpdateRequest
+ */
+export interface EmployerProfileCreateUpdateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof EmployerProfileCreateUpdateRequest
+     */
+    'contact_phone'?: string;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof EmployerProfileCreateUpdateRequest
+     */
+    'preferred_services'?: Array<number>;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof EmployerProfileCreateUpdateRequest
+     */
+    'favorite_masters'?: Array<number>;
+}
+/**
+ * * `general` - Основная информация * `support` - Support * `sales` - Sales * `feedback` - Feedback * `other` - Other
+ * @export
+ * @enum {string}
+ */
+
+export enum EnquiryTypeEnum {
+    general = 'general',
+    support = 'support',
+    sales = 'sales',
+    feedback = 'feedback',
+    other = 'other'
+}
+
+
+/**
  * Serializer for Firebase authentication request
  * @export
- * @interface FireBaseAuth
+ * @interface FireBaseAuthRequest
  */
-export interface FireBaseAuth {
+export interface FireBaseAuthRequest {
     /**
      * Firebase ID token
      * @type {string}
-     * @memberof FireBaseAuth
+     * @memberof FireBaseAuthRequest
      */
     'id_token': string;
 }
@@ -926,10 +1232,10 @@ export interface Job {
     'id': number;
     /**
      * 
-     * @type {number}
+     * @type {JobEmployer}
      * @memberof Job
      */
-    'employer': number;
+    'employer': JobEmployer;
     /**
      * 
      * @type {number}
@@ -1010,6 +1316,12 @@ export interface Job {
     'special_requirements'?: string;
     /**
      * 
+     * @type {Array<Attachment>}
+     * @memberof Job
+     */
+    'attachments': Array<Attachment>;
+    /**
+     * 
      * @type {string}
      * @memberof Job
      */
@@ -1066,10 +1378,10 @@ export interface JobApplication {
     'applicant': number | null;
     /**
      * 
-     * @type {StatusC50Enum}
+     * @type {JobApplicationStatusEnum}
      * @memberof JobApplication
      */
-    'status'?: StatusC50Enum;
+    'status'?: JobApplicationStatusEnum;
     /**
      * 
      * @type {string}
@@ -1153,10 +1465,10 @@ export interface JobApplicationJob {
     'id': number;
     /**
      * 
-     * @type {number}
+     * @type {JobEmployer}
      * @memberof JobApplicationJob
      */
-    'employer': number;
+    'employer': JobEmployer;
     /**
      * 
      * @type {number}
@@ -1237,6 +1549,12 @@ export interface JobApplicationJob {
     'special_requirements'?: string;
     /**
      * 
+     * @type {Array<Attachment>}
+     * @memberof JobApplicationJob
+     */
+    'attachments': Array<Attachment>;
+    /**
+     * 
      * @type {string}
      * @memberof JobApplicationJob
      */
@@ -1251,87 +1569,72 @@ export interface JobApplicationJob {
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface JobApply
+ * @interface JobApplicationRequest
  */
-export interface JobApply {
+export interface JobApplicationRequest {
     /**
      * 
      * @type {number}
-     * @memberof JobApply
+     * @memberof JobApplicationRequest
      */
-    'id': number;
+    'applicant': number | null;
+    /**
+     * 
+     * @type {JobApplicationStatusEnum}
+     * @memberof JobApplicationRequest
+     */
+    'status'?: JobApplicationStatusEnum;
+}
+/**
+ * * `pending` - Pending * `accepted` - Accepted * `rejected` - Rejected * `withdrawn` - Withdrawn
+ * @export
+ * @enum {string}
+ */
+
+export enum JobApplicationStatusEnum {
+    pending = 'pending',
+    accepted = 'accepted',
+    rejected = 'rejected',
+    withdrawn = 'withdrawn'
+}
+
+
+/**
+ * Serializer for models with timestamp fields.
+ * @export
+ * @interface JobApplyRequest
+ */
+export interface JobApplyRequest {
     /**
      * ID of the job to apply for
      * @type {number}
-     * @memberof JobApply
+     * @memberof JobApplyRequest
      */
     'job_id': number;
     /**
      * 
      * @type {string}
-     * @memberof JobApply
+     * @memberof JobApplyRequest
      */
     'amount': string;
     /**
      * 
      * @type {string}
-     * @memberof JobApply
+     * @memberof JobApplyRequest
      */
     'comment'?: string;
     /**
      * 
      * @type {number}
-     * @memberof JobApply
+     * @memberof JobApplyRequest
      */
     'estimated_duration'?: number | null;
     /**
      * 
      * @type {number}
-     * @memberof JobApply
+     * @memberof JobApplyRequest
      */
     'resume'?: number | null;
-    /**
-     * 
-     * @type {StatusC50Enum}
-     * @memberof JobApply
-     */
-    'status': StatusC50Enum;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobApply
-     */
-    'applied_at': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobApply
-     */
-    'accepted_at': string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobApply
-     */
-    'rejected_at': string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobApply
-     */
-    'withdrawn_at': string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobApply
-     */
-    'created_at': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobApply
-     */
-    'updated_at': string;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -1413,10 +1716,10 @@ export interface JobAssignment {
     'accepted_application': JobAssignmentAcceptedApplication;
     /**
      * 
-     * @type {Array<AssignmentAttachment>}
+     * @type {Array<Attachment>}
      * @memberof JobAssignment
      */
-    'attachments': Array<AssignmentAttachment>;
+    'attachments': Array<Attachment>;
 }
 /**
  * 
@@ -1444,10 +1747,10 @@ export interface JobAssignmentAcceptedApplication {
     'applicant': number | null;
     /**
      * 
-     * @type {StatusC50Enum}
+     * @type {JobApplicationStatusEnum}
      * @memberof JobAssignmentAcceptedApplication
      */
-    'status'?: StatusC50Enum;
+    'status'?: JobApplicationStatusEnum;
     /**
      * 
      * @type {string}
@@ -1520,33 +1823,15 @@ export interface JobAssignmentApiActionData {
 /**
  * Serializer for completing job assignments with rating and review.
  * @export
- * @interface JobAssignmentCompletion
+ * @interface JobAssignmentCompletionRequest
  */
-export interface JobAssignmentCompletion {
-    /**
-     * 
-     * @type {number}
-     * @memberof JobAssignmentCompletion
-     */
-    'id': number;
+export interface JobAssignmentCompletionRequest {
     /**
      * Notes about the completion
      * @type {string}
-     * @memberof JobAssignmentCompletion
+     * @memberof JobAssignmentCompletionRequest
      */
     'completion_notes'?: string;
-    /**
-     * Rating for the client (1-5 stars)
-     * @type {number}
-     * @memberof JobAssignmentCompletion
-     */
-    'client_rating'?: number;
-    /**
-     * Review text for the client
-     * @type {string}
-     * @memberof JobAssignmentCompletion
-     */
-    'client_review'?: string;
 }
 /**
  * 
@@ -1566,6 +1851,55 @@ export interface JobAssignmentMaster {
      * @memberof JobAssignmentMaster
      */
     'user': AssignmentMasterUser;
+}
+/**
+ * Serializer for models with timestamp fields.
+ * @export
+ * @interface JobAssignmentRequest
+ */
+export interface JobAssignmentRequest {
+    /**
+     * 
+     * @type {JobAssignmentStatusEnum}
+     * @memberof JobAssignmentRequest
+     */
+    'status'?: JobAssignmentStatusEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobAssignmentRequest
+     */
+    'started_at'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobAssignmentRequest
+     */
+    'completed_at'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobAssignmentRequest
+     */
+    'progress_notes'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobAssignmentRequest
+     */
+    'completion_notes'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof JobAssignmentRequest
+     */
+    'client_rating'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobAssignmentRequest
+     */
+    'client_review'?: string;
 }
 /**
  * Serializer for job assignment with review data.
@@ -1642,6 +1976,128 @@ export enum JobAssignmentStatusEnum {
 }
 
 
+/**
+ * 
+ * @export
+ * @interface JobEmployer
+ */
+export interface JobEmployer {
+    /**
+     * 
+     * @type {number}
+     * @memberof JobEmployer
+     */
+    'id': number;
+    /**
+     * 
+     * @type {AssignmentMasterUser}
+     * @memberof JobEmployer
+     */
+    'user': AssignmentMasterUser;
+    /**
+     * 
+     * @type {number}
+     * @memberof JobEmployer
+     */
+    'total_orders'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof JobEmployer
+     */
+    'completed_orders'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof JobEmployer
+     */
+    'cancelled_orders'?: number;
+}
+/**
+ * Serializer for models with timestamp fields.
+ * @export
+ * @interface JobRequest
+ */
+export interface JobRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof JobRequest
+     */
+    'service_subcategory'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobRequest
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobRequest
+     */
+    'description': string;
+    /**
+     * 
+     * @type {Status30eEnum}
+     * @memberof JobRequest
+     */
+    'status'?: Status30eEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobRequest
+     */
+    'location': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof JobRequest
+     */
+    'city'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobRequest
+     */
+    'service_date'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobRequest
+     */
+    'service_time'?: string | null;
+    /**
+     * 
+     * @type {UrgencyEnum}
+     * @memberof JobRequest
+     */
+    'urgency'?: UrgencyEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobRequest
+     */
+    'budget_min'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobRequest
+     */
+    'budget_max'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobRequest
+     */
+    'final_price'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobRequest
+     */
+    'special_requirements'?: string;
+}
 /**
  * Simplified serializer for job search results using nested serializers.
  * @export
@@ -1909,13 +2365,13 @@ export interface MasterBasic {
 /**
  * Serializer for master online status update request.
  * @export
- * @interface MasterOnlineStatusRequest
+ * @interface MasterOnlineStatusRequestRequest
  */
-export interface MasterOnlineStatusRequest {
+export interface MasterOnlineStatusRequestRequest {
     /**
      * Online status to set
      * @type {boolean}
-     * @memberof MasterOnlineStatusRequest
+     * @memberof MasterOnlineStatusRequestRequest
      */
     'is_online'?: boolean;
 }
@@ -2058,6 +2514,103 @@ export interface MasterProfileCreateUpdate {
      * @memberof MasterProfileCreateUpdate
      */
     'is_top_master': boolean;
+}
+/**
+ * Serializer for models with timestamp fields.
+ * @export
+ * @interface MasterProfileCreateUpdateRequest
+ */
+export interface MasterProfileCreateUpdateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'profession'?: number | null;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'service_areas'?: Array<number>;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'services_offered'?: Array<number>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'works_remotely'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'accepts_clients_at_location'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'travels_to_clients'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'is_available'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'hourly_rate'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'response_time_hours'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'work_experience_start_year'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'education_institution'?: string;
+    /**
+     * e.g., 2005-2009
+     * @type {string}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'education_years'?: string;
+    /**
+     * List of languages spoken
+     * @type {any}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'languages'?: any;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'about_description'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterProfileCreateUpdateRequest
+     */
+    'current_location'?: string;
 }
 /**
  * Optimized serializer for master recommendations.
@@ -2256,6 +2809,37 @@ export interface MasterResume {
     'updated_at': string;
 }
 /**
+ * 
+ * @export
+ * @interface MasterResumeRequest
+ */
+export interface MasterResumeRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterResumeRequest
+     */
+    'master'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterResumeRequest
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MasterResumeRequest
+     */
+    'content': string;
+    /**
+     * 
+     * @type {MasterResumeStatusEnum}
+     * @memberof MasterResumeRequest
+     */
+    'status'?: MasterResumeStatusEnum;
+}
+/**
  * * `draft` - Draft * `published` - Published * `archived` - Archived
  * @export
  * @enum {string}
@@ -2391,12 +2975,6 @@ export interface MasterSkill {
     'skill': MasterSkillSkill;
     /**
      * 
-     * @type {number}
-     * @memberof MasterSkill
-     */
-    'skill_id': number;
-    /**
-     * 
      * @type {boolean}
      * @memberof MasterSkill
      */
@@ -2419,6 +2997,37 @@ export interface MasterSkill {
      * @memberof MasterSkill
      */
     'created_at': string;
+}
+/**
+ * Serializer for models with timestamp fields.
+ * @export
+ * @interface MasterSkillRequest
+ */
+export interface MasterSkillRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterSkillRequest
+     */
+    'skill_id': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof MasterSkillRequest
+     */
+    'is_primary_skill'?: boolean;
+    /**
+     * 
+     * @type {ProficiencyLevelEnum}
+     * @memberof MasterSkillRequest
+     */
+    'proficiency_level'?: ProficiencyLevelEnum;
+    /**
+     * 
+     * @type {number}
+     * @memberof MasterSkillRequest
+     */
+    'years_of_experience'?: number;
 }
 /**
  * 
@@ -2538,10 +3147,10 @@ export interface Message {
     'message_type'?: MessageMessageTypeEnum;
     /**
      * 
-     * @type {Array<ChatAttachment>}
+     * @type {Array<Attachment>}
      * @memberof Message
      */
-    'attachments': Array<ChatAttachment>;
+    'attachments': Array<Attachment>;
     /**
      * 
      * @type {number}
@@ -2640,11 +3249,11 @@ export interface MessageCreate {
      */
     'updated_at': string;
     /**
-     * File attachment (image or document)
-     * @type {string}
+     * 
+     * @type {Array<Attachment>}
      * @memberof MessageCreate
      */
-    'attachment_file'?: string | null;
+    'attachments': Array<Attachment>;
 }
 /**
  * * `text` - text * `image` - image * `file` - file
@@ -2659,6 +3268,31 @@ export enum MessageCreateMessageTypeEnum {
 }
 
 
+/**
+ * 
+ * @export
+ * @interface MessageCreateRequest
+ */
+export interface MessageCreateRequest {
+    /**
+     * 
+     * @type {MessageCreateMessageTypeEnum}
+     * @memberof MessageCreateRequest
+     */
+    'message_type': MessageCreateMessageTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof MessageCreateRequest
+     */
+    'content': string;
+    /**
+     * 
+     * @type {Array<any>}
+     * @memberof MessageCreateRequest
+     */
+    'attachments_files': Array<any>;
+}
 /**
  * * `text` - Текст * `image` - Изображение * `file` - Файл * `system` - System Message * `order_update` - Order Update
  * @export
@@ -2710,6 +3344,19 @@ export interface MessageUpdate {
      * @memberof MessageUpdate
      */
     'updated_at': string;
+}
+/**
+ * 
+ * @export
+ * @interface MessageUpdateRequest
+ */
+export interface MessageUpdateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof MessageUpdateRequest
+     */
+    'content': string;
 }
 /**
  * Serializer for Notification model.
@@ -2816,6 +3463,80 @@ export interface NotificationCreate {
     'verb': string;
 }
 /**
+ * Serializer for creating notifications.
+ * @export
+ * @interface NotificationCreateRequest
+ */
+export interface NotificationCreateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof NotificationCreateRequest
+     */
+    'recipient': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof NotificationCreateRequest
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof NotificationCreateRequest
+     */
+    'message': string;
+    /**
+     * 
+     * @type {LevelEnum}
+     * @memberof NotificationCreateRequest
+     */
+    'level'?: LevelEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof NotificationCreateRequest
+     */
+    'verb': string;
+}
+/**
+ * Serializer for Notification model.
+ * @export
+ * @interface NotificationRequest
+ */
+export interface NotificationRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof NotificationRequest
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof NotificationRequest
+     */
+    'message': string;
+    /**
+     * 
+     * @type {LevelEnum}
+     * @memberof NotificationRequest
+     */
+    'level'?: LevelEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof NotificationRequest
+     */
+    'verb': string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof NotificationRequest
+     */
+    'is_read'?: boolean;
+}
+/**
  * Serializer for updating notification read status.
  * @export
  * @interface NotificationUpdate
@@ -2827,6 +3548,50 @@ export interface NotificationUpdate {
      * @memberof NotificationUpdate
      */
     'is_read'?: boolean;
+}
+/**
+ * Serializer for updating notification read status.
+ * @export
+ * @interface NotificationUpdateRequest
+ */
+export interface NotificationUpdateRequest {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof NotificationUpdateRequest
+     */
+    'is_read'?: boolean;
+}
+/**
+ * 
+ * @export
+ * @interface PaginatedAttachmentList
+ */
+export interface PaginatedAttachmentList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedAttachmentList
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedAttachmentList
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedAttachmentList
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<Attachment>}
+     * @memberof PaginatedAttachmentList
+     */
+    'results'?: Array<Attachment>;
 }
 /**
  * 
@@ -3513,6 +4278,37 @@ export interface PaginatedServiceSubcategoryList {
 /**
  * 
  * @export
+ * @interface PaginatedSimpleContactList
+ */
+export interface PaginatedSimpleContactList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedSimpleContactList
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedSimpleContactList
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedSimpleContactList
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<SimpleContact>}
+     * @memberof PaginatedSimpleContactList
+     */
+    'results'?: Array<SimpleContact>;
+}
+/**
+ * 
+ * @export
  * @interface PaginatedSkillDetailList
  */
 export interface PaginatedSkillDetailList {
@@ -3606,1438 +4402,1115 @@ export interface PaginatedSystemSettingsList {
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface PatchedCertificate
+ * @interface PatchedCertificateRequest
  */
-export interface PatchedCertificate {
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedCertificate
-     */
-    'id'?: number;
+export interface PatchedCertificateRequest {
     /**
      * 
      * @type {string}
-     * @memberof PatchedCertificate
+     * @memberof PatchedCertificateRequest
      */
     'name'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedCertificate
+     * @memberof PatchedCertificateRequest
      */
     'issuing_organization'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedCertificate
+     * @memberof PatchedCertificateRequest
      */
     'issue_date'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedCertificate
+     * @memberof PatchedCertificateRequest
      */
     'expiry_date'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedCertificate
+     * @memberof PatchedCertificateRequest
      */
     'certificate_number'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedCertificate
-     */
-    'certificate_file'?: string | null;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedCertificate
-     */
-    'is_verified'?: boolean;
 }
 /**
  * Serializer for chat rooms.
  * @export
- * @interface PatchedChatRoom
+ * @interface PatchedChatRoomRequest
  */
-export interface PatchedChatRoom {
+export interface PatchedChatRoomRequest {
     /**
      * 
      * @type {number}
-     * @memberof PatchedChatRoom
-     */
-    'id'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedChatRoom
+     * @memberof PatchedChatRoomRequest
      */
     'job'?: number | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedChatRoom
+     * @memberof PatchedChatRoomRequest
      */
     'title'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedChatRoom
+     * @memberof PatchedChatRoomRequest
      */
     'is_active'?: boolean;
     /**
      * 
      * @type {ChatTypeEnum}
-     * @memberof PatchedChatRoom
+     * @memberof PatchedChatRoomRequest
      */
     'chat_type'?: ChatTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedChatRoom
-     */
-    'last_message_at'?: string | null;
-    /**
-     * 
-     * @type {Array<ChatParticipant>}
-     * @memberof PatchedChatRoom
-     */
-    'participants'?: Array<ChatParticipant>;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedChatRoom
-     */
-    'created_at'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedChatRoom
-     */
-    'updated_at'?: string;
 }
 /**
  * Serializer for City model.
  * @export
- * @interface PatchedCity
+ * @interface PatchedCityRequest
  */
-export interface PatchedCity {
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedCity
-     */
-    'id'?: number;
+export interface PatchedCityRequest {
     /**
      * 
      * @type {string}
-     * @memberof PatchedCity
+     * @memberof PatchedCityRequest
      */
     'name'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedCity
+     * @memberof PatchedCityRequest
      */
     'code'?: string;
-    /**
-     * 
-     * @type {CityCountry}
-     * @memberof PatchedCity
-     */
-    'country'?: CityCountry;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedCity
-     */
-    'country_name'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedCity
-     */
-    'created_at'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedCity
-     */
-    'updated_at'?: string;
 }
 /**
  * Serializer for Country model.
  * @export
- * @interface PatchedCountry
+ * @interface PatchedCountryRequest
  */
-export interface PatchedCountry {
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedCountry
-     */
-    'id'?: number;
+export interface PatchedCountryRequest {
     /**
      * 
      * @type {string}
-     * @memberof PatchedCountry
+     * @memberof PatchedCountryRequest
      */
     'name'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedCountry
+     * @memberof PatchedCountryRequest
      */
     'code'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedCountry
-     */
-    'created_at'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedCountry
-     */
-    'updated_at'?: string;
 }
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface PatchedEmployerProfileCreateUpdate
+ * @interface PatchedEmployerProfileCreateUpdateRequest
  */
-export interface PatchedEmployerProfileCreateUpdate {
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedEmployerProfileCreateUpdate
-     */
-    'id'?: number;
+export interface PatchedEmployerProfileCreateUpdateRequest {
     /**
      * 
      * @type {string}
-     * @memberof PatchedEmployerProfileCreateUpdate
+     * @memberof PatchedEmployerProfileCreateUpdateRequest
      */
     'contact_phone'?: string;
     /**
      * 
      * @type {Array<number>}
-     * @memberof PatchedEmployerProfileCreateUpdate
+     * @memberof PatchedEmployerProfileCreateUpdateRequest
      */
     'preferred_services'?: Array<number>;
     /**
      * 
      * @type {Array<number>}
-     * @memberof PatchedEmployerProfileCreateUpdate
+     * @memberof PatchedEmployerProfileCreateUpdateRequest
      */
     'favorite_masters'?: Array<number>;
 }
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface PatchedJob
+ * @interface PatchedJobApplicationRequest
  */
-export interface PatchedJob {
+export interface PatchedJobApplicationRequest {
     /**
      * 
      * @type {number}
-     * @memberof PatchedJob
-     */
-    'id'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedJob
-     */
-    'employer'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedJob
-     */
-    'service_subcategory'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJob
-     */
-    'title'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJob
-     */
-    'description'?: string;
-    /**
-     * 
-     * @type {Status30eEnum}
-     * @memberof PatchedJob
-     */
-    'status'?: Status30eEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJob
-     */
-    'location'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedJob
-     */
-    'city'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJob
-     */
-    'service_date'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJob
-     */
-    'service_time'?: string | null;
-    /**
-     * 
-     * @type {UrgencyEnum}
-     * @memberof PatchedJob
-     */
-    'urgency'?: UrgencyEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJob
-     */
-    'budget_min'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJob
-     */
-    'budget_max'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJob
-     */
-    'final_price'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJob
-     */
-    'special_requirements'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJob
-     */
-    'created_at'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJob
-     */
-    'updated_at'?: string;
-}
-/**
- * Serializer for models with timestamp fields.
- * @export
- * @interface PatchedJobApplication
- */
-export interface PatchedJobApplication {
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedJobApplication
-     */
-    'id'?: number;
-    /**
-     * 
-     * @type {JobApplicationJob}
-     * @memberof PatchedJobApplication
-     */
-    'job'?: JobApplicationJob;
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedJobApplication
+     * @memberof PatchedJobApplicationRequest
      */
     'applicant'?: number | null;
     /**
      * 
-     * @type {StatusC50Enum}
-     * @memberof PatchedJobApplication
+     * @type {JobApplicationStatusEnum}
+     * @memberof PatchedJobApplicationRequest
      */
-    'status'?: StatusC50Enum;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJobApplication
-     */
-    'applied_at'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJobApplication
-     */
-    'accepted_at'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJobApplication
-     */
-    'rejected_at'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJobApplication
-     */
-    'withdrawn_at'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJobApplication
-     */
-    'created_at'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJobApplication
-     */
-    'updated_at'?: string;
+    'status'?: JobApplicationStatusEnum;
 }
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface PatchedJobAssignment
+ * @interface PatchedJobAssignmentRequest
  */
-export interface PatchedJobAssignment {
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedJobAssignment
-     */
-    'id'?: number;
+export interface PatchedJobAssignmentRequest {
     /**
      * 
      * @type {JobAssignmentStatusEnum}
-     * @memberof PatchedJobAssignment
+     * @memberof PatchedJobAssignmentRequest
      */
     'status'?: JobAssignmentStatusEnum;
     /**
      * 
      * @type {string}
-     * @memberof PatchedJobAssignment
-     */
-    'assigned_at'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedJobAssignment
+     * @memberof PatchedJobAssignmentRequest
      */
     'started_at'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedJobAssignment
+     * @memberof PatchedJobAssignmentRequest
      */
     'completed_at'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedJobAssignment
+     * @memberof PatchedJobAssignmentRequest
      */
     'progress_notes'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedJobAssignment
+     * @memberof PatchedJobAssignmentRequest
      */
     'completion_notes'?: string;
     /**
      * 
      * @type {number}
-     * @memberof PatchedJobAssignment
+     * @memberof PatchedJobAssignmentRequest
      */
     'client_rating'?: number | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedJobAssignment
+     * @memberof PatchedJobAssignmentRequest
      */
     'client_review'?: string;
-    /**
-     * 
-     * @type {JobApplicationJob}
-     * @memberof PatchedJobAssignment
-     */
-    'job'?: JobApplicationJob;
-    /**
-     * 
-     * @type {JobAssignmentMaster}
-     * @memberof PatchedJobAssignment
-     */
-    'master'?: JobAssignmentMaster;
-    /**
-     * 
-     * @type {JobAssignmentAcceptedApplication}
-     * @memberof PatchedJobAssignment
-     */
-    'accepted_application'?: JobAssignmentAcceptedApplication;
-    /**
-     * 
-     * @type {Array<AssignmentAttachment>}
-     * @memberof PatchedJobAssignment
-     */
-    'attachments'?: Array<AssignmentAttachment>;
 }
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface PatchedMasterProfileCreateUpdate
+ * @interface PatchedJobRequest
  */
-export interface PatchedMasterProfileCreateUpdate {
+export interface PatchedJobRequest {
     /**
      * 
      * @type {number}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedJobRequest
      */
-    'id'?: number;
+    'service_subcategory'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedJobRequest
+     */
+    'title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedJobRequest
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {Status30eEnum}
+     * @memberof PatchedJobRequest
+     */
+    'status'?: Status30eEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedJobRequest
+     */
+    'location'?: string;
     /**
      * 
      * @type {number}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedJobRequest
+     */
+    'city'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedJobRequest
+     */
+    'service_date'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedJobRequest
+     */
+    'service_time'?: string | null;
+    /**
+     * 
+     * @type {UrgencyEnum}
+     * @memberof PatchedJobRequest
+     */
+    'urgency'?: UrgencyEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedJobRequest
+     */
+    'budget_min'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedJobRequest
+     */
+    'budget_max'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedJobRequest
+     */
+    'final_price'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedJobRequest
+     */
+    'special_requirements'?: string;
+}
+/**
+ * Serializer for models with timestamp fields.
+ * @export
+ * @interface PatchedMasterProfileCreateUpdateRequest
+ */
+export interface PatchedMasterProfileCreateUpdateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'profession'?: number | null;
     /**
      * 
      * @type {Array<number>}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'service_areas'?: Array<number>;
     /**
      * 
      * @type {Array<number>}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'services_offered'?: Array<number>;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'works_remotely'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'accepts_clients_at_location'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'travels_to_clients'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'is_available'?: boolean;
     /**
      * 
      * @type {string}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'hourly_rate'?: string | null;
     /**
      * 
      * @type {number}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'response_time_hours'?: number;
     /**
      * 
      * @type {number}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'work_experience_start_year'?: number | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'education_institution'?: string;
     /**
      * e.g., 2005-2009
      * @type {string}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'education_years'?: string;
     /**
      * List of languages spoken
      * @type {any}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'languages'?: any;
     /**
      * 
      * @type {string}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'about_description'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedMasterProfileCreateUpdate
+     * @memberof PatchedMasterProfileCreateUpdateRequest
      */
     'current_location'?: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedMasterProfileCreateUpdate
-     */
-    'is_verified_provider'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedMasterProfileCreateUpdate
-     */
-    'is_top_master'?: boolean;
 }
 /**
  * 
  * @export
- * @interface PatchedMasterResume
+ * @interface PatchedMasterResumeRequest
  */
-export interface PatchedMasterResume {
+export interface PatchedMasterResumeRequest {
     /**
      * 
      * @type {number}
-     * @memberof PatchedMasterResume
-     */
-    'id'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedMasterResume
+     * @memberof PatchedMasterResumeRequest
      */
     'master'?: number | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedMasterResume
+     * @memberof PatchedMasterResumeRequest
      */
     'title'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedMasterResume
+     * @memberof PatchedMasterResumeRequest
      */
     'content'?: string;
     /**
      * 
      * @type {MasterResumeStatusEnum}
-     * @memberof PatchedMasterResume
+     * @memberof PatchedMasterResumeRequest
      */
     'status'?: MasterResumeStatusEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedMasterResume
-     */
-    'created_at'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedMasterResume
-     */
-    'updated_at'?: string;
 }
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface PatchedMasterSkill
+ * @interface PatchedMasterSkillRequest
  */
-export interface PatchedMasterSkill {
+export interface PatchedMasterSkillRequest {
     /**
      * 
      * @type {number}
-     * @memberof PatchedMasterSkill
-     */
-    'id'?: number;
-    /**
-     * 
-     * @type {MasterSkillSkill}
-     * @memberof PatchedMasterSkill
-     */
-    'skill'?: MasterSkillSkill;
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedMasterSkill
+     * @memberof PatchedMasterSkillRequest
      */
     'skill_id'?: number;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedMasterSkill
+     * @memberof PatchedMasterSkillRequest
      */
     'is_primary_skill'?: boolean;
     /**
      * 
      * @type {ProficiencyLevelEnum}
-     * @memberof PatchedMasterSkill
+     * @memberof PatchedMasterSkillRequest
      */
     'proficiency_level'?: ProficiencyLevelEnum;
     /**
      * 
      * @type {number}
-     * @memberof PatchedMasterSkill
+     * @memberof PatchedMasterSkillRequest
      */
     'years_of_experience'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedMasterSkill
-     */
-    'created_at'?: string;
 }
 /**
  * Serializer for chat messages.
  * @export
- * @interface PatchedMessage
+ * @interface PatchedMessageRequest
  */
-export interface PatchedMessage {
+export interface PatchedMessageRequest {
     /**
      * 
      * @type {number}
-     * @memberof PatchedMessage
-     */
-    'id'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedMessage
+     * @memberof PatchedMessageRequest
      */
     'chat_room'?: number;
     /**
      * 
-     * @type {AssignmentMasterUser}
-     * @memberof PatchedMessage
-     */
-    'sender'?: AssignmentMasterUser;
-    /**
-     * 
      * @type {string}
-     * @memberof PatchedMessage
+     * @memberof PatchedMessageRequest
      */
     'content'?: string;
     /**
      * 
      * @type {MessageMessageTypeEnum}
-     * @memberof PatchedMessage
+     * @memberof PatchedMessageRequest
      */
     'message_type'?: MessageMessageTypeEnum;
     /**
      * 
-     * @type {Array<ChatAttachment>}
-     * @memberof PatchedMessage
-     */
-    'attachments'?: Array<ChatAttachment>;
-    /**
-     * 
      * @type {number}
-     * @memberof PatchedMessage
+     * @memberof PatchedMessageRequest
      */
     'reply_to'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedMessage
-     */
-    'reply_to_sender'?: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof PatchedMessage
-     */
-    'is_read'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedMessage
-     */
-    'read_at'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedMessage
-     */
-    'created_at'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedMessage
-     */
-    'updated_at'?: string;
 }
 /**
  * Serializer for updating notification read status.
  * @export
- * @interface PatchedNotificationUpdate
+ * @interface PatchedNotificationUpdateRequest
  */
-export interface PatchedNotificationUpdate {
+export interface PatchedNotificationUpdateRequest {
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedNotificationUpdate
+     * @memberof PatchedNotificationUpdateRequest
      */
     'is_read'?: boolean;
 }
 /**
  * Serializer for models with timestamp fields.
  * @export
- * @interface PatchedPortfolioItem
+ * @interface PatchedPortfolioItemRequest
  */
-export interface PatchedPortfolioItem {
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedPortfolioItem
-     */
-    'id'?: number;
+export interface PatchedPortfolioItemRequest {
     /**
      * 
      * @type {string}
-     * @memberof PatchedPortfolioItem
+     * @memberof PatchedPortfolioItemRequest
      */
     'title'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedPortfolioItem
+     * @memberof PatchedPortfolioItemRequest
      */
     'description'?: string;
     /**
      * 
-     * @type {MasterSkillSkill}
-     * @memberof PatchedPortfolioItem
-     */
-    'skill_used'?: MasterSkillSkill;
-    /**
-     * 
      * @type {number}
-     * @memberof PatchedPortfolioItem
+     * @memberof PatchedPortfolioItemRequest
      */
     'skill_used_id'?: number | null;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedPortfolioItem
+     * @memberof PatchedPortfolioItemRequest
      */
     'is_featured'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedPortfolioItem
-     */
-    'image'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedPortfolioItem
-     */
-    'created_at'?: string;
 }
 /**
  * 
  * @export
- * @interface PatchedProgressUpdate
+ * @interface PatchedProgressUpdateRequest
  */
-export interface PatchedProgressUpdate {
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedProgressUpdate
-     */
-    'id'?: number;
+export interface PatchedProgressUpdateRequest {
     /**
      * 
      * @type {string}
-     * @memberof PatchedProgressUpdate
+     * @memberof PatchedProgressUpdateRequest
      */
     'progress_notes'?: string;
 }
 /**
  * Serializer for creating and updating service areas.
  * @export
- * @interface PatchedServiceAreaCreateUpdate
+ * @interface PatchedServiceAreaCreateUpdateRequest
  */
-export interface PatchedServiceAreaCreateUpdate {
+export interface PatchedServiceAreaCreateUpdateRequest {
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceAreaCreateUpdate
+     * @memberof PatchedServiceAreaCreateUpdateRequest
      */
     'name'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceAreaCreateUpdate
+     * @memberof PatchedServiceAreaCreateUpdateRequest
      */
     'city'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceAreaCreateUpdate
+     * @memberof PatchedServiceAreaCreateUpdateRequest
      */
     'state'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceAreaCreateUpdate
+     * @memberof PatchedServiceAreaCreateUpdateRequest
      */
     'country'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceAreaCreateUpdate
+     * @memberof PatchedServiceAreaCreateUpdateRequest
      */
     'latitude'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceAreaCreateUpdate
+     * @memberof PatchedServiceAreaCreateUpdateRequest
      */
     'longitude'?: string | null;
     /**
      * 
      * @type {any}
-     * @memberof PatchedServiceAreaCreateUpdate
+     * @memberof PatchedServiceAreaCreateUpdateRequest
      */
     'postal_codes'?: any;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedServiceAreaCreateUpdate
+     * @memberof PatchedServiceAreaCreateUpdateRequest
      */
     'is_active'?: boolean;
     /**
      * 
      * @type {Array<number>}
-     * @memberof PatchedServiceAreaCreateUpdate
+     * @memberof PatchedServiceAreaCreateUpdateRequest
      */
     'service_categories'?: Array<number>;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceAreaCreateUpdate
+     * @memberof PatchedServiceAreaCreateUpdateRequest
      */
     'base_price_multiplier'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceAreaCreateUpdate
+     * @memberof PatchedServiceAreaCreateUpdateRequest
      */
     'travel_fee'?: string;
 }
 /**
  * Serializer for creating and updating service categories.
  * @export
- * @interface PatchedServiceCategoryCreateUpdate
+ * @interface PatchedServiceCategoryCreateUpdateRequest
  */
-export interface PatchedServiceCategoryCreateUpdate {
+export interface PatchedServiceCategoryCreateUpdateRequest {
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'name'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'description'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'icon'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'color'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'is_active'?: boolean;
     /**
      * 
      * @type {number}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'sort_order'?: number;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'banner_image'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'featured'?: boolean;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'commission_rate'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'min_price'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'max_price'?: string | null;
     /**
      * 
      * @type {number}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'estimated_duration_min'?: number | null;
     /**
      * 
      * @type {number}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'estimated_duration_max'?: number | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'meta_title'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'meta_description'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'keywords'?: string;
     /**
      * 
-     * @type {string}
-     * @memberof PatchedServiceCategoryCreateUpdate
-     */
-    'slug'?: string;
-    /**
-     * 
      * @type {boolean}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'requires_license'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'requires_insurance'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedServiceCategoryCreateUpdate
+     * @memberof PatchedServiceCategoryCreateUpdateRequest
      */
     'requires_background_check'?: boolean;
 }
 /**
  * Serializer for creating and updating service subcategories.
  * @export
- * @interface PatchedServiceSubcategoryCreateUpdate
+ * @interface PatchedServiceSubcategoryCreateUpdateRequest
  */
-export interface PatchedServiceSubcategoryCreateUpdate {
+export interface PatchedServiceSubcategoryCreateUpdateRequest {
     /**
      * 
      * @type {number}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'category'?: number;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'name'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'description'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'icon'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'is_active'?: boolean;
     /**
      * 
      * @type {number}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'sort_order'?: number;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'image'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'featured'?: boolean;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'base_price'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'price_range_min'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'price_range_max'?: string | null;
     /**
      * 
      * @type {number}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'estimated_duration'?: number | null;
     /**
      * 
      * @type {ComplexityLevelEnum}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'complexity_level'?: ComplexityLevelEnum;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'safety_requirements'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
-     */
-    'slug'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'meta_title'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedServiceSubcategoryCreateUpdate
+     * @memberof PatchedServiceSubcategoryCreateUpdateRequest
      */
     'meta_description'?: string;
 }
 /**
- * Serializer for creating and updating support FAQ items.
+ * Minimal contact serializer for submissions.
  * @export
- * @interface PatchedSupportFAQCreateUpdate
+ * @interface PatchedSimpleContactRequest
  */
-export interface PatchedSupportFAQCreateUpdate {
+export interface PatchedSimpleContactRequest {
     /**
      * 
      * @type {string}
-     * @memberof PatchedSupportFAQCreateUpdate
+     * @memberof PatchedSimpleContactRequest
+     */
+    'first_name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSimpleContactRequest
+     */
+    'last_name'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSimpleContactRequest
+     */
+    'email'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedSimpleContactRequest
+     */
+    'user'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSimpleContactRequest
+     */
+    'subject'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSimpleContactRequest
+     */
+    'message'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSimpleContactRequest
+     */
+    'phone'?: string;
+    /**
+     * 
+     * @type {EnquiryTypeEnum}
+     * @memberof PatchedSimpleContactRequest
+     */
+    'enquiry_type'?: EnquiryTypeEnum;
+}
+/**
+ * Serializer for creating and updating support FAQ items.
+ * @export
+ * @interface PatchedSupportFAQCreateUpdateRequest
+ */
+export interface PatchedSupportFAQCreateUpdateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSupportFAQCreateUpdateRequest
      */
     'question'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedSupportFAQCreateUpdate
+     * @memberof PatchedSupportFAQCreateUpdateRequest
      */
     'answer'?: string;
     /**
      * 
      * @type {CategoryEnum}
-     * @memberof PatchedSupportFAQCreateUpdate
+     * @memberof PatchedSupportFAQCreateUpdateRequest
      */
     'category'?: CategoryEnum;
     /**
      * 
      * @type {number}
-     * @memberof PatchedSupportFAQCreateUpdate
+     * @memberof PatchedSupportFAQCreateUpdateRequest
      */
     'sort_order'?: number;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedSupportFAQCreateUpdate
+     * @memberof PatchedSupportFAQCreateUpdateRequest
      */
     'is_popular'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedSupportFAQCreateUpdate
+     * @memberof PatchedSupportFAQCreateUpdateRequest
      */
     'is_active'?: boolean;
 }
 /**
  * Serializer for creating and updating system settings.
  * @export
- * @interface PatchedSystemSettingsCreateUpdate
+ * @interface PatchedSystemSettingsCreateUpdateRequest
  */
-export interface PatchedSystemSettingsCreateUpdate {
+export interface PatchedSystemSettingsCreateUpdateRequest {
     /**
      * 
      * @type {string}
-     * @memberof PatchedSystemSettingsCreateUpdate
+     * @memberof PatchedSystemSettingsCreateUpdateRequest
      */
     'key'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedSystemSettingsCreateUpdate
+     * @memberof PatchedSystemSettingsCreateUpdateRequest
      */
     'value'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedSystemSettingsCreateUpdate
+     * @memberof PatchedSystemSettingsCreateUpdateRequest
      */
     'description'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedSystemSettingsCreateUpdate
+     * @memberof PatchedSystemSettingsCreateUpdateRequest
      */
     'is_public'?: boolean;
     /**
      * 
      * @type {SettingTypeEnum}
-     * @memberof PatchedSystemSettingsCreateUpdate
+     * @memberof PatchedSystemSettingsCreateUpdateRequest
      */
     'setting_type'?: SettingTypeEnum;
     /**
      * 
      * @type {string}
-     * @memberof PatchedSystemSettingsCreateUpdate
+     * @memberof PatchedSystemSettingsCreateUpdateRequest
      */
     'validation_regex'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedSystemSettingsCreateUpdate
+     * @memberof PatchedSystemSettingsCreateUpdateRequest
      */
     'min_value'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedSystemSettingsCreateUpdate
+     * @memberof PatchedSystemSettingsCreateUpdateRequest
      */
     'max_value'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedSystemSettingsCreateUpdate
+     * @memberof PatchedSystemSettingsCreateUpdateRequest
      */
     'requires_admin'?: boolean;
     /**
      * 
      * @type {string}
-     * @memberof PatchedSystemSettingsCreateUpdate
+     * @memberof PatchedSystemSettingsCreateUpdateRequest
      */
     'category'?: string;
 }
 /**
  * Serializer for user notification settings.
  * @export
- * @interface PatchedUserNotificationSettings
+ * @interface PatchedUserNotificationSettingsRequest
  */
-export interface PatchedUserNotificationSettings {
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedUserNotificationSettings
-     */
-    'id'?: number;
+export interface PatchedUserNotificationSettingsRequest {
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'sms_notifications'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'push_notifications'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'email_notifications'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'task_notifications'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'specialist_messages'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'task_updates'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'marketing_emails'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'promotional_sms'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'newsletter'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'system_alerts'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'security_notifications'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'quiet_hours_enabled'?: boolean;
     /**
      * 
      * @type {string}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'quiet_hours_start'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedUserNotificationSettings
+     * @memberof PatchedUserNotificationSettingsRequest
      */
     'quiet_hours_end'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedUserNotificationSettings
-     */
-    'created_at'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedUserNotificationSettings
-     */
-    'updated_at'?: string;
 }
 /**
  * Serializer for updating user profile - enhanced version of api_users EditUserSettingsView
  * @export
- * @interface PatchedUserUpdate
+ * @interface PatchedUserUpdateRequest
  */
-export interface PatchedUserUpdate {
+export interface PatchedUserUpdateRequest {
     /**
      * 
      * @type {string}
-     * @memberof PatchedUserUpdate
-     */
-    'email'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedUserUpdate
+     * @memberof PatchedUserUpdateRequest
      */
     'description'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedUserUpdate
+     * @memberof PatchedUserUpdateRequest
      */
     'photo_url'?: string | null;
     /**
      * 
      * @type {string}
-     * @memberof PatchedUserUpdate
+     * @memberof PatchedUserUpdateRequest
      */
     'first_name'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchedUserUpdate
+     * @memberof PatchedUserUpdateRequest
      */
     'last_name'?: string;
 }
@@ -5073,22 +5546,16 @@ export interface PortfolioItem {
     'skill_used': MasterSkillSkill;
     /**
      * 
-     * @type {number}
-     * @memberof PortfolioItem
-     */
-    'skill_used_id'?: number | null;
-    /**
-     * 
      * @type {boolean}
      * @memberof PortfolioItem
      */
     'is_featured'?: boolean;
     /**
      * 
-     * @type {string}
+     * @type {Array<Attachment>}
      * @memberof PortfolioItem
      */
-    'image': string;
+    'attachments': Array<Attachment>;
     /**
      * 
      * @type {string}
@@ -5116,16 +5583,47 @@ export interface PortfolioItemBasic {
     'title': string;
     /**
      * 
-     * @type {string}
+     * @type {Array<Attachment>}
      * @memberof PortfolioItemBasic
      */
-    'image': string;
+    'attachments': Array<Attachment>;
     /**
      * 
      * @type {string}
      * @memberof PortfolioItemBasic
      */
     'description'?: string;
+}
+/**
+ * Serializer for models with timestamp fields.
+ * @export
+ * @interface PortfolioItemRequest
+ */
+export interface PortfolioItemRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof PortfolioItemRequest
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PortfolioItemRequest
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PortfolioItemRequest
+     */
+    'skill_used_id'?: number | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof PortfolioItemRequest
+     */
+    'is_featured'?: boolean;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -5467,25 +5965,19 @@ export interface PublicMasterProfileProfession {
 /**
  * 
  * @export
- * @interface Rating
+ * @interface RatingRequest
  */
-export interface Rating {
+export interface RatingRequest {
     /**
      * 
      * @type {number}
-     * @memberof Rating
-     */
-    'id': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Rating
+     * @memberof RatingRequest
      */
     'client_rating'?: number | null;
     /**
      * 
      * @type {string}
-     * @memberof Rating
+     * @memberof RatingRequest
      */
     'client_review'?: string;
 }
@@ -5760,6 +6252,79 @@ export interface ServiceAreaCreateUpdate {
     'travel_fee'?: string;
 }
 /**
+ * Serializer for creating and updating service areas.
+ * @export
+ * @interface ServiceAreaCreateUpdateRequest
+ */
+export interface ServiceAreaCreateUpdateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdateRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdateRequest
+     */
+    'city': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdateRequest
+     */
+    'state': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdateRequest
+     */
+    'country': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdateRequest
+     */
+    'latitude'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdateRequest
+     */
+    'longitude'?: string | null;
+    /**
+     * 
+     * @type {any}
+     * @memberof ServiceAreaCreateUpdateRequest
+     */
+    'postal_codes'?: any;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceAreaCreateUpdateRequest
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof ServiceAreaCreateUpdateRequest
+     */
+    'service_categories': Array<number>;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdateRequest
+     */
+    'base_price_multiplier'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAreaCreateUpdateRequest
+     */
+    'travel_fee'?: string;
+}
+/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface ServiceCategory
@@ -5962,6 +6527,127 @@ export interface ServiceCategoryCreateUpdate {
      * 
      * @type {boolean}
      * @memberof ServiceCategoryCreateUpdate
+     */
+    'requires_background_check'?: boolean;
+}
+/**
+ * Serializer for creating and updating service categories.
+ * @export
+ * @interface ServiceCategoryCreateUpdateRequest
+ */
+export interface ServiceCategoryCreateUpdateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'description': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'icon'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'color'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'banner_image'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'featured'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'commission_rate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'min_price'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'max_price'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'estimated_duration_min'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'estimated_duration_max'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'meta_title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'meta_description'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'keywords'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'requires_license'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceCategoryCreateUpdateRequest
+     */
+    'requires_insurance'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceCategoryCreateUpdateRequest
      */
     'requires_background_check'?: boolean;
 }
@@ -6204,6 +6890,109 @@ export interface ServiceSubcategoryCreateUpdate {
     'meta_description'?: string;
 }
 /**
+ * Serializer for creating and updating service subcategories.
+ * @export
+ * @interface ServiceSubcategoryCreateUpdateRequest
+ */
+export interface ServiceSubcategoryCreateUpdateRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'category': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'description': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'icon'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'image'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'featured'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'base_price'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'price_range_min'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'price_range_max'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'estimated_duration'?: number | null;
+    /**
+     * 
+     * @type {ComplexityLevelEnum}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'complexity_level'?: ComplexityLevelEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'safety_requirements'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'meta_title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryCreateUpdateRequest
+     */
+    'meta_description'?: string;
+}
+/**
  * * `string` - String * `integer` - Целое * `boolean` - Boolean * `json` - JSON * `file` - Файл
  * @export
  * @enum {string}
@@ -6218,6 +7007,140 @@ export enum SettingTypeEnum {
 }
 
 
+/**
+ * Minimal contact serializer for submissions.
+ * @export
+ * @interface SimpleContact
+ */
+export interface SimpleContact {
+    /**
+     * 
+     * @type {number}
+     * @memberof SimpleContact
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContact
+     */
+    'first_name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContact
+     */
+    'last_name'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContact
+     */
+    'email': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof SimpleContact
+     */
+    'user'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContact
+     */
+    'subject': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContact
+     */
+    'message': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContact
+     */
+    'phone': string;
+    /**
+     * 
+     * @type {EnquiryTypeEnum}
+     * @memberof SimpleContact
+     */
+    'enquiry_type': EnquiryTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContact
+     */
+    'ip_address': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContact
+     */
+    'created_at': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContact
+     */
+    'updated_at': string;
+}
+/**
+ * Minimal contact serializer for submissions.
+ * @export
+ * @interface SimpleContactRequest
+ */
+export interface SimpleContactRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContactRequest
+     */
+    'first_name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContactRequest
+     */
+    'last_name'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContactRequest
+     */
+    'email': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof SimpleContactRequest
+     */
+    'user'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContactRequest
+     */
+    'subject': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContactRequest
+     */
+    'message': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SimpleContactRequest
+     */
+    'phone': string;
+    /**
+     * 
+     * @type {EnquiryTypeEnum}
+     * @memberof SimpleContactRequest
+     */
+    'enquiry_type': EnquiryTypeEnum;
+}
 /**
  * Serializer for models with timestamp fields.
  * @export
@@ -6256,6 +7179,37 @@ export interface SkillDetail {
     'is_active'?: boolean;
 }
 /**
+ * Serializer for models with timestamp fields.
+ * @export
+ * @interface SkillDetailRequest
+ */
+export interface SkillDetailRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof SkillDetailRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SkillDetailRequest
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof SkillDetailRequest
+     */
+    'category': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SkillDetailRequest
+     */
+    'is_active'?: boolean;
+}
+/**
  * * `draft` - Draft * `published` - Published * `assigned` - Assigned * `in_progress` - In Progress * `completed` - Completed * `cancelled` - Cancelled
  * @export
  * @enum {string}
@@ -6268,20 +7222,6 @@ export enum Status30eEnum {
     in_progress = 'in_progress',
     completed = 'completed',
     cancelled = 'cancelled'
-}
-
-
-/**
- * * `pending` - Pending * `accepted` - Accepted * `rejected` - Rejected * `withdrawn` - Withdrawn
- * @export
- * @enum {string}
- */
-
-export enum StatusC50Enum {
-    pending = 'pending',
-    accepted = 'accepted',
-    rejected = 'rejected',
-    withdrawn = 'withdrawn'
 }
 
 
@@ -6392,6 +7332,49 @@ export interface SupportFAQCreateUpdate {
      * 
      * @type {boolean}
      * @memberof SupportFAQCreateUpdate
+     */
+    'is_active'?: boolean;
+}
+/**
+ * Serializer for creating and updating support FAQ items.
+ * @export
+ * @interface SupportFAQCreateUpdateRequest
+ */
+export interface SupportFAQCreateUpdateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof SupportFAQCreateUpdateRequest
+     */
+    'question': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SupportFAQCreateUpdateRequest
+     */
+    'answer': string;
+    /**
+     * 
+     * @type {CategoryEnum}
+     * @memberof SupportFAQCreateUpdateRequest
+     */
+    'category'?: CategoryEnum;
+    /**
+     * 
+     * @type {number}
+     * @memberof SupportFAQCreateUpdateRequest
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SupportFAQCreateUpdateRequest
+     */
+    'is_popular'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SupportFAQCreateUpdateRequest
      */
     'is_active'?: boolean;
 }
@@ -6508,6 +7491,73 @@ export interface SystemSettingsCreateUpdate {
      * 
      * @type {string}
      * @memberof SystemSettingsCreateUpdate
+     */
+    'category'?: string;
+}
+/**
+ * Serializer for creating and updating system settings.
+ * @export
+ * @interface SystemSettingsCreateUpdateRequest
+ */
+export interface SystemSettingsCreateUpdateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdateRequest
+     */
+    'key': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdateRequest
+     */
+    'value': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdateRequest
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SystemSettingsCreateUpdateRequest
+     */
+    'is_public'?: boolean;
+    /**
+     * 
+     * @type {SettingTypeEnum}
+     * @memberof SystemSettingsCreateUpdateRequest
+     */
+    'setting_type'?: SettingTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdateRequest
+     */
+    'validation_regex'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdateRequest
+     */
+    'min_value'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdateRequest
+     */
+    'max_value'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SystemSettingsCreateUpdateRequest
+     */
+    'requires_admin'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof SystemSettingsCreateUpdateRequest
      */
     'category'?: string;
 }
@@ -6666,6 +7716,37 @@ export interface UserDetailChild {
     'photo_url': string | null;
 }
 /**
+ * Serializer for models with timestamp fields.
+ * @export
+ * @interface UserDetailChildRequest
+ */
+export interface UserDetailChildRequest {
+    /**
+     * Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.
+     * @type {string}
+     * @memberof UserDetailChildRequest
+     */
+    'username': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDetailChildRequest
+     */
+    'email': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDetailChildRequest
+     */
+    'first_name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDetailChildRequest
+     */
+    'last_name'?: string;
+}
+/**
  * Serializer for user notification settings.
  * @export
  * @interface UserNotificationSettings
@@ -6775,6 +7856,97 @@ export interface UserNotificationSettings {
     'updated_at': string;
 }
 /**
+ * Serializer for user notification settings.
+ * @export
+ * @interface UserNotificationSettingsRequest
+ */
+export interface UserNotificationSettingsRequest {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'sms_notifications'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'push_notifications'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'email_notifications'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'task_notifications'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'specialist_messages'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'task_updates'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'marketing_emails'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'promotional_sms'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'newsletter'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'system_alerts'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'security_notifications'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'quiet_hours_enabled'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'quiet_hours_start'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserNotificationSettingsRequest
+     */
+    'quiet_hours_end'?: string | null;
+}
+/**
  * Serializer for user profile display
  * @export
  * @interface UserProfile
@@ -6851,6 +8023,37 @@ export interface UserUpdate {
      * 
      * @type {string}
      * @memberof UserUpdate
+     */
+    'last_name'?: string;
+}
+/**
+ * Serializer for updating user profile - enhanced version of api_users EditUserSettingsView
+ * @export
+ * @interface UserUpdateRequest
+ */
+export interface UserUpdateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UserUpdateRequest
+     */
+    'description'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserUpdateRequest
+     */
+    'photo_url'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserUpdateRequest
+     */
+    'first_name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserUpdateRequest
      */
     'last_name'?: string;
 }
@@ -6947,10 +8150,10 @@ export interface WrapperAssignment {
     'accepted_application': JobAssignmentAcceptedApplication;
     /**
      * 
-     * @type {Array<AssignmentAttachment>}
+     * @type {Array<Attachment>}
      * @memberof WrapperAssignment
      */
-    'attachments': Array<AssignmentAttachment>;
+    'attachments': Array<Attachment>;
 }
 
 /**
@@ -7115,15 +8318,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Accept a job application
          * @param {number} id A unique integer value identifying this Job Application.
-         * @param {JobApplication} jobApplication 
+         * @param {JobApplicationRequest} jobApplicationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ApplicationsAcceptCreate: async (id: number, jobApplication: JobApplication, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ApplicationsAccept: async (id: number, jobApplicationRequest: JobApplicationRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ApplicationsAcceptCreate', 'id', id)
-            // verify required parameter 'jobApplication' is not null or undefined
-            assertParamExists('v1ApplicationsAcceptCreate', 'jobApplication', jobApplication)
+            assertParamExists('v1ApplicationsAccept', 'id', id)
+            // verify required parameter 'jobApplicationRequest' is not null or undefined
+            assertParamExists('v1ApplicationsAccept', 'jobApplicationRequest', jobApplicationRequest)
             const localVarPath = `/api/v1/applications/{id}/accept/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -7149,7 +8352,51 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(jobApplication, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobApplicationRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Reject a job application
+         * @param {number} id A unique integer value identifying this Job Application.
+         * @param {JobApplicationRequest} jobApplicationRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ApplicationsAcceptReject: async (id: number, jobApplicationRequest: JobApplicationRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ApplicationsAcceptReject', 'id', id)
+            // verify required parameter 'jobApplicationRequest' is not null or undefined
+            assertParamExists('v1ApplicationsAcceptReject', 'jobApplicationRequest', jobApplicationRequest)
+            const localVarPath = `/api/v1/applications/{id}/reject/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(jobApplicationRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7158,13 +8405,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * ViewSet for managing job applications.
-         * @param {JobApplication} jobApplication 
+         * @param {JobApplicationRequest} jobApplicationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ApplicationsCreate: async (jobApplication: JobApplication, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'jobApplication' is not null or undefined
-            assertParamExists('v1ApplicationsCreate', 'jobApplication', jobApplication)
+        v1ApplicationsCreate: async (jobApplicationRequest: JobApplicationRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'jobApplicationRequest' is not null or undefined
+            assertParamExists('v1ApplicationsCreate', 'jobApplicationRequest', jobApplicationRequest)
             const localVarPath = `/api/v1/applications/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7189,7 +8436,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(jobApplication, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobApplicationRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7335,11 +8582,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * ViewSet for managing job applications.
          * @param {number} id A unique integer value identifying this Job Application.
-         * @param {PatchedJobApplication} [patchedJobApplication] 
+         * @param {PatchedJobApplicationRequest} [patchedJobApplicationRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ApplicationsPartialUpdate: async (id: number, patchedJobApplication?: PatchedJobApplication, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ApplicationsPartialUpdate: async (id: number, patchedJobApplicationRequest?: PatchedJobApplicationRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1ApplicationsPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/applications/{id}/`
@@ -7367,51 +8614,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedJobApplication, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Reject a job application
-         * @param {number} id A unique integer value identifying this Job Application.
-         * @param {JobApplication} jobApplication 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ApplicationsRejectCreate: async (id: number, jobApplication: JobApplication, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ApplicationsRejectCreate', 'id', id)
-            // verify required parameter 'jobApplication' is not null or undefined
-            assertParamExists('v1ApplicationsRejectCreate', 'jobApplication', jobApplication)
-            const localVarPath = `/api/v1/applications/{id}/reject/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(jobApplication, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedJobApplicationRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7459,15 +8662,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * ViewSet for managing job applications.
          * @param {number} id A unique integer value identifying this Job Application.
-         * @param {JobApplication} jobApplication 
+         * @param {JobApplicationRequest} jobApplicationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ApplicationsUpdate: async (id: number, jobApplication: JobApplication, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ApplicationsUpdate: async (id: number, jobApplicationRequest: JobApplicationRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1ApplicationsUpdate', 'id', id)
-            // verify required parameter 'jobApplication' is not null or undefined
-            assertParamExists('v1ApplicationsUpdate', 'jobApplication', jobApplication)
+            // verify required parameter 'jobApplicationRequest' is not null or undefined
+            assertParamExists('v1ApplicationsUpdate', 'jobApplicationRequest', jobApplicationRequest)
             const localVarPath = `/api/v1/applications/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -7493,7 +8696,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(jobApplication, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobApplicationRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7503,15 +8706,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Withdraw a job by master
          * @param {number} id A unique integer value identifying this Job Application.
-         * @param {JobApplication} jobApplication 
+         * @param {JobApplicationRequest} jobApplicationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ApplicationsWithdrawCreate: async (id: number, jobApplication: JobApplication, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ApplicationsWithdraw: async (id: number, jobApplicationRequest: JobApplicationRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ApplicationsWithdrawCreate', 'id', id)
-            // verify required parameter 'jobApplication' is not null or undefined
-            assertParamExists('v1ApplicationsWithdrawCreate', 'jobApplication', jobApplication)
+            assertParamExists('v1ApplicationsWithdraw', 'id', id)
+            // verify required parameter 'jobApplicationRequest' is not null or undefined
+            assertParamExists('v1ApplicationsWithdraw', 'jobApplicationRequest', jobApplicationRequest)
             const localVarPath = `/api/v1/applications/{id}/withdraw/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -7537,7 +8740,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(jobApplication, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobApplicationRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7546,11 +8749,162 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {JobAssignment} [jobAssignment] 
+         * @param {string} assignmentId 
+         * @param {Array<any>} files 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsCreate: async (jobAssignment?: JobAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1AssignmentsAttachmentsCreate: async (assignmentId: string, files: Array<any>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'assignmentId' is not null or undefined
+            assertParamExists('v1AssignmentsAttachmentsCreate', 'assignmentId', assignmentId)
+            // verify required parameter 'files' is not null or undefined
+            assertParamExists('v1AssignmentsAttachmentsCreate', 'files', files)
+            const localVarPath = `/api/v1/assignments/{assignment_id}/attachments/`
+                .replace(`{${"assignment_id"}}`, encodeURIComponent(String(assignmentId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (files) {
+                files.forEach((element) => {
+                    localVarFormParams.append('files', element as any);
+                })
+            }
+
+    
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = localVarFormParams;
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} assignmentId 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1AssignmentsAttachmentsDestroy: async (assignmentId: string, id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'assignmentId' is not null or undefined
+            assertParamExists('v1AssignmentsAttachmentsDestroy', 'assignmentId', assignmentId)
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1AssignmentsAttachmentsDestroy', 'id', id)
+            const localVarPath = `/api/v1/assignments/{assignment_id}/attachments/{id}/`
+                .replace(`{${"assignment_id"}}`, encodeURIComponent(String(assignmentId)))
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} assignmentId 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1AssignmentsAttachmentsList: async (assignmentId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'assignmentId' is not null or undefined
+            assertParamExists('v1AssignmentsAttachmentsList', 'assignmentId', assignmentId)
+            const localVarPath = `/api/v1/assignments/{assignment_id}/attachments/`
+                .replace(`{${"assignment_id"}}`, encodeURIComponent(String(assignmentId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {JobAssignmentRequest} [jobAssignmentRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1AssignmentsCreate: async (jobAssignmentRequest?: JobAssignmentRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/assignments/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7575,7 +8929,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(jobAssignment, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobAssignmentRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7677,11 +9031,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * 
          * @param {string} id 
-         * @param {PatchedJobAssignment} [patchedJobAssignment] 
+         * @param {PatchedJobAssignmentRequest} [patchedJobAssignmentRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsPartialUpdate: async (id: string, patchedJobAssignment?: PatchedJobAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1AssignmentsPartialUpdate: async (id: string, patchedJobAssignmentRequest?: PatchedJobAssignmentRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1AssignmentsPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/`
@@ -7709,7 +9063,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedJobAssignment, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedJobAssignmentRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7719,11 +9073,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Rate a completed job assignment
          * @param {string} id 
-         * @param {Rating} [rating] 
+         * @param {RatingRequest} [ratingRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsRateCreate: async (id: string, rating?: Rating, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1AssignmentsRateCreate: async (id: string, ratingRequest?: RatingRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1AssignmentsRateCreate', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/rate/`
@@ -7751,7 +9105,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(rating, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(ratingRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7799,11 +9153,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * 
          * @param {string} id 
-         * @param {JobAssignment} [jobAssignment] 
+         * @param {JobAssignmentRequest} [jobAssignmentRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsUpdate: async (id: string, jobAssignment?: JobAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1AssignmentsUpdate: async (id: string, jobAssignmentRequest?: JobAssignmentRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1AssignmentsUpdate', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/`
@@ -7831,7 +9185,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(jobAssignment, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobAssignmentRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7841,11 +9195,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Update progress notes for an assignment
          * @param {string} id 
-         * @param {PatchedProgressUpdate} [patchedProgressUpdate] 
+         * @param {PatchedProgressUpdateRequest} [patchedProgressUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsUpdateProgressPartialUpdate: async (id: string, patchedProgressUpdate?: PatchedProgressUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1AssignmentsUpdateProgressPartialUpdate: async (id: string, patchedProgressUpdateRequest?: PatchedProgressUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1AssignmentsUpdateProgressPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/update_progress/`
@@ -7873,7 +9227,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedProgressUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedProgressUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7882,13 +9236,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Authenticate or register a user using Firebase ID token.
-         * @param {FireBaseAuth} fireBaseAuth 
+         * @param {FireBaseAuthRequest} fireBaseAuthRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AuthFirebaseCreate: async (fireBaseAuth: FireBaseAuth, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'fireBaseAuth' is not null or undefined
-            assertParamExists('v1AuthFirebaseCreate', 'fireBaseAuth', fireBaseAuth)
+        v1AuthFirebaseCreate: async (fireBaseAuthRequest: FireBaseAuthRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'fireBaseAuthRequest' is not null or undefined
+            assertParamExists('v1AuthFirebaseCreate', 'fireBaseAuthRequest', fireBaseAuthRequest)
             const localVarPath = `/api/v1/auth/firebase/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7913,7 +9267,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(fireBaseAuth, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(fireBaseAuthRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7955,58 +9309,14 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Add participants to chat room
-         * @param {string} id 
-         * @param {ChatRoom} chatRoom 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatsRoomsAddParticipants: async (id: string, chatRoom: ChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1ChatsRoomsAddParticipants', 'id', id)
-            // verify required parameter 'chatRoom' is not null or undefined
-            assertParamExists('v1ChatsRoomsAddParticipants', 'chatRoom', chatRoom)
-            const localVarPath = `/api/v1/chats/rooms/{id}/add_participants/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(chatRoom, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * ViewSet for managing chat rooms
-         * @param {ChatRoomCreate} chatRoomCreate 
+         * @param {ChatRoomCreateRequest} chatRoomCreateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsCreate: async (chatRoomCreate: ChatRoomCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'chatRoomCreate' is not null or undefined
-            assertParamExists('v1ChatsRoomsCreate', 'chatRoomCreate', chatRoomCreate)
+        v1ChatsRoomsCreate: async (chatRoomCreateRequest: ChatRoomCreateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'chatRoomCreateRequest' is not null or undefined
+            assertParamExists('v1ChatsRoomsCreate', 'chatRoomCreateRequest', chatRoomCreateRequest)
             const localVarPath = `/api/v1/chats/rooms/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -8031,7 +9341,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(chatRoomCreate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(chatRoomCreateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8120,15 +9430,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Leave a chat room
          * @param {string} id 
-         * @param {ChatRoom} chatRoom 
+         * @param {ChatRoomRequest} chatRoomRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsLeave: async (id: string, chatRoom: ChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsLeave: async (id: string, chatRoomRequest: ChatRoomRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1ChatsRoomsLeave', 'id', id)
-            // verify required parameter 'chatRoom' is not null or undefined
-            assertParamExists('v1ChatsRoomsLeave', 'chatRoom', chatRoom)
+            // verify required parameter 'chatRoomRequest' is not null or undefined
+            assertParamExists('v1ChatsRoomsLeave', 'chatRoomRequest', chatRoomRequest)
             const localVarPath = `/api/v1/chats/rooms/{id}/leave/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -8154,7 +9464,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(chatRoom, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(chatRoomRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8218,15 +9528,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * 
          * @param {string} chatRoomId 
-         * @param {MessageCreate} messageCreate 
+         * @param {MessageCreateRequest} messageCreateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesCreate: async (chatRoomId: string, messageCreate: MessageCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsMessagesCreate: async (chatRoomId: string, messageCreateRequest: MessageCreateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'chatRoomId' is not null or undefined
             assertParamExists('v1ChatsRoomsMessagesCreate', 'chatRoomId', chatRoomId)
-            // verify required parameter 'messageCreate' is not null or undefined
-            assertParamExists('v1ChatsRoomsMessagesCreate', 'messageCreate', messageCreate)
+            // verify required parameter 'messageCreateRequest' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesCreate', 'messageCreateRequest', messageCreateRequest)
             const localVarPath = `/api/v1/chats/rooms/{chat_room_id}/messages/`
                 .replace(`{${"chat_room_id"}}`, encodeURIComponent(String(chatRoomId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -8252,7 +9562,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(messageCreate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(messageCreateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8363,11 +9673,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {PatchedMessage} [patchedMessage] 
+         * @param {PatchedMessageRequest} [patchedMessageRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesPartialUpdate: async (chatRoomId: string, id: string, patchedMessage?: PatchedMessage, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsMessagesPartialUpdate: async (chatRoomId: string, id: string, patchedMessageRequest?: PatchedMessageRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'chatRoomId' is not null or undefined
             assertParamExists('v1ChatsRoomsMessagesPartialUpdate', 'chatRoomId', chatRoomId)
             // verify required parameter 'id' is not null or undefined
@@ -8398,7 +9708,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedMessage, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedMessageRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8451,17 +9761,17 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {MessageUpdate} messageUpdate 
+         * @param {MessageUpdateRequest} messageUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesUpdate: async (chatRoomId: string, id: string, messageUpdate: MessageUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsMessagesUpdate: async (chatRoomId: string, id: string, messageUpdateRequest: MessageUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'chatRoomId' is not null or undefined
             assertParamExists('v1ChatsRoomsMessagesUpdate', 'chatRoomId', chatRoomId)
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1ChatsRoomsMessagesUpdate', 'id', id)
-            // verify required parameter 'messageUpdate' is not null or undefined
-            assertParamExists('v1ChatsRoomsMessagesUpdate', 'messageUpdate', messageUpdate)
+            // verify required parameter 'messageUpdateRequest' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesUpdate', 'messageUpdateRequest', messageUpdateRequest)
             const localVarPath = `/api/v1/chats/rooms/{chat_room_id}/messages/{id}/`
                 .replace(`{${"chat_room_id"}}`, encodeURIComponent(String(chatRoomId)))
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
@@ -8488,7 +9798,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(messageUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(messageUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8498,11 +9808,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * ViewSet for managing chat rooms
          * @param {string} id 
-         * @param {PatchedChatRoom} [patchedChatRoom] 
+         * @param {PatchedChatRoomRequest} [patchedChatRoomRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsPartialUpdate: async (id: string, patchedChatRoom?: PatchedChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsPartialUpdate: async (id: string, patchedChatRoomRequest?: PatchedChatRoomRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1ChatsRoomsPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/chats/rooms/{id}/`
@@ -8530,7 +9840,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedChatRoom, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedChatRoomRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8578,15 +9888,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * ViewSet for managing chat rooms
          * @param {string} id 
-         * @param {ChatRoom} chatRoom 
+         * @param {ChatRoomRequest} chatRoomRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsUpdate: async (id: string, chatRoom: ChatRoom, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsUpdate: async (id: string, chatRoomRequest: ChatRoomRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1ChatsRoomsUpdate', 'id', id)
-            // verify required parameter 'chatRoom' is not null or undefined
-            assertParamExists('v1ChatsRoomsUpdate', 'chatRoom', chatRoom)
+            // verify required parameter 'chatRoomRequest' is not null or undefined
+            assertParamExists('v1ChatsRoomsUpdate', 'chatRoomRequest', chatRoomRequest)
             const localVarPath = `/api/v1/chats/rooms/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -8612,7 +9922,297 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(chatRoom, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(chatRoomRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Create contact with throttling.
+         * @param {SimpleContactRequest} simpleContactRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsCreate: async (simpleContactRequest: SimpleContactRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'simpleContactRequest' is not null or undefined
+            assertParamExists('v1ContactsCreate', 'simpleContactRequest', simpleContactRequest)
+            const localVarPath = `/api/v1/contacts/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(simpleContactRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {number} id A unique integer value identifying this simple contact.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsDestroy: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ContactsDestroy', 'id', id)
+            const localVarPath = `/api/v1/contacts/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get available enquiry types.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsEnquiryTypesRetrieve: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/contacts/enquiry_types/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsList: async (ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/contacts/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {number} id A unique integer value identifying this simple contact.
+         * @param {PatchedSimpleContactRequest} [patchedSimpleContactRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsPartialUpdate: async (id: number, patchedSimpleContactRequest?: PatchedSimpleContactRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ContactsPartialUpdate', 'id', id)
+            const localVarPath = `/api/v1/contacts/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedSimpleContactRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {number} id A unique integer value identifying this simple contact.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsRetrieve: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ContactsRetrieve', 'id', id)
+            const localVarPath = `/api/v1/contacts/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {number} id A unique integer value identifying this simple contact.
+         * @param {SimpleContactRequest} simpleContactRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsUpdate: async (id: number, simpleContactRequest: SimpleContactRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1ContactsUpdate', 'id', id)
+            // verify required parameter 'simpleContactRequest' is not null or undefined
+            assertParamExists('v1ContactsUpdate', 'simpleContactRequest', simpleContactRequest)
+            const localVarPath = `/api/v1/contacts/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(simpleContactRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8728,13 +10328,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Service Areas - Full CRUD with authenticated access.
-         * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+         * @param {ServiceAreaCreateUpdateRequest} serviceAreaCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceAreasCreate: async (serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'serviceAreaCreateUpdate' is not null or undefined
-            assertParamExists('v1CoreServiceAreasCreate', 'serviceAreaCreateUpdate', serviceAreaCreateUpdate)
+        v1CoreServiceAreasCreate: async (serviceAreaCreateUpdateRequest: ServiceAreaCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'serviceAreaCreateUpdateRequest' is not null or undefined
+            assertParamExists('v1CoreServiceAreasCreate', 'serviceAreaCreateUpdateRequest', serviceAreaCreateUpdateRequest)
             const localVarPath = `/api/v1/core/service-areas/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -8759,7 +10359,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(serviceAreaCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceAreaCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8871,11 +10471,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Service Areas - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Area.
-         * @param {PatchedServiceAreaCreateUpdate} [patchedServiceAreaCreateUpdate] 
+         * @param {PatchedServiceAreaCreateUpdateRequest} [patchedServiceAreaCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceAreasPartialUpdate: async (id: number, patchedServiceAreaCreateUpdate?: PatchedServiceAreaCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreServiceAreasPartialUpdate: async (id: number, patchedServiceAreaCreateUpdateRequest?: PatchedServiceAreaCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1CoreServiceAreasPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/core/service-areas/{id}/`
@@ -8903,7 +10503,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedServiceAreaCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedServiceAreaCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8951,15 +10551,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Service Areas - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Area.
-         * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+         * @param {ServiceAreaCreateUpdateRequest} serviceAreaCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceAreasUpdate: async (id: number, serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreServiceAreasUpdate: async (id: number, serviceAreaCreateUpdateRequest: ServiceAreaCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1CoreServiceAreasUpdate', 'id', id)
-            // verify required parameter 'serviceAreaCreateUpdate' is not null or undefined
-            assertParamExists('v1CoreServiceAreasUpdate', 'serviceAreaCreateUpdate', serviceAreaCreateUpdate)
+            // verify required parameter 'serviceAreaCreateUpdateRequest' is not null or undefined
+            assertParamExists('v1CoreServiceAreasUpdate', 'serviceAreaCreateUpdateRequest', serviceAreaCreateUpdateRequest)
             const localVarPath = `/api/v1/core/service-areas/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -8985,7 +10585,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(serviceAreaCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceAreaCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8994,13 +10594,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Service Categories - Full CRUD with authenticated access.
-         * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+         * @param {ServiceCategoryCreateUpdateRequest} serviceCategoryCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceCategoriesCreate: async (serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'serviceCategoryCreateUpdate' is not null or undefined
-            assertParamExists('v1CoreServiceCategoriesCreate', 'serviceCategoryCreateUpdate', serviceCategoryCreateUpdate)
+        v1CoreServiceCategoriesCreate: async (serviceCategoryCreateUpdateRequest: ServiceCategoryCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'serviceCategoryCreateUpdateRequest' is not null or undefined
+            assertParamExists('v1CoreServiceCategoriesCreate', 'serviceCategoryCreateUpdateRequest', serviceCategoryCreateUpdateRequest)
             const localVarPath = `/api/v1/core/service-categories/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9025,7 +10625,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(serviceCategoryCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceCategoryCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9137,11 +10737,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Service Categories - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Category.
-         * @param {PatchedServiceCategoryCreateUpdate} [patchedServiceCategoryCreateUpdate] 
+         * @param {PatchedServiceCategoryCreateUpdateRequest} [patchedServiceCategoryCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceCategoriesPartialUpdate: async (id: number, patchedServiceCategoryCreateUpdate?: PatchedServiceCategoryCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreServiceCategoriesPartialUpdate: async (id: number, patchedServiceCategoryCreateUpdateRequest?: PatchedServiceCategoryCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1CoreServiceCategoriesPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/core/service-categories/{id}/`
@@ -9169,7 +10769,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedServiceCategoryCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedServiceCategoryCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9217,15 +10817,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Service Categories - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Category.
-         * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+         * @param {ServiceCategoryCreateUpdateRequest} serviceCategoryCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceCategoriesUpdate: async (id: number, serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreServiceCategoriesUpdate: async (id: number, serviceCategoryCreateUpdateRequest: ServiceCategoryCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1CoreServiceCategoriesUpdate', 'id', id)
-            // verify required parameter 'serviceCategoryCreateUpdate' is not null or undefined
-            assertParamExists('v1CoreServiceCategoriesUpdate', 'serviceCategoryCreateUpdate', serviceCategoryCreateUpdate)
+            // verify required parameter 'serviceCategoryCreateUpdateRequest' is not null or undefined
+            assertParamExists('v1CoreServiceCategoriesUpdate', 'serviceCategoryCreateUpdateRequest', serviceCategoryCreateUpdateRequest)
             const localVarPath = `/api/v1/core/service-categories/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -9251,7 +10851,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(serviceCategoryCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceCategoryCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9260,13 +10860,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Service Subcategories - Full CRUD with authenticated access.
-         * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+         * @param {ServiceSubcategoryCreateUpdateRequest} serviceSubcategoryCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceSubcategoriesCreate: async (serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'serviceSubcategoryCreateUpdate' is not null or undefined
-            assertParamExists('v1CoreServiceSubcategoriesCreate', 'serviceSubcategoryCreateUpdate', serviceSubcategoryCreateUpdate)
+        v1CoreServiceSubcategoriesCreate: async (serviceSubcategoryCreateUpdateRequest: ServiceSubcategoryCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'serviceSubcategoryCreateUpdateRequest' is not null or undefined
+            assertParamExists('v1CoreServiceSubcategoriesCreate', 'serviceSubcategoryCreateUpdateRequest', serviceSubcategoryCreateUpdateRequest)
             const localVarPath = `/api/v1/core/service-subcategories/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9291,7 +10891,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(serviceSubcategoryCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceSubcategoryCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9413,11 +11013,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Service Subcategories - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Subcategory.
-         * @param {PatchedServiceSubcategoryCreateUpdate} [patchedServiceSubcategoryCreateUpdate] 
+         * @param {PatchedServiceSubcategoryCreateUpdateRequest} [patchedServiceSubcategoryCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceSubcategoriesPartialUpdate: async (id: number, patchedServiceSubcategoryCreateUpdate?: PatchedServiceSubcategoryCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreServiceSubcategoriesPartialUpdate: async (id: number, patchedServiceSubcategoryCreateUpdateRequest?: PatchedServiceSubcategoryCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1CoreServiceSubcategoriesPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/core/service-subcategories/{id}/`
@@ -9445,7 +11045,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedServiceSubcategoryCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedServiceSubcategoryCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9493,15 +11093,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Service Subcategories - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Subcategory.
-         * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+         * @param {ServiceSubcategoryCreateUpdateRequest} serviceSubcategoryCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceSubcategoriesUpdate: async (id: number, serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreServiceSubcategoriesUpdate: async (id: number, serviceSubcategoryCreateUpdateRequest: ServiceSubcategoryCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1CoreServiceSubcategoriesUpdate', 'id', id)
-            // verify required parameter 'serviceSubcategoryCreateUpdate' is not null or undefined
-            assertParamExists('v1CoreServiceSubcategoriesUpdate', 'serviceSubcategoryCreateUpdate', serviceSubcategoryCreateUpdate)
+            // verify required parameter 'serviceSubcategoryCreateUpdateRequest' is not null or undefined
+            assertParamExists('v1CoreServiceSubcategoriesUpdate', 'serviceSubcategoryCreateUpdateRequest', serviceSubcategoryCreateUpdateRequest)
             const localVarPath = `/api/v1/core/service-subcategories/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -9527,7 +11127,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(serviceSubcategoryCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(serviceSubcategoryCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9536,13 +11136,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Support FAQs - Full CRUD with authenticated access.
-         * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+         * @param {SupportFAQCreateUpdateRequest} supportFAQCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreSupportFaqCreate: async (supportFAQCreateUpdate: SupportFAQCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'supportFAQCreateUpdate' is not null or undefined
-            assertParamExists('v1CoreSupportFaqCreate', 'supportFAQCreateUpdate', supportFAQCreateUpdate)
+        v1CoreSupportFaqCreate: async (supportFAQCreateUpdateRequest: SupportFAQCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'supportFAQCreateUpdateRequest' is not null or undefined
+            assertParamExists('v1CoreSupportFaqCreate', 'supportFAQCreateUpdateRequest', supportFAQCreateUpdateRequest)
             const localVarPath = `/api/v1/core/support/faq/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9567,7 +11167,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(supportFAQCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(supportFAQCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9684,11 +11284,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Support FAQs - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Support FAQ.
-         * @param {PatchedSupportFAQCreateUpdate} [patchedSupportFAQCreateUpdate] 
+         * @param {PatchedSupportFAQCreateUpdateRequest} [patchedSupportFAQCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreSupportFaqPartialUpdate: async (id: number, patchedSupportFAQCreateUpdate?: PatchedSupportFAQCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreSupportFaqPartialUpdate: async (id: number, patchedSupportFAQCreateUpdateRequest?: PatchedSupportFAQCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1CoreSupportFaqPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/core/support/faq/{id}/`
@@ -9716,7 +11316,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedSupportFAQCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedSupportFAQCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9764,15 +11364,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Support FAQs - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Support FAQ.
-         * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+         * @param {SupportFAQCreateUpdateRequest} supportFAQCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreSupportFaqUpdate: async (id: number, supportFAQCreateUpdate: SupportFAQCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreSupportFaqUpdate: async (id: number, supportFAQCreateUpdateRequest: SupportFAQCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1CoreSupportFaqUpdate', 'id', id)
-            // verify required parameter 'supportFAQCreateUpdate' is not null or undefined
-            assertParamExists('v1CoreSupportFaqUpdate', 'supportFAQCreateUpdate', supportFAQCreateUpdate)
+            // verify required parameter 'supportFAQCreateUpdateRequest' is not null or undefined
+            assertParamExists('v1CoreSupportFaqUpdate', 'supportFAQCreateUpdateRequest', supportFAQCreateUpdateRequest)
             const localVarPath = `/api/v1/core/support/faq/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -9798,7 +11398,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(supportFAQCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(supportFAQCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9807,13 +11407,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * System Settings - Full CRUD with authenticated access.
-         * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+         * @param {SystemSettingsCreateUpdateRequest} systemSettingsCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreSystemSettingsCreate: async (systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'systemSettingsCreateUpdate' is not null or undefined
-            assertParamExists('v1CoreSystemSettingsCreate', 'systemSettingsCreateUpdate', systemSettingsCreateUpdate)
+        v1CoreSystemSettingsCreate: async (systemSettingsCreateUpdateRequest: SystemSettingsCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'systemSettingsCreateUpdateRequest' is not null or undefined
+            assertParamExists('v1CoreSystemSettingsCreate', 'systemSettingsCreateUpdateRequest', systemSettingsCreateUpdateRequest)
             const localVarPath = `/api/v1/core/system-settings/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9838,7 +11438,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(systemSettingsCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(systemSettingsCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9950,11 +11550,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * System Settings - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this System Setting.
-         * @param {PatchedSystemSettingsCreateUpdate} [patchedSystemSettingsCreateUpdate] 
+         * @param {PatchedSystemSettingsCreateUpdateRequest} [patchedSystemSettingsCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreSystemSettingsPartialUpdate: async (id: number, patchedSystemSettingsCreateUpdate?: PatchedSystemSettingsCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreSystemSettingsPartialUpdate: async (id: number, patchedSystemSettingsCreateUpdateRequest?: PatchedSystemSettingsCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1CoreSystemSettingsPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/core/system-settings/{id}/`
@@ -9982,7 +11582,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedSystemSettingsCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedSystemSettingsCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10030,15 +11630,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * System Settings - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this System Setting.
-         * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+         * @param {SystemSettingsCreateUpdateRequest} systemSettingsCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreSystemSettingsUpdate: async (id: number, systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1CoreSystemSettingsUpdate: async (id: number, systemSettingsCreateUpdateRequest: SystemSettingsCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1CoreSystemSettingsUpdate', 'id', id)
-            // verify required parameter 'systemSettingsCreateUpdate' is not null or undefined
-            assertParamExists('v1CoreSystemSettingsUpdate', 'systemSettingsCreateUpdate', systemSettingsCreateUpdate)
+            // verify required parameter 'systemSettingsCreateUpdateRequest' is not null or undefined
+            assertParamExists('v1CoreSystemSettingsUpdate', 'systemSettingsCreateUpdateRequest', systemSettingsCreateUpdateRequest)
             const localVarPath = `/api/v1/core/system-settings/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -10064,7 +11664,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(systemSettingsCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(systemSettingsCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10107,13 +11707,67 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Complete an assignment with optional rating and review
-         * @param {string} id 
-         * @param {JobAssignmentCompletion} [jobAssignmentCompletion] 
+         * Get job recommendations for master based on skills, location, and preferences.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobAssignmentsComplete: async (id: string, jobAssignmentCompletion?: JobAssignmentCompletion, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1HomeMasterNewJobsList: async (ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/home/master/new-jobs/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Complete an assignment with optional rating and review
+         * @param {string} id 
+         * @param {JobAssignmentCompletionRequest} [jobAssignmentCompletionRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobAssignmentsComplete: async (id: string, jobAssignmentCompletionRequest?: JobAssignmentCompletionRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1JobAssignmentsComplete', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/complete/`
@@ -10141,7 +11795,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(jobAssignmentCompletion, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobAssignmentCompletionRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10151,11 +11805,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Start an assignment
          * @param {string} id 
-         * @param {JobAssignment} [jobAssignment] 
+         * @param {JobAssignmentRequest} [jobAssignmentRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobAssignmentsStart: async (id: string, jobAssignment?: JobAssignment, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1JobAssignmentsStart: async (id: string, jobAssignmentRequest?: JobAssignmentRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1JobAssignmentsStart', 'id', id)
             const localVarPath = `/api/v1/assignments/{id}/start/`
@@ -10183,7 +11837,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(jobAssignment, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobAssignmentRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10193,15 +11847,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Apply to a job.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {JobApply} jobApply 
+         * @param {JobApplyRequest} jobApplyRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsApply: async (id: number, jobApply: JobApply, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1JobsApply: async (id: number, jobApplyRequest: JobApplyRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1JobsApply', 'id', id)
-            // verify required parameter 'jobApply' is not null or undefined
-            assertParamExists('v1JobsApply', 'jobApply', jobApply)
+            // verify required parameter 'jobApplyRequest' is not null or undefined
+            assertParamExists('v1JobsApply', 'jobApplyRequest', jobApplyRequest)
             const localVarPath = `/api/v1/jobs/{id}/apply/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -10227,7 +11881,158 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(jobApply, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobApplyRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} jobId 
+         * @param {Array<any>} files 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobsAttachmentsCreate: async (jobId: string, files: Array<any>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'jobId' is not null or undefined
+            assertParamExists('v1JobsAttachmentsCreate', 'jobId', jobId)
+            // verify required parameter 'files' is not null or undefined
+            assertParamExists('v1JobsAttachmentsCreate', 'files', files)
+            const localVarPath = `/api/v1/jobs/{job_id}/attachments/`
+                .replace(`{${"job_id"}}`, encodeURIComponent(String(jobId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (files) {
+                files.forEach((element) => {
+                    localVarFormParams.append('files', element as any);
+                })
+            }
+
+    
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = localVarFormParams;
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {string} jobId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobsAttachmentsDestroy: async (id: string, jobId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1JobsAttachmentsDestroy', 'id', id)
+            // verify required parameter 'jobId' is not null or undefined
+            assertParamExists('v1JobsAttachmentsDestroy', 'jobId', jobId)
+            const localVarPath = `/api/v1/jobs/{job_id}/attachments/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
+                .replace(`{${"job_id"}}`, encodeURIComponent(String(jobId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} jobId 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobsAttachmentsList: async (jobId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'jobId' is not null or undefined
+            assertParamExists('v1JobsAttachmentsList', 'jobId', jobId)
+            const localVarPath = `/api/v1/jobs/{job_id}/attachments/`
+                .replace(`{${"job_id"}}`, encodeURIComponent(String(jobId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10237,15 +12042,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Toggle bookmark status for a job
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsBookmark: async (id: number, job: Job, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1JobsBookmark: async (id: number, jobRequest: JobRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1JobsBookmark', 'id', id)
-            // verify required parameter 'job' is not null or undefined
-            assertParamExists('v1JobsBookmark', 'job', job)
+            // verify required parameter 'jobRequest' is not null or undefined
+            assertParamExists('v1JobsBookmark', 'jobRequest', jobRequest)
             const localVarPath = `/api/v1/jobs/{id}/bookmark/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -10271,7 +12076,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(job, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10281,15 +12086,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Cancel a job. Only allowed if job is in PUBLISHED or ASSIGNED state.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsCancel: async (id: number, job: Job, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1JobsCancel: async (id: number, jobRequest: JobRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1JobsCancel', 'id', id)
-            // verify required parameter 'job' is not null or undefined
-            assertParamExists('v1JobsCancel', 'job', job)
+            // verify required parameter 'jobRequest' is not null or undefined
+            assertParamExists('v1JobsCancel', 'jobRequest', jobRequest)
             const localVarPath = `/api/v1/jobs/{id}/cancel/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -10315,7 +12120,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(job, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10324,13 +12129,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * ViewSet for managing jobs.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsCreate: async (job: Job, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'job' is not null or undefined
-            assertParamExists('v1JobsCreate', 'job', job)
+        v1JobsCreate: async (jobRequest: JobRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'jobRequest' is not null or undefined
+            assertParamExists('v1JobsCreate', 'jobRequest', jobRequest)
             const localVarPath = `/api/v1/jobs/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -10355,7 +12160,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(job, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10403,15 +12208,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Toggle favorite status for a job
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsFavorite: async (id: number, job: Job, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1JobsFavorite: async (id: number, jobRequest: JobRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1JobsFavorite', 'id', id)
-            // verify required parameter 'job' is not null or undefined
-            assertParamExists('v1JobsFavorite', 'job', job)
+            // verify required parameter 'jobRequest' is not null or undefined
+            assertParamExists('v1JobsFavorite', 'jobRequest', jobRequest)
             const localVarPath = `/api/v1/jobs/{id}/favorite/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -10437,7 +12242,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(job, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10446,17 +12251,22 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * ViewSet for managing jobs.
+         * @param {string} [city] 
+         * @param {number} [maxPrice] 
+         * @param {number} [minPrice] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
          * @param {string} [search] A search term.
+         * @param {number} [serviceCategory] 
+         * @param {string} [serviceDateFrom] 
+         * @param {string} [serviceDateTo] 
          * @param {number} [serviceSubcategory] 
-         * @param {'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published'} [status] * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled
          * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsList: async (ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategory?: number, status?: 'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1JobsList: async (city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/jobs/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -10474,6 +12284,18 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             // authentication tokenAuth required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            if (city !== undefined) {
+                localVarQueryParameter['city'] = city;
+            }
+
+            if (maxPrice !== undefined) {
+                localVarQueryParameter['max_price'] = maxPrice;
+            }
+
+            if (minPrice !== undefined) {
+                localVarQueryParameter['min_price'] = minPrice;
+            }
+
             if (ordering !== undefined) {
                 localVarQueryParameter['ordering'] = ordering;
             }
@@ -10490,12 +12312,220 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
                 localVarQueryParameter['search'] = search;
             }
 
+            if (serviceCategory !== undefined) {
+                localVarQueryParameter['service_category'] = serviceCategory;
+            }
+
+            if (serviceDateFrom !== undefined) {
+                localVarQueryParameter['service_date_from'] = (serviceDateFrom as any instanceof Date) ?
+                    (serviceDateFrom as any).toISOString().substr(0,10) :
+                    serviceDateFrom;
+            }
+
+            if (serviceDateTo !== undefined) {
+                localVarQueryParameter['service_date_to'] = (serviceDateTo as any instanceof Date) ?
+                    (serviceDateTo as any).toISOString().substr(0,10) :
+                    serviceDateTo;
+            }
+
             if (serviceSubcategory !== undefined) {
                 localVarQueryParameter['service_subcategory'] = serviceSubcategory;
             }
 
-            if (status !== undefined) {
-                localVarQueryParameter['status'] = status;
+            if (urgency !== undefined) {
+                localVarQueryParameter['urgency'] = urgency;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get completed job history for master
+         * @param {string} [city] 
+         * @param {number} [maxPrice] 
+         * @param {number} [minPrice] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceCategory] 
+         * @param {string} [serviceDateFrom] 
+         * @param {string} [serviceDateTo] 
+         * @param {number} [serviceSubcategory] 
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobsMasterHistory: async (city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/jobs/master_history/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (city !== undefined) {
+                localVarQueryParameter['city'] = city;
+            }
+
+            if (maxPrice !== undefined) {
+                localVarQueryParameter['max_price'] = maxPrice;
+            }
+
+            if (minPrice !== undefined) {
+                localVarQueryParameter['min_price'] = minPrice;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            if (serviceCategory !== undefined) {
+                localVarQueryParameter['service_category'] = serviceCategory;
+            }
+
+            if (serviceDateFrom !== undefined) {
+                localVarQueryParameter['service_date_from'] = (serviceDateFrom as any instanceof Date) ?
+                    (serviceDateFrom as any).toISOString().substr(0,10) :
+                    serviceDateFrom;
+            }
+
+            if (serviceDateTo !== undefined) {
+                localVarQueryParameter['service_date_to'] = (serviceDateTo as any instanceof Date) ?
+                    (serviceDateTo as any).toISOString().substr(0,10) :
+                    serviceDateTo;
+            }
+
+            if (serviceSubcategory !== undefined) {
+                localVarQueryParameter['service_subcategory'] = serviceSubcategory;
+            }
+
+            if (urgency !== undefined) {
+                localVarQueryParameter['urgency'] = urgency;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get jobs currently in progress for master
+         * @param {string} [city] 
+         * @param {number} [maxPrice] 
+         * @param {number} [minPrice] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceCategory] 
+         * @param {string} [serviceDateFrom] 
+         * @param {string} [serviceDateTo] 
+         * @param {number} [serviceSubcategory] 
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobsMasterInProgress: async (city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/jobs/master_in_progress/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (city !== undefined) {
+                localVarQueryParameter['city'] = city;
+            }
+
+            if (maxPrice !== undefined) {
+                localVarQueryParameter['max_price'] = maxPrice;
+            }
+
+            if (minPrice !== undefined) {
+                localVarQueryParameter['min_price'] = minPrice;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            if (serviceCategory !== undefined) {
+                localVarQueryParameter['service_category'] = serviceCategory;
+            }
+
+            if (serviceDateFrom !== undefined) {
+                localVarQueryParameter['service_date_from'] = (serviceDateFrom as any instanceof Date) ?
+                    (serviceDateFrom as any).toISOString().substr(0,10) :
+                    serviceDateFrom;
+            }
+
+            if (serviceDateTo !== undefined) {
+                localVarQueryParameter['service_date_to'] = (serviceDateTo as any instanceof Date) ?
+                    (serviceDateTo as any).toISOString().substr(0,10) :
+                    serviceDateTo;
+            }
+
+            if (serviceSubcategory !== undefined) {
+                localVarQueryParameter['service_subcategory'] = serviceSubcategory;
             }
 
             if (urgency !== undefined) {
@@ -10516,11 +12546,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * ViewSet for managing jobs.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {PatchedJob} [patchedJob] 
+         * @param {PatchedJobRequest} [patchedJobRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsPartialUpdate: async (id: number, patchedJob?: PatchedJob, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1JobsPartialUpdate: async (id: number, patchedJobRequest?: PatchedJobRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1JobsPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/jobs/{id}/`
@@ -10548,7 +12578,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedJob, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedJobRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10558,15 +12588,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Publish a draft job. Only allowed if job is in DRAFT state.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsPublish: async (id: number, job: Job, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1JobsPublish: async (id: number, jobRequest: JobRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1JobsPublish', 'id', id)
-            // verify required parameter 'job' is not null or undefined
-            assertParamExists('v1JobsPublish', 'job', job)
+            // verify required parameter 'jobRequest' is not null or undefined
+            assertParamExists('v1JobsPublish', 'jobRequest', jobRequest)
             const localVarPath = `/api/v1/jobs/{id}/publish/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -10592,7 +12622,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(job, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10640,15 +12670,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * ViewSet for managing jobs.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsUpdate: async (id: number, job: Job, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1JobsUpdate: async (id: number, jobRequest: JobRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1JobsUpdate', 'id', id)
-            // verify required parameter 'job' is not null or undefined
-            assertParamExists('v1JobsUpdate', 'job', job)
+            // verify required parameter 'jobRequest' is not null or undefined
+            assertParamExists('v1JobsUpdate', 'jobRequest', jobRequest)
             const localVarPath = `/api/v1/jobs/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -10674,7 +12704,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(job, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jobRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10683,13 +12713,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * ViewSet for managing cities.
-         * @param {City} city 
+         * @param {CityRequest} cityRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCitiesCreate: async (city: City, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'city' is not null or undefined
-            assertParamExists('v1LocationsCitiesCreate', 'city', city)
+        v1LocationsCitiesCreate: async (cityRequest: CityRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'cityRequest' is not null or undefined
+            assertParamExists('v1LocationsCitiesCreate', 'cityRequest', cityRequest)
             const localVarPath = `/api/v1/locations/cities/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -10714,7 +12744,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(city, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(cityRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10826,11 +12856,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * ViewSet for managing cities.
          * @param {number} id A unique integer value identifying this City.
-         * @param {PatchedCity} [patchedCity] 
+         * @param {PatchedCityRequest} [patchedCityRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCitiesPartialUpdate: async (id: number, patchedCity?: PatchedCity, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1LocationsCitiesPartialUpdate: async (id: number, patchedCityRequest?: PatchedCityRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1LocationsCitiesPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/locations/cities/{id}/`
@@ -10858,7 +12888,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedCity, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedCityRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10906,15 +12936,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * ViewSet for managing cities.
          * @param {number} id A unique integer value identifying this City.
-         * @param {City} city 
+         * @param {CityRequest} cityRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCitiesUpdate: async (id: number, city: City, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1LocationsCitiesUpdate: async (id: number, cityRequest: CityRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1LocationsCitiesUpdate', 'id', id)
-            // verify required parameter 'city' is not null or undefined
-            assertParamExists('v1LocationsCitiesUpdate', 'city', city)
+            // verify required parameter 'cityRequest' is not null or undefined
+            assertParamExists('v1LocationsCitiesUpdate', 'cityRequest', cityRequest)
             const localVarPath = `/api/v1/locations/cities/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -10940,7 +12970,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(city, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(cityRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10949,13 +12979,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * ViewSet for managing countries.
-         * @param {Country} country 
+         * @param {CountryRequest} countryRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCountriesCreate: async (country: Country, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'country' is not null or undefined
-            assertParamExists('v1LocationsCountriesCreate', 'country', country)
+        v1LocationsCountriesCreate: async (countryRequest: CountryRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'countryRequest' is not null or undefined
+            assertParamExists('v1LocationsCountriesCreate', 'countryRequest', countryRequest)
             const localVarPath = `/api/v1/locations/countries/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -10980,7 +13010,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(country, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(countryRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11087,11 +13117,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * ViewSet for managing countries.
          * @param {number} id A unique integer value identifying this Country.
-         * @param {PatchedCountry} [patchedCountry] 
+         * @param {PatchedCountryRequest} [patchedCountryRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCountriesPartialUpdate: async (id: number, patchedCountry?: PatchedCountry, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1LocationsCountriesPartialUpdate: async (id: number, patchedCountryRequest?: PatchedCountryRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1LocationsCountriesPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/locations/countries/{id}/`
@@ -11119,7 +13149,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedCountry, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedCountryRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11167,15 +13197,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * ViewSet for managing countries.
          * @param {number} id A unique integer value identifying this Country.
-         * @param {Country} country 
+         * @param {CountryRequest} countryRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCountriesUpdate: async (id: number, country: Country, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1LocationsCountriesUpdate: async (id: number, countryRequest: CountryRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1LocationsCountriesUpdate', 'id', id)
-            // verify required parameter 'country' is not null or undefined
-            assertParamExists('v1LocationsCountriesUpdate', 'country', country)
+            // verify required parameter 'countryRequest' is not null or undefined
+            assertParamExists('v1LocationsCountriesUpdate', 'countryRequest', countryRequest)
             const localVarPath = `/api/v1/locations/countries/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -11201,7 +13231,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(country, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(countryRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11244,13 +13274,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * ViewSet for managing notifications with clean actions.
-         * @param {NotificationCreate} notificationCreate 
+         * @param {NotificationCreateRequest} notificationCreateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsCreate: async (notificationCreate: NotificationCreate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'notificationCreate' is not null or undefined
-            assertParamExists('v1NotificationsCreate', 'notificationCreate', notificationCreate)
+        v1NotificationsCreate: async (notificationCreateRequest: NotificationCreateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'notificationCreateRequest' is not null or undefined
+            assertParamExists('v1NotificationsCreate', 'notificationCreateRequest', notificationCreateRequest)
             const localVarPath = `/api/v1/notifications/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11275,7 +13305,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(notificationCreate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(notificationCreateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11376,13 +13406,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Mark all notifications as read for current user
-         * @param {Notification} notification 
+         * @param {NotificationRequest} notificationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsMarkAllRead: async (notification: Notification, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'notification' is not null or undefined
-            assertParamExists('v1NotificationsMarkAllRead', 'notification', notification)
+        v1NotificationsMarkAllRead: async (notificationRequest: NotificationRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'notificationRequest' is not null or undefined
+            assertParamExists('v1NotificationsMarkAllRead', 'notificationRequest', notificationRequest)
             const localVarPath = `/api/v1/notifications/mark-all-read/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11407,7 +13437,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(notification, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(notificationRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11417,15 +13447,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Mark specific notification as read
          * @param {string} id 
-         * @param {Notification} notification 
+         * @param {NotificationRequest} notificationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsMarkRead: async (id: string, notification: Notification, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1NotificationsMarkRead: async (id: string, notificationRequest: NotificationRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1NotificationsMarkRead', 'id', id)
-            // verify required parameter 'notification' is not null or undefined
-            assertParamExists('v1NotificationsMarkRead', 'notification', notification)
+            // verify required parameter 'notificationRequest' is not null or undefined
+            assertParamExists('v1NotificationsMarkRead', 'notificationRequest', notificationRequest)
             const localVarPath = `/api/v1/notifications/{id}/mark-read/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -11451,7 +13481,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(notification, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(notificationRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11461,15 +13491,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Mark specific notification as unread
          * @param {string} id 
-         * @param {Notification} notification 
+         * @param {NotificationRequest} notificationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsMarkUnread: async (id: string, notification: Notification, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1NotificationsMarkUnread: async (id: string, notificationRequest: NotificationRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1NotificationsMarkUnread', 'id', id)
-            // verify required parameter 'notification' is not null or undefined
-            assertParamExists('v1NotificationsMarkUnread', 'notification', notification)
+            // verify required parameter 'notificationRequest' is not null or undefined
+            assertParamExists('v1NotificationsMarkUnread', 'notificationRequest', notificationRequest)
             const localVarPath = `/api/v1/notifications/{id}/mark-unread/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -11495,7 +13525,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(notification, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(notificationRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11505,11 +13535,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * ViewSet for managing notifications with clean actions.
          * @param {string} id 
-         * @param {PatchedNotificationUpdate} [patchedNotificationUpdate] 
+         * @param {PatchedNotificationUpdateRequest} [patchedNotificationUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsPartialUpdate: async (id: string, patchedNotificationUpdate?: PatchedNotificationUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1NotificationsPartialUpdate: async (id: string, patchedNotificationUpdateRequest?: PatchedNotificationUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1NotificationsPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/notifications/{id}/`
@@ -11537,7 +13567,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedNotificationUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedNotificationUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11698,11 +13728,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * ViewSet for managing notifications with clean actions.
          * @param {string} id 
-         * @param {NotificationUpdate} [notificationUpdate] 
+         * @param {NotificationUpdateRequest} [notificationUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsUpdate: async (id: string, notificationUpdate?: NotificationUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1NotificationsUpdate: async (id: string, notificationUpdateRequest?: NotificationUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1NotificationsUpdate', 'id', id)
             const localVarPath = `/api/v1/notifications/{id}/`
@@ -11730,7 +13760,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(notificationUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(notificationUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11738,7 +13768,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Perform action based on \'action\' parameter in request data.
+         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11773,11 +13803,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {PatchedUserNotificationSettings} [patchedUserNotificationSettings] 
+         * @param {PatchedUserNotificationSettingsRequest} [patchedUserNotificationSettingsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfileNotificationSettingsPartialUpdate: async (patchedUserNotificationSettings?: PatchedUserNotificationSettings, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ProfileNotificationSettingsPartialUpdate: async (patchedUserNotificationSettingsRequest?: PatchedUserNotificationSettingsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/profile/notification-settings/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11802,7 +13832,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedUserNotificationSettings, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedUserNotificationSettingsRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11845,11 +13875,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {UserNotificationSettings} [userNotificationSettings] 
+         * @param {UserNotificationSettingsRequest} [userNotificationSettingsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfileNotificationSettingsUpdate: async (userNotificationSettings?: UserNotificationSettings, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ProfileNotificationSettingsUpdate: async (userNotificationSettingsRequest?: UserNotificationSettingsRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/profile/notification-settings/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11874,7 +13904,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(userNotificationSettings, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(userNotificationSettingsRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11883,11 +13913,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Retrieve or update authenticated user\'s profile, including profile image upload.
-         * @param {PatchedUserUpdate} [patchedUserUpdate] 
+         * @param {PatchedUserUpdateRequest} [patchedUserUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfilePartialUpdate: async (patchedUserUpdate?: PatchedUserUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ProfilePartialUpdate: async (patchedUserUpdateRequest?: PatchedUserUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/profile/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11912,7 +13942,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedUserUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedUserUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11955,11 +13985,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Retrieve or update authenticated user\'s profile, including profile image upload.
-         * @param {UserUpdate} [userUpdate] 
+         * @param {UserUpdateRequest} [userUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfileUpdate: async (userUpdate?: UserUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ProfileUpdate: async (userUpdateRequest?: UserUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/profile/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11984,7 +14014,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(userUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(userUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11994,15 +14024,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Archive a published resume.
          * @param {number} id A unique integer value identifying this master resume.
-         * @param {MasterResume} masterResume 
+         * @param {MasterResumeRequest} masterResumeRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ResumesArchive: async (id: number, masterResume: MasterResume, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ResumesArchive: async (id: number, masterResumeRequest: MasterResumeRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1ResumesArchive', 'id', id)
-            // verify required parameter 'masterResume' is not null or undefined
-            assertParamExists('v1ResumesArchive', 'masterResume', masterResume)
+            // verify required parameter 'masterResumeRequest' is not null or undefined
+            assertParamExists('v1ResumesArchive', 'masterResumeRequest', masterResumeRequest)
             const localVarPath = `/api/v1/resumes/{id}/archive/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -12028,7 +14058,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(masterResume, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(masterResumeRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12037,13 +14067,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * CRUD for Master resumes. Masters manage their own resumes, public sees published.
-         * @param {MasterResume} masterResume 
+         * @param {MasterResumeRequest} masterResumeRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ResumesCreate: async (masterResume: MasterResume, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'masterResume' is not null or undefined
-            assertParamExists('v1ResumesCreate', 'masterResume', masterResume)
+        v1ResumesCreate: async (masterResumeRequest: MasterResumeRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'masterResumeRequest' is not null or undefined
+            assertParamExists('v1ResumesCreate', 'masterResumeRequest', masterResumeRequest)
             const localVarPath = `/api/v1/resumes/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -12068,7 +14098,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(masterResume, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(masterResumeRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12170,11 +14200,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * CRUD for Master resumes. Masters manage their own resumes, public sees published.
          * @param {number} id A unique integer value identifying this master resume.
-         * @param {PatchedMasterResume} [patchedMasterResume] 
+         * @param {PatchedMasterResumeRequest} [patchedMasterResumeRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ResumesPartialUpdate: async (id: number, patchedMasterResume?: PatchedMasterResume, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ResumesPartialUpdate: async (id: number, patchedMasterResumeRequest?: PatchedMasterResumeRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1ResumesPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/resumes/{id}/`
@@ -12202,7 +14232,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedMasterResume, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedMasterResumeRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12212,15 +14242,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Publish a draft resume. Only allowed if in DRAFT state.
          * @param {number} id A unique integer value identifying this master resume.
-         * @param {MasterResume} masterResume 
+         * @param {MasterResumeRequest} masterResumeRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ResumesPublish: async (id: number, masterResume: MasterResume, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ResumesPublish: async (id: number, masterResumeRequest: MasterResumeRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1ResumesPublish', 'id', id)
-            // verify required parameter 'masterResume' is not null or undefined
-            assertParamExists('v1ResumesPublish', 'masterResume', masterResume)
+            // verify required parameter 'masterResumeRequest' is not null or undefined
+            assertParamExists('v1ResumesPublish', 'masterResumeRequest', masterResumeRequest)
             const localVarPath = `/api/v1/resumes/{id}/publish/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -12246,7 +14276,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(masterResume, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(masterResumeRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12294,15 +14324,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * CRUD for Master resumes. Masters manage their own resumes, public sees published.
          * @param {number} id A unique integer value identifying this master resume.
-         * @param {MasterResume} masterResume 
+         * @param {MasterResumeRequest} masterResumeRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ResumesUpdate: async (id: number, masterResume: MasterResume, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ResumesUpdate: async (id: number, masterResumeRequest: MasterResumeRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1ResumesUpdate', 'id', id)
-            // verify required parameter 'masterResume' is not null or undefined
-            assertParamExists('v1ResumesUpdate', 'masterResume', masterResume)
+            // verify required parameter 'masterResumeRequest' is not null or undefined
+            assertParamExists('v1ResumesUpdate', 'masterResumeRequest', masterResumeRequest)
             const localVarPath = `/api/v1/resumes/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -12328,7 +14358,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(masterResume, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(masterResumeRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13016,11 +15046,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Update online status for master
-         * @param {MasterOnlineStatusRequest} [masterOnlineStatusRequest] 
+         * @param {MasterOnlineStatusRequestRequest} [masterOnlineStatusRequestRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMastersUpdateOnlineStatus: async (masterOnlineStatusRequest?: MasterOnlineStatusRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMastersUpdateOnlineStatus: async (masterOnlineStatusRequestRequest?: MasterOnlineStatusRequestRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/users/my/status`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13045,7 +15075,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(masterOnlineStatusRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(masterOnlineStatusRequestRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13054,13 +15084,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Crud for certificates.
-         * @param {Certificate} certificate 
+         * @param {CertificateRequest} certificateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyCertificatesCreate: async (certificate: Certificate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'certificate' is not null or undefined
-            assertParamExists('v1UsersMyCertificatesCreate', 'certificate', certificate)
+        v1UsersMyCertificatesCreate: async (certificateRequest: CertificateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'certificateRequest' is not null or undefined
+            assertParamExists('v1UsersMyCertificatesCreate', 'certificateRequest', certificateRequest)
             const localVarPath = `/api/v1/users/my/certificates/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13085,7 +15115,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(certificate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(certificateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13187,11 +15217,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Crud for certificates.
          * @param {string} id 
-         * @param {PatchedCertificate} [patchedCertificate] 
+         * @param {PatchedCertificateRequest} [patchedCertificateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyCertificatesPartialUpdate: async (id: string, patchedCertificate?: PatchedCertificate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMyCertificatesPartialUpdate: async (id: string, patchedCertificateRequest?: PatchedCertificateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1UsersMyCertificatesPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/users/my/certificates/{id}/`
@@ -13219,7 +15249,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedCertificate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedCertificateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13267,15 +15297,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Crud for certificates.
          * @param {string} id 
-         * @param {Certificate} certificate 
+         * @param {CertificateRequest} certificateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyCertificatesUpdate: async (id: string, certificate: Certificate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMyCertificatesUpdate: async (id: string, certificateRequest: CertificateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1UsersMyCertificatesUpdate', 'id', id)
-            // verify required parameter 'certificate' is not null or undefined
-            assertParamExists('v1UsersMyCertificatesUpdate', 'certificate', certificate)
+            // verify required parameter 'certificateRequest' is not null or undefined
+            assertParamExists('v1UsersMyCertificatesUpdate', 'certificateRequest', certificateRequest)
             const localVarPath = `/api/v1/users/my/certificates/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -13301,7 +15331,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(certificate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(certificateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13310,11 +15340,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {EmployerProfileCreateUpdate} [employerProfileCreateUpdate] 
+         * @param {EmployerProfileCreateUpdateRequest} [employerProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyEmployerCreateCreate: async (employerProfileCreateUpdate?: EmployerProfileCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMyEmployerCreateCreate: async (employerProfileCreateUpdateRequest?: EmployerProfileCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/users/my/employer/create/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13339,7 +15369,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(employerProfileCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(employerProfileCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13348,11 +15378,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {PatchedEmployerProfileCreateUpdate} [patchedEmployerProfileCreateUpdate] 
+         * @param {PatchedEmployerProfileCreateUpdateRequest} [patchedEmployerProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyEmployerPartialUpdate: async (patchedEmployerProfileCreateUpdate?: PatchedEmployerProfileCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMyEmployerPartialUpdate: async (patchedEmployerProfileCreateUpdateRequest?: PatchedEmployerProfileCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/users/my/employer/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13377,7 +15407,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedEmployerProfileCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedEmployerProfileCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13420,11 +15450,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {EmployerProfileCreateUpdate} [employerProfileCreateUpdate] 
+         * @param {EmployerProfileCreateUpdateRequest} [employerProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyEmployerUpdate: async (employerProfileCreateUpdate?: EmployerProfileCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMyEmployerUpdate: async (employerProfileCreateUpdateRequest?: EmployerProfileCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/users/my/employer/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13449,7 +15479,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(employerProfileCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(employerProfileCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13458,11 +15488,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {MasterProfileCreateUpdate} [masterProfileCreateUpdate] 
+         * @param {MasterProfileCreateUpdateRequest} [masterProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyMasterCreateCreate: async (masterProfileCreateUpdate?: MasterProfileCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMyMasterCreateCreate: async (masterProfileCreateUpdateRequest?: MasterProfileCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/users/my/master/create`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13487,7 +15517,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(masterProfileCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(masterProfileCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13496,11 +15526,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {PatchedMasterProfileCreateUpdate} [patchedMasterProfileCreateUpdate] 
+         * @param {PatchedMasterProfileCreateUpdateRequest} [patchedMasterProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyMasterPartialUpdate: async (patchedMasterProfileCreateUpdate?: PatchedMasterProfileCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMyMasterPartialUpdate: async (patchedMasterProfileCreateUpdateRequest?: PatchedMasterProfileCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/users/my/master/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13525,7 +15555,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedMasterProfileCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedMasterProfileCreateUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13568,11 +15598,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * 
-         * @param {MasterProfileCreateUpdate} [masterProfileCreateUpdate] 
+         * @param {MasterProfileCreateUpdateRequest} [masterProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyMasterUpdate: async (masterProfileCreateUpdate?: MasterProfileCreateUpdate, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMyMasterUpdate: async (masterProfileCreateUpdateRequest?: MasterProfileCreateUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/users/my/master/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13597,7 +15627,158 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(masterProfileCreateUpdate, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(masterProfileCreateUpdateRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} portfolioId 
+         * @param {Array<any>} files 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMyPortfolioAttachmentsCreate: async (portfolioId: string, files: Array<any>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'portfolioId' is not null or undefined
+            assertParamExists('v1UsersMyPortfolioAttachmentsCreate', 'portfolioId', portfolioId)
+            // verify required parameter 'files' is not null or undefined
+            assertParamExists('v1UsersMyPortfolioAttachmentsCreate', 'files', files)
+            const localVarPath = `/api/v1/users/my/portfolio/{portfolio_id}/attachments/`
+                .replace(`{${"portfolio_id"}}`, encodeURIComponent(String(portfolioId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (files) {
+                files.forEach((element) => {
+                    localVarFormParams.append('files', element as any);
+                })
+            }
+
+    
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = localVarFormParams;
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {string} portfolioId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMyPortfolioAttachmentsDestroy: async (id: string, portfolioId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('v1UsersMyPortfolioAttachmentsDestroy', 'id', id)
+            // verify required parameter 'portfolioId' is not null or undefined
+            assertParamExists('v1UsersMyPortfolioAttachmentsDestroy', 'portfolioId', portfolioId)
+            const localVarPath = `/api/v1/users/my/portfolio/{portfolio_id}/attachments/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
+                .replace(`{${"portfolio_id"}}`, encodeURIComponent(String(portfolioId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} portfolioId 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMyPortfolioAttachmentsList: async (portfolioId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'portfolioId' is not null or undefined
+            assertParamExists('v1UsersMyPortfolioAttachmentsList', 'portfolioId', portfolioId)
+            const localVarPath = `/api/v1/users/my/portfolio/{portfolio_id}/attachments/`
+                .replace(`{${"portfolio_id"}}`, encodeURIComponent(String(portfolioId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13606,13 +15787,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Crud for service master portfolio items.
-         * @param {PortfolioItem} portfolioItem 
+         * @param {PortfolioItemRequest} portfolioItemRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyPortfolioCreate: async (portfolioItem: PortfolioItem, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'portfolioItem' is not null or undefined
-            assertParamExists('v1UsersMyPortfolioCreate', 'portfolioItem', portfolioItem)
+        v1UsersMyPortfolioCreate: async (portfolioItemRequest: PortfolioItemRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'portfolioItemRequest' is not null or undefined
+            assertParamExists('v1UsersMyPortfolioCreate', 'portfolioItemRequest', portfolioItemRequest)
             const localVarPath = `/api/v1/users/my/portfolio/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13637,7 +15818,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(portfolioItem, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(portfolioItemRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13739,11 +15920,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Crud for service master portfolio items.
          * @param {string} id 
-         * @param {PatchedPortfolioItem} [patchedPortfolioItem] 
+         * @param {PatchedPortfolioItemRequest} [patchedPortfolioItemRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyPortfolioPartialUpdate: async (id: string, patchedPortfolioItem?: PatchedPortfolioItem, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMyPortfolioPartialUpdate: async (id: string, patchedPortfolioItemRequest?: PatchedPortfolioItemRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1UsersMyPortfolioPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/users/my/portfolio/{id}/`
@@ -13771,7 +15952,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedPortfolioItem, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedPortfolioItemRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13819,15 +16000,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Crud for service master portfolio items.
          * @param {string} id 
-         * @param {PortfolioItem} portfolioItem 
+         * @param {PortfolioItemRequest} portfolioItemRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyPortfolioUpdate: async (id: string, portfolioItem: PortfolioItem, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMyPortfolioUpdate: async (id: string, portfolioItemRequest: PortfolioItemRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1UsersMyPortfolioUpdate', 'id', id)
-            // verify required parameter 'portfolioItem' is not null or undefined
-            assertParamExists('v1UsersMyPortfolioUpdate', 'portfolioItem', portfolioItem)
+            // verify required parameter 'portfolioItemRequest' is not null or undefined
+            assertParamExists('v1UsersMyPortfolioUpdate', 'portfolioItemRequest', portfolioItemRequest)
             const localVarPath = `/api/v1/users/my/portfolio/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -13853,7 +16034,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(portfolioItem, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(portfolioItemRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13862,13 +16043,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         },
         /**
          * Crud for service master skills.
-         * @param {MasterSkill} masterSkill 
+         * @param {MasterSkillRequest} masterSkillRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMySkillsCreate: async (masterSkill: MasterSkill, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'masterSkill' is not null or undefined
-            assertParamExists('v1UsersMySkillsCreate', 'masterSkill', masterSkill)
+        v1UsersMySkillsCreate: async (masterSkillRequest: MasterSkillRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'masterSkillRequest' is not null or undefined
+            assertParamExists('v1UsersMySkillsCreate', 'masterSkillRequest', masterSkillRequest)
             const localVarPath = `/api/v1/users/my/skills/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13893,7 +16074,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(masterSkill, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(masterSkillRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13995,11 +16176,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Crud for service master skills.
          * @param {string} id 
-         * @param {PatchedMasterSkill} [patchedMasterSkill] 
+         * @param {PatchedMasterSkillRequest} [patchedMasterSkillRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMySkillsPartialUpdate: async (id: string, patchedMasterSkill?: PatchedMasterSkill, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMySkillsPartialUpdate: async (id: string, patchedMasterSkillRequest?: PatchedMasterSkillRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1UsersMySkillsPartialUpdate', 'id', id)
             const localVarPath = `/api/v1/users/my/skills/{id}/`
@@ -14027,7 +16208,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedMasterSkill, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedMasterSkillRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -14075,15 +16256,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * Crud for service master skills.
          * @param {string} id 
-         * @param {MasterSkill} masterSkill 
+         * @param {MasterSkillRequest} masterSkillRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMySkillsUpdate: async (id: string, masterSkill: MasterSkill, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1UsersMySkillsUpdate: async (id: string, masterSkillRequest: MasterSkillRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1UsersMySkillsUpdate', 'id', id)
-            // verify required parameter 'masterSkill' is not null or undefined
-            assertParamExists('v1UsersMySkillsUpdate', 'masterSkill', masterSkill)
+            // verify required parameter 'masterSkillRequest' is not null or undefined
+            assertParamExists('v1UsersMySkillsUpdate', 'masterSkillRequest', masterSkillRequest)
             const localVarPath = `/api/v1/users/my/skills/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -14109,7 +16290,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(masterSkill, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(masterSkillRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -14300,22 +16481,33 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Accept a job application
          * @param {number} id A unique integer value identifying this Job Application.
-         * @param {JobApplication} jobApplication 
+         * @param {JobApplicationRequest} jobApplicationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ApplicationsAcceptCreate(id: number, jobApplication: JobApplication, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApplicationApiAction>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ApplicationsAcceptCreate(id, jobApplication, options);
+        async v1ApplicationsAccept(id: number, jobApplicationRequest: JobApplicationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApplicationApiAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ApplicationsAccept(id, jobApplicationRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Reject a job application
+         * @param {number} id A unique integer value identifying this Job Application.
+         * @param {JobApplicationRequest} jobApplicationRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ApplicationsAcceptReject(id: number, jobApplicationRequest: JobApplicationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApplicationApiAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ApplicationsAcceptReject(id, jobApplicationRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for managing job applications.
-         * @param {JobApplication} jobApplication 
+         * @param {JobApplicationRequest} jobApplicationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ApplicationsCreate(jobApplication: JobApplication, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApplication>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ApplicationsCreate(jobApplication, options);
+        async v1ApplicationsCreate(jobApplicationRequest: JobApplicationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApplication>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ApplicationsCreate(jobApplicationRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14352,23 +16544,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * ViewSet for managing job applications.
          * @param {number} id A unique integer value identifying this Job Application.
-         * @param {PatchedJobApplication} [patchedJobApplication] 
+         * @param {PatchedJobApplicationRequest} [patchedJobApplicationRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ApplicationsPartialUpdate(id: number, patchedJobApplication?: PatchedJobApplication, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApplication>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ApplicationsPartialUpdate(id, patchedJobApplication, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * Reject a job application
-         * @param {number} id A unique integer value identifying this Job Application.
-         * @param {JobApplication} jobApplication 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ApplicationsRejectCreate(id: number, jobApplication: JobApplication, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApplicationApiAction>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ApplicationsRejectCreate(id, jobApplication, options);
+        async v1ApplicationsPartialUpdate(id: number, patchedJobApplicationRequest?: PatchedJobApplicationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApplication>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ApplicationsPartialUpdate(id, patchedJobApplicationRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14384,33 +16565,69 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * ViewSet for managing job applications.
          * @param {number} id A unique integer value identifying this Job Application.
-         * @param {JobApplication} jobApplication 
+         * @param {JobApplicationRequest} jobApplicationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ApplicationsUpdate(id: number, jobApplication: JobApplication, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApplication>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ApplicationsUpdate(id, jobApplication, options);
+        async v1ApplicationsUpdate(id: number, jobApplicationRequest: JobApplicationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApplication>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ApplicationsUpdate(id, jobApplicationRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Withdraw a job by master
          * @param {number} id A unique integer value identifying this Job Application.
-         * @param {JobApplication} jobApplication 
+         * @param {JobApplicationRequest} jobApplicationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ApplicationsWithdrawCreate(id: number, jobApplication: JobApplication, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApplicationApiAction>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ApplicationsWithdrawCreate(id, jobApplication, options);
+        async v1ApplicationsWithdraw(id: number, jobApplicationRequest: JobApplicationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApplicationApiAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ApplicationsWithdraw(id, jobApplicationRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * 
-         * @param {JobAssignment} [jobAssignment] 
+         * @param {string} assignmentId 
+         * @param {Array<any>} files 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsCreate(jobAssignment?: JobAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignment>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsCreate(jobAssignment, options);
+        async v1AssignmentsAttachmentsCreate(assignmentId: string, files: Array<any>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsAttachmentsCreate(assignmentId, files, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} assignmentId 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1AssignmentsAttachmentsDestroy(assignmentId: string, id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsAttachmentsDestroy(assignmentId, id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} assignmentId 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1AssignmentsAttachmentsList(assignmentId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedAttachmentList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsAttachmentsList(assignmentId, ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {JobAssignmentRequest} [jobAssignmentRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1AssignmentsCreate(jobAssignmentRequest?: JobAssignmentRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignment>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsCreate(jobAssignmentRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14439,23 +16656,23 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} id 
-         * @param {PatchedJobAssignment} [patchedJobAssignment] 
+         * @param {PatchedJobAssignmentRequest} [patchedJobAssignmentRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsPartialUpdate(id: string, patchedJobAssignment?: PatchedJobAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignment>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsPartialUpdate(id, patchedJobAssignment, options);
+        async v1AssignmentsPartialUpdate(id: string, patchedJobAssignmentRequest?: PatchedJobAssignmentRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignment>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsPartialUpdate(id, patchedJobAssignmentRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Rate a completed job assignment
          * @param {string} id 
-         * @param {Rating} [rating] 
+         * @param {RatingRequest} [ratingRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsRateCreate(id: string, rating?: Rating, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsRateCreate(id, rating, options);
+        async v1AssignmentsRateCreate(id: string, ratingRequest?: RatingRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsRateCreate(id, ratingRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14471,33 +16688,33 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} id 
-         * @param {JobAssignment} [jobAssignment] 
+         * @param {JobAssignmentRequest} [jobAssignmentRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsUpdate(id: string, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignment>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsUpdate(id, jobAssignment, options);
+        async v1AssignmentsUpdate(id: string, jobAssignmentRequest?: JobAssignmentRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignment>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsUpdate(id, jobAssignmentRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Update progress notes for an assignment
          * @param {string} id 
-         * @param {PatchedProgressUpdate} [patchedProgressUpdate] 
+         * @param {PatchedProgressUpdateRequest} [patchedProgressUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsUpdateProgressPartialUpdate(id: string, patchedProgressUpdate?: PatchedProgressUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignmentApiAction>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsUpdateProgressPartialUpdate(id, patchedProgressUpdate, options);
+        async v1AssignmentsUpdateProgressPartialUpdate(id: string, patchedProgressUpdateRequest?: PatchedProgressUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignmentApiAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsUpdateProgressPartialUpdate(id, patchedProgressUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Authenticate or register a user using Firebase ID token.
-         * @param {FireBaseAuth} fireBaseAuth 
+         * @param {FireBaseAuthRequest} fireBaseAuthRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AuthFirebaseCreate(fireBaseAuth: FireBaseAuth, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FirebaseAuthResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AuthFirebaseCreate(fireBaseAuth, options);
+        async v1AuthFirebaseCreate(fireBaseAuthRequest: FireBaseAuthRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FirebaseAuthResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AuthFirebaseCreate(fireBaseAuthRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14510,24 +16727,13 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Add participants to chat room
-         * @param {string} id 
-         * @param {ChatRoom} chatRoom 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1ChatsRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsAddParticipants(id, chatRoom, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
          * ViewSet for managing chat rooms
-         * @param {ChatRoomCreate} chatRoomCreate 
+         * @param {ChatRoomCreateRequest} chatRoomCreateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsCreate(chatRoomCreate: ChatRoomCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoomCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsCreate(chatRoomCreate, options);
+        async v1ChatsRoomsCreate(chatRoomCreateRequest: ChatRoomCreateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoomCreate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsCreate(chatRoomCreateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14553,12 +16759,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Leave a chat room
          * @param {string} id 
-         * @param {ChatRoom} chatRoom 
+         * @param {ChatRoomRequest} chatRoomRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsLeave(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsLeave(id, chatRoom, options);
+        async v1ChatsRoomsLeave(id: string, chatRoomRequest: ChatRoomRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsLeave(id, chatRoomRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14577,12 +16783,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} chatRoomId 
-         * @param {MessageCreate} messageCreate 
+         * @param {MessageCreateRequest} messageCreateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreate: MessageCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesCreate(chatRoomId, messageCreate, options);
+        async v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreateRequest: MessageCreateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageCreate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesCreate(chatRoomId, messageCreateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14614,12 +16820,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {PatchedMessage} [patchedMessage] 
+         * @param {PatchedMessageRequest} [patchedMessageRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessage?: PatchedMessage, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Message>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, patchedMessage, options);
+        async v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessageRequest?: PatchedMessageRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Message>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, patchedMessageRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14637,23 +16843,23 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {MessageUpdate} messageUpdate 
+         * @param {MessageUpdateRequest} messageUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdate: MessageUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesUpdate(chatRoomId, id, messageUpdate, options);
+        async v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdateRequest: MessageUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesUpdate(chatRoomId, id, messageUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for managing chat rooms
          * @param {string} id 
-         * @param {PatchedChatRoom} [patchedChatRoom] 
+         * @param {PatchedChatRoomRequest} [patchedChatRoomRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsPartialUpdate(id: string, patchedChatRoom?: PatchedChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsPartialUpdate(id, patchedChatRoom, options);
+        async v1ChatsRoomsPartialUpdate(id: string, patchedChatRoomRequest?: PatchedChatRoomRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsPartialUpdate(id, patchedChatRoomRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14669,12 +16875,86 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * ViewSet for managing chat rooms
          * @param {string} id 
-         * @param {ChatRoom} chatRoom 
+         * @param {ChatRoomRequest} chatRoomRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsUpdate(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsUpdate(id, chatRoom, options);
+        async v1ChatsRoomsUpdate(id: string, chatRoomRequest: ChatRoomRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ChatRoom>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsUpdate(id, chatRoomRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Create contact with throttling.
+         * @param {SimpleContactRequest} simpleContactRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ContactsCreate(simpleContactRequest: SimpleContactRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SimpleContact>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ContactsCreate(simpleContactRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {number} id A unique integer value identifying this simple contact.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ContactsDestroy(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ContactsDestroy(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get available enquiry types.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ContactsEnquiryTypesRetrieve(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SimpleContact>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ContactsEnquiryTypesRetrieve(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ContactsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedSimpleContactList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ContactsList(ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {number} id A unique integer value identifying this simple contact.
+         * @param {PatchedSimpleContactRequest} [patchedSimpleContactRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ContactsPartialUpdate(id: number, patchedSimpleContactRequest?: PatchedSimpleContactRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SimpleContact>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ContactsPartialUpdate(id, patchedSimpleContactRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {number} id A unique integer value identifying this simple contact.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ContactsRetrieve(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SimpleContact>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ContactsRetrieve(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {number} id A unique integer value identifying this simple contact.
+         * @param {SimpleContactRequest} simpleContactRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ContactsUpdate(id: number, simpleContactRequest: SimpleContactRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SimpleContact>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ContactsUpdate(id, simpleContactRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14705,12 +16985,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * Service Areas - Full CRUD with authenticated access.
-         * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+         * @param {ServiceAreaCreateUpdateRequest} serviceAreaCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreServiceAreasCreate(serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAreaCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasCreate(serviceAreaCreateUpdate, options);
+        async v1CoreServiceAreasCreate(serviceAreaCreateUpdateRequest: ServiceAreaCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAreaCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasCreate(serviceAreaCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14741,12 +17021,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Service Areas - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Area.
-         * @param {PatchedServiceAreaCreateUpdate} [patchedServiceAreaCreateUpdate] 
+         * @param {PatchedServiceAreaCreateUpdateRequest} [patchedServiceAreaCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreServiceAreasPartialUpdate(id: number, patchedServiceAreaCreateUpdate?: PatchedServiceAreaCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAreaCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasPartialUpdate(id, patchedServiceAreaCreateUpdate, options);
+        async v1CoreServiceAreasPartialUpdate(id: number, patchedServiceAreaCreateUpdateRequest?: PatchedServiceAreaCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAreaCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasPartialUpdate(id, patchedServiceAreaCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14762,22 +17042,22 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Service Areas - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Area.
-         * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+         * @param {ServiceAreaCreateUpdateRequest} serviceAreaCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreServiceAreasUpdate(id: number, serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAreaCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasUpdate(id, serviceAreaCreateUpdate, options);
+        async v1CoreServiceAreasUpdate(id: number, serviceAreaCreateUpdateRequest: ServiceAreaCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAreaCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceAreasUpdate(id, serviceAreaCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Service Categories - Full CRUD with authenticated access.
-         * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+         * @param {ServiceCategoryCreateUpdateRequest} serviceCategoryCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceCategoryCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdate, options);
+        async v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdateRequest: ServiceCategoryCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceCategoryCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14808,12 +17088,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Service Categories - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Category.
-         * @param {PatchedServiceCategoryCreateUpdate} [patchedServiceCategoryCreateUpdate] 
+         * @param {PatchedServiceCategoryCreateUpdateRequest} [patchedServiceCategoryCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreServiceCategoriesPartialUpdate(id: number, patchedServiceCategoryCreateUpdate?: PatchedServiceCategoryCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceCategoryCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceCategoriesPartialUpdate(id, patchedServiceCategoryCreateUpdate, options);
+        async v1CoreServiceCategoriesPartialUpdate(id: number, patchedServiceCategoryCreateUpdateRequest?: PatchedServiceCategoryCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceCategoryCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceCategoriesPartialUpdate(id, patchedServiceCategoryCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14829,22 +17109,22 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Service Categories - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Category.
-         * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+         * @param {ServiceCategoryCreateUpdateRequest} serviceCategoryCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreServiceCategoriesUpdate(id: number, serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceCategoryCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceCategoriesUpdate(id, serviceCategoryCreateUpdate, options);
+        async v1CoreServiceCategoriesUpdate(id: number, serviceCategoryCreateUpdateRequest: ServiceCategoryCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceCategoryCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceCategoriesUpdate(id, serviceCategoryCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Service Subcategories - Full CRUD with authenticated access.
-         * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+         * @param {ServiceSubcategoryCreateUpdateRequest} serviceSubcategoryCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceSubcategoryCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdate, options);
+        async v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdateRequest: ServiceSubcategoryCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceSubcategoryCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14877,12 +17157,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Service Subcategories - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Subcategory.
-         * @param {PatchedServiceSubcategoryCreateUpdate} [patchedServiceSubcategoryCreateUpdate] 
+         * @param {PatchedServiceSubcategoryCreateUpdateRequest} [patchedServiceSubcategoryCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreServiceSubcategoriesPartialUpdate(id: number, patchedServiceSubcategoryCreateUpdate?: PatchedServiceSubcategoryCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceSubcategoryCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesPartialUpdate(id, patchedServiceSubcategoryCreateUpdate, options);
+        async v1CoreServiceSubcategoriesPartialUpdate(id: number, patchedServiceSubcategoryCreateUpdateRequest?: PatchedServiceSubcategoryCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceSubcategoryCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesPartialUpdate(id, patchedServiceSubcategoryCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14898,22 +17178,22 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Service Subcategories - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Subcategory.
-         * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+         * @param {ServiceSubcategoryCreateUpdateRequest} serviceSubcategoryCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreServiceSubcategoriesUpdate(id: number, serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceSubcategoryCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesUpdate(id, serviceSubcategoryCreateUpdate, options);
+        async v1CoreServiceSubcategoriesUpdate(id: number, serviceSubcategoryCreateUpdateRequest: ServiceSubcategoryCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceSubcategoryCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreServiceSubcategoriesUpdate(id, serviceSubcategoryCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Support FAQs - Full CRUD with authenticated access.
-         * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+         * @param {SupportFAQCreateUpdateRequest} supportFAQCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreSupportFaqCreate(supportFAQCreateUpdate: SupportFAQCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SupportFAQCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSupportFaqCreate(supportFAQCreateUpdate, options);
+        async v1CoreSupportFaqCreate(supportFAQCreateUpdateRequest: SupportFAQCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SupportFAQCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSupportFaqCreate(supportFAQCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14945,12 +17225,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Support FAQs - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Support FAQ.
-         * @param {PatchedSupportFAQCreateUpdate} [patchedSupportFAQCreateUpdate] 
+         * @param {PatchedSupportFAQCreateUpdateRequest} [patchedSupportFAQCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreSupportFaqPartialUpdate(id: number, patchedSupportFAQCreateUpdate?: PatchedSupportFAQCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SupportFAQCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSupportFaqPartialUpdate(id, patchedSupportFAQCreateUpdate, options);
+        async v1CoreSupportFaqPartialUpdate(id: number, patchedSupportFAQCreateUpdateRequest?: PatchedSupportFAQCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SupportFAQCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSupportFaqPartialUpdate(id, patchedSupportFAQCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -14966,22 +17246,22 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Support FAQs - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Support FAQ.
-         * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+         * @param {SupportFAQCreateUpdateRequest} supportFAQCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreSupportFaqUpdate(id: number, supportFAQCreateUpdate: SupportFAQCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SupportFAQCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSupportFaqUpdate(id, supportFAQCreateUpdate, options);
+        async v1CoreSupportFaqUpdate(id: number, supportFAQCreateUpdateRequest: SupportFAQCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SupportFAQCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSupportFaqUpdate(id, supportFAQCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * System Settings - Full CRUD with authenticated access.
-         * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+         * @param {SystemSettingsCreateUpdateRequest} systemSettingsCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreSystemSettingsCreate(systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SystemSettingsCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSystemSettingsCreate(systemSettingsCreateUpdate, options);
+        async v1CoreSystemSettingsCreate(systemSettingsCreateUpdateRequest: SystemSettingsCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SystemSettingsCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSystemSettingsCreate(systemSettingsCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15012,12 +17292,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * System Settings - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this System Setting.
-         * @param {PatchedSystemSettingsCreateUpdate} [patchedSystemSettingsCreateUpdate] 
+         * @param {PatchedSystemSettingsCreateUpdateRequest} [patchedSystemSettingsCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreSystemSettingsPartialUpdate(id: number, patchedSystemSettingsCreateUpdate?: PatchedSystemSettingsCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SystemSettingsCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSystemSettingsPartialUpdate(id, patchedSystemSettingsCreateUpdate, options);
+        async v1CoreSystemSettingsPartialUpdate(id: number, patchedSystemSettingsCreateUpdateRequest?: PatchedSystemSettingsCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SystemSettingsCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSystemSettingsPartialUpdate(id, patchedSystemSettingsCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15033,12 +17313,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * System Settings - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this System Setting.
-         * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+         * @param {SystemSettingsCreateUpdateRequest} systemSettingsCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1CoreSystemSettingsUpdate(id: number, systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SystemSettingsCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSystemSettingsUpdate(id, systemSettingsCreateUpdate, options);
+        async v1CoreSystemSettingsUpdate(id: number, systemSettingsCreateUpdateRequest: SystemSettingsCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SystemSettingsCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1CoreSystemSettingsUpdate(id, systemSettingsCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15052,68 +17332,117 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Complete an assignment with optional rating and review
-         * @param {string} id 
-         * @param {JobAssignmentCompletion} [jobAssignmentCompletion] 
+         * Get job recommendations for master based on skills, location, and preferences.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobAssignmentsComplete(id: string, jobAssignmentCompletion?: JobAssignmentCompletion, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignmentApiAction>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobAssignmentsComplete(id, jobAssignmentCompletion, options);
+        async v1HomeMasterNewJobsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedJobSearchList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1HomeMasterNewJobsList(ordering, page, pageSize, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Complete an assignment with optional rating and review
+         * @param {string} id 
+         * @param {JobAssignmentCompletionRequest} [jobAssignmentCompletionRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1JobAssignmentsComplete(id: string, jobAssignmentCompletionRequest?: JobAssignmentCompletionRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignmentApiAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobAssignmentsComplete(id, jobAssignmentCompletionRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Start an assignment
          * @param {string} id 
-         * @param {JobAssignment} [jobAssignment] 
+         * @param {JobAssignmentRequest} [jobAssignmentRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobAssignmentsStart(id: string, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignmentApiAction>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobAssignmentsStart(id, jobAssignment, options);
+        async v1JobAssignmentsStart(id: string, jobAssignmentRequest?: JobAssignmentRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobAssignmentApiAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobAssignmentsStart(id, jobAssignmentRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Apply to a job.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {JobApply} jobApply 
+         * @param {JobApplyRequest} jobApplyRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobsApply(id: number, jobApply: JobApply, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApiAction>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsApply(id, jobApply, options);
+        async v1JobsApply(id: number, jobApplyRequest: JobApplyRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApiAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsApply(id, jobApplyRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} jobId 
+         * @param {Array<any>} files 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1JobsAttachmentsCreate(jobId: string, files: Array<any>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsAttachmentsCreate(jobId, files, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {string} jobId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1JobsAttachmentsDestroy(id: string, jobId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsAttachmentsDestroy(id, jobId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} jobId 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1JobsAttachmentsList(jobId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedAttachmentList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsAttachmentsList(jobId, ordering, page, pageSize, search, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Toggle bookmark status for a job
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobsBookmark(id: number, job: Job, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsBookmark(id, job, options);
+        async v1JobsBookmark(id: number, jobRequest: JobRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsBookmark(id, jobRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Cancel a job. Only allowed if job is in PUBLISHED or ASSIGNED state.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobsCancel(id: number, job: Job, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApiAction>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsCancel(id, job, options);
+        async v1JobsCancel(id: number, jobRequest: JobRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApiAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsCancel(id, jobRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for managing jobs.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobsCreate(job: Job, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Job>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsCreate(job, options);
+        async v1JobsCreate(jobRequest: JobRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Job>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsCreate(jobRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15129,50 +17458,97 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Toggle favorite status for a job
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobsFavorite(id: number, job: Job, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsFavorite(id, job, options);
+        async v1JobsFavorite(id: number, jobRequest: JobRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsFavorite(id, jobRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for managing jobs.
+         * @param {string} [city] 
+         * @param {number} [maxPrice] 
+         * @param {number} [minPrice] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
          * @param {string} [search] A search term.
+         * @param {number} [serviceCategory] 
+         * @param {string} [serviceDateFrom] 
+         * @param {string} [serviceDateTo] 
          * @param {number} [serviceSubcategory] 
-         * @param {'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published'} [status] * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled
          * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobsList(ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategory?: number, status?: 'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedJobList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsList(ordering, page, pageSize, search, serviceSubcategory, status, urgency, options);
+        async v1JobsList(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedJobList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsList(city, maxPrice, minPrice, ordering, page, pageSize, search, serviceCategory, serviceDateFrom, serviceDateTo, serviceSubcategory, urgency, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get completed job history for master
+         * @param {string} [city] 
+         * @param {number} [maxPrice] 
+         * @param {number} [minPrice] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceCategory] 
+         * @param {string} [serviceDateFrom] 
+         * @param {string} [serviceDateTo] 
+         * @param {number} [serviceSubcategory] 
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1JobsMasterHistory(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedJobList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsMasterHistory(city, maxPrice, minPrice, ordering, page, pageSize, search, serviceCategory, serviceDateFrom, serviceDateTo, serviceSubcategory, urgency, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get jobs currently in progress for master
+         * @param {string} [city] 
+         * @param {number} [maxPrice] 
+         * @param {number} [minPrice] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceCategory] 
+         * @param {string} [serviceDateFrom] 
+         * @param {string} [serviceDateTo] 
+         * @param {number} [serviceSubcategory] 
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1JobsMasterInProgress(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedJobList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsMasterInProgress(city, maxPrice, minPrice, ordering, page, pageSize, search, serviceCategory, serviceDateFrom, serviceDateTo, serviceSubcategory, urgency, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for managing jobs.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {PatchedJob} [patchedJob] 
+         * @param {PatchedJobRequest} [patchedJobRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobsPartialUpdate(id: number, patchedJob?: PatchedJob, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Job>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsPartialUpdate(id, patchedJob, options);
+        async v1JobsPartialUpdate(id: number, patchedJobRequest?: PatchedJobRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Job>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsPartialUpdate(id, patchedJobRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Publish a draft job. Only allowed if job is in DRAFT state.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobsPublish(id: number, job: Job, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApiAction>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsPublish(id, job, options);
+        async v1JobsPublish(id: number, jobRequest: JobRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JobApiAction>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsPublish(id, jobRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15188,22 +17564,22 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * ViewSet for managing jobs.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1JobsUpdate(id: number, job: Job, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Job>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsUpdate(id, job, options);
+        async v1JobsUpdate(id: number, jobRequest: JobRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Job>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsUpdate(id, jobRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for managing cities.
-         * @param {City} city 
+         * @param {CityRequest} cityRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1LocationsCitiesCreate(city: City, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<City>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesCreate(city, options);
+        async v1LocationsCitiesCreate(cityRequest: CityRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<City>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesCreate(cityRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15234,12 +17610,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * ViewSet for managing cities.
          * @param {number} id A unique integer value identifying this City.
-         * @param {PatchedCity} [patchedCity] 
+         * @param {PatchedCityRequest} [patchedCityRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1LocationsCitiesPartialUpdate(id: number, patchedCity?: PatchedCity, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<City>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesPartialUpdate(id, patchedCity, options);
+        async v1LocationsCitiesPartialUpdate(id: number, patchedCityRequest?: PatchedCityRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<City>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesPartialUpdate(id, patchedCityRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15255,22 +17631,22 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * ViewSet for managing cities.
          * @param {number} id A unique integer value identifying this City.
-         * @param {City} city 
+         * @param {CityRequest} cityRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1LocationsCitiesUpdate(id: number, city: City, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<City>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesUpdate(id, city, options);
+        async v1LocationsCitiesUpdate(id: number, cityRequest: CityRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<City>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCitiesUpdate(id, cityRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for managing countries.
-         * @param {Country} country 
+         * @param {CountryRequest} countryRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1LocationsCountriesCreate(country: Country, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Country>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesCreate(country, options);
+        async v1LocationsCountriesCreate(countryRequest: CountryRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Country>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesCreate(countryRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15300,12 +17676,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * ViewSet for managing countries.
          * @param {number} id A unique integer value identifying this Country.
-         * @param {PatchedCountry} [patchedCountry] 
+         * @param {PatchedCountryRequest} [patchedCountryRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1LocationsCountriesPartialUpdate(id: number, patchedCountry?: PatchedCountry, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Country>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesPartialUpdate(id, patchedCountry, options);
+        async v1LocationsCountriesPartialUpdate(id: number, patchedCountryRequest?: PatchedCountryRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Country>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesPartialUpdate(id, patchedCountryRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15321,12 +17697,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * ViewSet for managing countries.
          * @param {number} id A unique integer value identifying this Country.
-         * @param {Country} country 
+         * @param {CountryRequest} countryRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1LocationsCountriesUpdate(id: number, country: Country, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Country>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesUpdate(id, country, options);
+        async v1LocationsCountriesUpdate(id: number, countryRequest: CountryRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Country>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1LocationsCountriesUpdate(id, countryRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15340,12 +17716,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * ViewSet for managing notifications with clean actions.
-         * @param {NotificationCreate} notificationCreate 
+         * @param {NotificationCreateRequest} notificationCreateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1NotificationsCreate(notificationCreate: NotificationCreate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsCreate(notificationCreate, options);
+        async v1NotificationsCreate(notificationCreateRequest: NotificationCreateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationCreate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsCreate(notificationCreateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15373,45 +17749,45 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * Mark all notifications as read for current user
-         * @param {Notification} notification 
+         * @param {NotificationRequest} notificationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1NotificationsMarkAllRead(notification: Notification, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<any>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsMarkAllRead(notification, options);
+        async v1NotificationsMarkAllRead(notificationRequest: NotificationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<any>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsMarkAllRead(notificationRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Mark specific notification as read
          * @param {string} id 
-         * @param {Notification} notification 
+         * @param {NotificationRequest} notificationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1NotificationsMarkRead(id: string, notification: Notification, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Notification>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsMarkRead(id, notification, options);
+        async v1NotificationsMarkRead(id: string, notificationRequest: NotificationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Notification>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsMarkRead(id, notificationRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Mark specific notification as unread
          * @param {string} id 
-         * @param {Notification} notification 
+         * @param {NotificationRequest} notificationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1NotificationsMarkUnread(id: string, notification: Notification, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Notification>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsMarkUnread(id, notification, options);
+        async v1NotificationsMarkUnread(id: string, notificationRequest: NotificationRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Notification>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsMarkUnread(id, notificationRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for managing notifications with clean actions.
          * @param {string} id 
-         * @param {PatchedNotificationUpdate} [patchedNotificationUpdate] 
+         * @param {PatchedNotificationUpdateRequest} [patchedNotificationUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1NotificationsPartialUpdate(id: string, patchedNotificationUpdate?: PatchedNotificationUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsPartialUpdate(id, patchedNotificationUpdate, options);
+        async v1NotificationsPartialUpdate(id: string, patchedNotificationUpdateRequest?: PatchedNotificationUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsPartialUpdate(id, patchedNotificationUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15454,16 +17830,16 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * ViewSet for managing notifications with clean actions.
          * @param {string} id 
-         * @param {NotificationUpdate} [notificationUpdate] 
+         * @param {NotificationUpdateRequest} [notificationUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1NotificationsUpdate(id: string, notificationUpdate?: NotificationUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsUpdate(id, notificationUpdate, options);
+        async v1NotificationsUpdate(id: string, notificationUpdateRequest?: NotificationUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<NotificationUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1NotificationsUpdate(id, notificationUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Perform action based on \'action\' parameter in request data.
+         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -15473,12 +17849,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {PatchedUserNotificationSettings} [patchedUserNotificationSettings] 
+         * @param {PatchedUserNotificationSettingsRequest} [patchedUserNotificationSettingsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ProfileNotificationSettingsPartialUpdate(patchedUserNotificationSettings?: PatchedUserNotificationSettings, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserNotificationSettings>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfileNotificationSettingsPartialUpdate(patchedUserNotificationSettings, options);
+        async v1ProfileNotificationSettingsPartialUpdate(patchedUserNotificationSettingsRequest?: PatchedUserNotificationSettingsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserNotificationSettings>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfileNotificationSettingsPartialUpdate(patchedUserNotificationSettingsRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15492,22 +17868,22 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {UserNotificationSettings} [userNotificationSettings] 
+         * @param {UserNotificationSettingsRequest} [userNotificationSettingsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ProfileNotificationSettingsUpdate(userNotificationSettings?: UserNotificationSettings, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserNotificationSettings>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfileNotificationSettingsUpdate(userNotificationSettings, options);
+        async v1ProfileNotificationSettingsUpdate(userNotificationSettingsRequest?: UserNotificationSettingsRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserNotificationSettings>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfileNotificationSettingsUpdate(userNotificationSettingsRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Retrieve or update authenticated user\'s profile, including profile image upload.
-         * @param {PatchedUserUpdate} [patchedUserUpdate] 
+         * @param {PatchedUserUpdateRequest} [patchedUserUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ProfilePartialUpdate(patchedUserUpdate?: PatchedUserUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfilePartialUpdate(patchedUserUpdate, options);
+        async v1ProfilePartialUpdate(patchedUserUpdateRequest?: PatchedUserUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfilePartialUpdate(patchedUserUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15521,33 +17897,33 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * Retrieve or update authenticated user\'s profile, including profile image upload.
-         * @param {UserUpdate} [userUpdate] 
+         * @param {UserUpdateRequest} [userUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ProfileUpdate(userUpdate?: UserUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfileUpdate(userUpdate, options);
+        async v1ProfileUpdate(userUpdateRequest?: UserUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ProfileUpdate(userUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Archive a published resume.
          * @param {number} id A unique integer value identifying this master resume.
-         * @param {MasterResume} masterResume 
+         * @param {MasterResumeRequest} masterResumeRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ResumesArchive(id: number, masterResume: MasterResume, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ResumesArchive(id, masterResume, options);
+        async v1ResumesArchive(id: number, masterResumeRequest: MasterResumeRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ResumesArchive(id, masterResumeRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * CRUD for Master resumes. Masters manage their own resumes, public sees published.
-         * @param {MasterResume} masterResume 
+         * @param {MasterResumeRequest} masterResumeRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ResumesCreate(masterResume: MasterResume, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterResume>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ResumesCreate(masterResume, options);
+        async v1ResumesCreate(masterResumeRequest: MasterResumeRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterResume>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ResumesCreate(masterResumeRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15576,23 +17952,23 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * CRUD for Master resumes. Masters manage their own resumes, public sees published.
          * @param {number} id A unique integer value identifying this master resume.
-         * @param {PatchedMasterResume} [patchedMasterResume] 
+         * @param {PatchedMasterResumeRequest} [patchedMasterResumeRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ResumesPartialUpdate(id: number, patchedMasterResume?: PatchedMasterResume, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterResume>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ResumesPartialUpdate(id, patchedMasterResume, options);
+        async v1ResumesPartialUpdate(id: number, patchedMasterResumeRequest?: PatchedMasterResumeRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterResume>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ResumesPartialUpdate(id, patchedMasterResumeRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Publish a draft resume. Only allowed if in DRAFT state.
          * @param {number} id A unique integer value identifying this master resume.
-         * @param {MasterResume} masterResume 
+         * @param {MasterResumeRequest} masterResumeRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ResumesPublish(id: number, masterResume: MasterResume, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ResumesPublish(id, masterResume, options);
+        async v1ResumesPublish(id: number, masterResumeRequest: MasterResumeRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ResumesPublish(id, masterResumeRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15608,12 +17984,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * CRUD for Master resumes. Masters manage their own resumes, public sees published.
          * @param {number} id A unique integer value identifying this master resume.
-         * @param {MasterResume} masterResume 
+         * @param {MasterResumeRequest} masterResumeRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ResumesUpdate(id: number, masterResume: MasterResume, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterResume>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ResumesUpdate(id, masterResume, options);
+        async v1ResumesUpdate(id: number, masterResumeRequest: MasterResumeRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterResume>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ResumesUpdate(id, masterResumeRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15780,22 +18156,22 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * Update online status for master
-         * @param {MasterOnlineStatusRequest} [masterOnlineStatusRequest] 
+         * @param {MasterOnlineStatusRequestRequest} [masterOnlineStatusRequestRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequest?: MasterOnlineStatusRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterOnlineStatusResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequest, options);
+        async v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequestRequest?: MasterOnlineStatusRequestRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterOnlineStatusResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequestRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Crud for certificates.
-         * @param {Certificate} certificate 
+         * @param {CertificateRequest} certificateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMyCertificatesCreate(certificate: Certificate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Certificate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyCertificatesCreate(certificate, options);
+        async v1UsersMyCertificatesCreate(certificateRequest: CertificateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Certificate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyCertificatesCreate(certificateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15824,12 +18200,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Crud for certificates.
          * @param {string} id 
-         * @param {PatchedCertificate} [patchedCertificate] 
+         * @param {PatchedCertificateRequest} [patchedCertificateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMyCertificatesPartialUpdate(id: string, patchedCertificate?: PatchedCertificate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Certificate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyCertificatesPartialUpdate(id, patchedCertificate, options);
+        async v1UsersMyCertificatesPartialUpdate(id: string, patchedCertificateRequest?: PatchedCertificateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Certificate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyCertificatesPartialUpdate(id, patchedCertificateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15845,32 +18221,32 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Crud for certificates.
          * @param {string} id 
-         * @param {Certificate} certificate 
+         * @param {CertificateRequest} certificateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMyCertificatesUpdate(id: string, certificate: Certificate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Certificate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyCertificatesUpdate(id, certificate, options);
+        async v1UsersMyCertificatesUpdate(id: string, certificateRequest: CertificateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Certificate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyCertificatesUpdate(id, certificateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * 
-         * @param {EmployerProfileCreateUpdate} [employerProfileCreateUpdate] 
+         * @param {EmployerProfileCreateUpdateRequest} [employerProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMyEmployerCreateCreate(employerProfileCreateUpdate?: EmployerProfileCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EmployerProfileCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyEmployerCreateCreate(employerProfileCreateUpdate, options);
+        async v1UsersMyEmployerCreateCreate(employerProfileCreateUpdateRequest?: EmployerProfileCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EmployerProfileCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyEmployerCreateCreate(employerProfileCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * 
-         * @param {PatchedEmployerProfileCreateUpdate} [patchedEmployerProfileCreateUpdate] 
+         * @param {PatchedEmployerProfileCreateUpdateRequest} [patchedEmployerProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMyEmployerPartialUpdate(patchedEmployerProfileCreateUpdate?: PatchedEmployerProfileCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EmployerProfileCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyEmployerPartialUpdate(patchedEmployerProfileCreateUpdate, options);
+        async v1UsersMyEmployerPartialUpdate(patchedEmployerProfileCreateUpdateRequest?: PatchedEmployerProfileCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EmployerProfileCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyEmployerPartialUpdate(patchedEmployerProfileCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15884,32 +18260,32 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {EmployerProfileCreateUpdate} [employerProfileCreateUpdate] 
+         * @param {EmployerProfileCreateUpdateRequest} [employerProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMyEmployerUpdate(employerProfileCreateUpdate?: EmployerProfileCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EmployerProfileCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyEmployerUpdate(employerProfileCreateUpdate, options);
+        async v1UsersMyEmployerUpdate(employerProfileCreateUpdateRequest?: EmployerProfileCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EmployerProfileCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyEmployerUpdate(employerProfileCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * 
-         * @param {MasterProfileCreateUpdate} [masterProfileCreateUpdate] 
+         * @param {MasterProfileCreateUpdateRequest} [masterProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMyMasterCreateCreate(masterProfileCreateUpdate?: MasterProfileCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterProfileCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyMasterCreateCreate(masterProfileCreateUpdate, options);
+        async v1UsersMyMasterCreateCreate(masterProfileCreateUpdateRequest?: MasterProfileCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterProfileCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyMasterCreateCreate(masterProfileCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * 
-         * @param {PatchedMasterProfileCreateUpdate} [patchedMasterProfileCreateUpdate] 
+         * @param {PatchedMasterProfileCreateUpdateRequest} [patchedMasterProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMyMasterPartialUpdate(patchedMasterProfileCreateUpdate?: PatchedMasterProfileCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterProfileCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyMasterPartialUpdate(patchedMasterProfileCreateUpdate, options);
+        async v1UsersMyMasterPartialUpdate(patchedMasterProfileCreateUpdateRequest?: PatchedMasterProfileCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterProfileCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyMasterPartialUpdate(patchedMasterProfileCreateUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15923,22 +18299,58 @@ export const V1ApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {MasterProfileCreateUpdate} [masterProfileCreateUpdate] 
+         * @param {MasterProfileCreateUpdateRequest} [masterProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMyMasterUpdate(masterProfileCreateUpdate?: MasterProfileCreateUpdate, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterProfileCreateUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyMasterUpdate(masterProfileCreateUpdate, options);
+        async v1UsersMyMasterUpdate(masterProfileCreateUpdateRequest?: MasterProfileCreateUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterProfileCreateUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyMasterUpdate(masterProfileCreateUpdateRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} portfolioId 
+         * @param {Array<any>} files 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersMyPortfolioAttachmentsCreate(portfolioId: string, files: Array<any>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyPortfolioAttachmentsCreate(portfolioId, files, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {string} portfolioId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersMyPortfolioAttachmentsDestroy(id: string, portfolioId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyPortfolioAttachmentsDestroy(id, portfolioId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} portfolioId 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1UsersMyPortfolioAttachmentsList(portfolioId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedAttachmentList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyPortfolioAttachmentsList(portfolioId, ordering, page, pageSize, search, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Crud for service master portfolio items.
-         * @param {PortfolioItem} portfolioItem 
+         * @param {PortfolioItemRequest} portfolioItemRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMyPortfolioCreate(portfolioItem: PortfolioItem, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PortfolioItem>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyPortfolioCreate(portfolioItem, options);
+        async v1UsersMyPortfolioCreate(portfolioItemRequest: PortfolioItemRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PortfolioItem>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyPortfolioCreate(portfolioItemRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15967,12 +18379,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Crud for service master portfolio items.
          * @param {string} id 
-         * @param {PatchedPortfolioItem} [patchedPortfolioItem] 
+         * @param {PatchedPortfolioItemRequest} [patchedPortfolioItemRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMyPortfolioPartialUpdate(id: string, patchedPortfolioItem?: PatchedPortfolioItem, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PortfolioItem>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyPortfolioPartialUpdate(id, patchedPortfolioItem, options);
+        async v1UsersMyPortfolioPartialUpdate(id: string, patchedPortfolioItemRequest?: PatchedPortfolioItemRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PortfolioItem>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyPortfolioPartialUpdate(id, patchedPortfolioItemRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -15988,22 +18400,22 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Crud for service master portfolio items.
          * @param {string} id 
-         * @param {PortfolioItem} portfolioItem 
+         * @param {PortfolioItemRequest} portfolioItemRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMyPortfolioUpdate(id: string, portfolioItem: PortfolioItem, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PortfolioItem>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyPortfolioUpdate(id, portfolioItem, options);
+        async v1UsersMyPortfolioUpdate(id: string, portfolioItemRequest: PortfolioItemRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PortfolioItem>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMyPortfolioUpdate(id, portfolioItemRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Crud for service master skills.
-         * @param {MasterSkill} masterSkill 
+         * @param {MasterSkillRequest} masterSkillRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMySkillsCreate(masterSkill: MasterSkill, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterSkill>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMySkillsCreate(masterSkill, options);
+        async v1UsersMySkillsCreate(masterSkillRequest: MasterSkillRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterSkill>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMySkillsCreate(masterSkillRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -16032,12 +18444,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Crud for service master skills.
          * @param {string} id 
-         * @param {PatchedMasterSkill} [patchedMasterSkill] 
+         * @param {PatchedMasterSkillRequest} [patchedMasterSkillRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMySkillsPartialUpdate(id: string, patchedMasterSkill?: PatchedMasterSkill, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterSkill>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMySkillsPartialUpdate(id, patchedMasterSkill, options);
+        async v1UsersMySkillsPartialUpdate(id: string, patchedMasterSkillRequest?: PatchedMasterSkillRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterSkill>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMySkillsPartialUpdate(id, patchedMasterSkillRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -16053,12 +18465,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * Crud for service master skills.
          * @param {string} id 
-         * @param {MasterSkill} masterSkill 
+         * @param {MasterSkillRequest} masterSkillRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1UsersMySkillsUpdate(id: string, masterSkill: MasterSkill, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterSkill>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMySkillsUpdate(id, masterSkill, options);
+        async v1UsersMySkillsUpdate(id: string, masterSkillRequest: MasterSkillRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MasterSkill>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1UsersMySkillsUpdate(id, masterSkillRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -16115,21 +18527,31 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Accept a job application
          * @param {number} id A unique integer value identifying this Job Application.
-         * @param {JobApplication} jobApplication 
+         * @param {JobApplicationRequest} jobApplicationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ApplicationsAcceptCreate(id: number, jobApplication: JobApplication, options?: any): AxiosPromise<JobApplicationApiAction> {
-            return localVarFp.v1ApplicationsAcceptCreate(id, jobApplication, options).then((request) => request(axios, basePath));
+        v1ApplicationsAccept(id: number, jobApplicationRequest: JobApplicationRequest, options?: any): AxiosPromise<JobApplicationApiAction> {
+            return localVarFp.v1ApplicationsAccept(id, jobApplicationRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Reject a job application
+         * @param {number} id A unique integer value identifying this Job Application.
+         * @param {JobApplicationRequest} jobApplicationRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ApplicationsAcceptReject(id: number, jobApplicationRequest: JobApplicationRequest, options?: any): AxiosPromise<JobApplicationApiAction> {
+            return localVarFp.v1ApplicationsAcceptReject(id, jobApplicationRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing job applications.
-         * @param {JobApplication} jobApplication 
+         * @param {JobApplicationRequest} jobApplicationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ApplicationsCreate(jobApplication: JobApplication, options?: any): AxiosPromise<JobApplication> {
-            return localVarFp.v1ApplicationsCreate(jobApplication, options).then((request) => request(axios, basePath));
+        v1ApplicationsCreate(jobApplicationRequest: JobApplicationRequest, options?: any): AxiosPromise<JobApplication> {
+            return localVarFp.v1ApplicationsCreate(jobApplicationRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing job applications.
@@ -16163,22 +18585,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * ViewSet for managing job applications.
          * @param {number} id A unique integer value identifying this Job Application.
-         * @param {PatchedJobApplication} [patchedJobApplication] 
+         * @param {PatchedJobApplicationRequest} [patchedJobApplicationRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ApplicationsPartialUpdate(id: number, patchedJobApplication?: PatchedJobApplication, options?: any): AxiosPromise<JobApplication> {
-            return localVarFp.v1ApplicationsPartialUpdate(id, patchedJobApplication, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Reject a job application
-         * @param {number} id A unique integer value identifying this Job Application.
-         * @param {JobApplication} jobApplication 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ApplicationsRejectCreate(id: number, jobApplication: JobApplication, options?: any): AxiosPromise<JobApplicationApiAction> {
-            return localVarFp.v1ApplicationsRejectCreate(id, jobApplication, options).then((request) => request(axios, basePath));
+        v1ApplicationsPartialUpdate(id: number, patchedJobApplicationRequest?: PatchedJobApplicationRequest, options?: any): AxiosPromise<JobApplication> {
+            return localVarFp.v1ApplicationsPartialUpdate(id, patchedJobApplicationRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing job applications.
@@ -16192,31 +18604,64 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * ViewSet for managing job applications.
          * @param {number} id A unique integer value identifying this Job Application.
-         * @param {JobApplication} jobApplication 
+         * @param {JobApplicationRequest} jobApplicationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ApplicationsUpdate(id: number, jobApplication: JobApplication, options?: any): AxiosPromise<JobApplication> {
-            return localVarFp.v1ApplicationsUpdate(id, jobApplication, options).then((request) => request(axios, basePath));
+        v1ApplicationsUpdate(id: number, jobApplicationRequest: JobApplicationRequest, options?: any): AxiosPromise<JobApplication> {
+            return localVarFp.v1ApplicationsUpdate(id, jobApplicationRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Withdraw a job by master
          * @param {number} id A unique integer value identifying this Job Application.
-         * @param {JobApplication} jobApplication 
+         * @param {JobApplicationRequest} jobApplicationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ApplicationsWithdrawCreate(id: number, jobApplication: JobApplication, options?: any): AxiosPromise<JobApplicationApiAction> {
-            return localVarFp.v1ApplicationsWithdrawCreate(id, jobApplication, options).then((request) => request(axios, basePath));
+        v1ApplicationsWithdraw(id: number, jobApplicationRequest: JobApplicationRequest, options?: any): AxiosPromise<JobApplicationApiAction> {
+            return localVarFp.v1ApplicationsWithdraw(id, jobApplicationRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {JobAssignment} [jobAssignment] 
+         * @param {string} assignmentId 
+         * @param {Array<any>} files 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsCreate(jobAssignment?: JobAssignment, options?: any): AxiosPromise<JobAssignment> {
-            return localVarFp.v1AssignmentsCreate(jobAssignment, options).then((request) => request(axios, basePath));
+        v1AssignmentsAttachmentsCreate(assignmentId: string, files: Array<any>, options?: any): AxiosPromise<void> {
+            return localVarFp.v1AssignmentsAttachmentsCreate(assignmentId, files, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} assignmentId 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1AssignmentsAttachmentsDestroy(assignmentId: string, id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.v1AssignmentsAttachmentsDestroy(assignmentId, id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} assignmentId 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1AssignmentsAttachmentsList(assignmentId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedAttachmentList> {
+            return localVarFp.v1AssignmentsAttachmentsList(assignmentId, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {JobAssignmentRequest} [jobAssignmentRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1AssignmentsCreate(jobAssignmentRequest?: JobAssignmentRequest, options?: any): AxiosPromise<JobAssignment> {
+            return localVarFp.v1AssignmentsCreate(jobAssignmentRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -16242,22 +18687,22 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * 
          * @param {string} id 
-         * @param {PatchedJobAssignment} [patchedJobAssignment] 
+         * @param {PatchedJobAssignmentRequest} [patchedJobAssignmentRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsPartialUpdate(id: string, patchedJobAssignment?: PatchedJobAssignment, options?: any): AxiosPromise<JobAssignment> {
-            return localVarFp.v1AssignmentsPartialUpdate(id, patchedJobAssignment, options).then((request) => request(axios, basePath));
+        v1AssignmentsPartialUpdate(id: string, patchedJobAssignmentRequest?: PatchedJobAssignmentRequest, options?: any): AxiosPromise<JobAssignment> {
+            return localVarFp.v1AssignmentsPartialUpdate(id, patchedJobAssignmentRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Rate a completed job assignment
          * @param {string} id 
-         * @param {Rating} [rating] 
+         * @param {RatingRequest} [ratingRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsRateCreate(id: string, rating?: Rating, options?: any): AxiosPromise<CResponse> {
-            return localVarFp.v1AssignmentsRateCreate(id, rating, options).then((request) => request(axios, basePath));
+        v1AssignmentsRateCreate(id: string, ratingRequest?: RatingRequest, options?: any): AxiosPromise<CResponse> {
+            return localVarFp.v1AssignmentsRateCreate(id, ratingRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -16271,31 +18716,31 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * 
          * @param {string} id 
-         * @param {JobAssignment} [jobAssignment] 
+         * @param {JobAssignmentRequest} [jobAssignmentRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsUpdate(id: string, jobAssignment?: JobAssignment, options?: any): AxiosPromise<JobAssignment> {
-            return localVarFp.v1AssignmentsUpdate(id, jobAssignment, options).then((request) => request(axios, basePath));
+        v1AssignmentsUpdate(id: string, jobAssignmentRequest?: JobAssignmentRequest, options?: any): AxiosPromise<JobAssignment> {
+            return localVarFp.v1AssignmentsUpdate(id, jobAssignmentRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Update progress notes for an assignment
          * @param {string} id 
-         * @param {PatchedProgressUpdate} [patchedProgressUpdate] 
+         * @param {PatchedProgressUpdateRequest} [patchedProgressUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsUpdateProgressPartialUpdate(id: string, patchedProgressUpdate?: PatchedProgressUpdate, options?: any): AxiosPromise<JobAssignmentApiAction> {
-            return localVarFp.v1AssignmentsUpdateProgressPartialUpdate(id, patchedProgressUpdate, options).then((request) => request(axios, basePath));
+        v1AssignmentsUpdateProgressPartialUpdate(id: string, patchedProgressUpdateRequest?: PatchedProgressUpdateRequest, options?: any): AxiosPromise<JobAssignmentApiAction> {
+            return localVarFp.v1AssignmentsUpdateProgressPartialUpdate(id, patchedProgressUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Authenticate or register a user using Firebase ID token.
-         * @param {FireBaseAuth} fireBaseAuth 
+         * @param {FireBaseAuthRequest} fireBaseAuthRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AuthFirebaseCreate(fireBaseAuth: FireBaseAuth, options?: any): AxiosPromise<FirebaseAuthResponse> {
-            return localVarFp.v1AuthFirebaseCreate(fireBaseAuth, options).then((request) => request(axios, basePath));
+        v1AuthFirebaseCreate(fireBaseAuthRequest: FireBaseAuthRequest, options?: any): AxiosPromise<FirebaseAuthResponse> {
+            return localVarFp.v1AuthFirebaseCreate(fireBaseAuthRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * User logout view - enhanced version of api_users LogOutView
@@ -16306,23 +18751,13 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1AuthLogoutCreate(options).then((request) => request(axios, basePath));
         },
         /**
-         * Add participants to chat room
-         * @param {string} id 
-         * @param {ChatRoom} chatRoom 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1ChatsRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: any): AxiosPromise<ChatRoom> {
-            return localVarFp.v1ChatsRoomsAddParticipants(id, chatRoom, options).then((request) => request(axios, basePath));
-        },
-        /**
          * ViewSet for managing chat rooms
-         * @param {ChatRoomCreate} chatRoomCreate 
+         * @param {ChatRoomCreateRequest} chatRoomCreateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsCreate(chatRoomCreate: ChatRoomCreate, options?: any): AxiosPromise<ChatRoomCreate> {
-            return localVarFp.v1ChatsRoomsCreate(chatRoomCreate, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsCreate(chatRoomCreateRequest: ChatRoomCreateRequest, options?: any): AxiosPromise<ChatRoomCreate> {
+            return localVarFp.v1ChatsRoomsCreate(chatRoomCreateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing chat rooms
@@ -16345,12 +18780,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Leave a chat room
          * @param {string} id 
-         * @param {ChatRoom} chatRoom 
+         * @param {ChatRoomRequest} chatRoomRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsLeave(id: string, chatRoom: ChatRoom, options?: any): AxiosPromise<ChatRoom> {
-            return localVarFp.v1ChatsRoomsLeave(id, chatRoom, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsLeave(id: string, chatRoomRequest: ChatRoomRequest, options?: any): AxiosPromise<ChatRoom> {
+            return localVarFp.v1ChatsRoomsLeave(id, chatRoomRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing chat rooms
@@ -16367,12 +18802,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * 
          * @param {string} chatRoomId 
-         * @param {MessageCreate} messageCreate 
+         * @param {MessageCreateRequest} messageCreateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreate: MessageCreate, options?: any): AxiosPromise<MessageCreate> {
-            return localVarFp.v1ChatsRoomsMessagesCreate(chatRoomId, messageCreate, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreateRequest: MessageCreateRequest, options?: any): AxiosPromise<MessageCreate> {
+            return localVarFp.v1ChatsRoomsMessagesCreate(chatRoomId, messageCreateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -16401,12 +18836,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {PatchedMessage} [patchedMessage] 
+         * @param {PatchedMessageRequest} [patchedMessageRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessage?: PatchedMessage, options?: any): AxiosPromise<Message> {
-            return localVarFp.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, patchedMessage, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessageRequest?: PatchedMessageRequest, options?: any): AxiosPromise<Message> {
+            return localVarFp.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, patchedMessageRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -16422,22 +18857,22 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {MessageUpdate} messageUpdate 
+         * @param {MessageUpdateRequest} messageUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdate: MessageUpdate, options?: any): AxiosPromise<MessageUpdate> {
-            return localVarFp.v1ChatsRoomsMessagesUpdate(chatRoomId, id, messageUpdate, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdateRequest: MessageUpdateRequest, options?: any): AxiosPromise<MessageUpdate> {
+            return localVarFp.v1ChatsRoomsMessagesUpdate(chatRoomId, id, messageUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing chat rooms
          * @param {string} id 
-         * @param {PatchedChatRoom} [patchedChatRoom] 
+         * @param {PatchedChatRoomRequest} [patchedChatRoomRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsPartialUpdate(id: string, patchedChatRoom?: PatchedChatRoom, options?: any): AxiosPromise<ChatRoom> {
-            return localVarFp.v1ChatsRoomsPartialUpdate(id, patchedChatRoom, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsPartialUpdate(id: string, patchedChatRoomRequest?: PatchedChatRoomRequest, options?: any): AxiosPromise<ChatRoom> {
+            return localVarFp.v1ChatsRoomsPartialUpdate(id, patchedChatRoomRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing chat rooms
@@ -16451,12 +18886,79 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * ViewSet for managing chat rooms
          * @param {string} id 
-         * @param {ChatRoom} chatRoom 
+         * @param {ChatRoomRequest} chatRoomRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsUpdate(id: string, chatRoom: ChatRoom, options?: any): AxiosPromise<ChatRoom> {
-            return localVarFp.v1ChatsRoomsUpdate(id, chatRoom, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsUpdate(id: string, chatRoomRequest: ChatRoomRequest, options?: any): AxiosPromise<ChatRoom> {
+            return localVarFp.v1ChatsRoomsUpdate(id, chatRoomRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Create contact with throttling.
+         * @param {SimpleContactRequest} simpleContactRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsCreate(simpleContactRequest: SimpleContactRequest, options?: any): AxiosPromise<SimpleContact> {
+            return localVarFp.v1ContactsCreate(simpleContactRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {number} id A unique integer value identifying this simple contact.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsDestroy(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.v1ContactsDestroy(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get available enquiry types.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsEnquiryTypesRetrieve(options?: any): AxiosPromise<SimpleContact> {
+            return localVarFp.v1ContactsEnquiryTypesRetrieve(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedSimpleContactList> {
+            return localVarFp.v1ContactsList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {number} id A unique integer value identifying this simple contact.
+         * @param {PatchedSimpleContactRequest} [patchedSimpleContactRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsPartialUpdate(id: number, patchedSimpleContactRequest?: PatchedSimpleContactRequest, options?: any): AxiosPromise<SimpleContact> {
+            return localVarFp.v1ContactsPartialUpdate(id, patchedSimpleContactRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {number} id A unique integer value identifying this simple contact.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsRetrieve(id: number, options?: any): AxiosPromise<SimpleContact> {
+            return localVarFp.v1ContactsRetrieve(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Contact enquiries API with minimal code.
+         * @param {number} id A unique integer value identifying this simple contact.
+         * @param {SimpleContactRequest} simpleContactRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ContactsUpdate(id: number, simpleContactRequest: SimpleContactRequest, options?: any): AxiosPromise<SimpleContact> {
+            return localVarFp.v1ContactsUpdate(id, simpleContactRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Languages - Read-only (managed via admin/fixtures).
@@ -16484,12 +18986,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * Service Areas - Full CRUD with authenticated access.
-         * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+         * @param {ServiceAreaCreateUpdateRequest} serviceAreaCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceAreasCreate(serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options?: any): AxiosPromise<ServiceAreaCreateUpdate> {
-            return localVarFp.v1CoreServiceAreasCreate(serviceAreaCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreServiceAreasCreate(serviceAreaCreateUpdateRequest: ServiceAreaCreateUpdateRequest, options?: any): AxiosPromise<ServiceAreaCreateUpdate> {
+            return localVarFp.v1CoreServiceAreasCreate(serviceAreaCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Service Areas - Full CRUD with authenticated access.
@@ -16517,12 +19019,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Service Areas - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Area.
-         * @param {PatchedServiceAreaCreateUpdate} [patchedServiceAreaCreateUpdate] 
+         * @param {PatchedServiceAreaCreateUpdateRequest} [patchedServiceAreaCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceAreasPartialUpdate(id: number, patchedServiceAreaCreateUpdate?: PatchedServiceAreaCreateUpdate, options?: any): AxiosPromise<ServiceAreaCreateUpdate> {
-            return localVarFp.v1CoreServiceAreasPartialUpdate(id, patchedServiceAreaCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreServiceAreasPartialUpdate(id: number, patchedServiceAreaCreateUpdateRequest?: PatchedServiceAreaCreateUpdateRequest, options?: any): AxiosPromise<ServiceAreaCreateUpdate> {
+            return localVarFp.v1CoreServiceAreasPartialUpdate(id, patchedServiceAreaCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Service Areas - Full CRUD with authenticated access.
@@ -16536,21 +19038,21 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Service Areas - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Area.
-         * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+         * @param {ServiceAreaCreateUpdateRequest} serviceAreaCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceAreasUpdate(id: number, serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options?: any): AxiosPromise<ServiceAreaCreateUpdate> {
-            return localVarFp.v1CoreServiceAreasUpdate(id, serviceAreaCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreServiceAreasUpdate(id: number, serviceAreaCreateUpdateRequest: ServiceAreaCreateUpdateRequest, options?: any): AxiosPromise<ServiceAreaCreateUpdate> {
+            return localVarFp.v1CoreServiceAreasUpdate(id, serviceAreaCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Service Categories - Full CRUD with authenticated access.
-         * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+         * @param {ServiceCategoryCreateUpdateRequest} serviceCategoryCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options?: any): AxiosPromise<ServiceCategoryCreateUpdate> {
-            return localVarFp.v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdateRequest: ServiceCategoryCreateUpdateRequest, options?: any): AxiosPromise<ServiceCategoryCreateUpdate> {
+            return localVarFp.v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Service Categories - Full CRUD with authenticated access.
@@ -16578,12 +19080,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Service Categories - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Category.
-         * @param {PatchedServiceCategoryCreateUpdate} [patchedServiceCategoryCreateUpdate] 
+         * @param {PatchedServiceCategoryCreateUpdateRequest} [patchedServiceCategoryCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceCategoriesPartialUpdate(id: number, patchedServiceCategoryCreateUpdate?: PatchedServiceCategoryCreateUpdate, options?: any): AxiosPromise<ServiceCategoryCreateUpdate> {
-            return localVarFp.v1CoreServiceCategoriesPartialUpdate(id, patchedServiceCategoryCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreServiceCategoriesPartialUpdate(id: number, patchedServiceCategoryCreateUpdateRequest?: PatchedServiceCategoryCreateUpdateRequest, options?: any): AxiosPromise<ServiceCategoryCreateUpdate> {
+            return localVarFp.v1CoreServiceCategoriesPartialUpdate(id, patchedServiceCategoryCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Service Categories - Full CRUD with authenticated access.
@@ -16597,21 +19099,21 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Service Categories - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Category.
-         * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+         * @param {ServiceCategoryCreateUpdateRequest} serviceCategoryCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceCategoriesUpdate(id: number, serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options?: any): AxiosPromise<ServiceCategoryCreateUpdate> {
-            return localVarFp.v1CoreServiceCategoriesUpdate(id, serviceCategoryCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreServiceCategoriesUpdate(id: number, serviceCategoryCreateUpdateRequest: ServiceCategoryCreateUpdateRequest, options?: any): AxiosPromise<ServiceCategoryCreateUpdate> {
+            return localVarFp.v1CoreServiceCategoriesUpdate(id, serviceCategoryCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Service Subcategories - Full CRUD with authenticated access.
-         * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+         * @param {ServiceSubcategoryCreateUpdateRequest} serviceSubcategoryCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options?: any): AxiosPromise<ServiceSubcategoryCreateUpdate> {
-            return localVarFp.v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdateRequest: ServiceSubcategoryCreateUpdateRequest, options?: any): AxiosPromise<ServiceSubcategoryCreateUpdate> {
+            return localVarFp.v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Service Subcategories - Full CRUD with authenticated access.
@@ -16641,12 +19143,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Service Subcategories - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Subcategory.
-         * @param {PatchedServiceSubcategoryCreateUpdate} [patchedServiceSubcategoryCreateUpdate] 
+         * @param {PatchedServiceSubcategoryCreateUpdateRequest} [patchedServiceSubcategoryCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceSubcategoriesPartialUpdate(id: number, patchedServiceSubcategoryCreateUpdate?: PatchedServiceSubcategoryCreateUpdate, options?: any): AxiosPromise<ServiceSubcategoryCreateUpdate> {
-            return localVarFp.v1CoreServiceSubcategoriesPartialUpdate(id, patchedServiceSubcategoryCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreServiceSubcategoriesPartialUpdate(id: number, patchedServiceSubcategoryCreateUpdateRequest?: PatchedServiceSubcategoryCreateUpdateRequest, options?: any): AxiosPromise<ServiceSubcategoryCreateUpdate> {
+            return localVarFp.v1CoreServiceSubcategoriesPartialUpdate(id, patchedServiceSubcategoryCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Service Subcategories - Full CRUD with authenticated access.
@@ -16660,21 +19162,21 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Service Subcategories - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Service Subcategory.
-         * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+         * @param {ServiceSubcategoryCreateUpdateRequest} serviceSubcategoryCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreServiceSubcategoriesUpdate(id: number, serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options?: any): AxiosPromise<ServiceSubcategoryCreateUpdate> {
-            return localVarFp.v1CoreServiceSubcategoriesUpdate(id, serviceSubcategoryCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreServiceSubcategoriesUpdate(id: number, serviceSubcategoryCreateUpdateRequest: ServiceSubcategoryCreateUpdateRequest, options?: any): AxiosPromise<ServiceSubcategoryCreateUpdate> {
+            return localVarFp.v1CoreServiceSubcategoriesUpdate(id, serviceSubcategoryCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Support FAQs - Full CRUD with authenticated access.
-         * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+         * @param {SupportFAQCreateUpdateRequest} supportFAQCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreSupportFaqCreate(supportFAQCreateUpdate: SupportFAQCreateUpdate, options?: any): AxiosPromise<SupportFAQCreateUpdate> {
-            return localVarFp.v1CoreSupportFaqCreate(supportFAQCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreSupportFaqCreate(supportFAQCreateUpdateRequest: SupportFAQCreateUpdateRequest, options?: any): AxiosPromise<SupportFAQCreateUpdate> {
+            return localVarFp.v1CoreSupportFaqCreate(supportFAQCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Support FAQs - Full CRUD with authenticated access.
@@ -16703,12 +19205,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Support FAQs - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Support FAQ.
-         * @param {PatchedSupportFAQCreateUpdate} [patchedSupportFAQCreateUpdate] 
+         * @param {PatchedSupportFAQCreateUpdateRequest} [patchedSupportFAQCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreSupportFaqPartialUpdate(id: number, patchedSupportFAQCreateUpdate?: PatchedSupportFAQCreateUpdate, options?: any): AxiosPromise<SupportFAQCreateUpdate> {
-            return localVarFp.v1CoreSupportFaqPartialUpdate(id, patchedSupportFAQCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreSupportFaqPartialUpdate(id: number, patchedSupportFAQCreateUpdateRequest?: PatchedSupportFAQCreateUpdateRequest, options?: any): AxiosPromise<SupportFAQCreateUpdate> {
+            return localVarFp.v1CoreSupportFaqPartialUpdate(id, patchedSupportFAQCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Support FAQs - Full CRUD with authenticated access.
@@ -16722,21 +19224,21 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Support FAQs - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this Support FAQ.
-         * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+         * @param {SupportFAQCreateUpdateRequest} supportFAQCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreSupportFaqUpdate(id: number, supportFAQCreateUpdate: SupportFAQCreateUpdate, options?: any): AxiosPromise<SupportFAQCreateUpdate> {
-            return localVarFp.v1CoreSupportFaqUpdate(id, supportFAQCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreSupportFaqUpdate(id: number, supportFAQCreateUpdateRequest: SupportFAQCreateUpdateRequest, options?: any): AxiosPromise<SupportFAQCreateUpdate> {
+            return localVarFp.v1CoreSupportFaqUpdate(id, supportFAQCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * System Settings - Full CRUD with authenticated access.
-         * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+         * @param {SystemSettingsCreateUpdateRequest} systemSettingsCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreSystemSettingsCreate(systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: any): AxiosPromise<SystemSettingsCreateUpdate> {
-            return localVarFp.v1CoreSystemSettingsCreate(systemSettingsCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreSystemSettingsCreate(systemSettingsCreateUpdateRequest: SystemSettingsCreateUpdateRequest, options?: any): AxiosPromise<SystemSettingsCreateUpdate> {
+            return localVarFp.v1CoreSystemSettingsCreate(systemSettingsCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * System Settings - Full CRUD with authenticated access.
@@ -16764,12 +19266,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * System Settings - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this System Setting.
-         * @param {PatchedSystemSettingsCreateUpdate} [patchedSystemSettingsCreateUpdate] 
+         * @param {PatchedSystemSettingsCreateUpdateRequest} [patchedSystemSettingsCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreSystemSettingsPartialUpdate(id: number, patchedSystemSettingsCreateUpdate?: PatchedSystemSettingsCreateUpdate, options?: any): AxiosPromise<SystemSettingsCreateUpdate> {
-            return localVarFp.v1CoreSystemSettingsPartialUpdate(id, patchedSystemSettingsCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreSystemSettingsPartialUpdate(id: number, patchedSystemSettingsCreateUpdateRequest?: PatchedSystemSettingsCreateUpdateRequest, options?: any): AxiosPromise<SystemSettingsCreateUpdate> {
+            return localVarFp.v1CoreSystemSettingsPartialUpdate(id, patchedSystemSettingsCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * System Settings - Full CRUD with authenticated access.
@@ -16783,12 +19285,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * System Settings - Full CRUD with authenticated access.
          * @param {number} id A unique integer value identifying this System Setting.
-         * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+         * @param {SystemSettingsCreateUpdateRequest} systemSettingsCreateUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1CoreSystemSettingsUpdate(id: number, systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: any): AxiosPromise<SystemSettingsCreateUpdate> {
-            return localVarFp.v1CoreSystemSettingsUpdate(id, systemSettingsCreateUpdate, options).then((request) => request(axios, basePath));
+        v1CoreSystemSettingsUpdate(id: number, systemSettingsCreateUpdateRequest: SystemSettingsCreateUpdateRequest, options?: any): AxiosPromise<SystemSettingsCreateUpdate> {
+            return localVarFp.v1CoreSystemSettingsUpdate(id, systemSettingsCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Returns featured categories, recommended masters, and statistics for the home page. Prioritizes top masters first, then fills with additional masters if needed.
@@ -16800,63 +19302,108 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1HomeClientRetrieve(options).then((request) => request(axios, basePath));
         },
         /**
-         * Complete an assignment with optional rating and review
-         * @param {string} id 
-         * @param {JobAssignmentCompletion} [jobAssignmentCompletion] 
+         * Get job recommendations for master based on skills, location, and preferences.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobAssignmentsComplete(id: string, jobAssignmentCompletion?: JobAssignmentCompletion, options?: any): AxiosPromise<JobAssignmentApiAction> {
-            return localVarFp.v1JobAssignmentsComplete(id, jobAssignmentCompletion, options).then((request) => request(axios, basePath));
+        v1HomeMasterNewJobsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedJobSearchList> {
+            return localVarFp.v1HomeMasterNewJobsList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Complete an assignment with optional rating and review
+         * @param {string} id 
+         * @param {JobAssignmentCompletionRequest} [jobAssignmentCompletionRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobAssignmentsComplete(id: string, jobAssignmentCompletionRequest?: JobAssignmentCompletionRequest, options?: any): AxiosPromise<JobAssignmentApiAction> {
+            return localVarFp.v1JobAssignmentsComplete(id, jobAssignmentCompletionRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Start an assignment
          * @param {string} id 
-         * @param {JobAssignment} [jobAssignment] 
+         * @param {JobAssignmentRequest} [jobAssignmentRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobAssignmentsStart(id: string, jobAssignment?: JobAssignment, options?: any): AxiosPromise<JobAssignmentApiAction> {
-            return localVarFp.v1JobAssignmentsStart(id, jobAssignment, options).then((request) => request(axios, basePath));
+        v1JobAssignmentsStart(id: string, jobAssignmentRequest?: JobAssignmentRequest, options?: any): AxiosPromise<JobAssignmentApiAction> {
+            return localVarFp.v1JobAssignmentsStart(id, jobAssignmentRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Apply to a job.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {JobApply} jobApply 
+         * @param {JobApplyRequest} jobApplyRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsApply(id: number, jobApply: JobApply, options?: any): AxiosPromise<JobApiAction> {
-            return localVarFp.v1JobsApply(id, jobApply, options).then((request) => request(axios, basePath));
+        v1JobsApply(id: number, jobApplyRequest: JobApplyRequest, options?: any): AxiosPromise<JobApiAction> {
+            return localVarFp.v1JobsApply(id, jobApplyRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} jobId 
+         * @param {Array<any>} files 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobsAttachmentsCreate(jobId: string, files: Array<any>, options?: any): AxiosPromise<void> {
+            return localVarFp.v1JobsAttachmentsCreate(jobId, files, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {string} jobId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobsAttachmentsDestroy(id: string, jobId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.v1JobsAttachmentsDestroy(id, jobId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} jobId 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobsAttachmentsList(jobId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedAttachmentList> {
+            return localVarFp.v1JobsAttachmentsList(jobId, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
          * Toggle bookmark status for a job
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsBookmark(id: number, job: Job, options?: any): AxiosPromise<CResponse> {
-            return localVarFp.v1JobsBookmark(id, job, options).then((request) => request(axios, basePath));
+        v1JobsBookmark(id: number, jobRequest: JobRequest, options?: any): AxiosPromise<CResponse> {
+            return localVarFp.v1JobsBookmark(id, jobRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Cancel a job. Only allowed if job is in PUBLISHED or ASSIGNED state.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsCancel(id: number, job: Job, options?: any): AxiosPromise<JobApiAction> {
-            return localVarFp.v1JobsCancel(id, job, options).then((request) => request(axios, basePath));
+        v1JobsCancel(id: number, jobRequest: JobRequest, options?: any): AxiosPromise<JobApiAction> {
+            return localVarFp.v1JobsCancel(id, jobRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing jobs.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsCreate(job: Job, options?: any): AxiosPromise<Job> {
-            return localVarFp.v1JobsCreate(job, options).then((request) => request(axios, basePath));
+        v1JobsCreate(jobRequest: JobRequest, options?: any): AxiosPromise<Job> {
+            return localVarFp.v1JobsCreate(jobRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing jobs.
@@ -16870,47 +19417,92 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Toggle favorite status for a job
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsFavorite(id: number, job: Job, options?: any): AxiosPromise<CResponse> {
-            return localVarFp.v1JobsFavorite(id, job, options).then((request) => request(axios, basePath));
+        v1JobsFavorite(id: number, jobRequest: JobRequest, options?: any): AxiosPromise<CResponse> {
+            return localVarFp.v1JobsFavorite(id, jobRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing jobs.
+         * @param {string} [city] 
+         * @param {number} [maxPrice] 
+         * @param {number} [minPrice] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
          * @param {string} [search] A search term.
+         * @param {number} [serviceCategory] 
+         * @param {string} [serviceDateFrom] 
+         * @param {string} [serviceDateTo] 
          * @param {number} [serviceSubcategory] 
-         * @param {'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published'} [status] * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled
          * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsList(ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategory?: number, status?: 'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: any): AxiosPromise<PaginatedJobList> {
-            return localVarFp.v1JobsList(ordering, page, pageSize, search, serviceSubcategory, status, urgency, options).then((request) => request(axios, basePath));
+        v1JobsList(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: any): AxiosPromise<PaginatedJobList> {
+            return localVarFp.v1JobsList(city, maxPrice, minPrice, ordering, page, pageSize, search, serviceCategory, serviceDateFrom, serviceDateTo, serviceSubcategory, urgency, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get completed job history for master
+         * @param {string} [city] 
+         * @param {number} [maxPrice] 
+         * @param {number} [minPrice] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceCategory] 
+         * @param {string} [serviceDateFrom] 
+         * @param {string} [serviceDateTo] 
+         * @param {number} [serviceSubcategory] 
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobsMasterHistory(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: any): AxiosPromise<PaginatedJobList> {
+            return localVarFp.v1JobsMasterHistory(city, maxPrice, minPrice, ordering, page, pageSize, search, serviceCategory, serviceDateFrom, serviceDateTo, serviceSubcategory, urgency, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get jobs currently in progress for master
+         * @param {string} [city] 
+         * @param {number} [maxPrice] 
+         * @param {number} [minPrice] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceCategory] 
+         * @param {string} [serviceDateFrom] 
+         * @param {string} [serviceDateTo] 
+         * @param {number} [serviceSubcategory] 
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobsMasterInProgress(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: any): AxiosPromise<PaginatedJobList> {
+            return localVarFp.v1JobsMasterInProgress(city, maxPrice, minPrice, ordering, page, pageSize, search, serviceCategory, serviceDateFrom, serviceDateTo, serviceSubcategory, urgency, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing jobs.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {PatchedJob} [patchedJob] 
+         * @param {PatchedJobRequest} [patchedJobRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsPartialUpdate(id: number, patchedJob?: PatchedJob, options?: any): AxiosPromise<Job> {
-            return localVarFp.v1JobsPartialUpdate(id, patchedJob, options).then((request) => request(axios, basePath));
+        v1JobsPartialUpdate(id: number, patchedJobRequest?: PatchedJobRequest, options?: any): AxiosPromise<Job> {
+            return localVarFp.v1JobsPartialUpdate(id, patchedJobRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Publish a draft job. Only allowed if job is in DRAFT state.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsPublish(id: number, job: Job, options?: any): AxiosPromise<JobApiAction> {
-            return localVarFp.v1JobsPublish(id, job, options).then((request) => request(axios, basePath));
+        v1JobsPublish(id: number, jobRequest: JobRequest, options?: any): AxiosPromise<JobApiAction> {
+            return localVarFp.v1JobsPublish(id, jobRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing jobs.
@@ -16924,21 +19516,21 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * ViewSet for managing jobs.
          * @param {number} id A unique integer value identifying this Job.
-         * @param {Job} job 
+         * @param {JobRequest} jobRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1JobsUpdate(id: number, job: Job, options?: any): AxiosPromise<Job> {
-            return localVarFp.v1JobsUpdate(id, job, options).then((request) => request(axios, basePath));
+        v1JobsUpdate(id: number, jobRequest: JobRequest, options?: any): AxiosPromise<Job> {
+            return localVarFp.v1JobsUpdate(id, jobRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing cities.
-         * @param {City} city 
+         * @param {CityRequest} cityRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCitiesCreate(city: City, options?: any): AxiosPromise<City> {
-            return localVarFp.v1LocationsCitiesCreate(city, options).then((request) => request(axios, basePath));
+        v1LocationsCitiesCreate(cityRequest: CityRequest, options?: any): AxiosPromise<City> {
+            return localVarFp.v1LocationsCitiesCreate(cityRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing cities.
@@ -16966,12 +19558,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * ViewSet for managing cities.
          * @param {number} id A unique integer value identifying this City.
-         * @param {PatchedCity} [patchedCity] 
+         * @param {PatchedCityRequest} [patchedCityRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCitiesPartialUpdate(id: number, patchedCity?: PatchedCity, options?: any): AxiosPromise<City> {
-            return localVarFp.v1LocationsCitiesPartialUpdate(id, patchedCity, options).then((request) => request(axios, basePath));
+        v1LocationsCitiesPartialUpdate(id: number, patchedCityRequest?: PatchedCityRequest, options?: any): AxiosPromise<City> {
+            return localVarFp.v1LocationsCitiesPartialUpdate(id, patchedCityRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing cities.
@@ -16985,21 +19577,21 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * ViewSet for managing cities.
          * @param {number} id A unique integer value identifying this City.
-         * @param {City} city 
+         * @param {CityRequest} cityRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCitiesUpdate(id: number, city: City, options?: any): AxiosPromise<City> {
-            return localVarFp.v1LocationsCitiesUpdate(id, city, options).then((request) => request(axios, basePath));
+        v1LocationsCitiesUpdate(id: number, cityRequest: CityRequest, options?: any): AxiosPromise<City> {
+            return localVarFp.v1LocationsCitiesUpdate(id, cityRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing countries.
-         * @param {Country} country 
+         * @param {CountryRequest} countryRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCountriesCreate(country: Country, options?: any): AxiosPromise<Country> {
-            return localVarFp.v1LocationsCountriesCreate(country, options).then((request) => request(axios, basePath));
+        v1LocationsCountriesCreate(countryRequest: CountryRequest, options?: any): AxiosPromise<Country> {
+            return localVarFp.v1LocationsCountriesCreate(countryRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing countries.
@@ -17026,12 +19618,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * ViewSet for managing countries.
          * @param {number} id A unique integer value identifying this Country.
-         * @param {PatchedCountry} [patchedCountry] 
+         * @param {PatchedCountryRequest} [patchedCountryRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCountriesPartialUpdate(id: number, patchedCountry?: PatchedCountry, options?: any): AxiosPromise<Country> {
-            return localVarFp.v1LocationsCountriesPartialUpdate(id, patchedCountry, options).then((request) => request(axios, basePath));
+        v1LocationsCountriesPartialUpdate(id: number, patchedCountryRequest?: PatchedCountryRequest, options?: any): AxiosPromise<Country> {
+            return localVarFp.v1LocationsCountriesPartialUpdate(id, patchedCountryRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing countries.
@@ -17045,12 +19637,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * ViewSet for managing countries.
          * @param {number} id A unique integer value identifying this Country.
-         * @param {Country} country 
+         * @param {CountryRequest} countryRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1LocationsCountriesUpdate(id: number, country: Country, options?: any): AxiosPromise<Country> {
-            return localVarFp.v1LocationsCountriesUpdate(id, country, options).then((request) => request(axios, basePath));
+        v1LocationsCountriesUpdate(id: number, countryRequest: CountryRequest, options?: any): AxiosPromise<Country> {
+            return localVarFp.v1LocationsCountriesUpdate(id, countryRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Get notification counts for current user
@@ -17062,12 +19654,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * ViewSet for managing notifications with clean actions.
-         * @param {NotificationCreate} notificationCreate 
+         * @param {NotificationCreateRequest} notificationCreateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsCreate(notificationCreate: NotificationCreate, options?: any): AxiosPromise<NotificationCreate> {
-            return localVarFp.v1NotificationsCreate(notificationCreate, options).then((request) => request(axios, basePath));
+        v1NotificationsCreate(notificationCreateRequest: NotificationCreateRequest, options?: any): AxiosPromise<NotificationCreate> {
+            return localVarFp.v1NotificationsCreate(notificationCreateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing notifications with clean actions.
@@ -17092,42 +19684,42 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * Mark all notifications as read for current user
-         * @param {Notification} notification 
+         * @param {NotificationRequest} notificationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsMarkAllRead(notification: Notification, options?: any): AxiosPromise<any> {
-            return localVarFp.v1NotificationsMarkAllRead(notification, options).then((request) => request(axios, basePath));
+        v1NotificationsMarkAllRead(notificationRequest: NotificationRequest, options?: any): AxiosPromise<any> {
+            return localVarFp.v1NotificationsMarkAllRead(notificationRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Mark specific notification as read
          * @param {string} id 
-         * @param {Notification} notification 
+         * @param {NotificationRequest} notificationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsMarkRead(id: string, notification: Notification, options?: any): AxiosPromise<Notification> {
-            return localVarFp.v1NotificationsMarkRead(id, notification, options).then((request) => request(axios, basePath));
+        v1NotificationsMarkRead(id: string, notificationRequest: NotificationRequest, options?: any): AxiosPromise<Notification> {
+            return localVarFp.v1NotificationsMarkRead(id, notificationRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Mark specific notification as unread
          * @param {string} id 
-         * @param {Notification} notification 
+         * @param {NotificationRequest} notificationRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsMarkUnread(id: string, notification: Notification, options?: any): AxiosPromise<Notification> {
-            return localVarFp.v1NotificationsMarkUnread(id, notification, options).then((request) => request(axios, basePath));
+        v1NotificationsMarkUnread(id: string, notificationRequest: NotificationRequest, options?: any): AxiosPromise<Notification> {
+            return localVarFp.v1NotificationsMarkUnread(id, notificationRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing notifications with clean actions.
          * @param {string} id 
-         * @param {PatchedNotificationUpdate} [patchedNotificationUpdate] 
+         * @param {PatchedNotificationUpdateRequest} [patchedNotificationUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsPartialUpdate(id: string, patchedNotificationUpdate?: PatchedNotificationUpdate, options?: any): AxiosPromise<NotificationUpdate> {
-            return localVarFp.v1NotificationsPartialUpdate(id, patchedNotificationUpdate, options).then((request) => request(axios, basePath));
+        v1NotificationsPartialUpdate(id: string, patchedNotificationUpdateRequest?: PatchedNotificationUpdateRequest, options?: any): AxiosPromise<NotificationUpdate> {
+            return localVarFp.v1NotificationsPartialUpdate(id, patchedNotificationUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Get recent notifications (last 7 days)
@@ -17166,15 +19758,15 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * ViewSet for managing notifications with clean actions.
          * @param {string} id 
-         * @param {NotificationUpdate} [notificationUpdate] 
+         * @param {NotificationUpdateRequest} [notificationUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1NotificationsUpdate(id: string, notificationUpdate?: NotificationUpdate, options?: any): AxiosPromise<NotificationUpdate> {
-            return localVarFp.v1NotificationsUpdate(id, notificationUpdate, options).then((request) => request(axios, basePath));
+        v1NotificationsUpdate(id: string, notificationUpdateRequest?: NotificationUpdateRequest, options?: any): AxiosPromise<NotificationUpdate> {
+            return localVarFp.v1NotificationsUpdate(id, notificationUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
-         * Perform action based on \'action\' parameter in request data.
+         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -17183,12 +19775,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * 
-         * @param {PatchedUserNotificationSettings} [patchedUserNotificationSettings] 
+         * @param {PatchedUserNotificationSettingsRequest} [patchedUserNotificationSettingsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfileNotificationSettingsPartialUpdate(patchedUserNotificationSettings?: PatchedUserNotificationSettings, options?: any): AxiosPromise<UserNotificationSettings> {
-            return localVarFp.v1ProfileNotificationSettingsPartialUpdate(patchedUserNotificationSettings, options).then((request) => request(axios, basePath));
+        v1ProfileNotificationSettingsPartialUpdate(patchedUserNotificationSettingsRequest?: PatchedUserNotificationSettingsRequest, options?: any): AxiosPromise<UserNotificationSettings> {
+            return localVarFp.v1ProfileNotificationSettingsPartialUpdate(patchedUserNotificationSettingsRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -17200,21 +19792,21 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * 
-         * @param {UserNotificationSettings} [userNotificationSettings] 
+         * @param {UserNotificationSettingsRequest} [userNotificationSettingsRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfileNotificationSettingsUpdate(userNotificationSettings?: UserNotificationSettings, options?: any): AxiosPromise<UserNotificationSettings> {
-            return localVarFp.v1ProfileNotificationSettingsUpdate(userNotificationSettings, options).then((request) => request(axios, basePath));
+        v1ProfileNotificationSettingsUpdate(userNotificationSettingsRequest?: UserNotificationSettingsRequest, options?: any): AxiosPromise<UserNotificationSettings> {
+            return localVarFp.v1ProfileNotificationSettingsUpdate(userNotificationSettingsRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Retrieve or update authenticated user\'s profile, including profile image upload.
-         * @param {PatchedUserUpdate} [patchedUserUpdate] 
+         * @param {PatchedUserUpdateRequest} [patchedUserUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfilePartialUpdate(patchedUserUpdate?: PatchedUserUpdate, options?: any): AxiosPromise<UserUpdate> {
-            return localVarFp.v1ProfilePartialUpdate(patchedUserUpdate, options).then((request) => request(axios, basePath));
+        v1ProfilePartialUpdate(patchedUserUpdateRequest?: PatchedUserUpdateRequest, options?: any): AxiosPromise<UserUpdate> {
+            return localVarFp.v1ProfilePartialUpdate(patchedUserUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Retrieve or update authenticated user\'s profile, including profile image upload.
@@ -17226,31 +19818,31 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * Retrieve or update authenticated user\'s profile, including profile image upload.
-         * @param {UserUpdate} [userUpdate] 
+         * @param {UserUpdateRequest} [userUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ProfileUpdate(userUpdate?: UserUpdate, options?: any): AxiosPromise<UserUpdate> {
-            return localVarFp.v1ProfileUpdate(userUpdate, options).then((request) => request(axios, basePath));
+        v1ProfileUpdate(userUpdateRequest?: UserUpdateRequest, options?: any): AxiosPromise<UserUpdate> {
+            return localVarFp.v1ProfileUpdate(userUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Archive a published resume.
          * @param {number} id A unique integer value identifying this master resume.
-         * @param {MasterResume} masterResume 
+         * @param {MasterResumeRequest} masterResumeRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ResumesArchive(id: number, masterResume: MasterResume, options?: any): AxiosPromise<void> {
-            return localVarFp.v1ResumesArchive(id, masterResume, options).then((request) => request(axios, basePath));
+        v1ResumesArchive(id: number, masterResumeRequest: MasterResumeRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.v1ResumesArchive(id, masterResumeRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * CRUD for Master resumes. Masters manage their own resumes, public sees published.
-         * @param {MasterResume} masterResume 
+         * @param {MasterResumeRequest} masterResumeRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ResumesCreate(masterResume: MasterResume, options?: any): AxiosPromise<MasterResume> {
-            return localVarFp.v1ResumesCreate(masterResume, options).then((request) => request(axios, basePath));
+        v1ResumesCreate(masterResumeRequest: MasterResumeRequest, options?: any): AxiosPromise<MasterResume> {
+            return localVarFp.v1ResumesCreate(masterResumeRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * CRUD for Master resumes. Masters manage their own resumes, public sees published.
@@ -17276,22 +19868,22 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * CRUD for Master resumes. Masters manage their own resumes, public sees published.
          * @param {number} id A unique integer value identifying this master resume.
-         * @param {PatchedMasterResume} [patchedMasterResume] 
+         * @param {PatchedMasterResumeRequest} [patchedMasterResumeRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ResumesPartialUpdate(id: number, patchedMasterResume?: PatchedMasterResume, options?: any): AxiosPromise<MasterResume> {
-            return localVarFp.v1ResumesPartialUpdate(id, patchedMasterResume, options).then((request) => request(axios, basePath));
+        v1ResumesPartialUpdate(id: number, patchedMasterResumeRequest?: PatchedMasterResumeRequest, options?: any): AxiosPromise<MasterResume> {
+            return localVarFp.v1ResumesPartialUpdate(id, patchedMasterResumeRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Publish a draft resume. Only allowed if in DRAFT state.
          * @param {number} id A unique integer value identifying this master resume.
-         * @param {MasterResume} masterResume 
+         * @param {MasterResumeRequest} masterResumeRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ResumesPublish(id: number, masterResume: MasterResume, options?: any): AxiosPromise<void> {
-            return localVarFp.v1ResumesPublish(id, masterResume, options).then((request) => request(axios, basePath));
+        v1ResumesPublish(id: number, masterResumeRequest: MasterResumeRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.v1ResumesPublish(id, masterResumeRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * CRUD for Master resumes. Masters manage their own resumes, public sees published.
@@ -17305,12 +19897,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * CRUD for Master resumes. Masters manage their own resumes, public sees published.
          * @param {number} id A unique integer value identifying this master resume.
-         * @param {MasterResume} masterResume 
+         * @param {MasterResumeRequest} masterResumeRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ResumesUpdate(id: number, masterResume: MasterResume, options?: any): AxiosPromise<MasterResume> {
-            return localVarFp.v1ResumesUpdate(id, masterResume, options).then((request) => request(axios, basePath));
+        v1ResumesUpdate(id: number, masterResumeRequest: MasterResumeRequest, options?: any): AxiosPromise<MasterResume> {
+            return localVarFp.v1ResumesUpdate(id, masterResumeRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Get review analytics for a specific master
@@ -17465,21 +20057,21 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * Update online status for master
-         * @param {MasterOnlineStatusRequest} [masterOnlineStatusRequest] 
+         * @param {MasterOnlineStatusRequestRequest} [masterOnlineStatusRequestRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequest?: MasterOnlineStatusRequest, options?: any): AxiosPromise<MasterOnlineStatusResponse> {
-            return localVarFp.v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequest, options).then((request) => request(axios, basePath));
+        v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequestRequest?: MasterOnlineStatusRequestRequest, options?: any): AxiosPromise<MasterOnlineStatusResponse> {
+            return localVarFp.v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequestRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Crud for certificates.
-         * @param {Certificate} certificate 
+         * @param {CertificateRequest} certificateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyCertificatesCreate(certificate: Certificate, options?: any): AxiosPromise<Certificate> {
-            return localVarFp.v1UsersMyCertificatesCreate(certificate, options).then((request) => request(axios, basePath));
+        v1UsersMyCertificatesCreate(certificateRequest: CertificateRequest, options?: any): AxiosPromise<Certificate> {
+            return localVarFp.v1UsersMyCertificatesCreate(certificateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Crud for certificates.
@@ -17505,12 +20097,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Crud for certificates.
          * @param {string} id 
-         * @param {PatchedCertificate} [patchedCertificate] 
+         * @param {PatchedCertificateRequest} [patchedCertificateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyCertificatesPartialUpdate(id: string, patchedCertificate?: PatchedCertificate, options?: any): AxiosPromise<Certificate> {
-            return localVarFp.v1UsersMyCertificatesPartialUpdate(id, patchedCertificate, options).then((request) => request(axios, basePath));
+        v1UsersMyCertificatesPartialUpdate(id: string, patchedCertificateRequest?: PatchedCertificateRequest, options?: any): AxiosPromise<Certificate> {
+            return localVarFp.v1UsersMyCertificatesPartialUpdate(id, patchedCertificateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Crud for certificates.
@@ -17524,30 +20116,30 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Crud for certificates.
          * @param {string} id 
-         * @param {Certificate} certificate 
+         * @param {CertificateRequest} certificateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyCertificatesUpdate(id: string, certificate: Certificate, options?: any): AxiosPromise<Certificate> {
-            return localVarFp.v1UsersMyCertificatesUpdate(id, certificate, options).then((request) => request(axios, basePath));
+        v1UsersMyCertificatesUpdate(id: string, certificateRequest: CertificateRequest, options?: any): AxiosPromise<Certificate> {
+            return localVarFp.v1UsersMyCertificatesUpdate(id, certificateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {EmployerProfileCreateUpdate} [employerProfileCreateUpdate] 
+         * @param {EmployerProfileCreateUpdateRequest} [employerProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyEmployerCreateCreate(employerProfileCreateUpdate?: EmployerProfileCreateUpdate, options?: any): AxiosPromise<EmployerProfileCreateUpdate> {
-            return localVarFp.v1UsersMyEmployerCreateCreate(employerProfileCreateUpdate, options).then((request) => request(axios, basePath));
+        v1UsersMyEmployerCreateCreate(employerProfileCreateUpdateRequest?: EmployerProfileCreateUpdateRequest, options?: any): AxiosPromise<EmployerProfileCreateUpdate> {
+            return localVarFp.v1UsersMyEmployerCreateCreate(employerProfileCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {PatchedEmployerProfileCreateUpdate} [patchedEmployerProfileCreateUpdate] 
+         * @param {PatchedEmployerProfileCreateUpdateRequest} [patchedEmployerProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyEmployerPartialUpdate(patchedEmployerProfileCreateUpdate?: PatchedEmployerProfileCreateUpdate, options?: any): AxiosPromise<EmployerProfileCreateUpdate> {
-            return localVarFp.v1UsersMyEmployerPartialUpdate(patchedEmployerProfileCreateUpdate, options).then((request) => request(axios, basePath));
+        v1UsersMyEmployerPartialUpdate(patchedEmployerProfileCreateUpdateRequest?: PatchedEmployerProfileCreateUpdateRequest, options?: any): AxiosPromise<EmployerProfileCreateUpdate> {
+            return localVarFp.v1UsersMyEmployerPartialUpdate(patchedEmployerProfileCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -17559,30 +20151,30 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * 
-         * @param {EmployerProfileCreateUpdate} [employerProfileCreateUpdate] 
+         * @param {EmployerProfileCreateUpdateRequest} [employerProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyEmployerUpdate(employerProfileCreateUpdate?: EmployerProfileCreateUpdate, options?: any): AxiosPromise<EmployerProfileCreateUpdate> {
-            return localVarFp.v1UsersMyEmployerUpdate(employerProfileCreateUpdate, options).then((request) => request(axios, basePath));
+        v1UsersMyEmployerUpdate(employerProfileCreateUpdateRequest?: EmployerProfileCreateUpdateRequest, options?: any): AxiosPromise<EmployerProfileCreateUpdate> {
+            return localVarFp.v1UsersMyEmployerUpdate(employerProfileCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {MasterProfileCreateUpdate} [masterProfileCreateUpdate] 
+         * @param {MasterProfileCreateUpdateRequest} [masterProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyMasterCreateCreate(masterProfileCreateUpdate?: MasterProfileCreateUpdate, options?: any): AxiosPromise<MasterProfileCreateUpdate> {
-            return localVarFp.v1UsersMyMasterCreateCreate(masterProfileCreateUpdate, options).then((request) => request(axios, basePath));
+        v1UsersMyMasterCreateCreate(masterProfileCreateUpdateRequest?: MasterProfileCreateUpdateRequest, options?: any): AxiosPromise<MasterProfileCreateUpdate> {
+            return localVarFp.v1UsersMyMasterCreateCreate(masterProfileCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {PatchedMasterProfileCreateUpdate} [patchedMasterProfileCreateUpdate] 
+         * @param {PatchedMasterProfileCreateUpdateRequest} [patchedMasterProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyMasterPartialUpdate(patchedMasterProfileCreateUpdate?: PatchedMasterProfileCreateUpdate, options?: any): AxiosPromise<MasterProfileCreateUpdate> {
-            return localVarFp.v1UsersMyMasterPartialUpdate(patchedMasterProfileCreateUpdate, options).then((request) => request(axios, basePath));
+        v1UsersMyMasterPartialUpdate(patchedMasterProfileCreateUpdateRequest?: PatchedMasterProfileCreateUpdateRequest, options?: any): AxiosPromise<MasterProfileCreateUpdate> {
+            return localVarFp.v1UsersMyMasterPartialUpdate(patchedMasterProfileCreateUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -17594,21 +20186,54 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         },
         /**
          * 
-         * @param {MasterProfileCreateUpdate} [masterProfileCreateUpdate] 
+         * @param {MasterProfileCreateUpdateRequest} [masterProfileCreateUpdateRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyMasterUpdate(masterProfileCreateUpdate?: MasterProfileCreateUpdate, options?: any): AxiosPromise<MasterProfileCreateUpdate> {
-            return localVarFp.v1UsersMyMasterUpdate(masterProfileCreateUpdate, options).then((request) => request(axios, basePath));
+        v1UsersMyMasterUpdate(masterProfileCreateUpdateRequest?: MasterProfileCreateUpdateRequest, options?: any): AxiosPromise<MasterProfileCreateUpdate> {
+            return localVarFp.v1UsersMyMasterUpdate(masterProfileCreateUpdateRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} portfolioId 
+         * @param {Array<any>} files 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMyPortfolioAttachmentsCreate(portfolioId: string, files: Array<any>, options?: any): AxiosPromise<void> {
+            return localVarFp.v1UsersMyPortfolioAttachmentsCreate(portfolioId, files, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {string} portfolioId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMyPortfolioAttachmentsDestroy(id: string, portfolioId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.v1UsersMyPortfolioAttachmentsDestroy(id, portfolioId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} portfolioId 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1UsersMyPortfolioAttachmentsList(portfolioId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedAttachmentList> {
+            return localVarFp.v1UsersMyPortfolioAttachmentsList(portfolioId, ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
         },
         /**
          * Crud for service master portfolio items.
-         * @param {PortfolioItem} portfolioItem 
+         * @param {PortfolioItemRequest} portfolioItemRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyPortfolioCreate(portfolioItem: PortfolioItem, options?: any): AxiosPromise<PortfolioItem> {
-            return localVarFp.v1UsersMyPortfolioCreate(portfolioItem, options).then((request) => request(axios, basePath));
+        v1UsersMyPortfolioCreate(portfolioItemRequest: PortfolioItemRequest, options?: any): AxiosPromise<PortfolioItem> {
+            return localVarFp.v1UsersMyPortfolioCreate(portfolioItemRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Crud for service master portfolio items.
@@ -17634,12 +20259,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Crud for service master portfolio items.
          * @param {string} id 
-         * @param {PatchedPortfolioItem} [patchedPortfolioItem] 
+         * @param {PatchedPortfolioItemRequest} [patchedPortfolioItemRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyPortfolioPartialUpdate(id: string, patchedPortfolioItem?: PatchedPortfolioItem, options?: any): AxiosPromise<PortfolioItem> {
-            return localVarFp.v1UsersMyPortfolioPartialUpdate(id, patchedPortfolioItem, options).then((request) => request(axios, basePath));
+        v1UsersMyPortfolioPartialUpdate(id: string, patchedPortfolioItemRequest?: PatchedPortfolioItemRequest, options?: any): AxiosPromise<PortfolioItem> {
+            return localVarFp.v1UsersMyPortfolioPartialUpdate(id, patchedPortfolioItemRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Crud for service master portfolio items.
@@ -17653,21 +20278,21 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Crud for service master portfolio items.
          * @param {string} id 
-         * @param {PortfolioItem} portfolioItem 
+         * @param {PortfolioItemRequest} portfolioItemRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMyPortfolioUpdate(id: string, portfolioItem: PortfolioItem, options?: any): AxiosPromise<PortfolioItem> {
-            return localVarFp.v1UsersMyPortfolioUpdate(id, portfolioItem, options).then((request) => request(axios, basePath));
+        v1UsersMyPortfolioUpdate(id: string, portfolioItemRequest: PortfolioItemRequest, options?: any): AxiosPromise<PortfolioItem> {
+            return localVarFp.v1UsersMyPortfolioUpdate(id, portfolioItemRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Crud for service master skills.
-         * @param {MasterSkill} masterSkill 
+         * @param {MasterSkillRequest} masterSkillRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMySkillsCreate(masterSkill: MasterSkill, options?: any): AxiosPromise<MasterSkill> {
-            return localVarFp.v1UsersMySkillsCreate(masterSkill, options).then((request) => request(axios, basePath));
+        v1UsersMySkillsCreate(masterSkillRequest: MasterSkillRequest, options?: any): AxiosPromise<MasterSkill> {
+            return localVarFp.v1UsersMySkillsCreate(masterSkillRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Crud for service master skills.
@@ -17693,12 +20318,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Crud for service master skills.
          * @param {string} id 
-         * @param {PatchedMasterSkill} [patchedMasterSkill] 
+         * @param {PatchedMasterSkillRequest} [patchedMasterSkillRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMySkillsPartialUpdate(id: string, patchedMasterSkill?: PatchedMasterSkill, options?: any): AxiosPromise<MasterSkill> {
-            return localVarFp.v1UsersMySkillsPartialUpdate(id, patchedMasterSkill, options).then((request) => request(axios, basePath));
+        v1UsersMySkillsPartialUpdate(id: string, patchedMasterSkillRequest?: PatchedMasterSkillRequest, options?: any): AxiosPromise<MasterSkill> {
+            return localVarFp.v1UsersMySkillsPartialUpdate(id, patchedMasterSkillRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Crud for service master skills.
@@ -17712,12 +20337,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * Crud for service master skills.
          * @param {string} id 
-         * @param {MasterSkill} masterSkill 
+         * @param {MasterSkillRequest} masterSkillRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1UsersMySkillsUpdate(id: string, masterSkill: MasterSkill, options?: any): AxiosPromise<MasterSkill> {
-            return localVarFp.v1UsersMySkillsUpdate(id, masterSkill, options).then((request) => request(axios, basePath));
+        v1UsersMySkillsUpdate(id: string, masterSkillRequest: MasterSkillRequest, options?: any): AxiosPromise<MasterSkill> {
+            return localVarFp.v1UsersMySkillsUpdate(id, masterSkillRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -17769,21 +20394,31 @@ export interface V1ApiInterface {
     /**
      * Accept a job application
      * @param {number} id A unique integer value identifying this Job Application.
-     * @param {JobApplication} jobApplication 
+     * @param {JobApplicationRequest} jobApplicationRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ApplicationsAcceptCreate(id: number, jobApplication: JobApplication, options?: AxiosRequestConfig): AxiosPromise<JobApplicationApiAction>;
+    v1ApplicationsAccept(id: number, jobApplicationRequest: JobApplicationRequest, options?: AxiosRequestConfig): AxiosPromise<JobApplicationApiAction>;
+
+    /**
+     * Reject a job application
+     * @param {number} id A unique integer value identifying this Job Application.
+     * @param {JobApplicationRequest} jobApplicationRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ApplicationsAcceptReject(id: number, jobApplicationRequest: JobApplicationRequest, options?: AxiosRequestConfig): AxiosPromise<JobApplicationApiAction>;
 
     /**
      * ViewSet for managing job applications.
-     * @param {JobApplication} jobApplication 
+     * @param {JobApplicationRequest} jobApplicationRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ApplicationsCreate(jobApplication: JobApplication, options?: AxiosRequestConfig): AxiosPromise<JobApplication>;
+    v1ApplicationsCreate(jobApplicationRequest: JobApplicationRequest, options?: AxiosRequestConfig): AxiosPromise<JobApplication>;
 
     /**
      * ViewSet for managing job applications.
@@ -17817,22 +20452,12 @@ export interface V1ApiInterface {
     /**
      * ViewSet for managing job applications.
      * @param {number} id A unique integer value identifying this Job Application.
-     * @param {PatchedJobApplication} [patchedJobApplication] 
+     * @param {PatchedJobApplicationRequest} [patchedJobApplicationRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ApplicationsPartialUpdate(id: number, patchedJobApplication?: PatchedJobApplication, options?: AxiosRequestConfig): AxiosPromise<JobApplication>;
-
-    /**
-     * Reject a job application
-     * @param {number} id A unique integer value identifying this Job Application.
-     * @param {JobApplication} jobApplication 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1ApplicationsRejectCreate(id: number, jobApplication: JobApplication, options?: AxiosRequestConfig): AxiosPromise<JobApplicationApiAction>;
+    v1ApplicationsPartialUpdate(id: number, patchedJobApplicationRequest?: PatchedJobApplicationRequest, options?: AxiosRequestConfig): AxiosPromise<JobApplication>;
 
     /**
      * ViewSet for managing job applications.
@@ -17846,31 +20471,64 @@ export interface V1ApiInterface {
     /**
      * ViewSet for managing job applications.
      * @param {number} id A unique integer value identifying this Job Application.
-     * @param {JobApplication} jobApplication 
+     * @param {JobApplicationRequest} jobApplicationRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ApplicationsUpdate(id: number, jobApplication: JobApplication, options?: AxiosRequestConfig): AxiosPromise<JobApplication>;
+    v1ApplicationsUpdate(id: number, jobApplicationRequest: JobApplicationRequest, options?: AxiosRequestConfig): AxiosPromise<JobApplication>;
 
     /**
      * Withdraw a job by master
      * @param {number} id A unique integer value identifying this Job Application.
-     * @param {JobApplication} jobApplication 
+     * @param {JobApplicationRequest} jobApplicationRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ApplicationsWithdrawCreate(id: number, jobApplication: JobApplication, options?: AxiosRequestConfig): AxiosPromise<JobApplicationApiAction>;
+    v1ApplicationsWithdraw(id: number, jobApplicationRequest: JobApplicationRequest, options?: AxiosRequestConfig): AxiosPromise<JobApplicationApiAction>;
 
     /**
      * 
-     * @param {JobAssignment} [jobAssignment] 
+     * @param {string} assignmentId 
+     * @param {Array<any>} files 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsCreate(jobAssignment?: JobAssignment, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
+    v1AssignmentsAttachmentsCreate(assignmentId: string, files: Array<any>, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * 
+     * @param {string} assignmentId 
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1AssignmentsAttachmentsDestroy(assignmentId: string, id: string, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * 
+     * @param {string} assignmentId 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1AssignmentsAttachmentsList(assignmentId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedAttachmentList>;
+
+    /**
+     * 
+     * @param {JobAssignmentRequest} [jobAssignmentRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1AssignmentsCreate(jobAssignmentRequest?: JobAssignmentRequest, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
 
     /**
      * 
@@ -17896,22 +20554,22 @@ export interface V1ApiInterface {
     /**
      * 
      * @param {string} id 
-     * @param {PatchedJobAssignment} [patchedJobAssignment] 
+     * @param {PatchedJobAssignmentRequest} [patchedJobAssignmentRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsPartialUpdate(id: string, patchedJobAssignment?: PatchedJobAssignment, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
+    v1AssignmentsPartialUpdate(id: string, patchedJobAssignmentRequest?: PatchedJobAssignmentRequest, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
 
     /**
      * Rate a completed job assignment
      * @param {string} id 
-     * @param {Rating} [rating] 
+     * @param {RatingRequest} [ratingRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsRateCreate(id: string, rating?: Rating, options?: AxiosRequestConfig): AxiosPromise<CResponse>;
+    v1AssignmentsRateCreate(id: string, ratingRequest?: RatingRequest, options?: AxiosRequestConfig): AxiosPromise<CResponse>;
 
     /**
      * 
@@ -17925,31 +20583,31 @@ export interface V1ApiInterface {
     /**
      * 
      * @param {string} id 
-     * @param {JobAssignment} [jobAssignment] 
+     * @param {JobAssignmentRequest} [jobAssignmentRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsUpdate(id: string, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
+    v1AssignmentsUpdate(id: string, jobAssignmentRequest?: JobAssignmentRequest, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
 
     /**
      * Update progress notes for an assignment
      * @param {string} id 
-     * @param {PatchedProgressUpdate} [patchedProgressUpdate] 
+     * @param {PatchedProgressUpdateRequest} [patchedProgressUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsUpdateProgressPartialUpdate(id: string, patchedProgressUpdate?: PatchedProgressUpdate, options?: AxiosRequestConfig): AxiosPromise<JobAssignmentApiAction>;
+    v1AssignmentsUpdateProgressPartialUpdate(id: string, patchedProgressUpdateRequest?: PatchedProgressUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<JobAssignmentApiAction>;
 
     /**
      * Authenticate or register a user using Firebase ID token.
-     * @param {FireBaseAuth} fireBaseAuth 
+     * @param {FireBaseAuthRequest} fireBaseAuthRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AuthFirebaseCreate(fireBaseAuth: FireBaseAuth, options?: AxiosRequestConfig): AxiosPromise<FirebaseAuthResponse>;
+    v1AuthFirebaseCreate(fireBaseAuthRequest: FireBaseAuthRequest, options?: AxiosRequestConfig): AxiosPromise<FirebaseAuthResponse>;
 
     /**
      * User logout view - enhanced version of api_users LogOutView
@@ -17960,23 +20618,13 @@ export interface V1ApiInterface {
     v1AuthLogoutCreate(options?: AxiosRequestConfig): AxiosPromise<LogoutResponse>;
 
     /**
-     * Add participants to chat room
-     * @param {string} id 
-     * @param {ChatRoom} chatRoom 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1ChatsRoomsAddParticipants(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
-
-    /**
      * ViewSet for managing chat rooms
-     * @param {ChatRoomCreate} chatRoomCreate 
+     * @param {ChatRoomCreateRequest} chatRoomCreateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsCreate(chatRoomCreate: ChatRoomCreate, options?: AxiosRequestConfig): AxiosPromise<ChatRoomCreate>;
+    v1ChatsRoomsCreate(chatRoomCreateRequest: ChatRoomCreateRequest, options?: AxiosRequestConfig): AxiosPromise<ChatRoomCreate>;
 
     /**
      * ViewSet for managing chat rooms
@@ -17999,12 +20647,12 @@ export interface V1ApiInterface {
     /**
      * Leave a chat room
      * @param {string} id 
-     * @param {ChatRoom} chatRoom 
+     * @param {ChatRoomRequest} chatRoomRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsLeave(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
+    v1ChatsRoomsLeave(id: string, chatRoomRequest: ChatRoomRequest, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
 
     /**
      * ViewSet for managing chat rooms
@@ -18021,12 +20669,12 @@ export interface V1ApiInterface {
     /**
      * 
      * @param {string} chatRoomId 
-     * @param {MessageCreate} messageCreate 
+     * @param {MessageCreateRequest} messageCreateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreate: MessageCreate, options?: AxiosRequestConfig): AxiosPromise<MessageCreate>;
+    v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreateRequest: MessageCreateRequest, options?: AxiosRequestConfig): AxiosPromise<MessageCreate>;
 
     /**
      * 
@@ -18055,12 +20703,12 @@ export interface V1ApiInterface {
      * 
      * @param {string} chatRoomId 
      * @param {string} id 
-     * @param {PatchedMessage} [patchedMessage] 
+     * @param {PatchedMessageRequest} [patchedMessageRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessage?: PatchedMessage, options?: AxiosRequestConfig): AxiosPromise<Message>;
+    v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessageRequest?: PatchedMessageRequest, options?: AxiosRequestConfig): AxiosPromise<Message>;
 
     /**
      * 
@@ -18076,22 +20724,22 @@ export interface V1ApiInterface {
      * 
      * @param {string} chatRoomId 
      * @param {string} id 
-     * @param {MessageUpdate} messageUpdate 
+     * @param {MessageUpdateRequest} messageUpdateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdate: MessageUpdate, options?: AxiosRequestConfig): AxiosPromise<MessageUpdate>;
+    v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdateRequest: MessageUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<MessageUpdate>;
 
     /**
      * ViewSet for managing chat rooms
      * @param {string} id 
-     * @param {PatchedChatRoom} [patchedChatRoom] 
+     * @param {PatchedChatRoomRequest} [patchedChatRoomRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsPartialUpdate(id: string, patchedChatRoom?: PatchedChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
+    v1ChatsRoomsPartialUpdate(id: string, patchedChatRoomRequest?: PatchedChatRoomRequest, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
 
     /**
      * ViewSet for managing chat rooms
@@ -18105,12 +20753,79 @@ export interface V1ApiInterface {
     /**
      * ViewSet for managing chat rooms
      * @param {string} id 
-     * @param {ChatRoom} chatRoom 
+     * @param {ChatRoomRequest} chatRoomRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsUpdate(id: string, chatRoom: ChatRoom, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
+    v1ChatsRoomsUpdate(id: string, chatRoomRequest: ChatRoomRequest, options?: AxiosRequestConfig): AxiosPromise<ChatRoom>;
+
+    /**
+     * Create contact with throttling.
+     * @param {SimpleContactRequest} simpleContactRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ContactsCreate(simpleContactRequest: SimpleContactRequest, options?: AxiosRequestConfig): AxiosPromise<SimpleContact>;
+
+    /**
+     * Contact enquiries API with minimal code.
+     * @param {number} id A unique integer value identifying this simple contact.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ContactsDestroy(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Get available enquiry types.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ContactsEnquiryTypesRetrieve(options?: AxiosRequestConfig): AxiosPromise<SimpleContact>;
+
+    /**
+     * Contact enquiries API with minimal code.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ContactsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedSimpleContactList>;
+
+    /**
+     * Contact enquiries API with minimal code.
+     * @param {number} id A unique integer value identifying this simple contact.
+     * @param {PatchedSimpleContactRequest} [patchedSimpleContactRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ContactsPartialUpdate(id: number, patchedSimpleContactRequest?: PatchedSimpleContactRequest, options?: AxiosRequestConfig): AxiosPromise<SimpleContact>;
+
+    /**
+     * Contact enquiries API with minimal code.
+     * @param {number} id A unique integer value identifying this simple contact.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ContactsRetrieve(id: number, options?: AxiosRequestConfig): AxiosPromise<SimpleContact>;
+
+    /**
+     * Contact enquiries API with minimal code.
+     * @param {number} id A unique integer value identifying this simple contact.
+     * @param {SimpleContactRequest} simpleContactRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ContactsUpdate(id: number, simpleContactRequest: SimpleContactRequest, options?: AxiosRequestConfig): AxiosPromise<SimpleContact>;
 
     /**
      * Languages - Read-only (managed via admin/fixtures).
@@ -18138,12 +20853,12 @@ export interface V1ApiInterface {
 
     /**
      * Service Areas - Full CRUD with authenticated access.
-     * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+     * @param {ServiceAreaCreateUpdateRequest} serviceAreaCreateUpdateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreServiceAreasCreate(serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceAreaCreateUpdate>;
+    v1CoreServiceAreasCreate(serviceAreaCreateUpdateRequest: ServiceAreaCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<ServiceAreaCreateUpdate>;
 
     /**
      * Service Areas - Full CRUD with authenticated access.
@@ -18171,12 +20886,12 @@ export interface V1ApiInterface {
     /**
      * Service Areas - Full CRUD with authenticated access.
      * @param {number} id A unique integer value identifying this Service Area.
-     * @param {PatchedServiceAreaCreateUpdate} [patchedServiceAreaCreateUpdate] 
+     * @param {PatchedServiceAreaCreateUpdateRequest} [patchedServiceAreaCreateUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreServiceAreasPartialUpdate(id: number, patchedServiceAreaCreateUpdate?: PatchedServiceAreaCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceAreaCreateUpdate>;
+    v1CoreServiceAreasPartialUpdate(id: number, patchedServiceAreaCreateUpdateRequest?: PatchedServiceAreaCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<ServiceAreaCreateUpdate>;
 
     /**
      * Service Areas - Full CRUD with authenticated access.
@@ -18190,21 +20905,21 @@ export interface V1ApiInterface {
     /**
      * Service Areas - Full CRUD with authenticated access.
      * @param {number} id A unique integer value identifying this Service Area.
-     * @param {ServiceAreaCreateUpdate} serviceAreaCreateUpdate 
+     * @param {ServiceAreaCreateUpdateRequest} serviceAreaCreateUpdateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreServiceAreasUpdate(id: number, serviceAreaCreateUpdate: ServiceAreaCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceAreaCreateUpdate>;
+    v1CoreServiceAreasUpdate(id: number, serviceAreaCreateUpdateRequest: ServiceAreaCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<ServiceAreaCreateUpdate>;
 
     /**
      * Service Categories - Full CRUD with authenticated access.
-     * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+     * @param {ServiceCategoryCreateUpdateRequest} serviceCategoryCreateUpdateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceCategoryCreateUpdate>;
+    v1CoreServiceCategoriesCreate(serviceCategoryCreateUpdateRequest: ServiceCategoryCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<ServiceCategoryCreateUpdate>;
 
     /**
      * Service Categories - Full CRUD with authenticated access.
@@ -18232,12 +20947,12 @@ export interface V1ApiInterface {
     /**
      * Service Categories - Full CRUD with authenticated access.
      * @param {number} id A unique integer value identifying this Service Category.
-     * @param {PatchedServiceCategoryCreateUpdate} [patchedServiceCategoryCreateUpdate] 
+     * @param {PatchedServiceCategoryCreateUpdateRequest} [patchedServiceCategoryCreateUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreServiceCategoriesPartialUpdate(id: number, patchedServiceCategoryCreateUpdate?: PatchedServiceCategoryCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceCategoryCreateUpdate>;
+    v1CoreServiceCategoriesPartialUpdate(id: number, patchedServiceCategoryCreateUpdateRequest?: PatchedServiceCategoryCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<ServiceCategoryCreateUpdate>;
 
     /**
      * Service Categories - Full CRUD with authenticated access.
@@ -18251,21 +20966,21 @@ export interface V1ApiInterface {
     /**
      * Service Categories - Full CRUD with authenticated access.
      * @param {number} id A unique integer value identifying this Service Category.
-     * @param {ServiceCategoryCreateUpdate} serviceCategoryCreateUpdate 
+     * @param {ServiceCategoryCreateUpdateRequest} serviceCategoryCreateUpdateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreServiceCategoriesUpdate(id: number, serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceCategoryCreateUpdate>;
+    v1CoreServiceCategoriesUpdate(id: number, serviceCategoryCreateUpdateRequest: ServiceCategoryCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<ServiceCategoryCreateUpdate>;
 
     /**
      * Service Subcategories - Full CRUD with authenticated access.
-     * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+     * @param {ServiceSubcategoryCreateUpdateRequest} serviceSubcategoryCreateUpdateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceSubcategoryCreateUpdate>;
+    v1CoreServiceSubcategoriesCreate(serviceSubcategoryCreateUpdateRequest: ServiceSubcategoryCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<ServiceSubcategoryCreateUpdate>;
 
     /**
      * Service Subcategories - Full CRUD with authenticated access.
@@ -18295,12 +21010,12 @@ export interface V1ApiInterface {
     /**
      * Service Subcategories - Full CRUD with authenticated access.
      * @param {number} id A unique integer value identifying this Service Subcategory.
-     * @param {PatchedServiceSubcategoryCreateUpdate} [patchedServiceSubcategoryCreateUpdate] 
+     * @param {PatchedServiceSubcategoryCreateUpdateRequest} [patchedServiceSubcategoryCreateUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreServiceSubcategoriesPartialUpdate(id: number, patchedServiceSubcategoryCreateUpdate?: PatchedServiceSubcategoryCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceSubcategoryCreateUpdate>;
+    v1CoreServiceSubcategoriesPartialUpdate(id: number, patchedServiceSubcategoryCreateUpdateRequest?: PatchedServiceSubcategoryCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<ServiceSubcategoryCreateUpdate>;
 
     /**
      * Service Subcategories - Full CRUD with authenticated access.
@@ -18314,21 +21029,21 @@ export interface V1ApiInterface {
     /**
      * Service Subcategories - Full CRUD with authenticated access.
      * @param {number} id A unique integer value identifying this Service Subcategory.
-     * @param {ServiceSubcategoryCreateUpdate} serviceSubcategoryCreateUpdate 
+     * @param {ServiceSubcategoryCreateUpdateRequest} serviceSubcategoryCreateUpdateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreServiceSubcategoriesUpdate(id: number, serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<ServiceSubcategoryCreateUpdate>;
+    v1CoreServiceSubcategoriesUpdate(id: number, serviceSubcategoryCreateUpdateRequest: ServiceSubcategoryCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<ServiceSubcategoryCreateUpdate>;
 
     /**
      * Support FAQs - Full CRUD with authenticated access.
-     * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+     * @param {SupportFAQCreateUpdateRequest} supportFAQCreateUpdateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreSupportFaqCreate(supportFAQCreateUpdate: SupportFAQCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SupportFAQCreateUpdate>;
+    v1CoreSupportFaqCreate(supportFAQCreateUpdateRequest: SupportFAQCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<SupportFAQCreateUpdate>;
 
     /**
      * Support FAQs - Full CRUD with authenticated access.
@@ -18357,12 +21072,12 @@ export interface V1ApiInterface {
     /**
      * Support FAQs - Full CRUD with authenticated access.
      * @param {number} id A unique integer value identifying this Support FAQ.
-     * @param {PatchedSupportFAQCreateUpdate} [patchedSupportFAQCreateUpdate] 
+     * @param {PatchedSupportFAQCreateUpdateRequest} [patchedSupportFAQCreateUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreSupportFaqPartialUpdate(id: number, patchedSupportFAQCreateUpdate?: PatchedSupportFAQCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SupportFAQCreateUpdate>;
+    v1CoreSupportFaqPartialUpdate(id: number, patchedSupportFAQCreateUpdateRequest?: PatchedSupportFAQCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<SupportFAQCreateUpdate>;
 
     /**
      * Support FAQs - Full CRUD with authenticated access.
@@ -18376,21 +21091,21 @@ export interface V1ApiInterface {
     /**
      * Support FAQs - Full CRUD with authenticated access.
      * @param {number} id A unique integer value identifying this Support FAQ.
-     * @param {SupportFAQCreateUpdate} supportFAQCreateUpdate 
+     * @param {SupportFAQCreateUpdateRequest} supportFAQCreateUpdateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreSupportFaqUpdate(id: number, supportFAQCreateUpdate: SupportFAQCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SupportFAQCreateUpdate>;
+    v1CoreSupportFaqUpdate(id: number, supportFAQCreateUpdateRequest: SupportFAQCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<SupportFAQCreateUpdate>;
 
     /**
      * System Settings - Full CRUD with authenticated access.
-     * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+     * @param {SystemSettingsCreateUpdateRequest} systemSettingsCreateUpdateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreSystemSettingsCreate(systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SystemSettingsCreateUpdate>;
+    v1CoreSystemSettingsCreate(systemSettingsCreateUpdateRequest: SystemSettingsCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<SystemSettingsCreateUpdate>;
 
     /**
      * System Settings - Full CRUD with authenticated access.
@@ -18418,12 +21133,12 @@ export interface V1ApiInterface {
     /**
      * System Settings - Full CRUD with authenticated access.
      * @param {number} id A unique integer value identifying this System Setting.
-     * @param {PatchedSystemSettingsCreateUpdate} [patchedSystemSettingsCreateUpdate] 
+     * @param {PatchedSystemSettingsCreateUpdateRequest} [patchedSystemSettingsCreateUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreSystemSettingsPartialUpdate(id: number, patchedSystemSettingsCreateUpdate?: PatchedSystemSettingsCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SystemSettingsCreateUpdate>;
+    v1CoreSystemSettingsPartialUpdate(id: number, patchedSystemSettingsCreateUpdateRequest?: PatchedSystemSettingsCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<SystemSettingsCreateUpdate>;
 
     /**
      * System Settings - Full CRUD with authenticated access.
@@ -18437,12 +21152,12 @@ export interface V1ApiInterface {
     /**
      * System Settings - Full CRUD with authenticated access.
      * @param {number} id A unique integer value identifying this System Setting.
-     * @param {SystemSettingsCreateUpdate} systemSettingsCreateUpdate 
+     * @param {SystemSettingsCreateUpdateRequest} systemSettingsCreateUpdateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1CoreSystemSettingsUpdate(id: number, systemSettingsCreateUpdate: SystemSettingsCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<SystemSettingsCreateUpdate>;
+    v1CoreSystemSettingsUpdate(id: number, systemSettingsCreateUpdateRequest: SystemSettingsCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<SystemSettingsCreateUpdate>;
 
     /**
      * Returns featured categories, recommended masters, and statistics for the home page. Prioritizes top masters first, then fills with additional masters if needed.
@@ -18454,63 +21169,108 @@ export interface V1ApiInterface {
     v1HomeClientRetrieve(options?: AxiosRequestConfig): AxiosPromise<HomePageData>;
 
     /**
-     * Complete an assignment with optional rating and review
-     * @param {string} id 
-     * @param {JobAssignmentCompletion} [jobAssignmentCompletion] 
+     * Get job recommendations for master based on skills, location, and preferences.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobAssignmentsComplete(id: string, jobAssignmentCompletion?: JobAssignmentCompletion, options?: AxiosRequestConfig): AxiosPromise<JobAssignmentApiAction>;
+    v1HomeMasterNewJobsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedJobSearchList>;
+
+    /**
+     * Complete an assignment with optional rating and review
+     * @param {string} id 
+     * @param {JobAssignmentCompletionRequest} [jobAssignmentCompletionRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1JobAssignmentsComplete(id: string, jobAssignmentCompletionRequest?: JobAssignmentCompletionRequest, options?: AxiosRequestConfig): AxiosPromise<JobAssignmentApiAction>;
 
     /**
      * Start an assignment
      * @param {string} id 
-     * @param {JobAssignment} [jobAssignment] 
+     * @param {JobAssignmentRequest} [jobAssignmentRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobAssignmentsStart(id: string, jobAssignment?: JobAssignment, options?: AxiosRequestConfig): AxiosPromise<JobAssignmentApiAction>;
+    v1JobAssignmentsStart(id: string, jobAssignmentRequest?: JobAssignmentRequest, options?: AxiosRequestConfig): AxiosPromise<JobAssignmentApiAction>;
 
     /**
      * Apply to a job.
      * @param {number} id A unique integer value identifying this Job.
-     * @param {JobApply} jobApply 
+     * @param {JobApplyRequest} jobApplyRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobsApply(id: number, jobApply: JobApply, options?: AxiosRequestConfig): AxiosPromise<JobApiAction>;
+    v1JobsApply(id: number, jobApplyRequest: JobApplyRequest, options?: AxiosRequestConfig): AxiosPromise<JobApiAction>;
+
+    /**
+     * 
+     * @param {string} jobId 
+     * @param {Array<any>} files 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1JobsAttachmentsCreate(jobId: string, files: Array<any>, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} jobId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1JobsAttachmentsDestroy(id: string, jobId: string, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * 
+     * @param {string} jobId 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1JobsAttachmentsList(jobId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedAttachmentList>;
 
     /**
      * Toggle bookmark status for a job
      * @param {number} id A unique integer value identifying this Job.
-     * @param {Job} job 
+     * @param {JobRequest} jobRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobsBookmark(id: number, job: Job, options?: AxiosRequestConfig): AxiosPromise<CResponse>;
+    v1JobsBookmark(id: number, jobRequest: JobRequest, options?: AxiosRequestConfig): AxiosPromise<CResponse>;
 
     /**
      * Cancel a job. Only allowed if job is in PUBLISHED or ASSIGNED state.
      * @param {number} id A unique integer value identifying this Job.
-     * @param {Job} job 
+     * @param {JobRequest} jobRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobsCancel(id: number, job: Job, options?: AxiosRequestConfig): AxiosPromise<JobApiAction>;
+    v1JobsCancel(id: number, jobRequest: JobRequest, options?: AxiosRequestConfig): AxiosPromise<JobApiAction>;
 
     /**
      * ViewSet for managing jobs.
-     * @param {Job} job 
+     * @param {JobRequest} jobRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobsCreate(job: Job, options?: AxiosRequestConfig): AxiosPromise<Job>;
+    v1JobsCreate(jobRequest: JobRequest, options?: AxiosRequestConfig): AxiosPromise<Job>;
 
     /**
      * ViewSet for managing jobs.
@@ -18524,47 +21284,92 @@ export interface V1ApiInterface {
     /**
      * Toggle favorite status for a job
      * @param {number} id A unique integer value identifying this Job.
-     * @param {Job} job 
+     * @param {JobRequest} jobRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobsFavorite(id: number, job: Job, options?: AxiosRequestConfig): AxiosPromise<CResponse>;
+    v1JobsFavorite(id: number, jobRequest: JobRequest, options?: AxiosRequestConfig): AxiosPromise<CResponse>;
 
     /**
      * ViewSet for managing jobs.
+     * @param {string} [city] 
+     * @param {number} [maxPrice] 
+     * @param {number} [minPrice] 
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {number} [page] A page number within the paginated result set.
      * @param {number} [pageSize] Number of results to return per page.
      * @param {string} [search] A search term.
+     * @param {number} [serviceCategory] 
+     * @param {string} [serviceDateFrom] 
+     * @param {string} [serviceDateTo] 
      * @param {number} [serviceSubcategory] 
-     * @param {'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published'} [status] * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled
      * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobsList(ordering?: string, page?: number, pageSize?: number, search?: string, serviceSubcategory?: number, status?: 'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published', urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): AxiosPromise<PaginatedJobList>;
+    v1JobsList(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): AxiosPromise<PaginatedJobList>;
+
+    /**
+     * Get completed job history for master
+     * @param {string} [city] 
+     * @param {number} [maxPrice] 
+     * @param {number} [minPrice] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {number} [serviceCategory] 
+     * @param {string} [serviceDateFrom] 
+     * @param {string} [serviceDateTo] 
+     * @param {number} [serviceSubcategory] 
+     * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1JobsMasterHistory(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): AxiosPromise<PaginatedJobList>;
+
+    /**
+     * Get jobs currently in progress for master
+     * @param {string} [city] 
+     * @param {number} [maxPrice] 
+     * @param {number} [minPrice] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {number} [serviceCategory] 
+     * @param {string} [serviceDateFrom] 
+     * @param {string} [serviceDateTo] 
+     * @param {number} [serviceSubcategory] 
+     * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1JobsMasterInProgress(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): AxiosPromise<PaginatedJobList>;
 
     /**
      * ViewSet for managing jobs.
      * @param {number} id A unique integer value identifying this Job.
-     * @param {PatchedJob} [patchedJob] 
+     * @param {PatchedJobRequest} [patchedJobRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobsPartialUpdate(id: number, patchedJob?: PatchedJob, options?: AxiosRequestConfig): AxiosPromise<Job>;
+    v1JobsPartialUpdate(id: number, patchedJobRequest?: PatchedJobRequest, options?: AxiosRequestConfig): AxiosPromise<Job>;
 
     /**
      * Publish a draft job. Only allowed if job is in DRAFT state.
      * @param {number} id A unique integer value identifying this Job.
-     * @param {Job} job 
+     * @param {JobRequest} jobRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobsPublish(id: number, job: Job, options?: AxiosRequestConfig): AxiosPromise<JobApiAction>;
+    v1JobsPublish(id: number, jobRequest: JobRequest, options?: AxiosRequestConfig): AxiosPromise<JobApiAction>;
 
     /**
      * ViewSet for managing jobs.
@@ -18578,21 +21383,21 @@ export interface V1ApiInterface {
     /**
      * ViewSet for managing jobs.
      * @param {number} id A unique integer value identifying this Job.
-     * @param {Job} job 
+     * @param {JobRequest} jobRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1JobsUpdate(id: number, job: Job, options?: AxiosRequestConfig): AxiosPromise<Job>;
+    v1JobsUpdate(id: number, jobRequest: JobRequest, options?: AxiosRequestConfig): AxiosPromise<Job>;
 
     /**
      * ViewSet for managing cities.
-     * @param {City} city 
+     * @param {CityRequest} cityRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1LocationsCitiesCreate(city: City, options?: AxiosRequestConfig): AxiosPromise<City>;
+    v1LocationsCitiesCreate(cityRequest: CityRequest, options?: AxiosRequestConfig): AxiosPromise<City>;
 
     /**
      * ViewSet for managing cities.
@@ -18620,12 +21425,12 @@ export interface V1ApiInterface {
     /**
      * ViewSet for managing cities.
      * @param {number} id A unique integer value identifying this City.
-     * @param {PatchedCity} [patchedCity] 
+     * @param {PatchedCityRequest} [patchedCityRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1LocationsCitiesPartialUpdate(id: number, patchedCity?: PatchedCity, options?: AxiosRequestConfig): AxiosPromise<City>;
+    v1LocationsCitiesPartialUpdate(id: number, patchedCityRequest?: PatchedCityRequest, options?: AxiosRequestConfig): AxiosPromise<City>;
 
     /**
      * ViewSet for managing cities.
@@ -18639,21 +21444,21 @@ export interface V1ApiInterface {
     /**
      * ViewSet for managing cities.
      * @param {number} id A unique integer value identifying this City.
-     * @param {City} city 
+     * @param {CityRequest} cityRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1LocationsCitiesUpdate(id: number, city: City, options?: AxiosRequestConfig): AxiosPromise<City>;
+    v1LocationsCitiesUpdate(id: number, cityRequest: CityRequest, options?: AxiosRequestConfig): AxiosPromise<City>;
 
     /**
      * ViewSet for managing countries.
-     * @param {Country} country 
+     * @param {CountryRequest} countryRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1LocationsCountriesCreate(country: Country, options?: AxiosRequestConfig): AxiosPromise<Country>;
+    v1LocationsCountriesCreate(countryRequest: CountryRequest, options?: AxiosRequestConfig): AxiosPromise<Country>;
 
     /**
      * ViewSet for managing countries.
@@ -18680,12 +21485,12 @@ export interface V1ApiInterface {
     /**
      * ViewSet for managing countries.
      * @param {number} id A unique integer value identifying this Country.
-     * @param {PatchedCountry} [patchedCountry] 
+     * @param {PatchedCountryRequest} [patchedCountryRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1LocationsCountriesPartialUpdate(id: number, patchedCountry?: PatchedCountry, options?: AxiosRequestConfig): AxiosPromise<Country>;
+    v1LocationsCountriesPartialUpdate(id: number, patchedCountryRequest?: PatchedCountryRequest, options?: AxiosRequestConfig): AxiosPromise<Country>;
 
     /**
      * ViewSet for managing countries.
@@ -18699,12 +21504,12 @@ export interface V1ApiInterface {
     /**
      * ViewSet for managing countries.
      * @param {number} id A unique integer value identifying this Country.
-     * @param {Country} country 
+     * @param {CountryRequest} countryRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1LocationsCountriesUpdate(id: number, country: Country, options?: AxiosRequestConfig): AxiosPromise<Country>;
+    v1LocationsCountriesUpdate(id: number, countryRequest: CountryRequest, options?: AxiosRequestConfig): AxiosPromise<Country>;
 
     /**
      * Get notification counts for current user
@@ -18716,12 +21521,12 @@ export interface V1ApiInterface {
 
     /**
      * ViewSet for managing notifications with clean actions.
-     * @param {NotificationCreate} notificationCreate 
+     * @param {NotificationCreateRequest} notificationCreateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1NotificationsCreate(notificationCreate: NotificationCreate, options?: AxiosRequestConfig): AxiosPromise<NotificationCreate>;
+    v1NotificationsCreate(notificationCreateRequest: NotificationCreateRequest, options?: AxiosRequestConfig): AxiosPromise<NotificationCreate>;
 
     /**
      * ViewSet for managing notifications with clean actions.
@@ -18746,42 +21551,42 @@ export interface V1ApiInterface {
 
     /**
      * Mark all notifications as read for current user
-     * @param {Notification} notification 
+     * @param {NotificationRequest} notificationRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1NotificationsMarkAllRead(notification: Notification, options?: AxiosRequestConfig): AxiosPromise<any>;
+    v1NotificationsMarkAllRead(notificationRequest: NotificationRequest, options?: AxiosRequestConfig): AxiosPromise<any>;
 
     /**
      * Mark specific notification as read
      * @param {string} id 
-     * @param {Notification} notification 
+     * @param {NotificationRequest} notificationRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1NotificationsMarkRead(id: string, notification: Notification, options?: AxiosRequestConfig): AxiosPromise<Notification>;
+    v1NotificationsMarkRead(id: string, notificationRequest: NotificationRequest, options?: AxiosRequestConfig): AxiosPromise<Notification>;
 
     /**
      * Mark specific notification as unread
      * @param {string} id 
-     * @param {Notification} notification 
+     * @param {NotificationRequest} notificationRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1NotificationsMarkUnread(id: string, notification: Notification, options?: AxiosRequestConfig): AxiosPromise<Notification>;
+    v1NotificationsMarkUnread(id: string, notificationRequest: NotificationRequest, options?: AxiosRequestConfig): AxiosPromise<Notification>;
 
     /**
      * ViewSet for managing notifications with clean actions.
      * @param {string} id 
-     * @param {PatchedNotificationUpdate} [patchedNotificationUpdate] 
+     * @param {PatchedNotificationUpdateRequest} [patchedNotificationUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1NotificationsPartialUpdate(id: string, patchedNotificationUpdate?: PatchedNotificationUpdate, options?: AxiosRequestConfig): AxiosPromise<NotificationUpdate>;
+    v1NotificationsPartialUpdate(id: string, patchedNotificationUpdateRequest?: PatchedNotificationUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<NotificationUpdate>;
 
     /**
      * Get recent notifications (last 7 days)
@@ -18820,15 +21625,15 @@ export interface V1ApiInterface {
     /**
      * ViewSet for managing notifications with clean actions.
      * @param {string} id 
-     * @param {NotificationUpdate} [notificationUpdate] 
+     * @param {NotificationUpdateRequest} [notificationUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1NotificationsUpdate(id: string, notificationUpdate?: NotificationUpdate, options?: AxiosRequestConfig): AxiosPromise<NotificationUpdate>;
+    v1NotificationsUpdate(id: string, notificationUpdateRequest?: NotificationUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<NotificationUpdate>;
 
     /**
-     * Perform action based on \'action\' parameter in request data.
+     * 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
@@ -18837,12 +21642,12 @@ export interface V1ApiInterface {
 
     /**
      * 
-     * @param {PatchedUserNotificationSettings} [patchedUserNotificationSettings] 
+     * @param {PatchedUserNotificationSettingsRequest} [patchedUserNotificationSettingsRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ProfileNotificationSettingsPartialUpdate(patchedUserNotificationSettings?: PatchedUserNotificationSettings, options?: AxiosRequestConfig): AxiosPromise<UserNotificationSettings>;
+    v1ProfileNotificationSettingsPartialUpdate(patchedUserNotificationSettingsRequest?: PatchedUserNotificationSettingsRequest, options?: AxiosRequestConfig): AxiosPromise<UserNotificationSettings>;
 
     /**
      * 
@@ -18854,21 +21659,21 @@ export interface V1ApiInterface {
 
     /**
      * 
-     * @param {UserNotificationSettings} [userNotificationSettings] 
+     * @param {UserNotificationSettingsRequest} [userNotificationSettingsRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ProfileNotificationSettingsUpdate(userNotificationSettings?: UserNotificationSettings, options?: AxiosRequestConfig): AxiosPromise<UserNotificationSettings>;
+    v1ProfileNotificationSettingsUpdate(userNotificationSettingsRequest?: UserNotificationSettingsRequest, options?: AxiosRequestConfig): AxiosPromise<UserNotificationSettings>;
 
     /**
      * Retrieve or update authenticated user\'s profile, including profile image upload.
-     * @param {PatchedUserUpdate} [patchedUserUpdate] 
+     * @param {PatchedUserUpdateRequest} [patchedUserUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ProfilePartialUpdate(patchedUserUpdate?: PatchedUserUpdate, options?: AxiosRequestConfig): AxiosPromise<UserUpdate>;
+    v1ProfilePartialUpdate(patchedUserUpdateRequest?: PatchedUserUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<UserUpdate>;
 
     /**
      * Retrieve or update authenticated user\'s profile, including profile image upload.
@@ -18880,31 +21685,31 @@ export interface V1ApiInterface {
 
     /**
      * Retrieve or update authenticated user\'s profile, including profile image upload.
-     * @param {UserUpdate} [userUpdate] 
+     * @param {UserUpdateRequest} [userUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ProfileUpdate(userUpdate?: UserUpdate, options?: AxiosRequestConfig): AxiosPromise<UserUpdate>;
+    v1ProfileUpdate(userUpdateRequest?: UserUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<UserUpdate>;
 
     /**
      * Archive a published resume.
      * @param {number} id A unique integer value identifying this master resume.
-     * @param {MasterResume} masterResume 
+     * @param {MasterResumeRequest} masterResumeRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ResumesArchive(id: number, masterResume: MasterResume, options?: AxiosRequestConfig): AxiosPromise<void>;
+    v1ResumesArchive(id: number, masterResumeRequest: MasterResumeRequest, options?: AxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * CRUD for Master resumes. Masters manage their own resumes, public sees published.
-     * @param {MasterResume} masterResume 
+     * @param {MasterResumeRequest} masterResumeRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ResumesCreate(masterResume: MasterResume, options?: AxiosRequestConfig): AxiosPromise<MasterResume>;
+    v1ResumesCreate(masterResumeRequest: MasterResumeRequest, options?: AxiosRequestConfig): AxiosPromise<MasterResume>;
 
     /**
      * CRUD for Master resumes. Masters manage their own resumes, public sees published.
@@ -18930,22 +21735,22 @@ export interface V1ApiInterface {
     /**
      * CRUD for Master resumes. Masters manage their own resumes, public sees published.
      * @param {number} id A unique integer value identifying this master resume.
-     * @param {PatchedMasterResume} [patchedMasterResume] 
+     * @param {PatchedMasterResumeRequest} [patchedMasterResumeRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ResumesPartialUpdate(id: number, patchedMasterResume?: PatchedMasterResume, options?: AxiosRequestConfig): AxiosPromise<MasterResume>;
+    v1ResumesPartialUpdate(id: number, patchedMasterResumeRequest?: PatchedMasterResumeRequest, options?: AxiosRequestConfig): AxiosPromise<MasterResume>;
 
     /**
      * Publish a draft resume. Only allowed if in DRAFT state.
      * @param {number} id A unique integer value identifying this master resume.
-     * @param {MasterResume} masterResume 
+     * @param {MasterResumeRequest} masterResumeRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ResumesPublish(id: number, masterResume: MasterResume, options?: AxiosRequestConfig): AxiosPromise<void>;
+    v1ResumesPublish(id: number, masterResumeRequest: MasterResumeRequest, options?: AxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * CRUD for Master resumes. Masters manage their own resumes, public sees published.
@@ -18959,12 +21764,12 @@ export interface V1ApiInterface {
     /**
      * CRUD for Master resumes. Masters manage their own resumes, public sees published.
      * @param {number} id A unique integer value identifying this master resume.
-     * @param {MasterResume} masterResume 
+     * @param {MasterResumeRequest} masterResumeRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ResumesUpdate(id: number, masterResume: MasterResume, options?: AxiosRequestConfig): AxiosPromise<MasterResume>;
+    v1ResumesUpdate(id: number, masterResumeRequest: MasterResumeRequest, options?: AxiosRequestConfig): AxiosPromise<MasterResume>;
 
     /**
      * Get review analytics for a specific master
@@ -19119,21 +21924,21 @@ export interface V1ApiInterface {
 
     /**
      * Update online status for master
-     * @param {MasterOnlineStatusRequest} [masterOnlineStatusRequest] 
+     * @param {MasterOnlineStatusRequestRequest} [masterOnlineStatusRequestRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequest?: MasterOnlineStatusRequest, options?: AxiosRequestConfig): AxiosPromise<MasterOnlineStatusResponse>;
+    v1UsersMastersUpdateOnlineStatus(masterOnlineStatusRequestRequest?: MasterOnlineStatusRequestRequest, options?: AxiosRequestConfig): AxiosPromise<MasterOnlineStatusResponse>;
 
     /**
      * Crud for certificates.
-     * @param {Certificate} certificate 
+     * @param {CertificateRequest} certificateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMyCertificatesCreate(certificate: Certificate, options?: AxiosRequestConfig): AxiosPromise<Certificate>;
+    v1UsersMyCertificatesCreate(certificateRequest: CertificateRequest, options?: AxiosRequestConfig): AxiosPromise<Certificate>;
 
     /**
      * Crud for certificates.
@@ -19159,12 +21964,12 @@ export interface V1ApiInterface {
     /**
      * Crud for certificates.
      * @param {string} id 
-     * @param {PatchedCertificate} [patchedCertificate] 
+     * @param {PatchedCertificateRequest} [patchedCertificateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMyCertificatesPartialUpdate(id: string, patchedCertificate?: PatchedCertificate, options?: AxiosRequestConfig): AxiosPromise<Certificate>;
+    v1UsersMyCertificatesPartialUpdate(id: string, patchedCertificateRequest?: PatchedCertificateRequest, options?: AxiosRequestConfig): AxiosPromise<Certificate>;
 
     /**
      * Crud for certificates.
@@ -19178,30 +21983,30 @@ export interface V1ApiInterface {
     /**
      * Crud for certificates.
      * @param {string} id 
-     * @param {Certificate} certificate 
+     * @param {CertificateRequest} certificateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMyCertificatesUpdate(id: string, certificate: Certificate, options?: AxiosRequestConfig): AxiosPromise<Certificate>;
+    v1UsersMyCertificatesUpdate(id: string, certificateRequest: CertificateRequest, options?: AxiosRequestConfig): AxiosPromise<Certificate>;
 
     /**
      * 
-     * @param {EmployerProfileCreateUpdate} [employerProfileCreateUpdate] 
+     * @param {EmployerProfileCreateUpdateRequest} [employerProfileCreateUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMyEmployerCreateCreate(employerProfileCreateUpdate?: EmployerProfileCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<EmployerProfileCreateUpdate>;
+    v1UsersMyEmployerCreateCreate(employerProfileCreateUpdateRequest?: EmployerProfileCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<EmployerProfileCreateUpdate>;
 
     /**
      * 
-     * @param {PatchedEmployerProfileCreateUpdate} [patchedEmployerProfileCreateUpdate] 
+     * @param {PatchedEmployerProfileCreateUpdateRequest} [patchedEmployerProfileCreateUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMyEmployerPartialUpdate(patchedEmployerProfileCreateUpdate?: PatchedEmployerProfileCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<EmployerProfileCreateUpdate>;
+    v1UsersMyEmployerPartialUpdate(patchedEmployerProfileCreateUpdateRequest?: PatchedEmployerProfileCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<EmployerProfileCreateUpdate>;
 
     /**
      * 
@@ -19213,30 +22018,30 @@ export interface V1ApiInterface {
 
     /**
      * 
-     * @param {EmployerProfileCreateUpdate} [employerProfileCreateUpdate] 
+     * @param {EmployerProfileCreateUpdateRequest} [employerProfileCreateUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMyEmployerUpdate(employerProfileCreateUpdate?: EmployerProfileCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<EmployerProfileCreateUpdate>;
+    v1UsersMyEmployerUpdate(employerProfileCreateUpdateRequest?: EmployerProfileCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<EmployerProfileCreateUpdate>;
 
     /**
      * 
-     * @param {MasterProfileCreateUpdate} [masterProfileCreateUpdate] 
+     * @param {MasterProfileCreateUpdateRequest} [masterProfileCreateUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMyMasterCreateCreate(masterProfileCreateUpdate?: MasterProfileCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<MasterProfileCreateUpdate>;
+    v1UsersMyMasterCreateCreate(masterProfileCreateUpdateRequest?: MasterProfileCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<MasterProfileCreateUpdate>;
 
     /**
      * 
-     * @param {PatchedMasterProfileCreateUpdate} [patchedMasterProfileCreateUpdate] 
+     * @param {PatchedMasterProfileCreateUpdateRequest} [patchedMasterProfileCreateUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMyMasterPartialUpdate(patchedMasterProfileCreateUpdate?: PatchedMasterProfileCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<MasterProfileCreateUpdate>;
+    v1UsersMyMasterPartialUpdate(patchedMasterProfileCreateUpdateRequest?: PatchedMasterProfileCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<MasterProfileCreateUpdate>;
 
     /**
      * 
@@ -19248,21 +22053,54 @@ export interface V1ApiInterface {
 
     /**
      * 
-     * @param {MasterProfileCreateUpdate} [masterProfileCreateUpdate] 
+     * @param {MasterProfileCreateUpdateRequest} [masterProfileCreateUpdateRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMyMasterUpdate(masterProfileCreateUpdate?: MasterProfileCreateUpdate, options?: AxiosRequestConfig): AxiosPromise<MasterProfileCreateUpdate>;
+    v1UsersMyMasterUpdate(masterProfileCreateUpdateRequest?: MasterProfileCreateUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<MasterProfileCreateUpdate>;
+
+    /**
+     * 
+     * @param {string} portfolioId 
+     * @param {Array<any>} files 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersMyPortfolioAttachmentsCreate(portfolioId: string, files: Array<any>, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} portfolioId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersMyPortfolioAttachmentsDestroy(id: string, portfolioId: string, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * 
+     * @param {string} portfolioId 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1UsersMyPortfolioAttachmentsList(portfolioId: string, ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedAttachmentList>;
 
     /**
      * Crud for service master portfolio items.
-     * @param {PortfolioItem} portfolioItem 
+     * @param {PortfolioItemRequest} portfolioItemRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMyPortfolioCreate(portfolioItem: PortfolioItem, options?: AxiosRequestConfig): AxiosPromise<PortfolioItem>;
+    v1UsersMyPortfolioCreate(portfolioItemRequest: PortfolioItemRequest, options?: AxiosRequestConfig): AxiosPromise<PortfolioItem>;
 
     /**
      * Crud for service master portfolio items.
@@ -19288,12 +22126,12 @@ export interface V1ApiInterface {
     /**
      * Crud for service master portfolio items.
      * @param {string} id 
-     * @param {PatchedPortfolioItem} [patchedPortfolioItem] 
+     * @param {PatchedPortfolioItemRequest} [patchedPortfolioItemRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMyPortfolioPartialUpdate(id: string, patchedPortfolioItem?: PatchedPortfolioItem, options?: AxiosRequestConfig): AxiosPromise<PortfolioItem>;
+    v1UsersMyPortfolioPartialUpdate(id: string, patchedPortfolioItemRequest?: PatchedPortfolioItemRequest, options?: AxiosRequestConfig): AxiosPromise<PortfolioItem>;
 
     /**
      * Crud for service master portfolio items.
@@ -19307,21 +22145,21 @@ export interface V1ApiInterface {
     /**
      * Crud for service master portfolio items.
      * @param {string} id 
-     * @param {PortfolioItem} portfolioItem 
+     * @param {PortfolioItemRequest} portfolioItemRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMyPortfolioUpdate(id: string, portfolioItem: PortfolioItem, options?: AxiosRequestConfig): AxiosPromise<PortfolioItem>;
+    v1UsersMyPortfolioUpdate(id: string, portfolioItemRequest: PortfolioItemRequest, options?: AxiosRequestConfig): AxiosPromise<PortfolioItem>;
 
     /**
      * Crud for service master skills.
-     * @param {MasterSkill} masterSkill 
+     * @param {MasterSkillRequest} masterSkillRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMySkillsCreate(masterSkill: MasterSkill, options?: AxiosRequestConfig): AxiosPromise<MasterSkill>;
+    v1UsersMySkillsCreate(masterSkillRequest: MasterSkillRequest, options?: AxiosRequestConfig): AxiosPromise<MasterSkill>;
 
     /**
      * Crud for service master skills.
@@ -19347,12 +22185,12 @@ export interface V1ApiInterface {
     /**
      * Crud for service master skills.
      * @param {string} id 
-     * @param {PatchedMasterSkill} [patchedMasterSkill] 
+     * @param {PatchedMasterSkillRequest} [patchedMasterSkillRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMySkillsPartialUpdate(id: string, patchedMasterSkill?: PatchedMasterSkill, options?: AxiosRequestConfig): AxiosPromise<MasterSkill>;
+    v1UsersMySkillsPartialUpdate(id: string, patchedMasterSkillRequest?: PatchedMasterSkillRequest, options?: AxiosRequestConfig): AxiosPromise<MasterSkill>;
 
     /**
      * Crud for service master skills.
@@ -19366,12 +22204,12 @@ export interface V1ApiInterface {
     /**
      * Crud for service master skills.
      * @param {string} id 
-     * @param {MasterSkill} masterSkill 
+     * @param {MasterSkillRequest} masterSkillRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1UsersMySkillsUpdate(id: string, masterSkill: MasterSkill, options?: AxiosRequestConfig): AxiosPromise<MasterSkill>;
+    v1UsersMySkillsUpdate(id: string, masterSkillRequest: MasterSkillRequest, options?: AxiosRequestConfig): AxiosPromise<MasterSkill>;
 
     /**
      * 
@@ -19414,24 +22252,45 @@ export interface V1ApiInterface {
 }
 
 /**
- * Request parameters for v1ApplicationsAcceptCreate operation in V1Api.
+ * Request parameters for v1ApplicationsAccept operation in V1Api.
  * @export
- * @interface V1ApiV1ApplicationsAcceptCreateRequest
+ * @interface V1ApiV1ApplicationsAcceptRequest
  */
-export interface V1ApiV1ApplicationsAcceptCreateRequest {
+export interface V1ApiV1ApplicationsAcceptRequest {
     /**
      * A unique integer value identifying this Job Application.
      * @type {number}
-     * @memberof V1ApiV1ApplicationsAcceptCreate
+     * @memberof V1ApiV1ApplicationsAccept
      */
     readonly id: number
 
     /**
      * 
-     * @type {JobApplication}
-     * @memberof V1ApiV1ApplicationsAcceptCreate
+     * @type {JobApplicationRequest}
+     * @memberof V1ApiV1ApplicationsAccept
      */
-    readonly jobApplication: JobApplication
+    readonly jobApplicationRequest: JobApplicationRequest
+}
+
+/**
+ * Request parameters for v1ApplicationsAcceptReject operation in V1Api.
+ * @export
+ * @interface V1ApiV1ApplicationsAcceptRejectRequest
+ */
+export interface V1ApiV1ApplicationsAcceptRejectRequest {
+    /**
+     * A unique integer value identifying this Job Application.
+     * @type {number}
+     * @memberof V1ApiV1ApplicationsAcceptReject
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {JobApplicationRequest}
+     * @memberof V1ApiV1ApplicationsAcceptReject
+     */
+    readonly jobApplicationRequest: JobApplicationRequest
 }
 
 /**
@@ -19442,10 +22301,10 @@ export interface V1ApiV1ApplicationsAcceptCreateRequest {
 export interface V1ApiV1ApplicationsCreateRequest {
     /**
      * 
-     * @type {JobApplication}
+     * @type {JobApplicationRequest}
      * @memberof V1ApiV1ApplicationsCreate
      */
-    readonly jobApplication: JobApplication
+    readonly jobApplicationRequest: JobApplicationRequest
 }
 
 /**
@@ -19568,31 +22427,10 @@ export interface V1ApiV1ApplicationsPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedJobApplication}
+     * @type {PatchedJobApplicationRequest}
      * @memberof V1ApiV1ApplicationsPartialUpdate
      */
-    readonly patchedJobApplication?: PatchedJobApplication
-}
-
-/**
- * Request parameters for v1ApplicationsRejectCreate operation in V1Api.
- * @export
- * @interface V1ApiV1ApplicationsRejectCreateRequest
- */
-export interface V1ApiV1ApplicationsRejectCreateRequest {
-    /**
-     * A unique integer value identifying this Job Application.
-     * @type {number}
-     * @memberof V1ApiV1ApplicationsRejectCreate
-     */
-    readonly id: number
-
-    /**
-     * 
-     * @type {JobApplication}
-     * @memberof V1ApiV1ApplicationsRejectCreate
-     */
-    readonly jobApplication: JobApplication
+    readonly patchedJobApplicationRequest?: PatchedJobApplicationRequest
 }
 
 /**
@@ -19624,31 +22462,115 @@ export interface V1ApiV1ApplicationsUpdateRequest {
 
     /**
      * 
-     * @type {JobApplication}
+     * @type {JobApplicationRequest}
      * @memberof V1ApiV1ApplicationsUpdate
      */
-    readonly jobApplication: JobApplication
+    readonly jobApplicationRequest: JobApplicationRequest
 }
 
 /**
- * Request parameters for v1ApplicationsWithdrawCreate operation in V1Api.
+ * Request parameters for v1ApplicationsWithdraw operation in V1Api.
  * @export
- * @interface V1ApiV1ApplicationsWithdrawCreateRequest
+ * @interface V1ApiV1ApplicationsWithdrawRequest
  */
-export interface V1ApiV1ApplicationsWithdrawCreateRequest {
+export interface V1ApiV1ApplicationsWithdrawRequest {
     /**
      * A unique integer value identifying this Job Application.
      * @type {number}
-     * @memberof V1ApiV1ApplicationsWithdrawCreate
+     * @memberof V1ApiV1ApplicationsWithdraw
      */
     readonly id: number
 
     /**
      * 
-     * @type {JobApplication}
-     * @memberof V1ApiV1ApplicationsWithdrawCreate
+     * @type {JobApplicationRequest}
+     * @memberof V1ApiV1ApplicationsWithdraw
      */
-    readonly jobApplication: JobApplication
+    readonly jobApplicationRequest: JobApplicationRequest
+}
+
+/**
+ * Request parameters for v1AssignmentsAttachmentsCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1AssignmentsAttachmentsCreateRequest
+ */
+export interface V1ApiV1AssignmentsAttachmentsCreateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1AssignmentsAttachmentsCreate
+     */
+    readonly assignmentId: string
+
+    /**
+     * 
+     * @type {Array<any>}
+     * @memberof V1ApiV1AssignmentsAttachmentsCreate
+     */
+    readonly files: Array<any>
+}
+
+/**
+ * Request parameters for v1AssignmentsAttachmentsDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1AssignmentsAttachmentsDestroyRequest
+ */
+export interface V1ApiV1AssignmentsAttachmentsDestroyRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1AssignmentsAttachmentsDestroy
+     */
+    readonly assignmentId: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1AssignmentsAttachmentsDestroy
+     */
+    readonly id: string
+}
+
+/**
+ * Request parameters for v1AssignmentsAttachmentsList operation in V1Api.
+ * @export
+ * @interface V1ApiV1AssignmentsAttachmentsListRequest
+ */
+export interface V1ApiV1AssignmentsAttachmentsListRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1AssignmentsAttachmentsList
+     */
+    readonly assignmentId: string
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1AssignmentsAttachmentsList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1AssignmentsAttachmentsList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1AssignmentsAttachmentsList
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1AssignmentsAttachmentsList
+     */
+    readonly search?: string
 }
 
 /**
@@ -19659,10 +22581,10 @@ export interface V1ApiV1ApplicationsWithdrawCreateRequest {
 export interface V1ApiV1AssignmentsCreateRequest {
     /**
      * 
-     * @type {JobAssignment}
+     * @type {JobAssignmentRequest}
      * @memberof V1ApiV1AssignmentsCreate
      */
-    readonly jobAssignment?: JobAssignment
+    readonly jobAssignmentRequest?: JobAssignmentRequest
 }
 
 /**
@@ -19729,10 +22651,10 @@ export interface V1ApiV1AssignmentsPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedJobAssignment}
+     * @type {PatchedJobAssignmentRequest}
      * @memberof V1ApiV1AssignmentsPartialUpdate
      */
-    readonly patchedJobAssignment?: PatchedJobAssignment
+    readonly patchedJobAssignmentRequest?: PatchedJobAssignmentRequest
 }
 
 /**
@@ -19750,10 +22672,10 @@ export interface V1ApiV1AssignmentsRateCreateRequest {
 
     /**
      * 
-     * @type {Rating}
+     * @type {RatingRequest}
      * @memberof V1ApiV1AssignmentsRateCreate
      */
-    readonly rating?: Rating
+    readonly ratingRequest?: RatingRequest
 }
 
 /**
@@ -19785,10 +22707,10 @@ export interface V1ApiV1AssignmentsUpdateRequest {
 
     /**
      * 
-     * @type {JobAssignment}
+     * @type {JobAssignmentRequest}
      * @memberof V1ApiV1AssignmentsUpdate
      */
-    readonly jobAssignment?: JobAssignment
+    readonly jobAssignmentRequest?: JobAssignmentRequest
 }
 
 /**
@@ -19806,10 +22728,10 @@ export interface V1ApiV1AssignmentsUpdateProgressPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedProgressUpdate}
+     * @type {PatchedProgressUpdateRequest}
      * @memberof V1ApiV1AssignmentsUpdateProgressPartialUpdate
      */
-    readonly patchedProgressUpdate?: PatchedProgressUpdate
+    readonly patchedProgressUpdateRequest?: PatchedProgressUpdateRequest
 }
 
 /**
@@ -19820,31 +22742,10 @@ export interface V1ApiV1AssignmentsUpdateProgressPartialUpdateRequest {
 export interface V1ApiV1AuthFirebaseCreateRequest {
     /**
      * 
-     * @type {FireBaseAuth}
+     * @type {FireBaseAuthRequest}
      * @memberof V1ApiV1AuthFirebaseCreate
      */
-    readonly fireBaseAuth: FireBaseAuth
-}
-
-/**
- * Request parameters for v1ChatsRoomsAddParticipants operation in V1Api.
- * @export
- * @interface V1ApiV1ChatsRoomsAddParticipantsRequest
- */
-export interface V1ApiV1ChatsRoomsAddParticipantsRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsAddParticipants
-     */
-    readonly id: string
-
-    /**
-     * 
-     * @type {ChatRoom}
-     * @memberof V1ApiV1ChatsRoomsAddParticipants
-     */
-    readonly chatRoom: ChatRoom
+    readonly fireBaseAuthRequest: FireBaseAuthRequest
 }
 
 /**
@@ -19855,10 +22756,10 @@ export interface V1ApiV1ChatsRoomsAddParticipantsRequest {
 export interface V1ApiV1ChatsRoomsCreateRequest {
     /**
      * 
-     * @type {ChatRoomCreate}
+     * @type {ChatRoomCreateRequest}
      * @memberof V1ApiV1ChatsRoomsCreate
      */
-    readonly chatRoomCreate: ChatRoomCreate
+    readonly chatRoomCreateRequest: ChatRoomCreateRequest
 }
 
 /**
@@ -19904,10 +22805,10 @@ export interface V1ApiV1ChatsRoomsLeaveRequest {
 
     /**
      * 
-     * @type {ChatRoom}
+     * @type {ChatRoomRequest}
      * @memberof V1ApiV1ChatsRoomsLeave
      */
-    readonly chatRoom: ChatRoom
+    readonly chatRoomRequest: ChatRoomRequest
 }
 
 /**
@@ -19960,10 +22861,10 @@ export interface V1ApiV1ChatsRoomsMessagesCreateRequest {
 
     /**
      * 
-     * @type {MessageCreate}
+     * @type {MessageCreateRequest}
      * @memberof V1ApiV1ChatsRoomsMessagesCreate
      */
-    readonly messageCreate: MessageCreate
+    readonly messageCreateRequest: MessageCreateRequest
 }
 
 /**
@@ -20051,10 +22952,10 @@ export interface V1ApiV1ChatsRoomsMessagesPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedMessage}
+     * @type {PatchedMessageRequest}
      * @memberof V1ApiV1ChatsRoomsMessagesPartialUpdate
      */
-    readonly patchedMessage?: PatchedMessage
+    readonly patchedMessageRequest?: PatchedMessageRequest
 }
 
 /**
@@ -20100,10 +23001,10 @@ export interface V1ApiV1ChatsRoomsMessagesUpdateRequest {
 
     /**
      * 
-     * @type {MessageUpdate}
+     * @type {MessageUpdateRequest}
      * @memberof V1ApiV1ChatsRoomsMessagesUpdate
      */
-    readonly messageUpdate: MessageUpdate
+    readonly messageUpdateRequest: MessageUpdateRequest
 }
 
 /**
@@ -20121,10 +23022,10 @@ export interface V1ApiV1ChatsRoomsPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedChatRoom}
+     * @type {PatchedChatRoomRequest}
      * @memberof V1ApiV1ChatsRoomsPartialUpdate
      */
-    readonly patchedChatRoom?: PatchedChatRoom
+    readonly patchedChatRoomRequest?: PatchedChatRoomRequest
 }
 
 /**
@@ -20156,10 +23057,129 @@ export interface V1ApiV1ChatsRoomsUpdateRequest {
 
     /**
      * 
-     * @type {ChatRoom}
+     * @type {ChatRoomRequest}
      * @memberof V1ApiV1ChatsRoomsUpdate
      */
-    readonly chatRoom: ChatRoom
+    readonly chatRoomRequest: ChatRoomRequest
+}
+
+/**
+ * Request parameters for v1ContactsCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1ContactsCreateRequest
+ */
+export interface V1ApiV1ContactsCreateRequest {
+    /**
+     * 
+     * @type {SimpleContactRequest}
+     * @memberof V1ApiV1ContactsCreate
+     */
+    readonly simpleContactRequest: SimpleContactRequest
+}
+
+/**
+ * Request parameters for v1ContactsDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1ContactsDestroyRequest
+ */
+export interface V1ApiV1ContactsDestroyRequest {
+    /**
+     * A unique integer value identifying this simple contact.
+     * @type {number}
+     * @memberof V1ApiV1ContactsDestroy
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for v1ContactsList operation in V1Api.
+ * @export
+ * @interface V1ApiV1ContactsListRequest
+ */
+export interface V1ApiV1ContactsListRequest {
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1ContactsList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1ContactsList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1ContactsList
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1ContactsList
+     */
+    readonly search?: string
+}
+
+/**
+ * Request parameters for v1ContactsPartialUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1ContactsPartialUpdateRequest
+ */
+export interface V1ApiV1ContactsPartialUpdateRequest {
+    /**
+     * A unique integer value identifying this simple contact.
+     * @type {number}
+     * @memberof V1ApiV1ContactsPartialUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {PatchedSimpleContactRequest}
+     * @memberof V1ApiV1ContactsPartialUpdate
+     */
+    readonly patchedSimpleContactRequest?: PatchedSimpleContactRequest
+}
+
+/**
+ * Request parameters for v1ContactsRetrieve operation in V1Api.
+ * @export
+ * @interface V1ApiV1ContactsRetrieveRequest
+ */
+export interface V1ApiV1ContactsRetrieveRequest {
+    /**
+     * A unique integer value identifying this simple contact.
+     * @type {number}
+     * @memberof V1ApiV1ContactsRetrieve
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for v1ContactsUpdate operation in V1Api.
+ * @export
+ * @interface V1ApiV1ContactsUpdateRequest
+ */
+export interface V1ApiV1ContactsUpdateRequest {
+    /**
+     * A unique integer value identifying this simple contact.
+     * @type {number}
+     * @memberof V1ApiV1ContactsUpdate
+     */
+    readonly id: number
+
+    /**
+     * 
+     * @type {SimpleContactRequest}
+     * @memberof V1ApiV1ContactsUpdate
+     */
+    readonly simpleContactRequest: SimpleContactRequest
 }
 
 /**
@@ -20240,10 +23260,10 @@ export interface V1ApiV1CoreLanguagesRetrieveRequest {
 export interface V1ApiV1CoreServiceAreasCreateRequest {
     /**
      * 
-     * @type {ServiceAreaCreateUpdate}
+     * @type {ServiceAreaCreateUpdateRequest}
      * @memberof V1ApiV1CoreServiceAreasCreate
      */
-    readonly serviceAreaCreateUpdate: ServiceAreaCreateUpdate
+    readonly serviceAreaCreateUpdateRequest: ServiceAreaCreateUpdateRequest
 }
 
 /**
@@ -20324,10 +23344,10 @@ export interface V1ApiV1CoreServiceAreasPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedServiceAreaCreateUpdate}
+     * @type {PatchedServiceAreaCreateUpdateRequest}
      * @memberof V1ApiV1CoreServiceAreasPartialUpdate
      */
-    readonly patchedServiceAreaCreateUpdate?: PatchedServiceAreaCreateUpdate
+    readonly patchedServiceAreaCreateUpdateRequest?: PatchedServiceAreaCreateUpdateRequest
 }
 
 /**
@@ -20359,10 +23379,10 @@ export interface V1ApiV1CoreServiceAreasUpdateRequest {
 
     /**
      * 
-     * @type {ServiceAreaCreateUpdate}
+     * @type {ServiceAreaCreateUpdateRequest}
      * @memberof V1ApiV1CoreServiceAreasUpdate
      */
-    readonly serviceAreaCreateUpdate: ServiceAreaCreateUpdate
+    readonly serviceAreaCreateUpdateRequest: ServiceAreaCreateUpdateRequest
 }
 
 /**
@@ -20373,10 +23393,10 @@ export interface V1ApiV1CoreServiceAreasUpdateRequest {
 export interface V1ApiV1CoreServiceCategoriesCreateRequest {
     /**
      * 
-     * @type {ServiceCategoryCreateUpdate}
+     * @type {ServiceCategoryCreateUpdateRequest}
      * @memberof V1ApiV1CoreServiceCategoriesCreate
      */
-    readonly serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate
+    readonly serviceCategoryCreateUpdateRequest: ServiceCategoryCreateUpdateRequest
 }
 
 /**
@@ -20457,10 +23477,10 @@ export interface V1ApiV1CoreServiceCategoriesPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedServiceCategoryCreateUpdate}
+     * @type {PatchedServiceCategoryCreateUpdateRequest}
      * @memberof V1ApiV1CoreServiceCategoriesPartialUpdate
      */
-    readonly patchedServiceCategoryCreateUpdate?: PatchedServiceCategoryCreateUpdate
+    readonly patchedServiceCategoryCreateUpdateRequest?: PatchedServiceCategoryCreateUpdateRequest
 }
 
 /**
@@ -20492,10 +23512,10 @@ export interface V1ApiV1CoreServiceCategoriesUpdateRequest {
 
     /**
      * 
-     * @type {ServiceCategoryCreateUpdate}
+     * @type {ServiceCategoryCreateUpdateRequest}
      * @memberof V1ApiV1CoreServiceCategoriesUpdate
      */
-    readonly serviceCategoryCreateUpdate: ServiceCategoryCreateUpdate
+    readonly serviceCategoryCreateUpdateRequest: ServiceCategoryCreateUpdateRequest
 }
 
 /**
@@ -20506,10 +23526,10 @@ export interface V1ApiV1CoreServiceCategoriesUpdateRequest {
 export interface V1ApiV1CoreServiceSubcategoriesCreateRequest {
     /**
      * 
-     * @type {ServiceSubcategoryCreateUpdate}
+     * @type {ServiceSubcategoryCreateUpdateRequest}
      * @memberof V1ApiV1CoreServiceSubcategoriesCreate
      */
-    readonly serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate
+    readonly serviceSubcategoryCreateUpdateRequest: ServiceSubcategoryCreateUpdateRequest
 }
 
 /**
@@ -20604,10 +23624,10 @@ export interface V1ApiV1CoreServiceSubcategoriesPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedServiceSubcategoryCreateUpdate}
+     * @type {PatchedServiceSubcategoryCreateUpdateRequest}
      * @memberof V1ApiV1CoreServiceSubcategoriesPartialUpdate
      */
-    readonly patchedServiceSubcategoryCreateUpdate?: PatchedServiceSubcategoryCreateUpdate
+    readonly patchedServiceSubcategoryCreateUpdateRequest?: PatchedServiceSubcategoryCreateUpdateRequest
 }
 
 /**
@@ -20639,10 +23659,10 @@ export interface V1ApiV1CoreServiceSubcategoriesUpdateRequest {
 
     /**
      * 
-     * @type {ServiceSubcategoryCreateUpdate}
+     * @type {ServiceSubcategoryCreateUpdateRequest}
      * @memberof V1ApiV1CoreServiceSubcategoriesUpdate
      */
-    readonly serviceSubcategoryCreateUpdate: ServiceSubcategoryCreateUpdate
+    readonly serviceSubcategoryCreateUpdateRequest: ServiceSubcategoryCreateUpdateRequest
 }
 
 /**
@@ -20653,10 +23673,10 @@ export interface V1ApiV1CoreServiceSubcategoriesUpdateRequest {
 export interface V1ApiV1CoreSupportFaqCreateRequest {
     /**
      * 
-     * @type {SupportFAQCreateUpdate}
+     * @type {SupportFAQCreateUpdateRequest}
      * @memberof V1ApiV1CoreSupportFaqCreate
      */
-    readonly supportFAQCreateUpdate: SupportFAQCreateUpdate
+    readonly supportFAQCreateUpdateRequest: SupportFAQCreateUpdateRequest
 }
 
 /**
@@ -20744,10 +23764,10 @@ export interface V1ApiV1CoreSupportFaqPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedSupportFAQCreateUpdate}
+     * @type {PatchedSupportFAQCreateUpdateRequest}
      * @memberof V1ApiV1CoreSupportFaqPartialUpdate
      */
-    readonly patchedSupportFAQCreateUpdate?: PatchedSupportFAQCreateUpdate
+    readonly patchedSupportFAQCreateUpdateRequest?: PatchedSupportFAQCreateUpdateRequest
 }
 
 /**
@@ -20779,10 +23799,10 @@ export interface V1ApiV1CoreSupportFaqUpdateRequest {
 
     /**
      * 
-     * @type {SupportFAQCreateUpdate}
+     * @type {SupportFAQCreateUpdateRequest}
      * @memberof V1ApiV1CoreSupportFaqUpdate
      */
-    readonly supportFAQCreateUpdate: SupportFAQCreateUpdate
+    readonly supportFAQCreateUpdateRequest: SupportFAQCreateUpdateRequest
 }
 
 /**
@@ -20793,10 +23813,10 @@ export interface V1ApiV1CoreSupportFaqUpdateRequest {
 export interface V1ApiV1CoreSystemSettingsCreateRequest {
     /**
      * 
-     * @type {SystemSettingsCreateUpdate}
+     * @type {SystemSettingsCreateUpdateRequest}
      * @memberof V1ApiV1CoreSystemSettingsCreate
      */
-    readonly systemSettingsCreateUpdate: SystemSettingsCreateUpdate
+    readonly systemSettingsCreateUpdateRequest: SystemSettingsCreateUpdateRequest
 }
 
 /**
@@ -20877,10 +23897,10 @@ export interface V1ApiV1CoreSystemSettingsPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedSystemSettingsCreateUpdate}
+     * @type {PatchedSystemSettingsCreateUpdateRequest}
      * @memberof V1ApiV1CoreSystemSettingsPartialUpdate
      */
-    readonly patchedSystemSettingsCreateUpdate?: PatchedSystemSettingsCreateUpdate
+    readonly patchedSystemSettingsCreateUpdateRequest?: PatchedSystemSettingsCreateUpdateRequest
 }
 
 /**
@@ -20912,10 +23932,45 @@ export interface V1ApiV1CoreSystemSettingsUpdateRequest {
 
     /**
      * 
-     * @type {SystemSettingsCreateUpdate}
+     * @type {SystemSettingsCreateUpdateRequest}
      * @memberof V1ApiV1CoreSystemSettingsUpdate
      */
-    readonly systemSettingsCreateUpdate: SystemSettingsCreateUpdate
+    readonly systemSettingsCreateUpdateRequest: SystemSettingsCreateUpdateRequest
+}
+
+/**
+ * Request parameters for v1HomeMasterNewJobsList operation in V1Api.
+ * @export
+ * @interface V1ApiV1HomeMasterNewJobsListRequest
+ */
+export interface V1ApiV1HomeMasterNewJobsListRequest {
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1HomeMasterNewJobsList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1HomeMasterNewJobsList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1HomeMasterNewJobsList
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1HomeMasterNewJobsList
+     */
+    readonly search?: string
 }
 
 /**
@@ -20933,10 +23988,10 @@ export interface V1ApiV1JobAssignmentsCompleteRequest {
 
     /**
      * 
-     * @type {JobAssignmentCompletion}
+     * @type {JobAssignmentCompletionRequest}
      * @memberof V1ApiV1JobAssignmentsComplete
      */
-    readonly jobAssignmentCompletion?: JobAssignmentCompletion
+    readonly jobAssignmentCompletionRequest?: JobAssignmentCompletionRequest
 }
 
 /**
@@ -20954,10 +24009,10 @@ export interface V1ApiV1JobAssignmentsStartRequest {
 
     /**
      * 
-     * @type {JobAssignment}
+     * @type {JobAssignmentRequest}
      * @memberof V1ApiV1JobAssignmentsStart
      */
-    readonly jobAssignment?: JobAssignment
+    readonly jobAssignmentRequest?: JobAssignmentRequest
 }
 
 /**
@@ -20975,10 +24030,94 @@ export interface V1ApiV1JobsApplyRequest {
 
     /**
      * 
-     * @type {JobApply}
+     * @type {JobApplyRequest}
      * @memberof V1ApiV1JobsApply
      */
-    readonly jobApply: JobApply
+    readonly jobApplyRequest: JobApplyRequest
+}
+
+/**
+ * Request parameters for v1JobsAttachmentsCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1JobsAttachmentsCreateRequest
+ */
+export interface V1ApiV1JobsAttachmentsCreateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsAttachmentsCreate
+     */
+    readonly jobId: string
+
+    /**
+     * 
+     * @type {Array<any>}
+     * @memberof V1ApiV1JobsAttachmentsCreate
+     */
+    readonly files: Array<any>
+}
+
+/**
+ * Request parameters for v1JobsAttachmentsDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1JobsAttachmentsDestroyRequest
+ */
+export interface V1ApiV1JobsAttachmentsDestroyRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsAttachmentsDestroy
+     */
+    readonly id: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsAttachmentsDestroy
+     */
+    readonly jobId: string
+}
+
+/**
+ * Request parameters for v1JobsAttachmentsList operation in V1Api.
+ * @export
+ * @interface V1ApiV1JobsAttachmentsListRequest
+ */
+export interface V1ApiV1JobsAttachmentsListRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsAttachmentsList
+     */
+    readonly jobId: string
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1JobsAttachmentsList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1JobsAttachmentsList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1JobsAttachmentsList
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1JobsAttachmentsList
+     */
+    readonly search?: string
 }
 
 /**
@@ -20996,10 +24135,10 @@ export interface V1ApiV1JobsBookmarkRequest {
 
     /**
      * 
-     * @type {Job}
+     * @type {JobRequest}
      * @memberof V1ApiV1JobsBookmark
      */
-    readonly job: Job
+    readonly jobRequest: JobRequest
 }
 
 /**
@@ -21017,10 +24156,10 @@ export interface V1ApiV1JobsCancelRequest {
 
     /**
      * 
-     * @type {Job}
+     * @type {JobRequest}
      * @memberof V1ApiV1JobsCancel
      */
-    readonly job: Job
+    readonly jobRequest: JobRequest
 }
 
 /**
@@ -21031,10 +24170,10 @@ export interface V1ApiV1JobsCancelRequest {
 export interface V1ApiV1JobsCreateRequest {
     /**
      * 
-     * @type {Job}
+     * @type {JobRequest}
      * @memberof V1ApiV1JobsCreate
      */
-    readonly job: Job
+    readonly jobRequest: JobRequest
 }
 
 /**
@@ -21066,10 +24205,10 @@ export interface V1ApiV1JobsFavoriteRequest {
 
     /**
      * 
-     * @type {Job}
+     * @type {JobRequest}
      * @memberof V1ApiV1JobsFavorite
      */
-    readonly job: Job
+    readonly jobRequest: JobRequest
 }
 
 /**
@@ -21078,6 +24217,27 @@ export interface V1ApiV1JobsFavoriteRequest {
  * @interface V1ApiV1JobsListRequest
  */
 export interface V1ApiV1JobsListRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsList
+     */
+    readonly city?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsList
+     */
+    readonly maxPrice?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsList
+     */
+    readonly minPrice?: number
+
     /**
      * Which field to use when ordering the results.
      * @type {string}
@@ -21111,19 +24271,215 @@ export interface V1ApiV1JobsListRequest {
      * @type {number}
      * @memberof V1ApiV1JobsList
      */
-    readonly serviceSubcategory?: number
+    readonly serviceCategory?: number
 
     /**
-     * * &#x60;draft&#x60; - Draft * &#x60;published&#x60; - Published * &#x60;assigned&#x60; - Assigned * &#x60;in_progress&#x60; - In Progress * &#x60;completed&#x60; - Completed * &#x60;cancelled&#x60; - Cancelled
-     * @type {'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published'}
+     * 
+     * @type {string}
      * @memberof V1ApiV1JobsList
      */
-    readonly status?: 'assigned' | 'cancelled' | 'completed' | 'draft' | 'in_progress' | 'published'
+    readonly serviceDateFrom?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsList
+     */
+    readonly serviceDateTo?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsList
+     */
+    readonly serviceSubcategory?: number
 
     /**
      * * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
      * @type {'high' | 'low' | 'medium' | 'urgent'}
      * @memberof V1ApiV1JobsList
+     */
+    readonly urgency?: 'high' | 'low' | 'medium' | 'urgent'
+}
+
+/**
+ * Request parameters for v1JobsMasterHistory operation in V1Api.
+ * @export
+ * @interface V1ApiV1JobsMasterHistoryRequest
+ */
+export interface V1ApiV1JobsMasterHistoryRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsMasterHistory
+     */
+    readonly city?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsMasterHistory
+     */
+    readonly maxPrice?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsMasterHistory
+     */
+    readonly minPrice?: number
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1JobsMasterHistory
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1JobsMasterHistory
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1JobsMasterHistory
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1JobsMasterHistory
+     */
+    readonly search?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsMasterHistory
+     */
+    readonly serviceCategory?: number
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsMasterHistory
+     */
+    readonly serviceDateFrom?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsMasterHistory
+     */
+    readonly serviceDateTo?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsMasterHistory
+     */
+    readonly serviceSubcategory?: number
+
+    /**
+     * * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+     * @type {'high' | 'low' | 'medium' | 'urgent'}
+     * @memberof V1ApiV1JobsMasterHistory
+     */
+    readonly urgency?: 'high' | 'low' | 'medium' | 'urgent'
+}
+
+/**
+ * Request parameters for v1JobsMasterInProgress operation in V1Api.
+ * @export
+ * @interface V1ApiV1JobsMasterInProgressRequest
+ */
+export interface V1ApiV1JobsMasterInProgressRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsMasterInProgress
+     */
+    readonly city?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsMasterInProgress
+     */
+    readonly maxPrice?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsMasterInProgress
+     */
+    readonly minPrice?: number
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1JobsMasterInProgress
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1JobsMasterInProgress
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1JobsMasterInProgress
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1JobsMasterInProgress
+     */
+    readonly search?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsMasterInProgress
+     */
+    readonly serviceCategory?: number
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsMasterInProgress
+     */
+    readonly serviceDateFrom?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsMasterInProgress
+     */
+    readonly serviceDateTo?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsMasterInProgress
+     */
+    readonly serviceSubcategory?: number
+
+    /**
+     * * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+     * @type {'high' | 'low' | 'medium' | 'urgent'}
+     * @memberof V1ApiV1JobsMasterInProgress
      */
     readonly urgency?: 'high' | 'low' | 'medium' | 'urgent'
 }
@@ -21143,10 +24499,10 @@ export interface V1ApiV1JobsPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedJob}
+     * @type {PatchedJobRequest}
      * @memberof V1ApiV1JobsPartialUpdate
      */
-    readonly patchedJob?: PatchedJob
+    readonly patchedJobRequest?: PatchedJobRequest
 }
 
 /**
@@ -21164,10 +24520,10 @@ export interface V1ApiV1JobsPublishRequest {
 
     /**
      * 
-     * @type {Job}
+     * @type {JobRequest}
      * @memberof V1ApiV1JobsPublish
      */
-    readonly job: Job
+    readonly jobRequest: JobRequest
 }
 
 /**
@@ -21199,10 +24555,10 @@ export interface V1ApiV1JobsUpdateRequest {
 
     /**
      * 
-     * @type {Job}
+     * @type {JobRequest}
      * @memberof V1ApiV1JobsUpdate
      */
-    readonly job: Job
+    readonly jobRequest: JobRequest
 }
 
 /**
@@ -21213,10 +24569,10 @@ export interface V1ApiV1JobsUpdateRequest {
 export interface V1ApiV1LocationsCitiesCreateRequest {
     /**
      * 
-     * @type {City}
+     * @type {CityRequest}
      * @memberof V1ApiV1LocationsCitiesCreate
      */
-    readonly city: City
+    readonly cityRequest: CityRequest
 }
 
 /**
@@ -21297,10 +24653,10 @@ export interface V1ApiV1LocationsCitiesPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedCity}
+     * @type {PatchedCityRequest}
      * @memberof V1ApiV1LocationsCitiesPartialUpdate
      */
-    readonly patchedCity?: PatchedCity
+    readonly patchedCityRequest?: PatchedCityRequest
 }
 
 /**
@@ -21332,10 +24688,10 @@ export interface V1ApiV1LocationsCitiesUpdateRequest {
 
     /**
      * 
-     * @type {City}
+     * @type {CityRequest}
      * @memberof V1ApiV1LocationsCitiesUpdate
      */
-    readonly city: City
+    readonly cityRequest: CityRequest
 }
 
 /**
@@ -21346,10 +24702,10 @@ export interface V1ApiV1LocationsCitiesUpdateRequest {
 export interface V1ApiV1LocationsCountriesCreateRequest {
     /**
      * 
-     * @type {Country}
+     * @type {CountryRequest}
      * @memberof V1ApiV1LocationsCountriesCreate
      */
-    readonly country: Country
+    readonly countryRequest: CountryRequest
 }
 
 /**
@@ -21423,10 +24779,10 @@ export interface V1ApiV1LocationsCountriesPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedCountry}
+     * @type {PatchedCountryRequest}
      * @memberof V1ApiV1LocationsCountriesPartialUpdate
      */
-    readonly patchedCountry?: PatchedCountry
+    readonly patchedCountryRequest?: PatchedCountryRequest
 }
 
 /**
@@ -21458,10 +24814,10 @@ export interface V1ApiV1LocationsCountriesUpdateRequest {
 
     /**
      * 
-     * @type {Country}
+     * @type {CountryRequest}
      * @memberof V1ApiV1LocationsCountriesUpdate
      */
-    readonly country: Country
+    readonly countryRequest: CountryRequest
 }
 
 /**
@@ -21472,10 +24828,10 @@ export interface V1ApiV1LocationsCountriesUpdateRequest {
 export interface V1ApiV1NotificationsCreateRequest {
     /**
      * 
-     * @type {NotificationCreate}
+     * @type {NotificationCreateRequest}
      * @memberof V1ApiV1NotificationsCreate
      */
-    readonly notificationCreate: NotificationCreate
+    readonly notificationCreateRequest: NotificationCreateRequest
 }
 
 /**
@@ -21535,10 +24891,10 @@ export interface V1ApiV1NotificationsListRequest {
 export interface V1ApiV1NotificationsMarkAllReadRequest {
     /**
      * 
-     * @type {Notification}
+     * @type {NotificationRequest}
      * @memberof V1ApiV1NotificationsMarkAllRead
      */
-    readonly notification: Notification
+    readonly notificationRequest: NotificationRequest
 }
 
 /**
@@ -21556,10 +24912,10 @@ export interface V1ApiV1NotificationsMarkReadRequest {
 
     /**
      * 
-     * @type {Notification}
+     * @type {NotificationRequest}
      * @memberof V1ApiV1NotificationsMarkRead
      */
-    readonly notification: Notification
+    readonly notificationRequest: NotificationRequest
 }
 
 /**
@@ -21577,10 +24933,10 @@ export interface V1ApiV1NotificationsMarkUnreadRequest {
 
     /**
      * 
-     * @type {Notification}
+     * @type {NotificationRequest}
      * @memberof V1ApiV1NotificationsMarkUnread
      */
-    readonly notification: Notification
+    readonly notificationRequest: NotificationRequest
 }
 
 /**
@@ -21598,10 +24954,10 @@ export interface V1ApiV1NotificationsPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedNotificationUpdate}
+     * @type {PatchedNotificationUpdateRequest}
      * @memberof V1ApiV1NotificationsPartialUpdate
      */
-    readonly patchedNotificationUpdate?: PatchedNotificationUpdate
+    readonly patchedNotificationUpdateRequest?: PatchedNotificationUpdateRequest
 }
 
 /**
@@ -21710,10 +25066,10 @@ export interface V1ApiV1NotificationsUpdateRequest {
 
     /**
      * 
-     * @type {NotificationUpdate}
+     * @type {NotificationUpdateRequest}
      * @memberof V1ApiV1NotificationsUpdate
      */
-    readonly notificationUpdate?: NotificationUpdate
+    readonly notificationUpdateRequest?: NotificationUpdateRequest
 }
 
 /**
@@ -21724,10 +25080,10 @@ export interface V1ApiV1NotificationsUpdateRequest {
 export interface V1ApiV1ProfileNotificationSettingsPartialUpdateRequest {
     /**
      * 
-     * @type {PatchedUserNotificationSettings}
+     * @type {PatchedUserNotificationSettingsRequest}
      * @memberof V1ApiV1ProfileNotificationSettingsPartialUpdate
      */
-    readonly patchedUserNotificationSettings?: PatchedUserNotificationSettings
+    readonly patchedUserNotificationSettingsRequest?: PatchedUserNotificationSettingsRequest
 }
 
 /**
@@ -21738,10 +25094,10 @@ export interface V1ApiV1ProfileNotificationSettingsPartialUpdateRequest {
 export interface V1ApiV1ProfileNotificationSettingsUpdateRequest {
     /**
      * 
-     * @type {UserNotificationSettings}
+     * @type {UserNotificationSettingsRequest}
      * @memberof V1ApiV1ProfileNotificationSettingsUpdate
      */
-    readonly userNotificationSettings?: UserNotificationSettings
+    readonly userNotificationSettingsRequest?: UserNotificationSettingsRequest
 }
 
 /**
@@ -21752,10 +25108,10 @@ export interface V1ApiV1ProfileNotificationSettingsUpdateRequest {
 export interface V1ApiV1ProfilePartialUpdateRequest {
     /**
      * 
-     * @type {PatchedUserUpdate}
+     * @type {PatchedUserUpdateRequest}
      * @memberof V1ApiV1ProfilePartialUpdate
      */
-    readonly patchedUserUpdate?: PatchedUserUpdate
+    readonly patchedUserUpdateRequest?: PatchedUserUpdateRequest
 }
 
 /**
@@ -21766,10 +25122,10 @@ export interface V1ApiV1ProfilePartialUpdateRequest {
 export interface V1ApiV1ProfileUpdateRequest {
     /**
      * 
-     * @type {UserUpdate}
+     * @type {UserUpdateRequest}
      * @memberof V1ApiV1ProfileUpdate
      */
-    readonly userUpdate?: UserUpdate
+    readonly userUpdateRequest?: UserUpdateRequest
 }
 
 /**
@@ -21787,10 +25143,10 @@ export interface V1ApiV1ResumesArchiveRequest {
 
     /**
      * 
-     * @type {MasterResume}
+     * @type {MasterResumeRequest}
      * @memberof V1ApiV1ResumesArchive
      */
-    readonly masterResume: MasterResume
+    readonly masterResumeRequest: MasterResumeRequest
 }
 
 /**
@@ -21801,10 +25157,10 @@ export interface V1ApiV1ResumesArchiveRequest {
 export interface V1ApiV1ResumesCreateRequest {
     /**
      * 
-     * @type {MasterResume}
+     * @type {MasterResumeRequest}
      * @memberof V1ApiV1ResumesCreate
      */
-    readonly masterResume: MasterResume
+    readonly masterResumeRequest: MasterResumeRequest
 }
 
 /**
@@ -21871,10 +25227,10 @@ export interface V1ApiV1ResumesPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedMasterResume}
+     * @type {PatchedMasterResumeRequest}
      * @memberof V1ApiV1ResumesPartialUpdate
      */
-    readonly patchedMasterResume?: PatchedMasterResume
+    readonly patchedMasterResumeRequest?: PatchedMasterResumeRequest
 }
 
 /**
@@ -21892,10 +25248,10 @@ export interface V1ApiV1ResumesPublishRequest {
 
     /**
      * 
-     * @type {MasterResume}
+     * @type {MasterResumeRequest}
      * @memberof V1ApiV1ResumesPublish
      */
-    readonly masterResume: MasterResume
+    readonly masterResumeRequest: MasterResumeRequest
 }
 
 /**
@@ -21927,10 +25283,10 @@ export interface V1ApiV1ResumesUpdateRequest {
 
     /**
      * 
-     * @type {MasterResume}
+     * @type {MasterResumeRequest}
      * @memberof V1ApiV1ResumesUpdate
      */
-    readonly masterResume: MasterResume
+    readonly masterResumeRequest: MasterResumeRequest
 }
 
 /**
@@ -22452,10 +25808,10 @@ export interface V1ApiV1UsersMastersRetrieveRequest {
 export interface V1ApiV1UsersMastersUpdateOnlineStatusRequest {
     /**
      * 
-     * @type {MasterOnlineStatusRequest}
+     * @type {MasterOnlineStatusRequestRequest}
      * @memberof V1ApiV1UsersMastersUpdateOnlineStatus
      */
-    readonly masterOnlineStatusRequest?: MasterOnlineStatusRequest
+    readonly masterOnlineStatusRequestRequest?: MasterOnlineStatusRequestRequest
 }
 
 /**
@@ -22466,10 +25822,10 @@ export interface V1ApiV1UsersMastersUpdateOnlineStatusRequest {
 export interface V1ApiV1UsersMyCertificatesCreateRequest {
     /**
      * 
-     * @type {Certificate}
+     * @type {CertificateRequest}
      * @memberof V1ApiV1UsersMyCertificatesCreate
      */
-    readonly certificate: Certificate
+    readonly certificateRequest: CertificateRequest
 }
 
 /**
@@ -22536,10 +25892,10 @@ export interface V1ApiV1UsersMyCertificatesPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedCertificate}
+     * @type {PatchedCertificateRequest}
      * @memberof V1ApiV1UsersMyCertificatesPartialUpdate
      */
-    readonly patchedCertificate?: PatchedCertificate
+    readonly patchedCertificateRequest?: PatchedCertificateRequest
 }
 
 /**
@@ -22571,10 +25927,10 @@ export interface V1ApiV1UsersMyCertificatesUpdateRequest {
 
     /**
      * 
-     * @type {Certificate}
+     * @type {CertificateRequest}
      * @memberof V1ApiV1UsersMyCertificatesUpdate
      */
-    readonly certificate: Certificate
+    readonly certificateRequest: CertificateRequest
 }
 
 /**
@@ -22585,10 +25941,10 @@ export interface V1ApiV1UsersMyCertificatesUpdateRequest {
 export interface V1ApiV1UsersMyEmployerCreateCreateRequest {
     /**
      * 
-     * @type {EmployerProfileCreateUpdate}
+     * @type {EmployerProfileCreateUpdateRequest}
      * @memberof V1ApiV1UsersMyEmployerCreateCreate
      */
-    readonly employerProfileCreateUpdate?: EmployerProfileCreateUpdate
+    readonly employerProfileCreateUpdateRequest?: EmployerProfileCreateUpdateRequest
 }
 
 /**
@@ -22599,10 +25955,10 @@ export interface V1ApiV1UsersMyEmployerCreateCreateRequest {
 export interface V1ApiV1UsersMyEmployerPartialUpdateRequest {
     /**
      * 
-     * @type {PatchedEmployerProfileCreateUpdate}
+     * @type {PatchedEmployerProfileCreateUpdateRequest}
      * @memberof V1ApiV1UsersMyEmployerPartialUpdate
      */
-    readonly patchedEmployerProfileCreateUpdate?: PatchedEmployerProfileCreateUpdate
+    readonly patchedEmployerProfileCreateUpdateRequest?: PatchedEmployerProfileCreateUpdateRequest
 }
 
 /**
@@ -22613,10 +25969,10 @@ export interface V1ApiV1UsersMyEmployerPartialUpdateRequest {
 export interface V1ApiV1UsersMyEmployerUpdateRequest {
     /**
      * 
-     * @type {EmployerProfileCreateUpdate}
+     * @type {EmployerProfileCreateUpdateRequest}
      * @memberof V1ApiV1UsersMyEmployerUpdate
      */
-    readonly employerProfileCreateUpdate?: EmployerProfileCreateUpdate
+    readonly employerProfileCreateUpdateRequest?: EmployerProfileCreateUpdateRequest
 }
 
 /**
@@ -22627,10 +25983,10 @@ export interface V1ApiV1UsersMyEmployerUpdateRequest {
 export interface V1ApiV1UsersMyMasterCreateCreateRequest {
     /**
      * 
-     * @type {MasterProfileCreateUpdate}
+     * @type {MasterProfileCreateUpdateRequest}
      * @memberof V1ApiV1UsersMyMasterCreateCreate
      */
-    readonly masterProfileCreateUpdate?: MasterProfileCreateUpdate
+    readonly masterProfileCreateUpdateRequest?: MasterProfileCreateUpdateRequest
 }
 
 /**
@@ -22641,10 +25997,10 @@ export interface V1ApiV1UsersMyMasterCreateCreateRequest {
 export interface V1ApiV1UsersMyMasterPartialUpdateRequest {
     /**
      * 
-     * @type {PatchedMasterProfileCreateUpdate}
+     * @type {PatchedMasterProfileCreateUpdateRequest}
      * @memberof V1ApiV1UsersMyMasterPartialUpdate
      */
-    readonly patchedMasterProfileCreateUpdate?: PatchedMasterProfileCreateUpdate
+    readonly patchedMasterProfileCreateUpdateRequest?: PatchedMasterProfileCreateUpdateRequest
 }
 
 /**
@@ -22655,10 +26011,94 @@ export interface V1ApiV1UsersMyMasterPartialUpdateRequest {
 export interface V1ApiV1UsersMyMasterUpdateRequest {
     /**
      * 
-     * @type {MasterProfileCreateUpdate}
+     * @type {MasterProfileCreateUpdateRequest}
      * @memberof V1ApiV1UsersMyMasterUpdate
      */
-    readonly masterProfileCreateUpdate?: MasterProfileCreateUpdate
+    readonly masterProfileCreateUpdateRequest?: MasterProfileCreateUpdateRequest
+}
+
+/**
+ * Request parameters for v1UsersMyPortfolioAttachmentsCreate operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersMyPortfolioAttachmentsCreateRequest
+ */
+export interface V1ApiV1UsersMyPortfolioAttachmentsCreateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1UsersMyPortfolioAttachmentsCreate
+     */
+    readonly portfolioId: string
+
+    /**
+     * 
+     * @type {Array<any>}
+     * @memberof V1ApiV1UsersMyPortfolioAttachmentsCreate
+     */
+    readonly files: Array<any>
+}
+
+/**
+ * Request parameters for v1UsersMyPortfolioAttachmentsDestroy operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersMyPortfolioAttachmentsDestroyRequest
+ */
+export interface V1ApiV1UsersMyPortfolioAttachmentsDestroyRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1UsersMyPortfolioAttachmentsDestroy
+     */
+    readonly id: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1UsersMyPortfolioAttachmentsDestroy
+     */
+    readonly portfolioId: string
+}
+
+/**
+ * Request parameters for v1UsersMyPortfolioAttachmentsList operation in V1Api.
+ * @export
+ * @interface V1ApiV1UsersMyPortfolioAttachmentsListRequest
+ */
+export interface V1ApiV1UsersMyPortfolioAttachmentsListRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1UsersMyPortfolioAttachmentsList
+     */
+    readonly portfolioId: string
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1UsersMyPortfolioAttachmentsList
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1UsersMyPortfolioAttachmentsList
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1UsersMyPortfolioAttachmentsList
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1UsersMyPortfolioAttachmentsList
+     */
+    readonly search?: string
 }
 
 /**
@@ -22669,10 +26109,10 @@ export interface V1ApiV1UsersMyMasterUpdateRequest {
 export interface V1ApiV1UsersMyPortfolioCreateRequest {
     /**
      * 
-     * @type {PortfolioItem}
+     * @type {PortfolioItemRequest}
      * @memberof V1ApiV1UsersMyPortfolioCreate
      */
-    readonly portfolioItem: PortfolioItem
+    readonly portfolioItemRequest: PortfolioItemRequest
 }
 
 /**
@@ -22739,10 +26179,10 @@ export interface V1ApiV1UsersMyPortfolioPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedPortfolioItem}
+     * @type {PatchedPortfolioItemRequest}
      * @memberof V1ApiV1UsersMyPortfolioPartialUpdate
      */
-    readonly patchedPortfolioItem?: PatchedPortfolioItem
+    readonly patchedPortfolioItemRequest?: PatchedPortfolioItemRequest
 }
 
 /**
@@ -22774,10 +26214,10 @@ export interface V1ApiV1UsersMyPortfolioUpdateRequest {
 
     /**
      * 
-     * @type {PortfolioItem}
+     * @type {PortfolioItemRequest}
      * @memberof V1ApiV1UsersMyPortfolioUpdate
      */
-    readonly portfolioItem: PortfolioItem
+    readonly portfolioItemRequest: PortfolioItemRequest
 }
 
 /**
@@ -22788,10 +26228,10 @@ export interface V1ApiV1UsersMyPortfolioUpdateRequest {
 export interface V1ApiV1UsersMySkillsCreateRequest {
     /**
      * 
-     * @type {MasterSkill}
+     * @type {MasterSkillRequest}
      * @memberof V1ApiV1UsersMySkillsCreate
      */
-    readonly masterSkill: MasterSkill
+    readonly masterSkillRequest: MasterSkillRequest
 }
 
 /**
@@ -22858,10 +26298,10 @@ export interface V1ApiV1UsersMySkillsPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedMasterSkill}
+     * @type {PatchedMasterSkillRequest}
      * @memberof V1ApiV1UsersMySkillsPartialUpdate
      */
-    readonly patchedMasterSkill?: PatchedMasterSkill
+    readonly patchedMasterSkillRequest?: PatchedMasterSkillRequest
 }
 
 /**
@@ -22893,10 +26333,10 @@ export interface V1ApiV1UsersMySkillsUpdateRequest {
 
     /**
      * 
-     * @type {MasterSkill}
+     * @type {MasterSkillRequest}
      * @memberof V1ApiV1UsersMySkillsUpdate
      */
-    readonly masterSkill: MasterSkill
+    readonly masterSkillRequest: MasterSkillRequest
 }
 
 /**
@@ -23027,13 +26467,24 @@ export interface V1ApiV1UsersSkillsListRequest {
 export class V1Api extends BaseAPI implements V1ApiInterface {
     /**
      * Accept a job application
-     * @param {V1ApiV1ApplicationsAcceptCreateRequest} requestParameters Request parameters.
+     * @param {V1ApiV1ApplicationsAcceptRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1ApplicationsAcceptCreate(requestParameters: V1ApiV1ApplicationsAcceptCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ApplicationsAcceptCreate(requestParameters.id, requestParameters.jobApplication, options).then((request) => request(this.axios, this.basePath));
+    public v1ApplicationsAccept(requestParameters: V1ApiV1ApplicationsAcceptRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ApplicationsAccept(requestParameters.id, requestParameters.jobApplicationRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Reject a job application
+     * @param {V1ApiV1ApplicationsAcceptRejectRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ApplicationsAcceptReject(requestParameters: V1ApiV1ApplicationsAcceptRejectRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ApplicationsAcceptReject(requestParameters.id, requestParameters.jobApplicationRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23044,7 +26495,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ApplicationsCreate(requestParameters: V1ApiV1ApplicationsCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ApplicationsCreate(requestParameters.jobApplication, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ApplicationsCreate(requestParameters.jobApplicationRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23077,18 +26528,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ApplicationsPartialUpdate(requestParameters: V1ApiV1ApplicationsPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ApplicationsPartialUpdate(requestParameters.id, requestParameters.patchedJobApplication, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Reject a job application
-     * @param {V1ApiV1ApplicationsRejectCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ApplicationsRejectCreate(requestParameters: V1ApiV1ApplicationsRejectCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ApplicationsRejectCreate(requestParameters.id, requestParameters.jobApplication, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ApplicationsPartialUpdate(requestParameters.id, requestParameters.patchedJobApplicationRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23110,18 +26550,51 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ApplicationsUpdate(requestParameters: V1ApiV1ApplicationsUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ApplicationsUpdate(requestParameters.id, requestParameters.jobApplication, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ApplicationsUpdate(requestParameters.id, requestParameters.jobApplicationRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Withdraw a job by master
-     * @param {V1ApiV1ApplicationsWithdrawCreateRequest} requestParameters Request parameters.
+     * @param {V1ApiV1ApplicationsWithdrawRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
      */
-    public v1ApplicationsWithdrawCreate(requestParameters: V1ApiV1ApplicationsWithdrawCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ApplicationsWithdrawCreate(requestParameters.id, requestParameters.jobApplication, options).then((request) => request(this.axios, this.basePath));
+    public v1ApplicationsWithdraw(requestParameters: V1ApiV1ApplicationsWithdrawRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ApplicationsWithdraw(requestParameters.id, requestParameters.jobApplicationRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1AssignmentsAttachmentsCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1AssignmentsAttachmentsCreate(requestParameters: V1ApiV1AssignmentsAttachmentsCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1AssignmentsAttachmentsCreate(requestParameters.assignmentId, requestParameters.files, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1AssignmentsAttachmentsDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1AssignmentsAttachmentsDestroy(requestParameters: V1ApiV1AssignmentsAttachmentsDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1AssignmentsAttachmentsDestroy(requestParameters.assignmentId, requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1AssignmentsAttachmentsListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1AssignmentsAttachmentsList(requestParameters: V1ApiV1AssignmentsAttachmentsListRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1AssignmentsAttachmentsList(requestParameters.assignmentId, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23132,7 +26605,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1AssignmentsCreate(requestParameters: V1ApiV1AssignmentsCreateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AssignmentsCreate(requestParameters.jobAssignment, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1AssignmentsCreate(requestParameters.jobAssignmentRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23165,7 +26638,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1AssignmentsPartialUpdate(requestParameters: V1ApiV1AssignmentsPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AssignmentsPartialUpdate(requestParameters.id, requestParameters.patchedJobAssignment, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1AssignmentsPartialUpdate(requestParameters.id, requestParameters.patchedJobAssignmentRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23176,7 +26649,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1AssignmentsRateCreate(requestParameters: V1ApiV1AssignmentsRateCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AssignmentsRateCreate(requestParameters.id, requestParameters.rating, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1AssignmentsRateCreate(requestParameters.id, requestParameters.ratingRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23198,7 +26671,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1AssignmentsUpdate(requestParameters: V1ApiV1AssignmentsUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AssignmentsUpdate(requestParameters.id, requestParameters.jobAssignment, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1AssignmentsUpdate(requestParameters.id, requestParameters.jobAssignmentRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23209,7 +26682,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1AssignmentsUpdateProgressPartialUpdate(requestParameters: V1ApiV1AssignmentsUpdateProgressPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AssignmentsUpdateProgressPartialUpdate(requestParameters.id, requestParameters.patchedProgressUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1AssignmentsUpdateProgressPartialUpdate(requestParameters.id, requestParameters.patchedProgressUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23220,7 +26693,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1AuthFirebaseCreate(requestParameters: V1ApiV1AuthFirebaseCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AuthFirebaseCreate(requestParameters.fireBaseAuth, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1AuthFirebaseCreate(requestParameters.fireBaseAuthRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23234,17 +26707,6 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Add participants to chat room
-     * @param {V1ApiV1ChatsRoomsAddParticipantsRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1ChatsRoomsAddParticipants(requestParameters: V1ApiV1ChatsRoomsAddParticipantsRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsAddParticipants(requestParameters.id, requestParameters.chatRoom, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * ViewSet for managing chat rooms
      * @param {V1ApiV1ChatsRoomsCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -23252,7 +26714,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsCreate(requestParameters: V1ApiV1ChatsRoomsCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsCreate(requestParameters.chatRoomCreate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsCreate(requestParameters.chatRoomCreateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23285,7 +26747,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsLeave(requestParameters: V1ApiV1ChatsRoomsLeaveRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsLeave(requestParameters.id, requestParameters.chatRoom, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsLeave(requestParameters.id, requestParameters.chatRoomRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23307,7 +26769,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsMessagesCreate(requestParameters: V1ApiV1ChatsRoomsMessagesCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesCreate(requestParameters.chatRoomId, requestParameters.messageCreate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesCreate(requestParameters.chatRoomId, requestParameters.messageCreateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23340,7 +26802,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsMessagesPartialUpdate(requestParameters: V1ApiV1ChatsRoomsMessagesPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesPartialUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.patchedMessage, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesPartialUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.patchedMessageRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23362,7 +26824,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsMessagesUpdate(requestParameters: V1ApiV1ChatsRoomsMessagesUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.messageUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.messageUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23373,7 +26835,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsPartialUpdate(requestParameters: V1ApiV1ChatsRoomsPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsPartialUpdate(requestParameters.id, requestParameters.patchedChatRoom, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsPartialUpdate(requestParameters.id, requestParameters.patchedChatRoomRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23395,7 +26857,83 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsUpdate(requestParameters: V1ApiV1ChatsRoomsUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsUpdate(requestParameters.id, requestParameters.chatRoom, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsUpdate(requestParameters.id, requestParameters.chatRoomRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Create contact with throttling.
+     * @param {V1ApiV1ContactsCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ContactsCreate(requestParameters: V1ApiV1ContactsCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ContactsCreate(requestParameters.simpleContactRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Contact enquiries API with minimal code.
+     * @param {V1ApiV1ContactsDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ContactsDestroy(requestParameters: V1ApiV1ContactsDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ContactsDestroy(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get available enquiry types.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ContactsEnquiryTypesRetrieve(options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ContactsEnquiryTypesRetrieve(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Contact enquiries API with minimal code.
+     * @param {V1ApiV1ContactsListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ContactsList(requestParameters: V1ApiV1ContactsListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ContactsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Contact enquiries API with minimal code.
+     * @param {V1ApiV1ContactsPartialUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ContactsPartialUpdate(requestParameters: V1ApiV1ContactsPartialUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ContactsPartialUpdate(requestParameters.id, requestParameters.patchedSimpleContactRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Contact enquiries API with minimal code.
+     * @param {V1ApiV1ContactsRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ContactsRetrieve(requestParameters: V1ApiV1ContactsRetrieveRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ContactsRetrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Contact enquiries API with minimal code.
+     * @param {V1ApiV1ContactsUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ContactsUpdate(requestParameters: V1ApiV1ContactsUpdateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ContactsUpdate(requestParameters.id, requestParameters.simpleContactRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23428,7 +26966,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreServiceAreasCreate(requestParameters: V1ApiV1CoreServiceAreasCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreServiceAreasCreate(requestParameters.serviceAreaCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreServiceAreasCreate(requestParameters.serviceAreaCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23461,7 +26999,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreServiceAreasPartialUpdate(requestParameters: V1ApiV1CoreServiceAreasPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreServiceAreasPartialUpdate(requestParameters.id, requestParameters.patchedServiceAreaCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreServiceAreasPartialUpdate(requestParameters.id, requestParameters.patchedServiceAreaCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23483,7 +27021,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreServiceAreasUpdate(requestParameters: V1ApiV1CoreServiceAreasUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreServiceAreasUpdate(requestParameters.id, requestParameters.serviceAreaCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreServiceAreasUpdate(requestParameters.id, requestParameters.serviceAreaCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23494,7 +27032,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreServiceCategoriesCreate(requestParameters: V1ApiV1CoreServiceCategoriesCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreServiceCategoriesCreate(requestParameters.serviceCategoryCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreServiceCategoriesCreate(requestParameters.serviceCategoryCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23527,7 +27065,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreServiceCategoriesPartialUpdate(requestParameters: V1ApiV1CoreServiceCategoriesPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreServiceCategoriesPartialUpdate(requestParameters.id, requestParameters.patchedServiceCategoryCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreServiceCategoriesPartialUpdate(requestParameters.id, requestParameters.patchedServiceCategoryCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23549,7 +27087,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreServiceCategoriesUpdate(requestParameters: V1ApiV1CoreServiceCategoriesUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreServiceCategoriesUpdate(requestParameters.id, requestParameters.serviceCategoryCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreServiceCategoriesUpdate(requestParameters.id, requestParameters.serviceCategoryCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23560,7 +27098,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreServiceSubcategoriesCreate(requestParameters: V1ApiV1CoreServiceSubcategoriesCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesCreate(requestParameters.serviceSubcategoryCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesCreate(requestParameters.serviceSubcategoryCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23593,7 +27131,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreServiceSubcategoriesPartialUpdate(requestParameters: V1ApiV1CoreServiceSubcategoriesPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesPartialUpdate(requestParameters.id, requestParameters.patchedServiceSubcategoryCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesPartialUpdate(requestParameters.id, requestParameters.patchedServiceSubcategoryCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23615,7 +27153,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreServiceSubcategoriesUpdate(requestParameters: V1ApiV1CoreServiceSubcategoriesUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesUpdate(requestParameters.id, requestParameters.serviceSubcategoryCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreServiceSubcategoriesUpdate(requestParameters.id, requestParameters.serviceSubcategoryCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23626,7 +27164,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreSupportFaqCreate(requestParameters: V1ApiV1CoreSupportFaqCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreSupportFaqCreate(requestParameters.supportFAQCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreSupportFaqCreate(requestParameters.supportFAQCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23659,7 +27197,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreSupportFaqPartialUpdate(requestParameters: V1ApiV1CoreSupportFaqPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreSupportFaqPartialUpdate(requestParameters.id, requestParameters.patchedSupportFAQCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreSupportFaqPartialUpdate(requestParameters.id, requestParameters.patchedSupportFAQCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23681,7 +27219,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreSupportFaqUpdate(requestParameters: V1ApiV1CoreSupportFaqUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreSupportFaqUpdate(requestParameters.id, requestParameters.supportFAQCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreSupportFaqUpdate(requestParameters.id, requestParameters.supportFAQCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23692,7 +27230,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreSystemSettingsCreate(requestParameters: V1ApiV1CoreSystemSettingsCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreSystemSettingsCreate(requestParameters.systemSettingsCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreSystemSettingsCreate(requestParameters.systemSettingsCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23725,7 +27263,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreSystemSettingsPartialUpdate(requestParameters: V1ApiV1CoreSystemSettingsPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreSystemSettingsPartialUpdate(requestParameters.id, requestParameters.patchedSystemSettingsCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreSystemSettingsPartialUpdate(requestParameters.id, requestParameters.patchedSystemSettingsCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23747,7 +27285,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1CoreSystemSettingsUpdate(requestParameters: V1ApiV1CoreSystemSettingsUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1CoreSystemSettingsUpdate(requestParameters.id, requestParameters.systemSettingsCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1CoreSystemSettingsUpdate(requestParameters.id, requestParameters.systemSettingsCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23762,6 +27300,17 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
+     * Get job recommendations for master based on skills, location, and preferences.
+     * @param {V1ApiV1HomeMasterNewJobsListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1HomeMasterNewJobsList(requestParameters: V1ApiV1HomeMasterNewJobsListRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1HomeMasterNewJobsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Complete an assignment with optional rating and review
      * @param {V1ApiV1JobAssignmentsCompleteRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -23769,7 +27318,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1JobAssignmentsComplete(requestParameters: V1ApiV1JobAssignmentsCompleteRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1JobAssignmentsComplete(requestParameters.id, requestParameters.jobAssignmentCompletion, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1JobAssignmentsComplete(requestParameters.id, requestParameters.jobAssignmentCompletionRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23780,7 +27329,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1JobAssignmentsStart(requestParameters: V1ApiV1JobAssignmentsStartRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1JobAssignmentsStart(requestParameters.id, requestParameters.jobAssignment, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1JobAssignmentsStart(requestParameters.id, requestParameters.jobAssignmentRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23791,7 +27340,40 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1JobsApply(requestParameters: V1ApiV1JobsApplyRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1JobsApply(requestParameters.id, requestParameters.jobApply, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1JobsApply(requestParameters.id, requestParameters.jobApplyRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1JobsAttachmentsCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1JobsAttachmentsCreate(requestParameters: V1ApiV1JobsAttachmentsCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1JobsAttachmentsCreate(requestParameters.jobId, requestParameters.files, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1JobsAttachmentsDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1JobsAttachmentsDestroy(requestParameters: V1ApiV1JobsAttachmentsDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1JobsAttachmentsDestroy(requestParameters.id, requestParameters.jobId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1JobsAttachmentsListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1JobsAttachmentsList(requestParameters: V1ApiV1JobsAttachmentsListRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1JobsAttachmentsList(requestParameters.jobId, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23802,7 +27384,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1JobsBookmark(requestParameters: V1ApiV1JobsBookmarkRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1JobsBookmark(requestParameters.id, requestParameters.job, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1JobsBookmark(requestParameters.id, requestParameters.jobRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23813,7 +27395,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1JobsCancel(requestParameters: V1ApiV1JobsCancelRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1JobsCancel(requestParameters.id, requestParameters.job, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1JobsCancel(requestParameters.id, requestParameters.jobRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23824,7 +27406,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1JobsCreate(requestParameters: V1ApiV1JobsCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1JobsCreate(requestParameters.job, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1JobsCreate(requestParameters.jobRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23846,7 +27428,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1JobsFavorite(requestParameters: V1ApiV1JobsFavoriteRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1JobsFavorite(requestParameters.id, requestParameters.job, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1JobsFavorite(requestParameters.id, requestParameters.jobRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23857,7 +27439,29 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1JobsList(requestParameters: V1ApiV1JobsListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1JobsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, requestParameters.serviceSubcategory, requestParameters.status, requestParameters.urgency, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1JobsList(requestParameters.city, requestParameters.maxPrice, requestParameters.minPrice, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, requestParameters.serviceCategory, requestParameters.serviceDateFrom, requestParameters.serviceDateTo, requestParameters.serviceSubcategory, requestParameters.urgency, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get completed job history for master
+     * @param {V1ApiV1JobsMasterHistoryRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1JobsMasterHistory(requestParameters: V1ApiV1JobsMasterHistoryRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1JobsMasterHistory(requestParameters.city, requestParameters.maxPrice, requestParameters.minPrice, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, requestParameters.serviceCategory, requestParameters.serviceDateFrom, requestParameters.serviceDateTo, requestParameters.serviceSubcategory, requestParameters.urgency, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get jobs currently in progress for master
+     * @param {V1ApiV1JobsMasterInProgressRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1JobsMasterInProgress(requestParameters: V1ApiV1JobsMasterInProgressRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1JobsMasterInProgress(requestParameters.city, requestParameters.maxPrice, requestParameters.minPrice, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, requestParameters.serviceCategory, requestParameters.serviceDateFrom, requestParameters.serviceDateTo, requestParameters.serviceSubcategory, requestParameters.urgency, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23868,7 +27472,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1JobsPartialUpdate(requestParameters: V1ApiV1JobsPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1JobsPartialUpdate(requestParameters.id, requestParameters.patchedJob, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1JobsPartialUpdate(requestParameters.id, requestParameters.patchedJobRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23879,7 +27483,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1JobsPublish(requestParameters: V1ApiV1JobsPublishRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1JobsPublish(requestParameters.id, requestParameters.job, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1JobsPublish(requestParameters.id, requestParameters.jobRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23901,7 +27505,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1JobsUpdate(requestParameters: V1ApiV1JobsUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1JobsUpdate(requestParameters.id, requestParameters.job, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1JobsUpdate(requestParameters.id, requestParameters.jobRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23912,7 +27516,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1LocationsCitiesCreate(requestParameters: V1ApiV1LocationsCitiesCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1LocationsCitiesCreate(requestParameters.city, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1LocationsCitiesCreate(requestParameters.cityRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23945,7 +27549,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1LocationsCitiesPartialUpdate(requestParameters: V1ApiV1LocationsCitiesPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1LocationsCitiesPartialUpdate(requestParameters.id, requestParameters.patchedCity, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1LocationsCitiesPartialUpdate(requestParameters.id, requestParameters.patchedCityRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23967,7 +27571,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1LocationsCitiesUpdate(requestParameters: V1ApiV1LocationsCitiesUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1LocationsCitiesUpdate(requestParameters.id, requestParameters.city, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1LocationsCitiesUpdate(requestParameters.id, requestParameters.cityRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -23978,7 +27582,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1LocationsCountriesCreate(requestParameters: V1ApiV1LocationsCountriesCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1LocationsCountriesCreate(requestParameters.country, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1LocationsCountriesCreate(requestParameters.countryRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24011,7 +27615,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1LocationsCountriesPartialUpdate(requestParameters: V1ApiV1LocationsCountriesPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1LocationsCountriesPartialUpdate(requestParameters.id, requestParameters.patchedCountry, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1LocationsCountriesPartialUpdate(requestParameters.id, requestParameters.patchedCountryRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24033,7 +27637,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1LocationsCountriesUpdate(requestParameters: V1ApiV1LocationsCountriesUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1LocationsCountriesUpdate(requestParameters.id, requestParameters.country, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1LocationsCountriesUpdate(requestParameters.id, requestParameters.countryRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24054,7 +27658,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1NotificationsCreate(requestParameters: V1ApiV1NotificationsCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsCreate(requestParameters.notificationCreate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1NotificationsCreate(requestParameters.notificationCreateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24087,7 +27691,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1NotificationsMarkAllRead(requestParameters: V1ApiV1NotificationsMarkAllReadRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsMarkAllRead(requestParameters.notification, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1NotificationsMarkAllRead(requestParameters.notificationRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24098,7 +27702,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1NotificationsMarkRead(requestParameters: V1ApiV1NotificationsMarkReadRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsMarkRead(requestParameters.id, requestParameters.notification, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1NotificationsMarkRead(requestParameters.id, requestParameters.notificationRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24109,7 +27713,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1NotificationsMarkUnread(requestParameters: V1ApiV1NotificationsMarkUnreadRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsMarkUnread(requestParameters.id, requestParameters.notification, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1NotificationsMarkUnread(requestParameters.id, requestParameters.notificationRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24120,7 +27724,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1NotificationsPartialUpdate(requestParameters: V1ApiV1NotificationsPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsPartialUpdate(requestParameters.id, requestParameters.patchedNotificationUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1NotificationsPartialUpdate(requestParameters.id, requestParameters.patchedNotificationUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24164,11 +27768,11 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1NotificationsUpdate(requestParameters: V1ApiV1NotificationsUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1NotificationsUpdate(requestParameters.id, requestParameters.notificationUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1NotificationsUpdate(requestParameters.id, requestParameters.notificationUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Perform action based on \'action\' parameter in request data.
+     * 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1Api
@@ -24185,7 +27789,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ProfileNotificationSettingsPartialUpdate(requestParameters: V1ApiV1ProfileNotificationSettingsPartialUpdateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ProfileNotificationSettingsPartialUpdate(requestParameters.patchedUserNotificationSettings, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ProfileNotificationSettingsPartialUpdate(requestParameters.patchedUserNotificationSettingsRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24206,7 +27810,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ProfileNotificationSettingsUpdate(requestParameters: V1ApiV1ProfileNotificationSettingsUpdateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ProfileNotificationSettingsUpdate(requestParameters.userNotificationSettings, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ProfileNotificationSettingsUpdate(requestParameters.userNotificationSettingsRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24217,7 +27821,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ProfilePartialUpdate(requestParameters: V1ApiV1ProfilePartialUpdateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ProfilePartialUpdate(requestParameters.patchedUserUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ProfilePartialUpdate(requestParameters.patchedUserUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24238,7 +27842,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ProfileUpdate(requestParameters: V1ApiV1ProfileUpdateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ProfileUpdate(requestParameters.userUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ProfileUpdate(requestParameters.userUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24249,7 +27853,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ResumesArchive(requestParameters: V1ApiV1ResumesArchiveRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ResumesArchive(requestParameters.id, requestParameters.masterResume, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ResumesArchive(requestParameters.id, requestParameters.masterResumeRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24260,7 +27864,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ResumesCreate(requestParameters: V1ApiV1ResumesCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ResumesCreate(requestParameters.masterResume, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ResumesCreate(requestParameters.masterResumeRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24293,7 +27897,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ResumesPartialUpdate(requestParameters: V1ApiV1ResumesPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ResumesPartialUpdate(requestParameters.id, requestParameters.patchedMasterResume, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ResumesPartialUpdate(requestParameters.id, requestParameters.patchedMasterResumeRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24304,7 +27908,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ResumesPublish(requestParameters: V1ApiV1ResumesPublishRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ResumesPublish(requestParameters.id, requestParameters.masterResume, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ResumesPublish(requestParameters.id, requestParameters.masterResumeRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24326,7 +27930,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ResumesUpdate(requestParameters: V1ApiV1ResumesUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ResumesUpdate(requestParameters.id, requestParameters.masterResume, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ResumesUpdate(requestParameters.id, requestParameters.masterResumeRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24459,7 +28063,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMastersUpdateOnlineStatus(requestParameters: V1ApiV1UsersMastersUpdateOnlineStatusRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMastersUpdateOnlineStatus(requestParameters.masterOnlineStatusRequest, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMastersUpdateOnlineStatus(requestParameters.masterOnlineStatusRequestRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24470,7 +28074,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMyCertificatesCreate(requestParameters: V1ApiV1UsersMyCertificatesCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyCertificatesCreate(requestParameters.certificate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMyCertificatesCreate(requestParameters.certificateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24503,7 +28107,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMyCertificatesPartialUpdate(requestParameters: V1ApiV1UsersMyCertificatesPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyCertificatesPartialUpdate(requestParameters.id, requestParameters.patchedCertificate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMyCertificatesPartialUpdate(requestParameters.id, requestParameters.patchedCertificateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24525,7 +28129,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMyCertificatesUpdate(requestParameters: V1ApiV1UsersMyCertificatesUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyCertificatesUpdate(requestParameters.id, requestParameters.certificate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMyCertificatesUpdate(requestParameters.id, requestParameters.certificateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24536,7 +28140,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMyEmployerCreateCreate(requestParameters: V1ApiV1UsersMyEmployerCreateCreateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyEmployerCreateCreate(requestParameters.employerProfileCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMyEmployerCreateCreate(requestParameters.employerProfileCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24547,7 +28151,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMyEmployerPartialUpdate(requestParameters: V1ApiV1UsersMyEmployerPartialUpdateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyEmployerPartialUpdate(requestParameters.patchedEmployerProfileCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMyEmployerPartialUpdate(requestParameters.patchedEmployerProfileCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24568,7 +28172,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMyEmployerUpdate(requestParameters: V1ApiV1UsersMyEmployerUpdateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyEmployerUpdate(requestParameters.employerProfileCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMyEmployerUpdate(requestParameters.employerProfileCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24579,7 +28183,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMyMasterCreateCreate(requestParameters: V1ApiV1UsersMyMasterCreateCreateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyMasterCreateCreate(requestParameters.masterProfileCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMyMasterCreateCreate(requestParameters.masterProfileCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24590,7 +28194,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMyMasterPartialUpdate(requestParameters: V1ApiV1UsersMyMasterPartialUpdateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyMasterPartialUpdate(requestParameters.patchedMasterProfileCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMyMasterPartialUpdate(requestParameters.patchedMasterProfileCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24611,7 +28215,40 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMyMasterUpdate(requestParameters: V1ApiV1UsersMyMasterUpdateRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyMasterUpdate(requestParameters.masterProfileCreateUpdate, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMyMasterUpdate(requestParameters.masterProfileCreateUpdateRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1UsersMyPortfolioAttachmentsCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersMyPortfolioAttachmentsCreate(requestParameters: V1ApiV1UsersMyPortfolioAttachmentsCreateRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersMyPortfolioAttachmentsCreate(requestParameters.portfolioId, requestParameters.files, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1UsersMyPortfolioAttachmentsDestroyRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersMyPortfolioAttachmentsDestroy(requestParameters: V1ApiV1UsersMyPortfolioAttachmentsDestroyRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersMyPortfolioAttachmentsDestroy(requestParameters.id, requestParameters.portfolioId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {V1ApiV1UsersMyPortfolioAttachmentsListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1UsersMyPortfolioAttachmentsList(requestParameters: V1ApiV1UsersMyPortfolioAttachmentsListRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1UsersMyPortfolioAttachmentsList(requestParameters.portfolioId, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24622,7 +28259,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMyPortfolioCreate(requestParameters: V1ApiV1UsersMyPortfolioCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyPortfolioCreate(requestParameters.portfolioItem, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMyPortfolioCreate(requestParameters.portfolioItemRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24655,7 +28292,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMyPortfolioPartialUpdate(requestParameters: V1ApiV1UsersMyPortfolioPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyPortfolioPartialUpdate(requestParameters.id, requestParameters.patchedPortfolioItem, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMyPortfolioPartialUpdate(requestParameters.id, requestParameters.patchedPortfolioItemRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24677,7 +28314,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMyPortfolioUpdate(requestParameters: V1ApiV1UsersMyPortfolioUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMyPortfolioUpdate(requestParameters.id, requestParameters.portfolioItem, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMyPortfolioUpdate(requestParameters.id, requestParameters.portfolioItemRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24688,7 +28325,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMySkillsCreate(requestParameters: V1ApiV1UsersMySkillsCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMySkillsCreate(requestParameters.masterSkill, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMySkillsCreate(requestParameters.masterSkillRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24721,7 +28358,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMySkillsPartialUpdate(requestParameters: V1ApiV1UsersMySkillsPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMySkillsPartialUpdate(requestParameters.id, requestParameters.patchedMasterSkill, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMySkillsPartialUpdate(requestParameters.id, requestParameters.patchedMasterSkillRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -24743,7 +28380,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1UsersMySkillsUpdate(requestParameters: V1ApiV1UsersMySkillsUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1UsersMySkillsUpdate(requestParameters.id, requestParameters.masterSkill, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1UsersMySkillsUpdate(requestParameters.id, requestParameters.masterSkillRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

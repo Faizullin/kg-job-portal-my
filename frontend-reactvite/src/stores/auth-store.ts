@@ -12,6 +12,7 @@ interface AuthState {
   isAuthenticated: boolean;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
   user: UserDetail | null;
+  setUser: (user: UserDetail | null) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
   currentProfileType: ProfileType | null;
@@ -30,6 +31,8 @@ export const useAuthStore = create<AuthState>()(
     setIsAuthenticated: (isAuthenticated) =>
       set((state) => ({ ...state, isAuthenticated })),
     user: null,
+    setUser: (user) =>
+      set((state) => ({ ...state, user })),
     isLoading: false,
     setIsLoading: (isLoading) =>
       set((state) => ({ ...state, isLoading })),

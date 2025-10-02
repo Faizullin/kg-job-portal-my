@@ -211,7 +211,7 @@ def validate_total_size(file_list):
         )
 
 
-class JobAttachmentUploadSerializer(AttachmentSerializer):
+class JobAttachmentUploadSerializer(serializers.Serializer):
     """Serializer for job assignment attachments."""
 
     files = serializers.ListField(

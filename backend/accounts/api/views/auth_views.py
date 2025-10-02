@@ -13,8 +13,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from accounts.api.serializers import FireBaseAuthSerializer, FirebaseAuthResponseSerializer, UserProfileSerializer, \
-    UserDetailSerializer, LogoutResponseSerializer
+from accounts.api.serializers import FireBaseAuthSerializer, FirebaseAuthResponseSerializer, UserDetailSerializer, \
+    LogoutResponseSerializer
 from accounts.models import LoginSession, UserNotificationSettings, UserTypes
 
 UserModel = get_user_model()
@@ -27,6 +27,7 @@ class FirebaseAuthView(APIView):
     permission_classes = [AllowAny]
 
     @extend_schema(
+        request=FireBaseAuthSerializer,
         responses={
             200: FirebaseAuthResponseSerializer,
         },
@@ -35,10 +36,8 @@ class FirebaseAuthView(APIView):
         """Authenticate or register a user using Firebase ID token."""
 
         id_token = request.data.get('id_token')
-
         if not id_token:
             return Response({'error': 'id_token is required'}, status=400)
-
         try:
             decoded_token = auth.verify_id_token(id_token)
             firebase_user_id = decoded_token['uid']
@@ -51,7 +50,7 @@ class FirebaseAuthView(APIView):
 
         # Try to get active user first (manager automatically filters deleted users)
         try:
-            user = UserModel.objects.get(firebase_user_id=firebase_user_id)
+            user = UserModel.objects.prefetch_related("groups").get(firebase_user_id=firebase_user_id)
             if not user.is_active:
                 return Response({'error': 'User account is deactivated'}, status=403)
 
@@ -78,13 +77,13 @@ class FirebaseAuthView(APIView):
 
             # User doesn't exist - create new user from Firebase data
             # Firebase user is already verified above
-            user_profile = self._create_user_from_firebase(firebase_user)
+            user_created = self._create_user_from_firebase(firebase_user)
 
             # Generate token for new user
-            token, created = Token.objects.get_or_create(user=user_profile)
+            token, created = Token.objects.get_or_create(user=user_created)
 
             # Use UserProfileSerializer for consistent response
-            user_serializer = UserDetailSerializer(user_profile)
+            user_serializer = UserDetailSerializer(user_created)
             response_data = {
                 'token': token.key,
                 'user': user_serializer.data,
@@ -95,8 +94,7 @@ class FirebaseAuthView(APIView):
             serializer = FirebaseAuthResponseSerializer(response_data)
             return Response(serializer.data, status=201)
 
-
-    def _create_user_from_firebase(self, firebase_user):
+    def _create_user_from_firebase(self, firebase_user) -> UserModel:
         """Create a new user from Firebase user data."""
         try:
             # Extract user data from Firebase

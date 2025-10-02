@@ -91,7 +91,7 @@ export function ClientProfileForm() {
         favorite_masters: data.favorite_masters.map(master => master.id),
       };
       const response = await myApi.v1UsersMyEmployerPartialUpdate({ 
-        patchedEmployerProfileCreateUpdate: transformedData 
+        patchedEmployerProfileCreateUpdateRequest: transformedData 
       });
       return response.data;
     },

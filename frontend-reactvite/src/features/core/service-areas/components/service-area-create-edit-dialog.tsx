@@ -1,16 +1,16 @@
 import { FormDialog } from "@/components/dialogs/form-dialog";
+import { MultiCombobox } from "@/components/ui/combobox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { MultiCombobox } from "@/components/ui/combobox";
 import { useDialogControl } from "@/hooks/use-dialog-control";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
 
 const serviceAreaFormSchema = z.object({
   id: z.number().optional(),
@@ -74,7 +74,7 @@ export function ServiceAreaCreateEditDialog({
         ...data,
         service_categories: data.service_categories.map(id => parseInt(id)),
       };
-      return myApi.v1CoreServiceAreasCreate({ serviceAreaCreateUpdate: transformedData });
+      return myApi.v1CoreServiceAreasCreate({ serviceAreaCreateUpdateRequest: transformedData });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['service-areas'] });
@@ -93,7 +93,7 @@ export function ServiceAreaCreateEditDialog({
         ...data,
         service_categories: data.service_categories.map(id => parseInt(id)),
       };
-      return myApi.v1CoreServiceAreasUpdate({ id: control.data!.id!, serviceAreaCreateUpdate: transformedData });
+      return myApi.v1CoreServiceAreasUpdate({ id: control.data!.id!, serviceAreaCreateUpdateRequest: transformedData });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['service-areas'] });
@@ -129,7 +129,7 @@ export function ServiceAreaCreateEditDialog({
             state: dataToUse.state,
             country: dataToUse.country,
             is_active: dataToUse.is_active ?? true,
-            service_categories: dataToUse.service_categories.map(category => category.toString())  || [],
+            service_categories: dataToUse.service_categories.map(category => category.toString()) || [],
           });
         }
       } else {

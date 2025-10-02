@@ -100,7 +100,7 @@ export const sidebarData: SidebarData = {
       items: [
         {
           title: "Resume",
-          url: "/subscribers/resume",
+          url: "/subscribers/resumes",
           icon: FileText,
         },
         {

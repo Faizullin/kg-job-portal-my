@@ -20,27 +20,28 @@ import { type ColumnDef } from "@tanstack/react-table";
 import {
   Calendar,
   Edit,
-  Loader2,
   MoreHorizontal,
   Plus,
   Trash2,
+  Eye,
+  EyeOff,
+  SearchIcon,
 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import myApi from "@/lib/api/my-api";
+import type { 
+  MasterResume, 
+  MasterResumeStatusEnum 
+} from "@/lib/api/axios-client/api";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useDialogControl } from "@/hooks/use-dialog-control";
+import { Input } from "@/components/ui/input";
+import NiceModal from "@/components/nice-modal/modal-context";
+import { DeleteConfirmNiceDialog } from "@/components/dialogs/delete-confirm-dialog";
+import { ResumeCreateEditDialog, type ResumeFormData } from "./components/resume-create-edit-dialog";
 
-// Define resume interface based on API structure
-interface Resume {
-  id: number;
-  title: string;
-  summary: string;
-  experience_years: number;
-  education: string;
-  certifications: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export function ResumePage() {
+export function ResumesPage() {
   return (
     <>
       <Header fixed>
@@ -53,174 +54,127 @@ export function ResumePage() {
       </Header>
 
       <Main>
-        <ResumeTable />
+        <RenderTable />
       </Main>
     </>
   );
 }
 
-const RESUME_PAGE_QUERY_KEY = 'resume-page';
+const loadResumesQueryKey = 'resumes';
 
-const ResumeTable = () => {
+const RenderTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [editingResume, setEditingResume] = useState<Resume | null>(null);
-  
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [parsedData, setParsedData] = useState<Array<MasterResume>>([]);
+  const [parsedPagination, setParsedPagination] = useState({
+    pageCount: 1,
+  });
+
+  const resumeDialog = useDialogControl<ResumeFormData>();
   const queryClient = useQueryClient();
 
-  const loadResumeListQuery = useQuery({
-    queryKey: [RESUME_PAGE_QUERY_KEY, searchQuery],
+  const loadResumesQuery = useQuery({
+    queryKey: [loadResumesQueryKey, debouncedSearchQuery],
     queryFn: async () => {
-      // Using a mock API call since the actual API endpoint needs to be determined
-      // This will be replaced with the actual API call once the endpoint is identified
-      const response = await fetch('/api/v1/users/my-resume/', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`,
-        },
+      const response = await myApi.v1ResumesList({
+        search: debouncedSearchQuery || undefined,
+        page: 1,
+        pageSize: 10,
       });
-      if (!response.ok) {
-        throw new Error('Failed to fetch resume');
-      }
-      return await response.json();
+      return response.data;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
   });
 
-  const resumes = useMemo(() => {
-    // Mock data for now - replace with actual API response
-    return [
-      {
-        id: 1,
-        title: "Senior Software Engineer Resume",
-        summary: "Experienced software engineer with 5+ years in full-stack development",
-        experience_years: 5,
-        education: "Bachelor's in Computer Science",
-        certifications: "AWS Certified Developer, Google Cloud Professional",
-        created_at: "2024-01-15T10:00:00Z",
-        updated_at: "2024-01-20T14:30:00Z",
-      },
-      {
-        id: 2,
-        title: "Frontend Developer Resume",
-        summary: "Specialized in React, Vue.js, and modern frontend technologies",
-        experience_years: 3,
-        education: "Bachelor's in Information Technology",
-        certifications: "React Developer Certification",
-        created_at: "2024-01-10T09:00:00Z",
-        updated_at: "2024-01-18T16:45:00Z",
-      }
-    ] as Resume[];
-  }, []);
+  useEffect(() => {
+    if (!loadResumesQuery.data) return;
+    const parsed = loadResumesQuery.data.results || [];
+    setParsedData(parsed);
+    setParsedPagination({
+      pageCount: Math.ceil(
+        (loadResumesQuery.data.count || 0) / 10,
+      ),
+    });
+  }, [loadResumesQuery.data]);
 
-  const createResumeMutation = useMutation({
-    mutationFn: async (resumeData: Partial<Resume>) => {
-      // Mock API call - replace with actual API call
-      const response = await fetch('/api/v1/users/my-resume/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(resumeData),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to create resume');
-      }
-      return await response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [RESUME_PAGE_QUERY_KEY] });
-      toast.success("Resume created successfully!");
-      setShowCreateDialog(false);
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to create resume");
-    },
-  });
+  const totalCount = parsedData.length;
 
-  const updateResumeMutation = useMutation({
-    mutationFn: async ({ id, ...resumeData }: Partial<Resume> & { id: number }) => {
-      // Mock API call - replace with actual API call
-      const response = await fetch(`/api/v1/users/my-resume/${id}/`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(resumeData),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update resume');
-      }
-      return await response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [RESUME_PAGE_QUERY_KEY] });
-      toast.success("Resume updated successfully!");
-      setEditingResume(null);
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to update resume");
-    },
-  });
+  // Dialog handlers
+  const handleCreateResume = useCallback(() => {
+    resumeDialog.show(undefined); // Explicitly pass undefined to ensure create mode
+  }, [resumeDialog]);
 
-  const deleteResumeMutation = useMutation({
-    mutationFn: async (id: number) => {
-      // Mock API call - replace with actual API call
-      const response = await fetch(`/api/v1/users/my-resume/${id}/`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete resume');
-      }
-    },
+  const handleEditResume = useCallback((resume: MasterResume) => {
+    resumeDialog.show({
+      title: resume.title,
+      content: resume.content,
+      status: resume.status || 'draft',
+    });
+  }, [resumeDialog]);
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => myApi.v1ResumesDestroy({ id }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [RESUME_PAGE_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [loadResumesQueryKey] });
       toast.success("Resume deleted successfully!");
     },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to delete resume");
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to delete resume");
     },
   });
+  const deleteMutationMutateAsync = deleteMutation.mutateAsync;
+  const handleDeleteResume = useCallback((resume: MasterResume) => {
+    NiceModal.show(DeleteConfirmNiceDialog, {
+      args: {
+        title: "Delete Resume",
+        desc: `Are you sure you want to delete "${resume.title}"? This action cannot be undone.`,
+      }
+    }).then((response) => {
+      if (response.reason === "confirm") {
+        deleteMutationMutateAsync(resume.id);
+      }
+    })
+  }, [deleteMutationMutateAsync]);
 
-  const handleCreateResume = useCallback(() => {
-    setEditingResume(null);
-    setShowCreateDialog(true);
-  }, []);
-
-  const handleEditResume = useCallback((resume: Resume) => {
-    setEditingResume(resume);
-    setShowCreateDialog(true);
-  }, []);
-
-  const handleDeleteResume = useCallback((resume: Resume) => {
-    if (window.confirm(`Are you sure you want to delete "${resume.title}"?`)) {
-      deleteResumeMutation.mutate(resume.id);
+  const getStatusColor = useCallback((status: MasterResumeStatusEnum) => {
+    switch (status) {
+      case 'published':
+        return 'bg-green-100 text-green-800';
+      case 'draft':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'archived':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
-  }, [deleteResumeMutation]);
-
-  const getExperienceColor = useCallback((years: number) => {
-    if (years >= 5) return 'bg-green-100 text-green-800';
-    if (years >= 3) return 'bg-blue-100 text-blue-800';
-    if (years >= 1) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-gray-100 text-gray-800';
   }, []);
 
-  const totalCount = useMemo(() => resumes.length, [resumes]);
-
-  const columns = useMemo<ColumnDef<Resume>[]>(() => [
+  const columns = useMemo<ColumnDef<MasterResume, any>[]>(() => [
+    {
+      accessorKey: "id",
+      header: "ID",
+      cell: ({ row }) => (
+        <a className="font-mono text-sm" href="#" onClick={(e) => {
+          e.preventDefault();
+          handleEditResume(row.original);
+        }}>
+          #{row.getValue("id")}
+        </a>
+      ),
+      meta: {
+        variant: "number",
+        label: "ID",
+        className: ""
+      }
+    },
     {
       accessorKey: "title",
       header: "Title",
       cell: ({ row }) => (
-        <div className="max-w-[250px]">
+        <div className="max-w-[300px]">
           <div className="font-medium truncate">{row.getValue("title")}</div>
           <div className="text-sm text-muted-foreground truncate">
-            {row.original.summary}
+            {row.original.content.substring(0, 100)}...
           </div>
         </div>
       ),
@@ -232,48 +186,19 @@ const ResumeTable = () => {
       }
     },
     {
-      accessorKey: "experience_years",
-      header: "Experience",
+      accessorKey: "status",
+      header: "Status",
       cell: ({ row }) => {
-        const years = row.getValue("experience_years") as number;
+        const status = row.getValue("status") as MasterResumeStatusEnum;
         return (
-          <Badge className={getExperienceColor(years)}>
-            {years} years
+          <Badge className={getStatusColor(status)}>
+            {status?.charAt(0).toUpperCase() + status?.slice(1)}
           </Badge>
         );
       },
       meta: {
-        variant: "number",
-        label: "Experience",
-        unit: "years",
-        className: ""
-      }
-    },
-    {
-      accessorKey: "education",
-      header: "Education",
-      cell: ({ row }) => (
-        <div className="max-w-[200px] truncate text-sm">
-          {row.getValue("education")}
-        </div>
-      ),
-      meta: {
         variant: "text",
-        label: "Education",
-        className: ""
-      }
-    },
-    {
-      accessorKey: "certifications",
-      header: "Certifications",
-      cell: ({ row }) => (
-        <div className="max-w-[200px] truncate text-sm">
-          {row.getValue("certifications")}
-        </div>
-      ),
-      meta: {
-        variant: "text",
-        label: "Certifications",
+        label: "Status",
         className: ""
       }
     },
@@ -293,93 +218,142 @@ const ResumeTable = () => {
       }
     },
     {
+      accessorKey: "updated_at",
+      header: "Updated",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <Calendar className="h-3 w-3" />
+          <span>{new Date(row.getValue("updated_at")).toLocaleDateString()}</span>
+        </div>
+      ),
+      meta: {
+        variant: "date",
+        label: "Updated Date",
+        className: ""
+      }
+    },
+    {
       id: "actions",
       header: "Actions",
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => handleEditResume(row.original)}>
-              <Edit className="mr-2 h-4 w-4" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDeleteResume(row.original)}>
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
+      cell: ({ row }) => {
+        const resume = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start">
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Details
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => handleEditResume(resume)}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+              </DropdownMenuItem>
+              {resume.status === 'draft' && (
+                <DropdownMenuItem asChild>
+                  <Button variant="ghost" size="sm" className="w-full justify-start">
+                    <Eye className="h-4 w-4 mr-2" />
+                    Publish
+                  </Button>
+                </DropdownMenuItem>
+              )}
+              {resume.status === 'published' && (
+                <DropdownMenuItem asChild>
+                  <Button variant="ghost" size="sm" className="w-full justify-start">
+                    <EyeOff className="h-4 w-4 mr-2" />
+                    Archive
+                  </Button>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start text-red-600" onClick={() => handleDeleteResume(resume)}>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
     },
-  ], [getExperienceColor, handleEditResume, handleDeleteResume]);
+  ], [getStatusColor, handleEditResume, handleDeleteResume]);
 
   const { table } = useDataTable({
-    data: resumes,
+    data: parsedData,
     columns,
-    pageCount: Math.ceil(totalCount / 10),
+    pageCount: parsedPagination.pageCount,
+    enableGlobalFilter: true,
+    initialState: {
+      sorting: [{ id: "id", desc: true }],
+    },
   });
 
-  if (loadResumeListQuery.isLoading) {
+  if (loadResumesQuery.isLoading) {
     return (
-      <div className="flex items-center justify-center h-32">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
-  if (loadResumeListQuery.error) {
+  if (loadResumesQuery.error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-500">Error loading resumes: {loadResumeListQuery.error.message}</p>
+        <p className="text-red-600">Error loading resumes</p>
+        <Button onClick={() => loadResumesQuery.refetch()} className="mt-2">
+          Try Again
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Resume Management</h2>
-          <p className="text-muted-foreground">
-            Manage your professional resumes and experience details.
-          </p>
-        </div>
-        <Button onClick={handleCreateResume}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Resume
-        </Button>
-      </div>
-
-      <DataTable table={table}>
-        <DataTableToolbar table={table} />
-      </DataTable>
-
-      {/* TODO: Add ResumeCreateEditDialog component */}
-      {showCreateDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold mb-4">
-              {editingResume ? 'Edit Resume' : 'Create Resume'}
-            </h3>
-            <p className="text-muted-foreground">
-              Resume creation/edit dialog will be implemented here.
+    <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-lg font-semibold">Resumes</h3>
+            <p className="text-sm text-muted-foreground">
+              {totalCount} resume{totalCount !== 1 ? 's' : ''} found
             </p>
-            <div className="flex justify-end space-x-2 mt-4">
-              <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
-                Cancel
-              </Button>
-              <Button>
-                {editingResume ? 'Update' : 'Create'}
-              </Button>
+          </div>
+          <Button onClick={handleCreateResume} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Add Resume
+          </Button>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1 max-w-sm">
+              <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search resumes..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className="pl-8 h-8"
+              />
             </div>
           </div>
         </div>
-      )}
+        <DataTable table={table}>
+          <DataTableToolbar table={table} />
+        </DataTable>
+      </div>
+
+      {/* Dialog */}
+      <ResumeCreateEditDialog
+        control={resumeDialog}
+      />
     </div>
   );
 };

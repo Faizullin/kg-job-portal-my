@@ -4,43 +4,45 @@ from django.db.models import Q
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import serializers, status, mixins, viewsets, parsers
+from rest_framework import mixins, parsers, serializers, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from job_portal.apps.attachments.models import create_attachments
-from job_portal.apps.chats.models import ChatRoom, ChatParticipant, ChatRole
+from job_portal.apps.chats.models import ChatParticipant, ChatRole, ChatRoom
 from job_portal.apps.notifications.models import notify
 from job_portal.apps.users.api.permissions import HasEmployerProfile, HasMasterProfile
 from utils.permissions import (
     HasSpecificPermission,
 )
-from utils.views import BaseActionAPIViewMixin, BaseAction
+from utils.views import BaseAction, BaseActionAPIViewMixin
 from .filters import JobApplicationFilter, JobFilter
 from .permissions import JobAccessPermission
 from .serializers import (
     CResponseSerializer,
     JobApplicationSerializer,
     JobApplySerializer,
-    JobAssignmentSerializer,
+    JobAssignmentAttachmentUploadSerializer,
     JobAssignmentCompletionSerializer,
+    JobAssignmentSerializer,
+    JobAttachmentUploadSerializer,
     JobSerializer,
     ProgressUpdateSerializer,
-    RatingSerializer, JobAttachmentUploadSerializer, JobAssignmentAttachmentUploadSerializer,
+    RatingSerializer,
 )
 from ..models import (
+    BookmarkJob,
+    FavoriteJob,
     Job,
     JobApplication,
     JobApplicationStatus,
     JobAssignment,
     JobAssignmentStatus,
     JobStatus,
-    BookmarkJob,
-    FavoriteJob,
 )
 from ...attachments.api.permissions import IsAttachmentOwner
 from ...attachments.serializers import AttachmentSerializer
@@ -67,7 +69,9 @@ class JobAPIViewSet(viewsets.ModelViewSet):
     ordering = ["-created_at"]
 
     def get_queryset(self):
-        qs = Job.objects.all().select_related("employer__user", "service_subcategory", "city")
+        qs = Job.objects.all().select_related(
+            "employer__user", "service_subcategory", "city"
+        )
         user = self.request.user
 
         # Employer filtering
@@ -76,9 +80,9 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         # Master filtering - allow access to assigned jobs
         elif hasattr(user, "master_profile"):
             qs = qs.filter(
-                Q(status=JobStatus.PUBLISHED) |  # Published jobs
-                Q(assignment__master=user.master_profile) |  # Assigned jobs
-                Q(applications__applicant=user.master_profile)  # Applied jobs
+                Q(status=JobStatus.PUBLISHED)  # Published jobs
+                | Q(assignment__master=user.master_profile)  # Assigned jobs
+                | Q(applications__applicant=user.master_profile)  # Applied jobs
             ).distinct()
         else:
             qs = qs.filter(status=JobStatus.PUBLISHED)
@@ -97,7 +101,10 @@ class JobAPIViewSet(viewsets.ModelViewSet):
             "publish",
             "cancel",
         ]:
-            perms += [HasSpecificPermission(["jobs.change_job"])(), JobAccessPermission()]
+            perms += [
+                HasSpecificPermission(["jobs.change_job"])(),
+                JobAccessPermission(),
+            ]
         elif self.action == "create":
             perms += [HasSpecificPermission(["jobs.add_job"])()]
         elif self.action == "apply":
@@ -116,7 +123,7 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         responses={
             200: _JobApiActionSerializer,
         },
-        operation_id="v1_jobs_publish"
+        operation_id="v1_jobs_publish",
     )
     @action(detail=True, methods=["post"])
     def publish(self, request):
@@ -138,7 +145,7 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         responses={
             200: _JobApiActionSerializer,
         },
-        operation_id="v1_jobs_cancel"
+        operation_id="v1_jobs_cancel",
     )
     @action(detail=True, methods=["post"])
     def cancel(self, request):
@@ -162,7 +169,7 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         responses={
             200: _JobApiActionSerializer,
         },
-        operation_id="v1_jobs_apply"
+        operation_id="v1_jobs_apply",
     )
     @action(detail=True, methods=["post"])
     def apply(self, request, *args, **kwargs):
@@ -203,7 +210,7 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         responses={
             200: CResponseSerializer,
         },
-        operation_id="v1_jobs_bookmark"
+        operation_id="v1_jobs_bookmark",
     )
     @action(detail=True, methods=["post"])
     def bookmark(self, request):
@@ -213,25 +220,29 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         )
         if not created:
             bookmark.delete()
-            return Response({
-                'message': 'Job removed from bookmarks',
-                "data": {
-                    'is_bookmarked': False,
+            return Response(
+                {
+                    "message": "Job removed from bookmarks",
+                    "data": {
+                        "is_bookmarked": False,
+                    },
                 }
-            })
-        return Response({
-            'message': 'Job bookmarked successfully',
-            "data": {
-                'is_bookmarked': True,
+            )
+        return Response(
+            {
+                "message": "Job bookmarked successfully",
+                "data": {
+                    "is_bookmarked": True,
+                },
             }
-        })
+        )
 
     @extend_schema(
         description="Toggle favorite status for a job",
         responses={
             200: CResponseSerializer,
         },
-        operation_id="v1_jobs_favorite"
+        operation_id="v1_jobs_favorite",
     )
     @action(detail=True, methods=["post"])
     def favorite(self, request):
@@ -241,31 +252,42 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         )
         if not created:
             favorite.delete()
-            return Response({
-                'message': 'Job removed from favorites',
+            return Response(
+                {
+                    "message": "Job removed from favorites",
+                    "data": {
+                        "is_favorited": False,
+                    },
+                }
+            )
+        return Response(
+            {
+                "message": "Job added to favorites",
                 "data": {
-                    "is_favorited": False,
+                    "is_favorited": True,
                 },
-            })
-        return Response({
-            'message': 'Job added to favorites',
-            "data": {
-                "is_favorited": True,
-            },
-        })
+            }
+        )
 
     # Master Dashboard Actions
     @extend_schema(
         description="Get jobs currently in progress for master",
         responses={200: JobSerializer(many=True)},
-        operation_id="v1_jobs_master_in_progress"
+        operation_id="v1_jobs_master_in_progress",
     )
-    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated, HasMasterProfile])
+    @action(
+        detail=False,
+        methods=["get"],
+        permission_classes=[IsAuthenticated, HasMasterProfile],
+    )
     def master_in_progress(self, request):
         """Get jobs currently in progress for master."""
         qs = Job.objects.filter(
             assignment__master=request.user.master_profile,
-            assignment__status__in=[JobAssignmentStatus.ASSIGNED, JobAssignmentStatus.IN_PROGRESS]
+            assignment__status__in=[
+                JobAssignmentStatus.ASSIGNED,
+                JobAssignmentStatus.IN_PROGRESS,
+            ],
         ).select_related("employer__user", "service_subcategory", "city")
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
@@ -273,15 +295,23 @@ class JobAPIViewSet(viewsets.ModelViewSet):
     @extend_schema(
         description="Get completed job history for master",
         responses={200: JobSerializer(many=True)},
-        operation_id="v1_jobs_master_history"
+        operation_id="v1_jobs_master_history",
     )
-    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated, HasMasterProfile])
+    @action(
+        detail=False,
+        methods=["get"],
+        permission_classes=[IsAuthenticated, HasMasterProfile],
+    )
     def master_history(self, request):
         """Get completed job history for master."""
-        qs = Job.objects.filter(
-            assignment__master=request.user.master_profile,
-            assignment__status=JobAssignmentStatus.COMPLETED
-        ).select_related("employer__user", "service_subcategory", "city").order_by('-assignment__completed_at')
+        qs = (
+            Job.objects.filter(
+                assignment__master=request.user.master_profile,
+                assignment__status=JobAssignmentStatus.COMPLETED,
+            )
+            .select_related("employer__user", "service_subcategory", "city")
+            .order_by("-assignment__completed_at")
+        )
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
@@ -301,7 +331,13 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = JobApplicationFilter
     search_fields = ["job__title", "job__description", "comment"]
-    ordering_fields = ["created_at", "applied_at", "accepted_at", "withdrawn_at", "amount"]
+    ordering_fields = [
+        "created_at",
+        "applied_at",
+        "accepted_at",
+        "withdrawn_at",
+        "amount",
+    ]
     ordering = ["-created_at"]
 
     def get_queryset(self):
@@ -320,6 +356,7 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
         responses={
             200: _JobApplicationApiActionSerializer,
         },
+        operation_id="v1_applications_accept"
     )
     @action(
         detail=True,
@@ -369,7 +406,9 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
             ChatParticipant.objects.get_or_create(
                 chat_room=chat_room,
                 user=request.user,
-                defaults={"role": ChatRole.MEMBER, },
+                defaults={
+                    "role": ChatRole.MEMBER,
+                },
             )
         except ChatRoom.DoesNotExist:
             raise
@@ -398,6 +437,7 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
         responses={
             200: _JobApplicationApiActionSerializer,
         },
+        operation_id="v1_applications_accept_reject"
     )
     @action(
         detail=True,
@@ -443,6 +483,7 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
     @extend_schema(
         description="Withdraw a job by master",
         responses={200: _JobApplicationApiActionSerializer},
+        operation_id="v1_applications_withdraw"
     )
     @action(
         detail=True,
@@ -485,9 +526,7 @@ class JobAssignmentViewSet(BaseActionAPIViewMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         qs = JobAssignment.objects.select_related(
             "job", "master", "accepted_application"
-        ).filter(
-            master=self.request.user.master_profile
-        )
+        ).filter(master=self.request.user.master_profile)
         return qs
 
     @extend_schema(
@@ -495,7 +534,7 @@ class JobAssignmentViewSet(BaseActionAPIViewMixin, viewsets.ModelViewSet):
         responses={
             200: _JobAssignmentApiActionSerializer,
         },
-        operation_id="v1_job_assignments_start"
+        operation_id="v1_job_assignments_start",
     )
     @action(detail=True, methods=["post"])
     def start(self, request):
@@ -525,7 +564,7 @@ class JobAssignmentViewSet(BaseActionAPIViewMixin, viewsets.ModelViewSet):
         responses={
             200: _JobAssignmentApiActionSerializer,
         },
-        operation_id="v1_job_assignments_complete"
+        operation_id="v1_job_assignments_complete",
     )
     @action(detail=True, methods=["post"])
     def complete(self, request):
@@ -538,9 +577,9 @@ class JobAssignmentViewSet(BaseActionAPIViewMixin, viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         # Extract validated data
-        completion_notes = serializer.validated_data.get('completion_notes', '')
-        client_rating = serializer.validated_data.get('client_rating')
-        client_review = serializer.validated_data.get('client_review', '')
+        completion_notes = serializer.validated_data.get("completion_notes", "")
+        client_rating = serializer.validated_data.get("client_rating")
+        client_review = serializer.validated_data.get("client_review", "")
 
         # Update assignment
         assignment.status = JobAssignmentStatus.COMPLETED
@@ -560,12 +599,14 @@ class JobAssignmentViewSet(BaseActionAPIViewMixin, viewsets.ModelViewSet):
         assignment.job.completed_at = timezone.now()
         assignment.job.save()
 
-        return Response({
-            "message": "Assignment completed successfully",
-            "data": {
-                "assignment": JobAssignmentSerializer(assignment).data,
-            },
-        })
+        return Response(
+            {
+                "message": "Assignment completed successfully",
+                "data": {
+                    "assignment": JobAssignmentSerializer(assignment).data,
+                },
+            }
+        )
 
     @extend_schema(
         description="Update progress notes for an assignment",
@@ -574,18 +615,26 @@ class JobAssignmentViewSet(BaseActionAPIViewMixin, viewsets.ModelViewSet):
             200: _JobAssignmentApiActionSerializer,
         },
     )
-    @action(detail=True, methods=["patch"], permission_classes=[IsAuthenticated, HasMasterProfile])
+    @action(
+        detail=True,
+        methods=["patch"],
+        permission_classes=[IsAuthenticated, HasMasterProfile],
+    )
     def update_progress(self, request):
         assignment = self.get_object()
-        serializer = ProgressUpdateSerializer(assignment, data=request.data, partial=True)
+        serializer = ProgressUpdateSerializer(
+            assignment, data=request.data, partial=True
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({
-            "message": "Progress updated successfully",
-            "data": {
-                "assignment": JobAssignmentSerializer(assignment).data,
-            },
-        })
+        return Response(
+            {
+                "message": "Progress updated successfully",
+                "data": {
+                    "assignment": JobAssignmentSerializer(assignment).data,
+                },
+            }
+        )
 
     @extend_schema(
         description="Rate a completed job assignment",
@@ -598,12 +647,15 @@ class JobAssignmentViewSet(BaseActionAPIViewMixin, viewsets.ModelViewSet):
     def rate(self, request):
         assignment = self.get_object()
         if assignment.status != JobAssignmentStatus.COMPLETED:
-            return Response({'error': 'Assignment must be completed to rate'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Assignment must be completed to rate"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         serializer = RatingSerializer(assignment, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({'message': 'Rating submitted successfully'})
+        return Response({"message": "Rating submitted successfully"})
 
     class TmpAction(BaseAction):
         pass
@@ -613,9 +665,12 @@ class JobAssignmentViewSet(BaseActionAPIViewMixin, viewsets.ModelViewSet):
     ]
 
 
-class JobAttachmentViewSet(mixins.CreateModelMixin,
-                           mixins.DestroyModelMixin,
-                           viewsets.GenericViewSet):
+class JobAttachmentAPIViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
     permission_classes = [IsAuthenticated, IsAttachmentOwner, HasEmployerProfile]
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 
@@ -626,7 +681,7 @@ class JobAttachmentViewSet(mixins.CreateModelMixin,
         job_id = self.kwargs.get(parent_lookup_field)
         job = get_object_or_404(Job, id=job_id)
         if job.employer != self.request.user.employer_profile:
-            raise Permiss
+            raise PermissionDenied("You are not the owner of this job")
         self.request._job_obj = job
         return self.request._job_obj
 
@@ -651,22 +706,25 @@ class JobAttachmentViewSet(mixins.CreateModelMixin,
         return attachments
 
 
-class AssignmentAttachmentViewSet(mixins.CreateModelMixin,
-                                  mixins.DestroyModelMixin,
-                                  viewsets.GenericViewSet):
+class AssignmentAttachmentAPIViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
     permission_classes = [IsAuthenticated, IsAttachmentOwner, HasMasterProfile]
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 
-    def _get_job_assignment_obj(self) -> Job:
+    def _get_job_assignment_obj(self) -> JobAssignment:
         if hasattr(self.request, "_job_assignment_obj"):
             return self.request._job_assignment_obj
         parent_lookup_field = "job_assignment_id"
-        assingment_id = self.kwargs.get(parent_lookup_field)
-        job = get_object_or_404(JobAssignment, id=assingment_id)
-        if job.employer != self.request.user.master_profile:
-            raise ValidationError("Only the employer can manage job attachments")
-        self.request._job_obj = job
-        return self.request._job_obj
+        assignment_id = self.kwargs.get(parent_lookup_field)
+        job_assignment = get_object_or_404(JobAssignment, id=assignment_id)
+        if job_assignment.master != self.request.user.master_profile:
+            raise PermissionDenied("You are not the owner of this job assignment")
+        self.request._job_assignment_obj = job_assignment
+        return self.request._job_assignment_obj
 
     def get_queryset(self):
         assignment = self._get_job_assignment_obj()
@@ -678,7 +736,11 @@ class AssignmentAttachmentViewSet(mixins.CreateModelMixin,
         return AttachmentSerializer
 
     def perform_create(self, serializer):
-        assignment = JobAssignment.objects.get(pk=self.kwargs["assignment_pk"])
-        attachment = serializer.save(uploaded_by=self.request.user)
-        assignment.attachments.add(attachment)
-        return attachment
+        assignment = self._get_job_assignment_obj()
+        files = serializer.validated_data["files"]
+        if not files:
+            raise ValidationError("No files provided")
+        attachments = create_attachments(files, self.request.user, assignment)
+        for a in attachments:
+            assignment.attachments.add(a)
+        return attachments

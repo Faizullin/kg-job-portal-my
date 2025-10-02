@@ -4,32 +4,31 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import status
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from job_portal.apps.attachments.models import create_attachments
 from .permissions import IsChatMessageOwner, IsChatOwner
 from .serializers import (
     ChatRoomCreateSerializer,
+    ChatRoomForSearchResponseSerializer,
     ChatRoomSerializer,
     MessageCreateSerializer,
     MessageSerializer,
     MessageUpdateSerializer,
-    ChatRoomForSearchResponseSerializer,
 )
 from ..models import (
     ChatMessage,
     ChatParticipant,
-    ChatRole,
     ChatRoom,
     MessageType,
 )
-from job_portal.apps.attachments.models import Attachment
 from ..utils import get_chat_channel_name
 from ...users.models import Master
 
@@ -76,12 +75,7 @@ class ChatRoomAPIViewSet(ModelViewSet):
 
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
-        try:
-            obj = queryset.get(
-                id=self.kwargs["pk"],
-            )
-        except ChatRoom.DoesNotExist:
-            raise NotFound("Chat room not found or access denied")
+        obj = get_object_or_404(queryset, id=self.kwargs["pk"])
         self.check_object_permissions(self.request, obj)
         return obj
 
@@ -113,58 +107,14 @@ class ChatRoomAPIViewSet(ModelViewSet):
         return Response({"message": "Successfully left chat room"})
 
     @extend_schema(
-        description="Add participants to chat room",
-        operation_id="v1_chats_rooms_add_participants",
-    )
-    @action(detail=True, methods=["post"])
-    def add_participants(self, request, _pk=None):
-        chat_room = self.get_object()
-
-        user_ids = request.data.get("user_ids", [])
-        try:
-            requester = ChatParticipant.objects.get(
-                chat_room=chat_room, user=request.user
-            )
-            if requester.role not in [ChatRole.ADMIN, ChatRole.MODERATOR]:
-                return Response(
-                    {"error": "Only admins can add participants"},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-        except ChatParticipant.DoesNotExist:
-            return Response(
-                {"error": "Not a participant"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
-        added = []
-        for uid in user_ids:
-            try:
-                user = UserModel.objects.get(id=uid)
-                _, created = ChatParticipant.objects.get_or_create(
-                    chat_room=chat_room, user=user, defaults={"role": "member"}
-                )
-                if created:
-                    added.append(
-                        {
-                            "id": user.id,
-                            "name": f"{user.first_name} {user.last_name}".strip()
-                                    or user.username,
-                        }
-                    )
-            except UserModel.DoesNotExist:
-                continue
-
-        return Response({"message": f"Added {len(added)} users", "users": added})
-
-    @extend_schema(
         description="Get chats for master",
         operation_id="v1_chats_rooms_for_master",
         parameters=[
             OpenApiParameter(
-                name='master_id',
+                name="master_id",
                 type=OpenApiTypes.INT,
                 location=OpenApiParameter.QUERY,  # Indicates it's a query parameter (e.g., ?master_id=123)
-                required=True
+                required=True,
             ),
         ],
         responses={
@@ -196,9 +146,7 @@ class ChatRoomAPIViewSet(ModelViewSet):
         qs = self.get_queryset().filter(
             participants__id__in=[self.request.user.id, master.id],
         )
-        return Response(
-            ChatRoomForSearchResponseSerializer(qs, many=True).data
-        )
+        return Response(ChatRoomForSearchResponseSerializer(qs, many=True).data)
 
     def _broadcast_user_left(self, chat_room, user):
         """Broadcast user left event via WebSocket."""
@@ -257,7 +205,7 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
 
     def get_queryset(self):
         chat_context = self._get_chat_context()
-        return ChatMessage.objects.select_related("sender", "chat_room").filter(
+        return ChatMessage.objects.select_related("sender", "chat_room").prefetch_related("attachments").filter(
             chat_room=chat_context.chat_room
         )
 
@@ -271,7 +219,7 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
     def get_permissions(self):
         perms = super().get_permissions()
         if self.action in ["update", "destroy"]:
-            perms.append(IsChatMessageOwner())
+            perms += [IsChatMessageOwner()]
         return perms
 
     def perform_create(self, serializer):
@@ -279,12 +227,14 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
         user = self.request.user
         message_content = serializer.validated_data.get("content", "")
         message_type = serializer.validated_data.get("message_type")
-        attachment_file = serializer.validated_data.pop("attachment_file", None)
+        attachments_files = serializer.validated_data.pop("attachments_files", None)
         if (
                 not message_content
-                and attachment_file
+                and len(attachments_files) > 0
                 and message_type == MessageType.IMAGE
         ):
+            if len(attachments_files) > 1:
+                raise ValidationError("Only one image is allowed")
             message_content = "📷 Image"
 
         chat_message = serializer.save(
@@ -294,13 +244,9 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
             message_type=message_type,
         )
 
-        if attachment_file is not None:
-            attachment = Attachment.objects.create(
-                content_object=chat_message,
-                file=attachment_file,
-                uploaded_by=user
-            )
-            chat_message.attachments.add(attachment)
+        if attachments_files is not None:
+            created_attachments = create_attachments(attachments_files, user, chat_message)
+            chat_message.attachments.add(*created_attachments)
 
         ChatParticipant.objects.filter(chat_room=chat_context.chat_room).exclude(
             user=user
@@ -319,10 +265,11 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
             chat_context.chat_room, serializer.instance, self.request
         )
 
-    def perform_destroy(self, instance):
+    def perform_destroy(self, instance: ChatMessage):
         chat_context = self._get_chat_context()
+        if instance.attachments.count() > 0:
+            instance.attachments.all().delete()
         instance.delete()
-        super().perform_destroy(instance)
         self._broadcast_message_deletion(chat_context.chat_room, instance, self.request)
 
     def _broadcast_message_add(self, chat_room, message, request):

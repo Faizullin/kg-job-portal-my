@@ -7,7 +7,7 @@ UserModel = get_user_model()
 class UserProfileSerializer(serializers.ModelSerializer):
     """Serializer for user profile display"""
 
-    groups = serializers.SerializerMethodField()
+    groups = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = UserModel

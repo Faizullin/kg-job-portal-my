@@ -182,7 +182,7 @@ export function MasterForm() {
         is_available: data.is_available,
       };
       const response = await myApi.v1UsersMyMasterPartialUpdate({
-        patchedMasterProfileCreateUpdate: transformedData
+        patchedMasterProfileCreateUpdateRequest: transformedData
       });
       return response.data;
     },

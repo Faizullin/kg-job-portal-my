@@ -7,12 +7,14 @@ from .api.views import (
     MasterProfileCreateAPIView, EmployerProfileCreateAPIView,
     MasterProfileRetrieveUpdateAPIView, MasterPortfolioAPIViewSet, PublicSkillListAPIView,
     PublicMasterProfileAPIViewSet, CertificateAPIViewSet, MasterUpdateOnlineStatusAPIView,
-    PublicProfessionAPIViewSet,
+    PublicProfessionAPIViewSet, MasterPortfolioAttachmentAPIViewSet,
 )
 
 router = DefaultRouter()
 router.register(r'api/v1/users/my/skills', MasterSkillAPIViewSet, basename='my-skills')
 router.register(r'api/v1/users/my/portfolio', MasterPortfolioAPIViewSet, basename='my-portfolio')
+router.register(r'api/v1/users/my/portfolio/(?P<portfolio_id>[^/.]+)/attachments', MasterPortfolioAttachmentAPIViewSet,
+                basename='my-portfolio-attachment')
 router.register(r'api/v1/users/my/certificates', CertificateAPIViewSet, basename='my-certificates')
 router.register(r"api/v1/users/professions", PublicProfessionAPIViewSet, basename='public-professions')
 router.register(r"api/v1/users/masters", PublicMasterProfileAPIViewSet, basename='public-masters')

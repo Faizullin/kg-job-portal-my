@@ -37,6 +37,7 @@ export const Route = createFileRoute("/_authenticated")({
             auth.setCurrentProfileType('master');
           }
         }
+        auth.setUser(response);
       } catch (error) {
         if (!auth.isAuthenticated) {
           throw redirect({

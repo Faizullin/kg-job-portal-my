@@ -151,28 +151,6 @@ class Attachment(AbstractTimestampedModel):
     def __str__(self):
         return f"Attachment: {self.original_filename} for {self.content_type.model} #{self.object_id} [#{self.id}]"
 
-    @property
-    def file_extension(self):
-        """Get file extension."""
-        if self.original_filename:
-            return os.path.splitext(self.original_filename)[1].lower()
-        return ""
-
-    @property
-    def is_image(self):
-        """Check if attachment is an image."""
-        return self.file_type == "image"
-
-    @property
-    def is_document(self):
-        """Check if attachment is a document."""
-        return self.file_type in ["document", "pdf", "spreadsheet"]
-
-    @property
-    def is_media(self):
-        """Check if attachment is media (image, video, audio)."""
-        return self.file_type in ["image", "video", "audio"]
-
 
 def create_attachments(files, user, instance):
     """
