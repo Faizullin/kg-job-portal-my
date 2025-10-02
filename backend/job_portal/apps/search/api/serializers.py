@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
+from job_portal.apps.attachments.serializers import AttachmentSerializer
 from job_portal.apps.core.models import ServiceCategory, ServiceSubcategory
 from job_portal.apps.jobs.models import Job
 from job_portal.apps.users.models import Master, MasterStatistics, Profession, PortfolioItem
@@ -33,13 +34,15 @@ class ServiceCategoryBasicSerializer(serializers.ModelSerializer):
 
 class PortfolioItemBasicSerializer(serializers.ModelSerializer):
     """Basic portfolio item serializer."""
+
+    attachments = AttachmentSerializer(many=True, read_only=True)
     
     class Meta:
         model = PortfolioItem
         fields = [
             "id",
             "title",
-            "image",
+            "attachments",
             "description",
         ]
 

@@ -3,11 +3,11 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from job_portal.apps.attachments.models import Attachment
 from job_portal.apps.core.models import ServiceSubcategory
 from job_portal.apps.locations.models import City
 from job_portal.apps.resumes.models import MasterResume
 from job_portal.apps.users.models import Skill, Master, Employer, Company
-from job_portal.apps.attachments.models import Attachment
 from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedModel, AbstractCascadingSoftDeleteModel, \
     TitleField, AutoSlugField, AvailableField, AdvancedLocationField
 
@@ -142,6 +142,7 @@ class JobAssignment(AbstractTimestampedModel):
     # Progress tracking
     progress_notes = models.TextField(_("Progress Notes"), blank=True)
     completion_notes = models.TextField(_("Completion Notes"), blank=True)
+    attachments = models.ManyToManyField(Attachment, blank=True, related_name='assignments', )
 
     # Client feedback
     client_rating = models.PositiveIntegerField(_("Client Rating"), null=True, blank=True,

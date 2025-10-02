@@ -1,22 +1,26 @@
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import serializers, status
+from rest_framework import serializers, status, mixins, viewsets, parsers
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
 
+from job_portal.apps.attachments.models import create_attachments
+from job_portal.apps.chats.models import ChatRoom, ChatParticipant, ChatRole
 from job_portal.apps.notifications.models import notify
 from job_portal.apps.users.api.permissions import HasEmployerProfile, HasMasterProfile
 from utils.permissions import (
     HasSpecificPermission,
 )
-from .filters import JobApplicationFilter
+from utils.views import BaseActionAPIViewMixin, BaseAction
+from .filters import JobApplicationFilter, JobFilter
 from .permissions import JobAccessPermission
 from .serializers import (
     CResponseSerializer,
@@ -26,7 +30,7 @@ from .serializers import (
     JobAssignmentCompletionSerializer,
     JobSerializer,
     ProgressUpdateSerializer,
-    RatingSerializer,
+    RatingSerializer, JobAttachmentUploadSerializer, JobAssignmentAttachmentUploadSerializer,
 )
 from ..models import (
     Job,
@@ -38,20 +42,21 @@ from ..models import (
     BookmarkJob,
     FavoriteJob,
 )
-from job_portal.apps.chats.models import ChatRoom, ChatParticipant, ChatRole
-from job_portal.apps.attachments.models import Attachment
+from ...attachments.api.permissions import IsAttachmentOwner
+from ...attachments.serializers import AttachmentSerializer
 
 
 class _JobApiActionSerializer(CResponseSerializer):
     data = JobSerializer(read_only=True)
 
 
-class JobAPIViewSet(ModelViewSet):
+class JobAPIViewSet(viewsets.ModelViewSet):
     """ViewSet for managing jobs."""
 
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = JobSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = JobFilter
     filterset_fields = ["status", "service_subcategory", "urgency"]
     search_fields = ["title", "description", "special_requirements"]
     ordering_fields = [
@@ -62,11 +67,19 @@ class JobAPIViewSet(ModelViewSet):
     ordering = ["-created_at"]
 
     def get_queryset(self):
-        qs = Job.objects.all().select_related("employer__user", "service_subcategory")
+        qs = Job.objects.all().select_related("employer__user", "service_subcategory", "city")
         user = self.request.user
-        has_edit_access = user.is_authenticated and hasattr(user, "employer_profile")
-        if has_edit_access:
+
+        # Employer filtering
+        if hasattr(user, "employer_profile"):
             qs = qs.filter(employer=user.employer_profile)
+        # Master filtering - allow access to assigned jobs
+        elif hasattr(user, "master_profile"):
+            qs = qs.filter(
+                Q(status=JobStatus.PUBLISHED) |  # Published jobs
+                Q(assignment__master=user.master_profile) |  # Assigned jobs
+                Q(applications__applicant=user.master_profile)  # Applied jobs
+            ).distinct()
         else:
             qs = qs.filter(status=JobStatus.PUBLISHED)
         return qs
@@ -241,6 +254,37 @@ class JobAPIViewSet(ModelViewSet):
             },
         })
 
+    # Master Dashboard Actions
+    @extend_schema(
+        description="Get jobs currently in progress for master",
+        responses={200: JobSerializer(many=True)},
+        operation_id="v1_jobs_master_in_progress"
+    )
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated, HasMasterProfile])
+    def master_in_progress(self, request):
+        """Get jobs currently in progress for master."""
+        qs = Job.objects.filter(
+            assignment__master=request.user.master_profile,
+            assignment__status__in=[JobAssignmentStatus.ASSIGNED, JobAssignmentStatus.IN_PROGRESS]
+        ).select_related("employer__user", "service_subcategory", "city")
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
+
+    @extend_schema(
+        description="Get completed job history for master",
+        responses={200: JobSerializer(many=True)},
+        operation_id="v1_jobs_master_history"
+    )
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated, HasMasterProfile])
+    def master_history(self, request):
+        """Get completed job history for master."""
+        qs = Job.objects.filter(
+            assignment__master=request.user.master_profile,
+            assignment__status=JobAssignmentStatus.COMPLETED
+        ).select_related("employer__user", "service_subcategory", "city").order_by('-assignment__completed_at')
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
+
 
 class _JobApplicationApiActionSerializer(CResponseSerializer):
     class _JobApplicationApiActionDataSerializer(serializers.Serializer):
@@ -249,7 +293,7 @@ class _JobApplicationApiActionSerializer(CResponseSerializer):
     data = _JobApplicationApiActionDataSerializer(read_only=True)
 
 
-class JobApplicationAPIViewSet(ModelViewSet):
+class JobApplicationAPIViewSet(viewsets.ModelViewSet):
     """ViewSet for managing job applications."""
 
     permission_classes = [IsAuthenticated]
@@ -434,7 +478,7 @@ class _JobAssignmentApiActionSerializer(CResponseSerializer):
     data = WrapperSerializer(read_only=True)
 
 
-class JobAssignmentViewSet(ModelViewSet):
+class JobAssignmentViewSet(BaseActionAPIViewMixin, viewsets.ModelViewSet):
     serializer_class = JobAssignmentSerializer
     permission_classes = [IsAuthenticated, HasMasterProfile]
 
@@ -488,27 +532,27 @@ class JobAssignmentViewSet(ModelViewSet):
         assignment = self.get_object()
         if assignment.status != JobAssignmentStatus.IN_PROGRESS:
             raise ValidationError("Assignment must be in progress to complete.")
-        
+
         # Validate request data
         serializer = JobAssignmentCompletionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         # Extract validated data
         completion_notes = serializer.validated_data.get('completion_notes', '')
         client_rating = serializer.validated_data.get('client_rating')
         client_review = serializer.validated_data.get('client_review', '')
-        
+
         # Update assignment
         assignment.status = JobAssignmentStatus.COMPLETED
         assignment.completed_at = timezone.now()
         assignment.completion_notes = completion_notes
-        
+
         # Add rating and review if provided
         if client_rating is not None:
             assignment.client_rating = client_rating
         if client_review:
             assignment.client_review = client_review
-            
+
         assignment.save()
 
         # Update job status
@@ -521,53 +565,6 @@ class JobAssignmentViewSet(ModelViewSet):
             "data": {
                 "assignment": JobAssignmentSerializer(assignment).data,
             },
-        })
-
-    @extend_schema(
-        description="Upload attachments to a job assignment",
-        responses={
-            200: CResponseSerializer,
-        },
-        operation_id="v1_job_assignments_upload_attachments"
-    )
-    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated, HasMasterProfile])
-    def upload_attachments(self, request):
-        """Upload attachments to a job assignment."""
-        assignment = self.get_object()
-        
-        # Check if user is the assigned master
-        if assignment.master.user != request.user:
-            return Response(
-                {'error': 'Only the assigned master can upload attachments'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        attachment_files = request.FILES.getlist('attachments', [])
-        if not attachment_files:
-            return Response(
-                {'error': 'No files provided'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        uploaded_attachments = []
-        for attachment_file in attachment_files:
-            attachment = Attachment.objects.create(
-                content_object=assignment,
-                file=attachment_file,
-                uploaded_by=request.user
-            )
-            assignment.attachments.add(attachment)
-            uploaded_attachments.append({
-                'id': attachment.id,
-                'original_filename': attachment.original_filename,
-                'file_type': attachment.file_type,
-                'size': attachment.size,
-                'file_url': request.build_absolute_uri(attachment.file.url) if attachment.file else None
-            })
-        
-        return Response({
-            'message': f'Successfully uploaded {len(uploaded_attachments)} attachments',
-            'attachments': uploaded_attachments
         })
 
     @extend_schema(
@@ -608,115 +605,80 @@ class JobAssignmentViewSet(ModelViewSet):
         serializer.save()
         return Response({'message': 'Rating submitted successfully'})
 
-#
-# class UploadOrderAttachmentsAPIView(APIView):
-#     """Upload attachments to order (before photos)."""
-#     permission_classes = [IsAuthenticated]
-#     parser_classes = [MultiPartParser, FormParser]
-#
-#     def post(self, request, pk):
-#         """Upload attachments to order."""
-#         try:
-#             order = get_object_or_404(Order, pk=pk)
-#
-#             # Check permissions (client or assigned provider)
-#             can_upload = (
-#                     order.client.user_profile.user == request.user or
-#                     OrderAssignment.objects.filter(
-#                         order=order,
-#                         provider__user_profile__user=request.user
-#                     ).exists()
-#             )
-#
-#             if not can_upload:
-#                 return Response(
-#                     {'error': 'Permission denied'},
-#                     status=status.HTTP_403_FORBIDDEN
-#                 )
-#
-#             # Handle file uploads
-#             attachments = request.FILES.getlist('attachments')
-#             uploaded_files = []
-#
-#             for attachment in attachments:
-#                 order_attachment = OrderAttachment.objects.create(
-#                     file_name=attachment.name,
-#                     file_type=attachment.content_type.split('/')[0],
-#                     file_size=attachment.size,
-#                     file_url=attachment.url if hasattr(attachment, 'url') else '',
-#                     mime_type=attachment.content_type,
-#                     description=request.data.get('description', ''),
-#                     uploaded_by=request.user
-#                 )
-#
-#                 # Add to order
-#                 order.attachments.add(order_attachment)
-#                 uploaded_files.append({
-#                     'id': order_attachment.id,
-#                     'file_name': order_attachment.file_name,
-#                     'file_type': order_attachment.file_type,
-#                     'file_size': order_attachment.file_size
-#                 })
-#
-#             return Response({
-#                 'message': f'Uploaded {len(uploaded_files)} attachments',
-#                 'attachments': uploaded_files
-#             }, status=status.HTTP_201_CREATED)
-#
-#         except Exception as e:
-#             return Response(
-#                 {'error': f'Failed to upload attachments: {str(e)}'},
-#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
-#             )
-#
+    class TmpAction(BaseAction):
+        pass
 
-#
-# class RateClientAPIView(APIView):
-#     """Rate client after job completion."""
-#     permission_classes = [IsAuthenticated, HasServiceProviderProfile]
-#
-#     def post(self, request, pk):
-#         """Rate client."""
-#         try:
-#             order = get_object_or_404(Order, pk=pk)
-#
-#             # Check if user is assigned to this order
-#             assignment = get_object_or_404(
-#                 OrderAssignment,
-#                 order=order,
-#                 provider__user_profile__user=request.user
-#             )
-#
-#             if order.status != 'completed':
-#                 return Response(
-#                     {'error': 'Order must be completed to rate client'},
-#                     status=status.HTTP_400_BAD_REQUEST
-#                 )
-#
-#             rating = request.data.get('rating')
-#             review = request.data.get('review', '')
-#
-#             if not rating or not (1 <= int(rating) <= 5):
-#                 return Response(
-#                     {'error': 'Rating must be between 1 and 5'},
-#                     status=status.HTTP_400_BAD_REQUEST
-#                 )
-#
-#             assignment.client_rating = int(rating)
-#             assignment.client_review = review
-#             assignment.save()
-#
-#             return Response({
-#                 'message': 'Client rated successfully',
-#                 'rating': assignment.client_rating,
-#                 'review': assignment.client_review
-#             }, status=status.HTTP_200_OK)
-#
-#         except Exception as e:
-#             return Response(
-#                 {'error': f'Failed to rate client: {str(e)}'},
-#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
-#             )
-#
+    available_actions = [
+        TmpAction(),
+    ]
 
-#
+
+class JobAttachmentViewSet(mixins.CreateModelMixin,
+                           mixins.DestroyModelMixin,
+                           viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated, IsAttachmentOwner, HasEmployerProfile]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+
+    def _get_job_obj(self) -> Job:
+        if hasattr(self.request, "_job_obj"):
+            return self.request._job_obj
+        parent_lookup_field = "job_id"
+        job_id = self.kwargs.get(parent_lookup_field)
+        job = get_object_or_404(Job, id=job_id)
+        if job.employer != self.request.user.employer_profile:
+            raise Permiss
+        self.request._job_obj = job
+        return self.request._job_obj
+
+    def get_queryset(self):
+        job = self._get_job_obj()
+        return job.attachments.all()
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return JobAttachmentUploadSerializer
+        return AttachmentSerializer
+
+    def perform_create(self, serializer):
+        job = self._get_job_obj()
+        files = serializer.validated_data["files"]
+        print("files", files)
+        if not files:
+            raise ValidationError("No files provided")
+        attachments = create_attachments(files, self.request.user, job)
+        for a in attachments:
+            job.attachments.add(a)
+        return attachments
+
+
+class AssignmentAttachmentViewSet(mixins.CreateModelMixin,
+                                  mixins.DestroyModelMixin,
+                                  viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated, IsAttachmentOwner, HasMasterProfile]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+
+    def _get_job_assignment_obj(self) -> Job:
+        if hasattr(self.request, "_job_assignment_obj"):
+            return self.request._job_assignment_obj
+        parent_lookup_field = "job_assignment_id"
+        assingment_id = self.kwargs.get(parent_lookup_field)
+        job = get_object_or_404(JobAssignment, id=assingment_id)
+        if job.employer != self.request.user.master_profile:
+            raise ValidationError("Only the employer can manage job attachments")
+        self.request._job_obj = job
+        return self.request._job_obj
+
+    def get_queryset(self):
+        assignment = self._get_job_assignment_obj()
+        return assignment.attachments.all()
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return JobAssignmentAttachmentUploadSerializer
+        return AttachmentSerializer
+
+    def perform_create(self, serializer):
+        assignment = JobAssignment.objects.get(pk=self.kwargs["assignment_pk"])
+        attachment = serializer.save(uploaded_by=self.request.user)
+        assignment.attachments.add(attachment)
+        return attachment

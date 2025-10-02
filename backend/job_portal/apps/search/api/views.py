@@ -1,4 +1,4 @@
-from django.db.models import Count, Q
+from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 
 from job_portal.apps.core.models import ServiceCategory
 from job_portal.apps.jobs.models import Job, JobStatus
-from job_portal.apps.users.api.permissions import HasEmployerProfile
+from job_portal.apps.users.api.permissions import HasEmployerProfile, HasMasterProfile
 from job_portal.apps.users.models import Master
 from .serializers import (
     MasterSearchSerializer,
@@ -208,3 +208,41 @@ class HomeClientAPIView(APIView):
 
         serializer = HomePageDataSerializer(response_data)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# Master Dashboard Views
+
+class MasterRecommendedJobsAPIView(generics.ListAPIView):
+    """Get job recommendations for master based on skills, location, and preferences."""
+    
+    serializer_class = JobSearchSerializer
+    permission_classes = [IsAuthenticated, HasMasterProfile]
+    
+    def get_queryset(self):
+        master = self.request.user.master_profile
+        
+        # Base queryset: published jobs
+        qs = Job.objects.filter(status=JobStatus.PUBLISHED).select_related(
+            'employer__user', 'service_subcategory', 'city'
+        )
+        
+        # Filter by master's service areas
+        if master.services_offered.exists():
+            qs = qs.filter(service_subcategory__in=master.services_offered.all())
+        
+        # Filter by master's skills
+        if master.skills.exists():
+            qs = qs.filter(skills__in=master.skills.all())
+        
+        # Filter by location if master has current location
+        if master.current_location:
+            qs = qs.filter(city__name__icontains=master.current_location.split(',')[0])
+        
+        # Exclude jobs already applied to
+        applied_job_ids = master.applications.values_list('job_id', flat=True)
+        qs = qs.exclude(id__in=applied_job_ids)
+        
+        # Order by relevance (skills match, location, urgency, created_at)
+        qs = qs.order_by('-created_at', 'urgency')
+        
+        return qs.distinct()

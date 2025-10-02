@@ -2,7 +2,8 @@ from django.urls import path
 from .api.views import (
     MasterSearchAPIView,
     JobSearchAPIView,
-    HomeClientAPIView
+    HomeClientAPIView,
+    MasterRecommendedJobsAPIView
 )
 
 app_name = 'search'
@@ -13,4 +14,5 @@ urlpatterns = [
     
     # Master recommendation system for employers
     path('api/v1/home/client', HomeClientAPIView.as_view(), name='master-recommendations'),
+    path('api/v1/home/master/new-jobs/', MasterRecommendedJobsAPIView.as_view(), name='master-new-jobs'),
 ]

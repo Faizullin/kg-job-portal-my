@@ -301,11 +301,11 @@ class CertificateAdmin(admin.ModelAdmin):
                     "name",
                     "issuing_organization",
                     "certificate_number",
-                )
+                ),
             },
         ),
         ("Dates", {"fields": ("issue_date", "expiry_date")}),
-        ("Files & Verification", {"fields": ("is_verified")}),
+        ("Files & Verification", {"fields": ("is_verified",)}),
     )
 
     def get_queryset(self, request):

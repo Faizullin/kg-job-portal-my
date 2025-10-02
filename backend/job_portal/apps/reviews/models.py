@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import Avg
 from django.utils.translation import gettext_lazy as _
 
 from accounts.models import UserModel
@@ -49,18 +50,18 @@ class Review(AbstractSoftDeleteModel, AbstractTimestampedModel):
     def update_provider_rating(self):
         """Recalculate and update the average rating and total reviews for the provider."""
 
-        provider = self.master.statistics
-        reviews = Review.objects.filter(provider=provider)
+        master_statistics, created = self.master.statistics.get_or_create(master=self.master)
+        reviews = Review.objects.filter(master=self.master)
 
         if reviews.exists():
-            avg_rating = reviews.aggregate(avg=models.Avg('overall_rating'))['avg']
-            provider.average_rating = round(avg_rating, 2)
-            provider.total_reviews = reviews.count()
+            avg_rating = reviews.aggregate(avg=models.Avg('rating'))['avg']
+            master_statistics.average_rating = round(avg_rating, 2)
+            master_statistics.total_reviews = reviews.count()
         else:
-            provider.average_rating = 0.00
-            provider.total_reviews = 0
+            master_statistics.average_rating = 0.00
+            master_statistics.total_reviews = 0
 
-        provider.save(update_fields=['average_rating', 'total_reviews'])
+        master_statistics.save(update_fields=['average_rating', 'total_reviews'])
 
 
 class AppFeedback(AbstractTimestampedModel):

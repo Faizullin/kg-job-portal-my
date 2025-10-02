@@ -4,6 +4,35 @@ from django.core.exceptions import ValidationError
 from ..models import JobApplication, Job, JobStatus, JobApplicationStatus, JobUrgency
 
 
+class JobFilter(django_filters.FilterSet):
+    """Filter for Job model with master dashboard support."""
+    
+    # Price filtering
+    min_price = django_filters.NumberFilter(field_name='budget_min', lookup_expr='gte')
+    max_price = django_filters.NumberFilter(field_name='budget_max', lookup_expr='lte')
+    
+    # Service filtering
+    service_subcategory = django_filters.NumberFilter(field_name='service_subcategory__id')
+    service_category = django_filters.NumberFilter(field_name='service_subcategory__category__id')
+    
+    # Location filtering
+    city = django_filters.CharFilter(field_name='city__name', lookup_expr='icontains')
+    
+    # Time filtering
+    service_date_from = django_filters.DateFilter(field_name='service_date', lookup_expr='gte')
+    service_date_to = django_filters.DateFilter(field_name='service_date', lookup_expr='lte')
+    
+    # Urgency filtering
+    urgency = django_filters.ChoiceFilter(choices=JobUrgency.choices)
+    
+    class Meta:
+        model = Job
+        fields = [
+            'min_price', 'max_price', 'service_subcategory', 'service_category',
+            'city', 'service_date_from', 'service_date_to', 'urgency'
+        ]
+
+
 class JobApplicationFilter(django_filters.FilterSet):
     job_id = django_filters.NumberFilter(field_name='job__id', method='filter_by_job_id')
     status = django_filters.ChoiceFilter(choices=JobApplicationStatus.choices)

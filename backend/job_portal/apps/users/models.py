@@ -1,10 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from job_portal.apps.core.models import ServiceCategory, ServiceArea, ServiceSubcategory
 from job_portal.apps.attachments.models import Attachment
+from job_portal.apps.core.models import ServiceCategory, ServiceArea, ServiceSubcategory
 from utils.abstract_models import AbstractSoftDeleteModel, AbstractTimestampedModel, TitleField, ActiveField, \
     PhoneNumberField
 
@@ -85,7 +84,7 @@ class Employer(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Extended profile for employers."""
 
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='employer_profile')
-    
+
     # Contact information
     contact_phone = PhoneNumberField(blank=True)
 
@@ -147,8 +146,6 @@ class MasterSkill(AbstractTimestampedModel):
 
     def __str__(self):
         return f"{self.master.user.username} - {self.skill.name} [#{self.id}]"
-
-
 
 
 class PortfolioItem(AbstractSoftDeleteModel, AbstractTimestampedModel):

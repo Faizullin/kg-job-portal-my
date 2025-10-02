@@ -30,10 +30,10 @@ class BaseAction:
         raise BaseActionException("Incorrect action")
 
 
-class BaseActionAPIView(APIView):
+class BaseActionAPIViewMixin:
     available_actions: List[BaseAction] = []
 
-    def post(self, request):
+    def handle_action(self, request):
         """Perform action based on 'action' parameter in request data."""
 
         action_name = request.GET.get("action", None)
@@ -64,3 +64,8 @@ class BaseActionAPIView(APIView):
             )
         except BaseActionException as err:
             return Response({"success": 0, "message": str(err)}, status=err.status)
+
+
+class BaseActionAPIView(BaseActionAPIViewMixin, APIView):
+    def post(self, request):
+        return self.handle_action(request)
