@@ -6,7 +6,7 @@ from utils.serializers import (
     AbstractTimestampedModelSerializer,
 )
 from ..models import ChatRoom, ChatMessage, ChatParticipant, MessageType, ChatRole
-from job_portal.apps.attachments.models import Attachment
+from job_portal.apps.attachments.serializers import AttachmentSerializer
 
 UserModel = get_user_model()
 
@@ -100,23 +100,6 @@ class ChatRoomCreateSerializer(serializers.ModelSerializer):
             role=ChatRole.ADMIN,
         )
         return chat_room
-
-
-class AttachmentSerializer(serializers.ModelSerializer):
-    """Serializer for generic attachments."""
-
-    file_url = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Attachment
-        fields = ['id', 'original_filename', 'file_url', 'size', 'file_type', 'mime_type', 'uploaded_by', 'description', 'is_public', 'created_at']
-        read_only_fields = ['id', 'created_at']
-
-    def get_file_url(self, obj):
-        request = self.context.get('request')
-        if request and obj.file:
-            return request.build_absolute_uri(obj.file.url)
-        return obj.file.url if obj.file else None
 
 
 class MessageSerializer(AbstractTimestampedModelSerializer):

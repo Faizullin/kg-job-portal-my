@@ -171,16 +171,6 @@ class PortfolioItem(AbstractSoftDeleteModel, AbstractTimestampedModel):
         return f"{self.master.user.username} - {self.title}... [#{self.id}]"
 
 
-def certificate_storage_upload_to(instance, filename):
-    """Generate upload path for attachments."""
-
-    current_datetime = timezone.now().strftime('%Y/%m/%d')
-    if not instance.pk:
-        raise ValueError("Instance must have a primary key before uploading.")
-    updated_filename = f"{current_datetime}_{filename}"
-    return f'certificates/attachment_{instance.pk}/{updated_filename}'
-
-
 class Certificate(AbstractSoftDeleteModel, AbstractTimestampedModel):
     """Certificates and qualifications of a master."""
 
@@ -190,7 +180,6 @@ class Certificate(AbstractSoftDeleteModel, AbstractTimestampedModel):
     certificate_number = models.CharField(_("Certificate Number"), max_length=100, blank=True)
     issue_date = models.DateField(_("Issue Date"), null=True, blank=True)
     expiry_date = models.DateField(_("Expiry Date"), null=True, blank=True)
-    certificate_file = models.FileField(_("Certificate File"), upload_to=certificate_storage_upload_to, blank=True, null=True)
     is_verified = models.BooleanField(_("Verified"), default=False)
 
     class Meta:
