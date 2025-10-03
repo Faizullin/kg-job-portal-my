@@ -181,13 +181,13 @@ def validate_total_size(file_list):
 
 
 class MessageCreateSerializer(serializers.ModelSerializer):
-    message_type = serializers.ChoiceField(
-        choices=[
-            MessageType.TEXT,
-            MessageType.IMAGE,
-            MessageType.FILE,
-        ]
-    )
+    # message_type = serializers.ChoiceField(
+    #     choices=[
+    #         MessageType.TEXT,
+    #         MessageType.IMAGE,
+    #         MessageType.FILE,
+    #     ]
+    # )
     attachments = AttachmentSerializer(many=True, read_only=True)
     attachments_files = serializers.ListField(
         child=serializers.FileField(

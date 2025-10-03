@@ -18,7 +18,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { CUrls } from "@/config/constants";
 import { useDialogControl } from "@/hooks/use-dialog-control";
-import { MessageCreateMessageTypeEnum, MessageMessageTypeEnum, type ChatRoom, type ChatRoomCreate, type Message } from "@/lib/api/axios-client/api";
+import { MessageTypeEnum, type ChatRoom, type ChatRoomCreate, type Message } from "@/lib/api/axios-client/api";
 import myApi from "@/lib/api/my-api";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
@@ -159,13 +159,13 @@ export function Chats() {
             console.log('🔍 [Messages] New oldData:', oldData);
 
             // Determine message type from WebSocket data
-            let messageType = MessageMessageTypeEnum.text;
+            let messageType = MessageTypeEnum.text;
             if (data.message_type === 'image') {
-              messageType = MessageMessageTypeEnum.image;
+              messageType = MessageTypeEnum.image;
             } else if (data.message_type === 'file') {
-              messageType = MessageMessageTypeEnum.file;
+              messageType = MessageTypeEnum.file;
             } else if (data.message_type === 'system') {
-              messageType = MessageMessageTypeEnum.system;
+              messageType = MessageTypeEnum.system;
             }
 
             // Process attachments from WebSocket
@@ -279,7 +279,7 @@ export function Chats() {
     mutationFn: async ({ content, attachment, message_type }: {
       content: string;
       attachment?: File;
-      message_type: MessageCreateMessageTypeEnum;
+      message_type: MessageTypeEnum;
     }) => {
       if (!selectedRoom) throw new Error('No room selected');
 
@@ -288,7 +288,7 @@ export function Chats() {
         const formData = new FormData();
         formData.append('content', content);
         formData.append('message_type', message_type);
-        formData.append('attachments_files[]', attachment);
+        formData.append('attachments_files', attachment);
 
         const response = await myApi.axios.post(
           `/api/v1/chats/rooms/${selectedRoom.id}/messages/`,
@@ -300,16 +300,16 @@ export function Chats() {
           }
         );
         return response;
+      } else {
+        // For text messages without attachments, use the regular API
+        return await myApi.v1ChatsRoomsMessagesCreate({
+          chatRoomId: String(selectedRoom.id),
+          messageCreateRequest: {
+            content: content,
+            message_type: message_type,
+          }
+        });
       }
-
-      // For text messages without attachments, use the regular API
-      return myApi.v1ChatsRoomsMessagesCreate({
-        chatRoomId: String(selectedRoom.id),
-        messageCreateRequest: {
-          content: content,
-          message_type: message_type,
-        }
-      });
     },
     onSuccess: () => {
       setMessageInput('');
@@ -398,7 +398,7 @@ export function Chats() {
     if (!selectedRoom || !content.trim()) return;
     sendMessageMutation.mutate({
       content: content.trim(),
-      message_type: MessageCreateMessageTypeEnum.text,
+      message_type: MessageTypeEnum.text,
     });
   }, [selectedRoom, sendMessageMutation]);
 
@@ -413,8 +413,8 @@ export function Chats() {
     }
 
     const messageType = file.type.startsWith('image/')
-      ? MessageCreateMessageTypeEnum.image
-      : MessageCreateMessageTypeEnum.file;
+      ? MessageTypeEnum.image
+      : MessageTypeEnum.file;
 
     // Generate appropriate content based on file type
     let content = '';

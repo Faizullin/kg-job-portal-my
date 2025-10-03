@@ -8,14 +8,25 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import parsers, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.serializers import ValidationError
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
 from rest_framework.viewsets import ModelViewSet
 
 from job_portal.apps.attachments.models import create_attachments
+
+from ...users.models import Master
+from ..models import (
+    ChatMessage,
+    ChatParticipant,
+    ChatRole,
+    ChatRoom,
+    ChatType,
+    MessageType,
+)
+from ..utils import get_chat_channel_name
 from .permissions import IsChatMessageOwner, IsChatOwner
 from .serializers import (
     ChatRoomCreateSerializer,
@@ -27,16 +38,6 @@ from .serializers import (
     MessageSerializer,
     MessageUpdateSerializer,
 )
-from ..models import (
-    ChatMessage,
-    ChatParticipant,
-    ChatRole,
-    ChatRoom,
-    ChatType,
-    MessageType,
-)
-from ..utils import get_chat_channel_name
-from ...users.models import Master
 
 UserModel = get_user_model()
 
@@ -165,60 +166,63 @@ class ChatRoomAPIViewSet(ModelViewSet):
         """Initialize chat with another user - find existing or create new."""
         serializer = InitChatRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
-        user_id = serializer.validated_data['user_id']
-        title = serializer.validated_data.get('title', '')
-        
+
+        user_id = serializer.validated_data["user_id"]
+        title = serializer.validated_data.get("title", "")
+
         # Validate that user exists
         try:
             target_user = UserModel.objects.get(id=user_id, is_active=True)
         except UserModel.DoesNotExist:
             raise ValidationError("Target user not found or inactive")
-        
+
         # Prevent self-chat
         if target_user.id == request.user.id:
             raise ValidationError("Cannot create chat with yourself")
-        
+
         # Try to find existing chat between these two users
-        existing_chat = ChatRoom.objects.filter(
-            participants=request.user,
-            # chat_type=ChatType.GENERAL_CHAT
-        ).filter(
-            participants=target_user
-        ).first()
-        
+        existing_chat = (
+            ChatRoom.objects.filter(
+                participants=request.user,
+                # chat_type=ChatType.GENERAL_CHAT
+            )
+            .filter(participants=target_user)
+            .first()
+        )
+
         if existing_chat:
             # Return existing chat
-            return Response({
-                "message": "Existing chat found",
-                "data": InitChatResponseSerializer(existing_chat).data
-            })
-        
+            return Response(
+                {
+                    "message": "Existing chat found",
+                    "data": InitChatResponseSerializer(existing_chat).data,
+                }
+            )
+
         # Create new chat
-        chat_title = title or f"Chat with {target_user.get_full_name() or target_user.username}"
-        
-        chat_room = ChatRoom.objects.create(
-            title=chat_title,
-            chat_type=ChatType.GENERAL_CHAT,
-            is_active=True
+        chat_title = (
+            title or f"Chat with {target_user.get_full_name() or target_user.username}"
         )
-        
+
+        chat_room = ChatRoom.objects.create(
+            title=chat_title, chat_type=ChatType.GENERAL_CHAT, is_active=True
+        )
+
         # Add both users as participants
         ChatParticipant.objects.create(
-            chat_room=chat_room,
-            user=request.user,
-            role=ChatRole.MEMBER
+            chat_room=chat_room, user=request.user, role=ChatRole.MEMBER
         )
         ChatParticipant.objects.create(
-            chat_room=chat_room,
-            user=target_user,
-            role=ChatRole.MEMBER
+            chat_room=chat_room, user=target_user, role=ChatRole.MEMBER
         )
-        
-        return Response({
-            "message": "New chat created successfully",
-            "data": InitChatResponseSerializer(chat_room).data
-        }, status=status.HTTP_201_CREATED)
+
+        return Response(
+            {
+                "message": "New chat created successfully",
+                "data": InitChatResponseSerializer(chat_room).data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     def _broadcast_user_left(self, chat_room, user):
         """Broadcast user left event via WebSocket."""
@@ -252,7 +256,6 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
     filterset_fields = ["message_type", "is_read"]
     ordering_fields = ["created_at"]
     ordering = ["-created_at"]
-    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 
     def _get_chat_context(self):
         """
@@ -278,8 +281,10 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
 
     def get_queryset(self):
         chat_context = self._get_chat_context()
-        return ChatMessage.objects.select_related("sender", "chat_room").prefetch_related("attachments").filter(
-            chat_room=chat_context.chat_room
+        return (
+            ChatMessage.objects.select_related("sender", "chat_room")
+            .prefetch_related("attachments")
+            .filter(chat_room=chat_context.chat_room)
         )
 
     def get_serializer_class(self):
@@ -300,25 +305,23 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
         user = self.request.user
         message_content = serializer.validated_data.get("content", "")
         message_type = serializer.validated_data.get("message_type")
-        attachments_files = serializer.validated_data["attachments_files"]
-        if (
-                not message_content
-                and len(attachments_files) > 0
-                and message_type == MessageType.IMAGE
-        ):
+        attachments_files = serializer.validated_data.pop("attachments_files", None)
+        if attachments_files:
             if len(attachments_files) > 1:
-                raise ValidationError("Only one image is allowed")
-            message_content = "📷 Image"
+                raise ValidationError("Only one file is allowed")
+            if message_type == MessageType.IMAGE and not message_content:
+                message_content = "📷 Image"
 
-        chat_message = serializer.save(
+        chat_message = ChatMessage.objects.create(
             chat_room=chat_context.chat_room,
             sender=user,
             content=message_content,
             message_type=message_type,
         )
-        print("performe.create", attachments_files)
         if attachments_files is not None:
-            created_attachments = create_attachments(attachments_files, user, chat_message)
+            created_attachments = create_attachments(
+                attachments_files, user, chat_message
+            )
             chat_message.attachments.add(*created_attachments)
 
         ChatParticipant.objects.filter(chat_room=chat_context.chat_room).exclude(

@@ -1907,7 +1907,7 @@ export interface JobAssignmentApiActionData {
     'assignment': WrapperAssignment;
 }
 /**
- * Serializer for completing job assignments with rating and review.
+ * Serializer for completing job assignments.
  * @export
  * @interface JobAssignmentCompletionRequest
  */
@@ -1918,6 +1918,18 @@ export interface JobAssignmentCompletionRequest {
      * @memberof JobAssignmentCompletionRequest
      */
     'completion_notes'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof JobAssignmentCompletionRequest
+     */
+    'client_rating'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobAssignmentCompletionRequest
+     */
+    'client_review'?: string;
 }
 /**
  * 
@@ -3282,10 +3294,10 @@ export interface Message {
     'content': string;
     /**
      * 
-     * @type {MessageMessageTypeEnum}
+     * @type {MessageTypeEnum}
      * @memberof Message
      */
-    'message_type'?: MessageMessageTypeEnum;
+    'message_type'?: MessageTypeEnum;
     /**
      * 
      * @type {Array<Attachment>}
@@ -3355,10 +3367,10 @@ export interface MessageCreate {
     'sender': number;
     /**
      * 
-     * @type {MessageCreateMessageTypeEnum}
+     * @type {MessageTypeEnum}
      * @memberof MessageCreate
      */
-    'message_type': MessageCreateMessageTypeEnum;
+    'message_type'?: MessageTypeEnum;
     /**
      * 
      * @type {string}
@@ -3397,30 +3409,41 @@ export interface MessageCreate {
     'attachments': Array<Attachment>;
 }
 /**
- * * `text` - text * `image` - image * `file` - file
+ * 
  * @export
- * @enum {string}
+ * @interface MessageCreateRequest
  */
-
-export enum MessageCreateMessageTypeEnum {
-    text = 'text',
-    image = 'image',
-    file = 'file'
+export interface MessageCreateRequest {
+    /**
+     * 
+     * @type {MessageTypeEnum}
+     * @memberof MessageCreateRequest
+     */
+    'message_type'?: MessageTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof MessageCreateRequest
+     */
+    'content': string;
+    /**
+     * 
+     * @type {Array<any>}
+     * @memberof MessageCreateRequest
+     */
+    'attachments_files'?: Array<any> | null;
 }
-
-
 /**
- * * `text` - Текст * `image` - Изображение * `file` - Файл * `system` - System Message * `order_update` - Order Update
+ * * `text` - Текст * `image` - Изображение * `file` - Файл * `system` - System Message
  * @export
  * @enum {string}
  */
 
-export enum MessageMessageTypeEnum {
+export enum MessageTypeEnum {
     text = 'text',
     image = 'image',
     file = 'file',
-    system = 'system',
-    order_update = 'order_update'
+    system = 'system'
 }
 
 
@@ -3460,6 +3483,19 @@ export interface MessageUpdate {
      * @memberof MessageUpdate
      */
     'updated_at': string;
+}
+/**
+ * 
+ * @export
+ * @interface MessageUpdateRequest
+ */
+export interface MessageUpdateRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof MessageUpdateRequest
+     */
+    'content': string;
 }
 /**
  * Serializer for Notification model.
@@ -4940,6 +4976,37 @@ export interface PatchedMasterSkillRequest {
     'years_of_experience'?: number;
 }
 /**
+ * Serializer for chat messages.
+ * @export
+ * @interface PatchedMessageRequest
+ */
+export interface PatchedMessageRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedMessageRequest
+     */
+    'chat_room'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedMessageRequest
+     */
+    'content'?: string;
+    /**
+     * 
+     * @type {MessageTypeEnum}
+     * @memberof PatchedMessageRequest
+     */
+    'message_type'?: MessageTypeEnum;
+    /**
+     * 
+     * @type {number}
+     * @memberof PatchedMessageRequest
+     */
+    'reply_to'?: number | null;
+}
+/**
  * Serializer for updating notification read status.
  * @export
  * @interface PatchedNotificationUpdateRequest
@@ -6021,25 +6088,6 @@ export interface PublicMasterProfileProfession {
      * @memberof PublicMasterProfileProfession
      */
     'name': string;
-}
-/**
- * 
- * @export
- * @interface RatingRequest
- */
-export interface RatingRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof RatingRequest
-     */
-    'client_rating'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof RatingRequest
-     */
-    'client_review'?: string;
 }
 /**
  * Serializer for reading review data with nested serializers.
@@ -9193,48 +9241,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
-         * Rate a completed job assignment
-         * @param {string} id 
-         * @param {RatingRequest} [ratingRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AssignmentsRateCreate: async (id: string, ratingRequest?: RatingRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('v1AssignmentsRateCreate', 'id', id)
-            const localVarPath = `/api/v1/assignments/{id}/rate/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication cookieAuth required
-
-            // authentication tokenAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(ratingRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * 
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -9690,19 +9696,15 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * 
          * @param {string} chatRoomId 
-         * @param {MessageCreateMessageTypeEnum} messageType 
-         * @param {string} content 
-         * @param {Array<any>} [attachmentsFiles] 
+         * @param {MessageCreateRequest} messageCreateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesCreate: async (chatRoomId: string, messageType: MessageCreateMessageTypeEnum, content: string, attachmentsFiles?: Array<any>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsMessagesCreate: async (chatRoomId: string, messageCreateRequest: MessageCreateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'chatRoomId' is not null or undefined
             assertParamExists('v1ChatsRoomsMessagesCreate', 'chatRoomId', chatRoomId)
-            // verify required parameter 'messageType' is not null or undefined
-            assertParamExists('v1ChatsRoomsMessagesCreate', 'messageType', messageType)
-            // verify required parameter 'content' is not null or undefined
-            assertParamExists('v1ChatsRoomsMessagesCreate', 'content', content)
+            // verify required parameter 'messageCreateRequest' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesCreate', 'messageCreateRequest', messageCreateRequest)
             const localVarPath = `/api/v1/chats/rooms/{chat_room_id}/messages/`
                 .replace(`{${"chat_room_id"}}`, encodeURIComponent(String(chatRoomId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -9715,7 +9717,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
-            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
             // authentication cookieAuth required
 
@@ -9723,27 +9724,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-            if (messageType !== undefined) { 
-                localVarFormParams.append('message_type', new Blob([JSON.stringify(messageType)], { type: "application/json", }));
-            }
     
-            if (content !== undefined) { 
-                localVarFormParams.append('content', content as any);
-            }
-                if (attachmentsFiles) {
-                attachmentsFiles.forEach((element) => {
-                    localVarFormParams.append('attachments_files', element as any);
-                })
-            }
+            localVarHeaderParameter['Content-Type'] = 'application/json';
 
-    
-    
-            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = localVarFormParams;
+            localVarRequestOptions.data = serializeDataIfNeeded(messageCreateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9854,14 +9841,11 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {number} [chatRoom] 
-         * @param {string} [content] 
-         * @param {MessageMessageTypeEnum} [messageType] 
-         * @param {number} [replyTo] 
+         * @param {PatchedMessageRequest} [patchedMessageRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesPartialUpdate: async (chatRoomId: string, id: string, chatRoom?: number, content?: string, messageType?: MessageMessageTypeEnum, replyTo?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsMessagesPartialUpdate: async (chatRoomId: string, id: string, patchedMessageRequest?: PatchedMessageRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'chatRoomId' is not null or undefined
             assertParamExists('v1ChatsRoomsMessagesPartialUpdate', 'chatRoomId', chatRoomId)
             // verify required parameter 'id' is not null or undefined
@@ -9879,7 +9863,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
-            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
             // authentication cookieAuth required
 
@@ -9887,29 +9870,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-            if (chatRoom !== undefined) { 
-                localVarFormParams.append('chat_room', chatRoom as any);
-            }
     
-            if (content !== undefined) { 
-                localVarFormParams.append('content', content as any);
-            }
-    
-            if (messageType !== undefined) { 
-                localVarFormParams.append('message_type', new Blob([JSON.stringify(messageType)], { type: "application/json", }));
-            }
-    
-            if (replyTo !== undefined) { 
-                localVarFormParams.append('reply_to', replyTo as any);
-            }
-    
-    
-            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
-    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = localVarFormParams;
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedMessageRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9962,17 +9929,17 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {string} content 
+         * @param {MessageUpdateRequest} messageUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesUpdate: async (chatRoomId: string, id: string, content: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsMessagesUpdate: async (chatRoomId: string, id: string, messageUpdateRequest: MessageUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'chatRoomId' is not null or undefined
             assertParamExists('v1ChatsRoomsMessagesUpdate', 'chatRoomId', chatRoomId)
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1ChatsRoomsMessagesUpdate', 'id', id)
-            // verify required parameter 'content' is not null or undefined
-            assertParamExists('v1ChatsRoomsMessagesUpdate', 'content', content)
+            // verify required parameter 'messageUpdateRequest' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesUpdate', 'messageUpdateRequest', messageUpdateRequest)
             const localVarPath = `/api/v1/chats/rooms/{chat_room_id}/messages/{id}/`
                 .replace(`{${"chat_room_id"}}`, encodeURIComponent(String(chatRoomId)))
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
@@ -9986,7 +9953,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
-            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
             // authentication cookieAuth required
 
@@ -9994,17 +9960,13 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-            if (content !== undefined) { 
-                localVarFormParams.append('content', content as any);
-            }
     
-    
-            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
-    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = localVarFormParams;
+            localVarRequestOptions.data = serializeDataIfNeeded(messageUpdateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -16968,17 +16930,6 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Rate a completed job assignment
-         * @param {string} id 
-         * @param {RatingRequest} [ratingRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async v1AssignmentsRateCreate(id: string, ratingRequest?: RatingRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsRateCreate(id, ratingRequest, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
          * 
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -17096,14 +17047,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} chatRoomId 
-         * @param {MessageCreateMessageTypeEnum} messageType 
-         * @param {string} content 
-         * @param {Array<any>} [attachmentsFiles] 
+         * @param {MessageCreateRequest} messageCreateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsMessagesCreate(chatRoomId: string, messageType: MessageCreateMessageTypeEnum, content: string, attachmentsFiles?: Array<any>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesCreate(chatRoomId, messageType, content, attachmentsFiles, options);
+        async v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreateRequest: MessageCreateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageCreate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesCreate(chatRoomId, messageCreateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -17135,15 +17084,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {number} [chatRoom] 
-         * @param {string} [content] 
-         * @param {MessageMessageTypeEnum} [messageType] 
-         * @param {number} [replyTo] 
+         * @param {PatchedMessageRequest} [patchedMessageRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, chatRoom?: number, content?: string, messageType?: MessageMessageTypeEnum, replyTo?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Message>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, chatRoom, content, messageType, replyTo, options);
+        async v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessageRequest?: PatchedMessageRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Message>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, patchedMessageRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -17161,12 +17107,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {string} content 
+         * @param {MessageUpdateRequest} messageUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, content: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesUpdate(chatRoomId, id, content, options);
+        async v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdateRequest: MessageUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesUpdate(chatRoomId, id, messageUpdateRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -19033,16 +18979,6 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1AssignmentsPartialUpdate(id, patchedJobAssignmentRequest, options).then((request) => request(axios, basePath));
         },
         /**
-         * Rate a completed job assignment
-         * @param {string} id 
-         * @param {RatingRequest} [ratingRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        v1AssignmentsRateCreate(id: string, ratingRequest?: RatingRequest, options?: any): AxiosPromise<CResponse> {
-            return localVarFp.v1AssignmentsRateCreate(id, ratingRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
          * 
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -19149,14 +19085,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * 
          * @param {string} chatRoomId 
-         * @param {MessageCreateMessageTypeEnum} messageType 
-         * @param {string} content 
-         * @param {Array<any>} [attachmentsFiles] 
+         * @param {MessageCreateRequest} messageCreateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesCreate(chatRoomId: string, messageType: MessageCreateMessageTypeEnum, content: string, attachmentsFiles?: Array<any>, options?: any): AxiosPromise<MessageCreate> {
-            return localVarFp.v1ChatsRoomsMessagesCreate(chatRoomId, messageType, content, attachmentsFiles, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreateRequest: MessageCreateRequest, options?: any): AxiosPromise<MessageCreate> {
+            return localVarFp.v1ChatsRoomsMessagesCreate(chatRoomId, messageCreateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -19185,15 +19119,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {number} [chatRoom] 
-         * @param {string} [content] 
-         * @param {MessageMessageTypeEnum} [messageType] 
-         * @param {number} [replyTo] 
+         * @param {PatchedMessageRequest} [patchedMessageRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, chatRoom?: number, content?: string, messageType?: MessageMessageTypeEnum, replyTo?: number, options?: any): AxiosPromise<Message> {
-            return localVarFp.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, chatRoom, content, messageType, replyTo, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessageRequest?: PatchedMessageRequest, options?: any): AxiosPromise<Message> {
+            return localVarFp.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, patchedMessageRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -19209,12 +19140,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {string} content 
+         * @param {MessageUpdateRequest} messageUpdateRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, content: string, options?: any): AxiosPromise<MessageUpdate> {
-            return localVarFp.v1ChatsRoomsMessagesUpdate(chatRoomId, id, content, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdateRequest: MessageUpdateRequest, options?: any): AxiosPromise<MessageUpdate> {
+            return localVarFp.v1ChatsRoomsMessagesUpdate(chatRoomId, id, messageUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing chat rooms
@@ -20933,16 +20864,6 @@ export interface V1ApiInterface {
     v1AssignmentsPartialUpdate(id: string, patchedJobAssignmentRequest?: PatchedJobAssignmentRequest, options?: AxiosRequestConfig): AxiosPromise<JobAssignment>;
 
     /**
-     * Rate a completed job assignment
-     * @param {string} id 
-     * @param {RatingRequest} [ratingRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1ApiInterface
-     */
-    v1AssignmentsRateCreate(id: string, ratingRequest?: RatingRequest, options?: AxiosRequestConfig): AxiosPromise<CResponse>;
-
-    /**
      * 
      * @param {string} id 
      * @param {*} [options] Override http request option.
@@ -21049,14 +20970,12 @@ export interface V1ApiInterface {
     /**
      * 
      * @param {string} chatRoomId 
-     * @param {MessageCreateMessageTypeEnum} messageType 
-     * @param {string} content 
-     * @param {Array<any>} [attachmentsFiles] 
+     * @param {MessageCreateRequest} messageCreateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsMessagesCreate(chatRoomId: string, messageType: MessageCreateMessageTypeEnum, content: string, attachmentsFiles?: Array<any>, options?: AxiosRequestConfig): AxiosPromise<MessageCreate>;
+    v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreateRequest: MessageCreateRequest, options?: AxiosRequestConfig): AxiosPromise<MessageCreate>;
 
     /**
      * 
@@ -21085,15 +21004,12 @@ export interface V1ApiInterface {
      * 
      * @param {string} chatRoomId 
      * @param {string} id 
-     * @param {number} [chatRoom] 
-     * @param {string} [content] 
-     * @param {MessageMessageTypeEnum} [messageType] 
-     * @param {number} [replyTo] 
+     * @param {PatchedMessageRequest} [patchedMessageRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, chatRoom?: number, content?: string, messageType?: MessageMessageTypeEnum, replyTo?: number, options?: AxiosRequestConfig): AxiosPromise<Message>;
+    v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessageRequest?: PatchedMessageRequest, options?: AxiosRequestConfig): AxiosPromise<Message>;
 
     /**
      * 
@@ -21109,12 +21025,12 @@ export interface V1ApiInterface {
      * 
      * @param {string} chatRoomId 
      * @param {string} id 
-     * @param {string} content 
+     * @param {MessageUpdateRequest} messageUpdateRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, content: string, options?: AxiosRequestConfig): AxiosPromise<MessageUpdate>;
+    v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdateRequest: MessageUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<MessageUpdate>;
 
     /**
      * ViewSet for managing chat rooms
@@ -23056,27 +22972,6 @@ export interface V1ApiV1AssignmentsPartialUpdateRequest {
 }
 
 /**
- * Request parameters for v1AssignmentsRateCreate operation in V1Api.
- * @export
- * @interface V1ApiV1AssignmentsRateCreateRequest
- */
-export interface V1ApiV1AssignmentsRateCreateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1AssignmentsRateCreate
-     */
-    readonly id: string
-
-    /**
-     * 
-     * @type {RatingRequest}
-     * @memberof V1ApiV1AssignmentsRateCreate
-     */
-    readonly ratingRequest?: RatingRequest
-}
-
-/**
  * Request parameters for v1AssignmentsRetrieve operation in V1Api.
  * @export
  * @interface V1ApiV1AssignmentsRetrieveRequest
@@ -23273,24 +23168,10 @@ export interface V1ApiV1ChatsRoomsMessagesCreateRequest {
 
     /**
      * 
-     * @type {MessageCreateMessageTypeEnum}
+     * @type {MessageCreateRequest}
      * @memberof V1ApiV1ChatsRoomsMessagesCreate
      */
-    readonly messageType: MessageCreateMessageTypeEnum
-
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsMessagesCreate
-     */
-    readonly content: string
-
-    /**
-     * 
-     * @type {Array<any>}
-     * @memberof V1ApiV1ChatsRoomsMessagesCreate
-     */
-    readonly attachmentsFiles?: Array<any>
+    readonly messageCreateRequest: MessageCreateRequest
 }
 
 /**
@@ -23378,31 +23259,10 @@ export interface V1ApiV1ChatsRoomsMessagesPartialUpdateRequest {
 
     /**
      * 
-     * @type {number}
+     * @type {PatchedMessageRequest}
      * @memberof V1ApiV1ChatsRoomsMessagesPartialUpdate
      */
-    readonly chatRoom?: number
-
-    /**
-     * 
-     * @type {string}
-     * @memberof V1ApiV1ChatsRoomsMessagesPartialUpdate
-     */
-    readonly content?: string
-
-    /**
-     * 
-     * @type {MessageMessageTypeEnum}
-     * @memberof V1ApiV1ChatsRoomsMessagesPartialUpdate
-     */
-    readonly messageType?: MessageMessageTypeEnum
-
-    /**
-     * 
-     * @type {number}
-     * @memberof V1ApiV1ChatsRoomsMessagesPartialUpdate
-     */
-    readonly replyTo?: number
+    readonly patchedMessageRequest?: PatchedMessageRequest
 }
 
 /**
@@ -23448,10 +23308,10 @@ export interface V1ApiV1ChatsRoomsMessagesUpdateRequest {
 
     /**
      * 
-     * @type {string}
+     * @type {MessageUpdateRequest}
      * @memberof V1ApiV1ChatsRoomsMessagesUpdate
      */
-    readonly content: string
+    readonly messageUpdateRequest: MessageUpdateRequest
 }
 
 /**
@@ -27180,17 +27040,6 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
-     * Rate a completed job assignment
-     * @param {V1ApiV1AssignmentsRateCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof V1Api
-     */
-    public v1AssignmentsRateCreate(requestParameters: V1ApiV1AssignmentsRateCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AssignmentsRateCreate(requestParameters.id, requestParameters.ratingRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * 
      * @param {V1ApiV1AssignmentsRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -27318,7 +27167,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsMessagesCreate(requestParameters: V1ApiV1ChatsRoomsMessagesCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesCreate(requestParameters.chatRoomId, requestParameters.messageType, requestParameters.content, requestParameters.attachmentsFiles, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesCreate(requestParameters.chatRoomId, requestParameters.messageCreateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -27351,7 +27200,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsMessagesPartialUpdate(requestParameters: V1ApiV1ChatsRoomsMessagesPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesPartialUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.chatRoom, requestParameters.content, requestParameters.messageType, requestParameters.replyTo, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesPartialUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.patchedMessageRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -27373,7 +27222,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsMessagesUpdate(requestParameters: V1ApiV1ChatsRoomsMessagesUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.content, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.messageUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

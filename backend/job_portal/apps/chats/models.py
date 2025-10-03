@@ -18,7 +18,6 @@ class MessageType(models.TextChoices):
     IMAGE = 'image', _('Image')
     FILE = 'file', _('File')
     SYSTEM = 'system', _('System Message')
-    ORDER_UPDATE = 'order_update', _('Order Update')
 
 
 class ChatRole(models.TextChoices):

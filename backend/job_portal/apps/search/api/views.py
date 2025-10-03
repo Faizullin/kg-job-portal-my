@@ -91,7 +91,6 @@ class JobSearchAPIView(generics.ListAPIView):
     search_fields = [
         "title",
         "description",
-        "city",
         "service_subcategory__name",
         "service_subcategory__category__name",
     ]

@@ -50,7 +50,7 @@ class FirebaseAuthView(APIView):
 
         # Try to get active user first (manager automatically filters deleted users)
         try:
-            user = UserModel.objects.prefetch_related("groups").get(firebase_user_id=firebase_user_id)
+            user = UserModel.objects.get(firebase_user_id=firebase_user_id)
             if not user.is_active:
                 return Response({'error': 'User account is deactivated'}, status=403)
 
@@ -63,34 +63,34 @@ class FirebaseAuthView(APIView):
             return Response(serializer.data)
 
         except UserModel.DoesNotExist:
+            print("UserModel.DoesNotExist.0")
             # Check if user was soft-deleted
             try:
                 # Use all_with_deleted to check for deleted users
                 deleted_user = UserModel.objects.all_with_deleted().get(firebase_user_id=firebase_user_id)
+                print("deleted_user", deleted_user)
                 if deleted_user.is_deleted:
                     return Response({
                         'error': 'User account has been deleted',
                         'deleted_at': deleted_user.deleted_at
                     }, status=410)
             except UserModel.DoesNotExist:
+                print("UserModel.DoesNotExist.1")
                 pass
 
             # User doesn't exist - create new user from Firebase data
             # Firebase user is already verified above
             user_created = self._create_user_from_firebase(firebase_user)
+            print("user_created", user_created)
 
             # Generate token for new user
-            token, created = Token.objects.get_or_create(user=user_created)
-
-            # Use UserProfileSerializer for consistent response
-            user_serializer = UserDetailSerializer(user_created)
+            token, _ = Token.objects.get_or_create(user=user_created)
             response_data = {
                 'token': token.key,
-                'user': user_serializer.data,
+                'user': user_created,
                 'message': 'User registered and authenticated successfully'
             }
-
-            # Serialize the response for OpenAPI documentation
+            print("response_data", response_data) 
             serializer = FirebaseAuthResponseSerializer(response_data)
             return Response(serializer.data, status=201)
 
