@@ -3,7 +3,7 @@ from django.core.validators import (
     get_available_image_extensions,
 )
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from rest_framework.serializers import ValidationError
 
 from accounts.models import UserModel
 from job_portal.apps.attachments.serializers import AttachmentSerializer
@@ -48,6 +48,11 @@ class EmployerProfileCreateUpdateSerializer(AbstractTimestampedModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
+        
+        # Check if user already has a master profile
+        if hasattr(user, 'master_profile'):
+            raise ValidationError("User already has a master profile. Cannot create employer profile.")
+        
         employer_profile, created = Employer.objects.get_or_create(
             user=user, defaults=validated_data
         )
@@ -101,6 +106,11 @@ class MasterProfileCreateUpdateSerializer(AbstractTimestampedModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
+        
+        # Check if user already has an employer profile
+        if hasattr(user, 'employer_profile'):
+            raise ValidationError("User already has an employer profile. Cannot create master profile.")
+        
         master_profile, created = Master.objects.get_or_create(
             user=user, defaults=validated_data
         )

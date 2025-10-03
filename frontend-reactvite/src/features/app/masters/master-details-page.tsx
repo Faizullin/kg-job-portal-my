@@ -56,7 +56,7 @@ export function MasterDetailsPage({ masterId }: MasterDetailsPageProps) {
       }
 
       const response = await myApi.v1ChatsRoomsCreate({
-        chatRoomCreate: {
+        chatRoomCreateRequest: {
           title: `Чат с ${master?.user?.first_name && master?.user?.last_name
             ? `${master.user.first_name} ${master.user.last_name}`
             : master?.user?.username || "Мастер"}`,
@@ -209,11 +209,17 @@ export function MasterDetailsPage({ masterId }: MasterDetailsPageProps) {
                 <div className="grid grid-cols-2 gap-2">
                   {workExamples.map((item, index) => (
                     <div key={index} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                      <img
-                        src={item.image || undefined}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                      />
+                      {
+                        item.attachments.length > 0 ? (
+                          <>
+                            <img
+                              src={item.attachments[0]!.file_url || undefined}
+                              alt={item.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </>
+                        ) : null
+                      }
                     </div>
                   ))}
                 </div>

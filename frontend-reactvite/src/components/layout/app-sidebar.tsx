@@ -44,10 +44,11 @@ export function AppSidebar() {
         return hasAdminAccess;
       }
 
-      // Subscribers section - only show for masters
+      // Master Profile section - only show for masters
       if (url.startsWith("/subscribers")) {
         return isProvider;
       }
+
 
       if (url === "/search") return false;
       return true;

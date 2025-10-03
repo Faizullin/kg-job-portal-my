@@ -5,9 +5,10 @@ from django.db import models
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
-from rest_framework import parsers
+from rest_framework import parsers, status
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
+from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.serializers import ValidationError
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -20,6 +21,8 @@ from .serializers import (
     ChatRoomCreateSerializer,
     ChatRoomForSearchResponseSerializer,
     ChatRoomSerializer,
+    InitChatRequestSerializer,
+    InitChatResponseSerializer,
     MessageCreateSerializer,
     MessageSerializer,
     MessageUpdateSerializer,
@@ -27,7 +30,9 @@ from .serializers import (
 from ..models import (
     ChatMessage,
     ChatParticipant,
+    ChatRole,
     ChatRoom,
+    ChatType,
     MessageType,
 )
 from ..utils import get_chat_channel_name
@@ -149,6 +154,72 @@ class ChatRoomAPIViewSet(ModelViewSet):
         )
         return Response(ChatRoomForSearchResponseSerializer(qs, many=True).data)
 
+    @extend_schema(
+        description="Initialize chat with another user - find existing or create new",
+        request=InitChatRequestSerializer,
+        responses={200: InitChatResponseSerializer},
+        operation_id="v1_chats_rooms_init_chat",
+    )
+    @action(detail=False, methods=["post"])
+    def init_chat(self, request):
+        """Initialize chat with another user - find existing or create new."""
+        serializer = InitChatRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        user_id = serializer.validated_data['user_id']
+        title = serializer.validated_data.get('title', '')
+        
+        # Validate that user exists
+        try:
+            target_user = UserModel.objects.get(id=user_id, is_active=True)
+        except UserModel.DoesNotExist:
+            raise ValidationError("Target user not found or inactive")
+        
+        # Prevent self-chat
+        if target_user.id == request.user.id:
+            raise ValidationError("Cannot create chat with yourself")
+        
+        # Try to find existing chat between these two users
+        existing_chat = ChatRoom.objects.filter(
+            participants=request.user,
+            # chat_type=ChatType.GENERAL_CHAT
+        ).filter(
+            participants=target_user
+        ).first()
+        
+        if existing_chat:
+            # Return existing chat
+            return Response({
+                "message": "Existing chat found",
+                "data": InitChatResponseSerializer(existing_chat).data
+            })
+        
+        # Create new chat
+        chat_title = title or f"Chat with {target_user.get_full_name() or target_user.username}"
+        
+        chat_room = ChatRoom.objects.create(
+            title=chat_title,
+            chat_type=ChatType.GENERAL_CHAT,
+            is_active=True
+        )
+        
+        # Add both users as participants
+        ChatParticipant.objects.create(
+            chat_room=chat_room,
+            user=request.user,
+            role=ChatRole.MEMBER
+        )
+        ChatParticipant.objects.create(
+            chat_room=chat_room,
+            user=target_user,
+            role=ChatRole.MEMBER
+        )
+        
+        return Response({
+            "message": "New chat created successfully",
+            "data": InitChatResponseSerializer(chat_room).data
+        }, status=status.HTTP_201_CREATED)
+
     def _broadcast_user_left(self, chat_room, user):
         """Broadcast user left event via WebSocket."""
 
@@ -269,8 +340,7 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
 
     def perform_destroy(self, instance: ChatMessage):
         chat_context = self._get_chat_context()
-        if instance.attachments.count() > 0:
-            instance.attachments.all().delete()
+        instance.attachments.all().delete()
         instance.delete()
         self._broadcast_message_deletion(chat_context.chat_room, instance, self.request)
 

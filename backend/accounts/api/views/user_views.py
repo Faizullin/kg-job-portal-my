@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
+from rest_framework.serializers import ValidationError
 from django.core.files.storage import default_storage
 from firebase_admin import auth
 from rest_framework import generics

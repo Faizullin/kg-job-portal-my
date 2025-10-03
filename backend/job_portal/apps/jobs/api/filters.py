@@ -1,7 +1,8 @@
-import django_filters
-from django.core.exceptions import ValidationError
+import django_filters.rest_framework as django_filters
+from rest_framework.serializers import ValidationError
+from django.db.models import Q
 
-from ..models import JobApplication, Job, JobStatus, JobApplicationStatus, JobUrgency
+from ..models import JobApplication, Job, JobStatus, JobApplicationStatus, JobUrgency, JobAssignment, JobAssignmentStatus
 
 
 class JobFilter(django_filters.FilterSet):
@@ -25,12 +26,14 @@ class JobFilter(django_filters.FilterSet):
     # Urgency filtering
     urgency = django_filters.ChoiceFilter(choices=JobUrgency.choices)
     
+    
     class Meta:
         model = Job
         fields = [
             'min_price', 'max_price', 'service_subcategory', 'service_category',
             'city', 'service_date_from', 'service_date_to', 'urgency'
         ]
+    
 
 
 class JobApplicationFilter(django_filters.FilterSet):
@@ -58,3 +61,17 @@ class JobApplicationFilter(django_filters.FilterSet):
             raise ValidationError(f"Job with ID {value} does not exist")
         except ValueError:
             raise ValidationError(f"Invalid job ID: {value}")
+
+
+class JobAssignmentFilter(django_filters.FilterSet):
+    """Filter for JobAssignment model."""
+    
+    status = django_filters.ChoiceFilter(choices=JobAssignmentStatus.choices)
+    job = django_filters.NumberFilter(field_name='job__id')
+    assigned_at = django_filters.DateFromToRangeFilter()
+    started_at = django_filters.DateFromToRangeFilter()
+    completed_at = django_filters.DateFromToRangeFilter()
+
+    class Meta:
+        model = JobAssignment
+        fields = ['status', 'job', 'assigned_at', 'started_at', 'completed_at']

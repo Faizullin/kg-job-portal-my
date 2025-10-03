@@ -271,3 +271,21 @@ class ChatRoomForSearchResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatRoom
         fields = ["id", "master"]
+
+
+class InitChatRequestSerializer(serializers.Serializer):
+    """Serializer for init_chat action request."""
+    user_id = serializers.IntegerField(help_text="User ID to create or find chat with")
+    title = serializers.CharField(required=False, allow_blank=True, help_text="Optional chat title")
+
+
+class InitChatResponseSerializer(serializers.ModelSerializer):
+    """Serializer for init_chat action response."""
+    participants = ChatParticipantSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = ChatRoom
+        fields = [
+            "id", "job", "title", "is_active", "last_message_at", 
+            "chat_type", "participants", "created_at", "updated_at"
+        ]

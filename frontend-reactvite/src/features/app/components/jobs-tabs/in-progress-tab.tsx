@@ -1,9 +1,10 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, ChevronRight, MapPin } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent } from "@/components/ui/card";
 import myApi from "@/lib/api/my-api";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { Calendar, ChevronRight, MapPin } from "lucide-react";
 
 const ASSIGNMENTS_QUERY_KEY = 'assignments';
 
@@ -98,11 +99,11 @@ export function InProgressTab() {
             </div>
 
             <div className="text-blue-600 font-semibold text-lg mb-3">
-              {assignment.job?.budget_min && assignment.job?.budget_max 
+              {assignment.job?.budget_min && assignment.job?.budget_max
                 ? `${assignment.job.budget_min.toLocaleString()} - ${assignment.job.budget_max.toLocaleString()} тг`
-                : assignment.job?.final_price 
-                ? `${assignment.job.final_price.toLocaleString()} тг`
-                : 'Цена договорная'
+                : assignment.job?.final_price
+                  ? `${assignment.job.final_price.toLocaleString()} тг`
+                  : 'Цена договорная'
               }
             </div>
 
@@ -121,12 +122,15 @@ export function InProgressTab() {
               )}
             </div>
 
-            <Button 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white" 
+            <Button
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
               variant="outline"
+              asChild
             >
-              Подробнее
-              <ChevronRight className="ml-2 h-4 w-4" />
+              <Link to={`/jobs/assginments/$assignmentId`} params={{ assignmentId: assignment.id }}>
+                Подробнее
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Link>
             </Button>
           </CardContent>
         </Card>

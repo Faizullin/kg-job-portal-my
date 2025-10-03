@@ -1,6 +1,5 @@
-from django.core.exceptions import ValidationError
+from rest_framework.serializers import ValidationError
 from django.db import transaction
-from django.db.models import Q
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
@@ -9,31 +8,19 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from job_portal.apps.attachments.api.permissions import IsAttachmentOwner
 from job_portal.apps.attachments.models import create_attachments
+from job_portal.apps.attachments.serializers import AttachmentSerializer
 from job_portal.apps.chats.models import ChatParticipant, ChatRole, ChatRoom
 from job_portal.apps.notifications.models import notify
 from job_portal.apps.users.api.permissions import HasEmployerProfile, HasMasterProfile
 from utils.permissions import (
     HasSpecificPermission,
 )
-from utils.views import BaseAction, BaseActionAPIViewMixin
-
-from ...attachments.api.permissions import IsAttachmentOwner
-from ...attachments.serializers import AttachmentSerializer
-from ..models import (
-    BookmarkJob,
-    FavoriteJob,
-    Job,
-    JobApplication,
-    JobApplicationStatus,
-    JobAssignment,
-    JobAssignmentStatus,
-    JobStatus,
-)
-from .filters import JobApplicationFilter, JobFilter
+from .filters import JobApplicationFilter, JobFilter, JobAssignmentFilter
 from .permissions import JobAccessPermission
 from .serializers import (
     CResponseSerializer,
@@ -45,7 +32,16 @@ from .serializers import (
     JobAttachmentUploadSerializer,
     JobSerializer,
     ProgressUpdateSerializer,
-    RatingSerializer,
+)
+from ..models import (
+    BookmarkJob,
+    FavoriteJob,
+    Job,
+    JobApplication,
+    JobApplicationStatus,
+    JobAssignment,
+    JobAssignmentStatus,
+    JobStatus,
 )
 
 
@@ -70,22 +66,10 @@ class JobAPIViewSet(viewsets.ModelViewSet):
     ordering = ["-created_at"]
 
     def get_queryset(self):
-        qs = Job.objects.all().select_related(
-            "employer__user", "service_subcategory", "city"
+        qs = Job.objects.select_related(
+            "employer__user", "service_subcategory", "city__country"
         )
-        user = self.request.user
-
-        # Employer filtering
-        if hasattr(user, "employer_profile"):
-            qs = qs.filter(employer=user.employer_profile)
-        # Master filtering - allow access to assigned jobs
-        elif hasattr(user, "master_profile"):
-            qs = qs.filter(
-                Q(status=JobStatus.PUBLISHED)  # Published jobs
-                | Q(assignment__master=user.master_profile)  # Assigned jobs
-                | Q(applications__applicant=user.master_profile)  # Applied jobs
-            ).distinct()
-        else:
+        if self.action in ["list"]:
             qs = qs.filter(status=JobStatus.PUBLISHED)
         return qs
 
@@ -110,14 +94,16 @@ class JobAPIViewSet(viewsets.ModelViewSet):
             perms += [HasSpecificPermission(["jobs.add_job"])()]
         elif self.action == "apply":
             perms += [
-                IsAuthenticated(),
                 HasMasterProfile(),
-                HasSpecificPermission(["jobs.add_jobapplication"])(),
             ]
         return perms
 
     def perform_create(self, serializer):
         serializer.save(employer=self.request.user.employer_profile)
+
+    def perform_destroy(self, instance: Job):
+        instance.attachments.all().delete()
+        instance.delete()
 
     @extend_schema(
         description="Publish a draft job. Only allowed if job is in DRAFT state.",
@@ -183,7 +169,7 @@ class JobAPIViewSet(viewsets.ModelViewSet):
             applicant=master_profile,
         )
         if existing_job_application:
-            raise ValidationError("Job application already exists for this job.")
+            raise serializers.ValidationError("Job application already exists for this job.")
         job_application = JobApplication.objects.create(
             **serializer.validated_data,
             job=job,
@@ -283,14 +269,21 @@ class JobAPIViewSet(viewsets.ModelViewSet):
     )
     def master_in_progress(self, request):
         """Get jobs currently in progress for master."""
-        qs = Job.objects.filter(
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(
             assignment__master=request.user.master_profile,
             assignment__status__in=[
                 JobAssignmentStatus.ASSIGNED,
                 JobAssignmentStatus.IN_PROGRESS,
             ],
-        ).select_related("employer__user", "service_subcategory", "city")
-        serializer = self.get_serializer(qs, many=True)
+        )
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     @extend_schema(
@@ -305,15 +298,41 @@ class JobAPIViewSet(viewsets.ModelViewSet):
     )
     def master_history(self, request):
         """Get completed job history for master."""
-        qs = (
-            Job.objects.filter(
-                assignment__master=request.user.master_profile,
-                assignment__status=JobAssignmentStatus.COMPLETED,
-            )
-            .select_related("employer__user", "service_subcategory", "city")
-            .order_by("-assignment__completed_at")
-        )
-        serializer = self.get_serializer(qs, many=True)
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(
+            assignment__master=request.user.master_profile,
+            assignment__status=JobAssignmentStatus.COMPLETED,
+        ).order_by("-assignment__completed_at")
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @extend_schema(
+        description="Get my jobs (all jobs created by current employer)",
+        responses={200: JobSerializer(many=True)},
+        operation_id="v1_jobs_my_jobs",
+    )
+    @action(
+        detail=False,
+        methods=["get"],
+        permission_classes=[IsAuthenticated, HasEmployerProfile],
+    )
+    def my_jobs(self, request):
+        """Get all jobs created by the current employer (including drafts)."""
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(employer=request.user.employer_profile)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
 
@@ -342,7 +361,7 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
     ordering = ["-created_at"]
 
     def get_queryset(self):
-        qs = JobApplication.objects.select_related("job", "applicant")
+        qs = JobApplication.objects.select_related("job__employer", "applicant")
         user = self.request.user
         if hasattr(user, "employer_profile"):
             qs = qs.filter(job__employer=user.employer_profile)
@@ -351,6 +370,18 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
         else:
             qs = JobApplication.objects.none()
         return qs
+    
+    def get_permissions(self):
+        perms = super().get_permissions()
+        if self.action == "accept":
+            perms += [HasEmployerProfile()]
+        elif self.action == "reject":
+            perms += [HasEmployerProfile()]
+        elif self.action == "withdraw":
+            perms += [HasMasterProfile()]
+        elif self.action == "destroy":
+            perms += [HasEmployerProfile()]
+        return perms
 
     @extend_schema(
         description="Accept a job application",
@@ -362,11 +393,6 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=["post"],
-        permission_classes=[
-            IsAuthenticated,
-            HasEmployerProfile,
-            HasSpecificPermission(["jobs.change_jobapplication"]),
-        ],
     )
     def accept(self, request, pk=None):
         try:
@@ -426,8 +452,8 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
             {
                 "message": "Job application accepted successfully",
                 "data": {
-                    "application": application,
-                    "assignment": assignment,
+                    "application": JobApplicationSerializer(application).data,
+                    "assignment": JobAssignmentSerializer(assignment).data,
                 },
             },
             status=status.HTTP_200_OK,
@@ -443,11 +469,6 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=["post"],
-        permission_classes=[
-            IsAuthenticated,
-            HasEmployerProfile,
-            HasSpecificPermission(["jobs.change_jobapplication"]),
-        ],
     )
     def reject(self, request, pk=None):
         try:
@@ -489,7 +510,6 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=["post"],
-        permission_classes=[IsAuthenticated, HasMasterProfile],
     )
     def withdraw(self, request, pk=None):
         try:
@@ -520,15 +540,26 @@ class _JobAssignmentApiActionSerializer(CResponseSerializer):
     data = WrapperSerializer(read_only=True)
 
 
-class JobAssignmentViewSet(BaseActionAPIViewMixin, viewsets.ModelViewSet):
-    serializer_class = JobAssignmentSerializer
+class JobAssignmentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, HasMasterProfile]
+    serializer_class = JobAssignmentSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = JobAssignmentFilter
+    ordering_fields = [
+        "created_at",
+        "started_at",
+        "completed_at",
+    ]
 
     def get_queryset(self):
         qs = JobAssignment.objects.select_related(
             "job", "master", "accepted_application"
         ).filter(master=self.request.user.master_profile)
         return qs
+
+    def perform_destroy(self, instance: JobAssignment):
+        instance.attachments.all().delete()
+        instance.delete()
 
     @extend_schema(
         description="Start an assignment",
@@ -637,34 +668,6 @@ class JobAssignmentViewSet(BaseActionAPIViewMixin, viewsets.ModelViewSet):
             }
         )
 
-    @extend_schema(
-        description="Rate a completed job assignment",
-        request=RatingSerializer,
-        responses={
-            200: CResponseSerializer,
-        },
-    )
-    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
-    def rate(self, request):
-        assignment = self.get_object()
-        if assignment.status != JobAssignmentStatus.COMPLETED:
-            return Response(
-                {"error": "Assignment must be completed to rate"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        serializer = RatingSerializer(assignment, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({"message": "Rating submitted successfully"})
-
-    class TmpAction(BaseAction):
-        pass
-
-    available_actions = [
-        TmpAction(),
-    ]
-
 
 class JobAttachmentAPIViewSet(
     mixins.CreateModelMixin,
@@ -718,7 +721,7 @@ class AssignmentAttachmentAPIViewSet(
     def _get_job_assignment_obj(self) -> JobAssignment:
         if hasattr(self.request, "_job_assignment_obj"):
             return self.request._job_assignment_obj
-        parent_lookup_field = "job_assignment_id"
+        parent_lookup_field = "assignment_id"
         assignment_id = self.kwargs.get(parent_lookup_field)
         job_assignment = get_object_or_404(JobAssignment, id=assignment_id)
         if job_assignment.master != self.request.user.master_profile:

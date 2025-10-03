@@ -4,7 +4,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status, mixins, viewsets, parsers
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.serializers import ValidationError
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -33,9 +34,9 @@ def assign_client_permissions(user):
     user.groups.add(client_group)
     permissions = Permission.objects.filter(
         codename__in=[
-            "add_order",
-            "view_order",
-            "change_order",
+            "add_job",
+            "view_job",
+            "change_job",
             "view_bid",
             "add_payment",
             "view_payment",
@@ -50,7 +51,7 @@ def assign_master_permissions(user):
     provider_group, _ = Group.objects.get_or_create(name="master")
     user.groups.add(provider_group)
     permissions = Permission.objects.filter(
-        codename__in=["view_order", "add_bid", "view_bid", "change_bid", "view_payment"]
+        codename__in=["view_job", "add_bid", "view_bid", "change_bid", "view_payment"]
     )
     for perm in permissions:
         user.user_permissions.add(perm)

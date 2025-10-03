@@ -1,0 +1,825 @@
+{
+	"info": {
+		"_postman_id": "job-portal-api-collection",
+		"name": "Job Portal API",
+		"description": "Complete API collection for Job Portal Django REST API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{firebase_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "firebase_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"description": "Firebase-based authentication system for user login and logout",
+			"item": [
+				{
+					"name": "Firebase Auth",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_token\": \"your_firebase_id_token\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/firebase/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "firebase", ""]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/logout/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "logout", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "User Profile",
+			"description": "User profile management including basic info and notification settings",
+			"item": [
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/profile/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "profile", ""]
+						}
+					}
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"email\": \"john@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/profile/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "profile", ""]
+						}
+					}
+				},
+				{
+					"name": "Get Notification Settings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/profile/notification-settings/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "profile", "notification-settings", ""]
+						}
+					}
+				},
+				{
+					"name": "Update Notification Settings",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email_notifications\": true,\n  \"push_notifications\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/profile/notification-settings/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "profile", "notification-settings", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Jobs",
+			"description": "Job posting, management, and application system for employers and masters",
+			"item": [
+				{
+					"name": "List Jobs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/jobs/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "jobs", ""]
+						}
+					}
+				},
+				{
+					"name": "Create Job",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Plumbing Repair\",\n  \"description\": \"Need plumbing repair in kitchen\",\n  \"budget_min\": 100,\n  \"budget_max\": 300,\n  \"service_subcategory\": 1,\n  \"city\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/jobs/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "jobs", ""]
+						}
+					}
+				},
+				{
+					"name": "Get Job Detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/jobs/1/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "jobs", "1", ""]
+						}
+					}
+				},
+				{
+					"name": "Apply for Job",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 200,\n  \"comment\": \"I can complete this job in 2 hours\",\n  \"estimated_duration\": 2\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/jobs/1/apply/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "jobs", "1", "apply", ""]
+						}
+					}
+				},
+				{
+					"name": "Bookmark Job",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/jobs/1/bookmark/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "jobs", "1", "bookmark", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Job Applications",
+			"description": "Job application management including apply, accept, reject, and withdraw operations",
+			"item": [
+				{
+					"name": "List Applications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/applications/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "applications", ""]
+						}
+					}
+				},
+				{
+					"name": "Accept Application",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/applications/1/accept/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "applications", "1", "accept", ""]
+						}
+					}
+				},
+				{
+					"name": "Reject Application",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/applications/1/reject/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "applications", "1", "reject", ""]
+						}
+					}
+				},
+				{
+					"name": "Withdraw Application",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/applications/1/withdraw/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "applications", "1", "withdraw", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Job Assignments",
+			"description": "Job assignment lifecycle including start, progress tracking, and completion",
+			"item": [
+				{
+					"name": "List Assignments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/assignments/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "assignments", ""]
+						}
+					}
+				},
+				{
+					"name": "Start Assignment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/assignments/1/start/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "assignments", "1", "start", ""]
+						}
+					}
+				},
+				{
+					"name": "Complete Assignment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"completion_notes\": \"Job completed successfully\",\n  \"client_rating\": 5,\n  \"client_review\": \"Excellent work!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/assignments/1/complete/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "assignments", "1", "complete", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "User Profiles",
+			"description": "Master and employer profile creation, management, and online status updates",
+			"item": [
+				{
+					"name": "Create Master Profile",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"profession\": 1,\n  \"hourly_rate\": 25,\n  \"is_available\": true,\n  \"current_location\": \"Almaty, Kazakhstan\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/my/master/create",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "my", "master", "create"]
+						}
+					}
+				},
+				{
+					"name": "Create Employer Profile",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"contact_phone\": \"+77771234567\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/my/employer/create/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "my", "employer", "create", ""]
+						}
+					}
+				},
+				{
+					"name": "Get Master Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/my/master/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "my", "master", ""]
+						}
+					}
+				},
+				{
+					"name": "Update Master Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"hourly_rate\": 30,\n  \"is_available\": true,\n  \"current_location\": \"Almaty, Kazakhstan\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/my/master/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "my", "master", ""]
+						}
+					}
+				},
+				{
+					"name": "Update Online Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"is_online\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/my/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "my", "status"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Skills & Portfolio",
+			"description": "Master skills management, portfolio items, and certificate management",
+			"item": [
+				{
+					"name": "List My Skills",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/my/skills/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "my", "skills", ""]
+						}
+					}
+				},
+				{
+					"name": "Add Skill",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"skill\": 1,\n  \"proficiency_level\": \"expert\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/my/skills/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "my", "skills", ""]
+						}
+					}
+				},
+				{
+					"name": "List Portfolio Items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/my/portfolio/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "my", "portfolio", ""]
+						}
+					}
+				},
+				{
+					"name": "Add Portfolio Item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Kitchen Renovation\",\n  \"description\": \"Complete kitchen renovation project\",\n  \"project_url\": \"https://example.com/project\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/my/portfolio/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "my", "portfolio", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Search & Home",
+			"description": "Search functionality for masters and jobs, plus home page data and recommendations",
+			"item": [
+				{
+					"name": "Search Masters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/search/masters/?search=plumber&location=almaty",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "search", "masters", ""],
+							"query": [
+								{
+									"key": "search",
+									"value": "plumber"
+								},
+								{
+									"key": "location",
+									"value": "almaty"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Search Jobs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/search/jobs/?search=plumbing&budget_min=100",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "search", "jobs", ""],
+							"query": [
+								{
+									"key": "search",
+									"value": "plumbing"
+								},
+								{
+									"key": "budget_min",
+									"value": "100"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Home Page Data (Client)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/home/client",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "home", "client"]
+						}
+					}
+				},
+				{
+					"name": "New Jobs for Masters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/home/master/new-jobs/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "home", "master", "new-jobs", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Chats",
+			"description": "Real-time messaging system with chat rooms, message management, and file attachments",
+			"item": [
+				{
+					"name": "List Chat Rooms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/chats/rooms/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "chats", "rooms", ""]
+						}
+					}
+				},
+				{
+					"name": "Initialize Chat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 123,\n  \"title\": \"Chat with John\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/chats/rooms/init_chat/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "chats", "rooms", "init_chat", ""]
+						}
+					}
+				},
+				{
+					"name": "List Messages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/chats/rooms/1/messages/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "chats", "rooms", "1", "messages", ""]
+						}
+					}
+				},
+				{
+					"name": "Send Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "content",
+									"value": "Hello, how can I help you?",
+									"type": "text"
+								},
+								{
+									"key": "message_type",
+									"value": "text",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/chats/rooms/1/messages/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "chats", "rooms", "1", "messages", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"description": "User notification system for job updates, messages, and system alerts",
+			"item": [
+				{
+					"name": "List Notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/notifications/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "notifications", ""]
+						}
+					}
+				},
+				{
+					"name": "Mark as Read",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/notifications/1/mark_read/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "notifications", "1", "mark_read", ""]
+						}
+					}
+				},
+				{
+					"name": "Mark All as Read",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/notifications/mark_all_read/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "notifications", "mark_all_read", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Reviews",
+			"description": "Review and rating system for completed jobs, masters, and assignments",
+			"item": [
+				{
+					"name": "List Reviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/reviews/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "reviews", ""]
+						}
+					}
+				},
+				{
+					"name": "Master Reviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/reviews/master/1/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "reviews", "master", "1", ""]
+						}
+					}
+				},
+				{
+					"name": "Job Reviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/reviews/job/1/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "reviews", "job", "1", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Core Data",
+			"description": "Reference data including service categories, skills, professions, and geographic locations",
+			"item": [
+				{
+					"name": "List Service Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/core/service-categories/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "core", "service-categories", ""]
+						}
+					}
+				},
+				{
+					"name": "List Service Subcategories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/core/service-subcategories/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "core", "service-subcategories", ""]
+						}
+					}
+				},
+				{
+					"name": "List Skills",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/skills/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "skills", ""]
+						}
+					}
+				},
+				{
+					"name": "List Professions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/professions/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", "professions", ""]
+						}
+					}
+				},
+				{
+					"name": "List Countries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/locations/countries/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "locations", "countries", ""]
+						}
+					}
+				},
+				{
+					"name": "List Cities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/locations/cities/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "locations", "cities", ""]
+						}
+					}
+				}
+			]
+		}
+	]
+}

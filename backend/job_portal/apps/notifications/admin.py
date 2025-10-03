@@ -6,8 +6,8 @@ from .models import Notification
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'recipient', 'actor', 'title_preview',
-        'is_read', 'target'
+        'id', 'recipient',  'title_preview',
+        'is_read',
     ]
     list_filter = ['is_read', 'created_at']
     ordering = ['-created_at']
@@ -20,6 +20,3 @@ class NotificationAdmin(admin.ModelAdmin):
         return '-'
 
     title_preview.short_description = 'Title'
-
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('actor', 'action_object', 'target')

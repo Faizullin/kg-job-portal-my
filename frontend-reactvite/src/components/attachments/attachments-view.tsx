@@ -18,6 +18,7 @@ interface AttachmentsViewProps {
     className?: string;
     title?: string;
     description?: string;
+    readonly?: boolean;
 }
 
 export function AttachmentsView({
@@ -30,6 +31,7 @@ export function AttachmentsView({
     className = "",
     title = "Attachments",
     description = "Upload files to attach",
+    readonly = false,
 }: AttachmentsViewProps) {
     const [attachmentViewMode, setAttachmentViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -99,39 +101,41 @@ export function AttachmentsView({
         <div className={`space-y-3 pt-4 border-t ${className}`}>
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium">{title}</h3>
-                <div className="flex items-center gap-2">
-                    <div className="flex items-center border rounded-md">
+                {!readonly && (
+                    <div className="flex items-center gap-2">
+                        <div className="flex items-center border rounded-md">
+                            <Button
+                                type="button"
+                                variant={attachmentViewMode === 'grid' ? 'default' : 'ghost'}
+                                size="sm"
+                                onClick={() => setAttachmentViewMode('grid')}
+                                className="h-8 px-2"
+                            >
+                                <Grid3X3 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                type="button"
+                                variant={attachmentViewMode === 'list' ? 'default' : 'ghost'}
+                                size="sm"
+                                onClick={() => setAttachmentViewMode('list')}
+                                className="h-8 px-2"
+                            >
+                                <List className="h-4 w-4" />
+                            </Button>
+                        </div>
                         <Button
                             type="button"
-                            variant={attachmentViewMode === 'grid' ? 'default' : 'ghost'}
+                            variant="outline"
                             size="sm"
-                            onClick={() => setAttachmentViewMode('grid')}
-                            className="h-8 px-2"
+                            onClick={handleUploadAttachments}
+                            disabled={isLoading}
+                            className="flex items-center gap-2"
                         >
-                            <Grid3X3 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                            type="button"
-                            variant={attachmentViewMode === 'list' ? 'default' : 'ghost'}
-                            size="sm"
-                            onClick={() => setAttachmentViewMode('list')}
-                            className="h-8 px-2"
-                        >
-                            <List className="h-4 w-4" />
+                            <Paperclip className="h-4 w-4" />
+                            Upload Files
                         </Button>
                     </div>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleUploadAttachments}
-                        disabled={isLoading}
-                        className="flex items-center gap-2"
-                    >
-                        <Paperclip className="h-4 w-4" />
-                        Upload Files
-                    </Button>
-                </div>
+                )}
             </div>
 
             <div className="min-h-[120px] border rounded-lg p-4 bg-muted/30">
@@ -173,15 +177,17 @@ export function AttachmentsView({
                                             </p>
                                         </div>
                                     </div>
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="sm"
-                                        className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive bg-background/80 backdrop-blur-sm"
-                                        onClick={() => handleDeleteAttachment(attachment)}
-                                    >
-                                        <X className="h-3 w-3" />
-                                    </Button>
+                                    {!readonly && (
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive bg-background/80 backdrop-blur-sm"
+                                            onClick={() => handleDeleteAttachment(attachment)}
+                                        >
+                                            <X className="h-3 w-3" />
+                                        </Button>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -220,15 +226,17 @@ export function AttachmentsView({
                                             {attachment.size ? `${(attachment.size / 1024).toFixed(1)} KB` : 'Unknown size'}
                                         </Badge>
                                     </div>
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive flex-shrink-0"
-                                        onClick={() => handleDeleteAttachment(attachment)}
-                                    >
-                                        <X className="h-3 w-3" />
-                                    </Button>
+                                    {!readonly && (
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive flex-shrink-0"
+                                            onClick={() => handleDeleteAttachment(attachment)}
+                                        >
+                                            <X className="h-3 w-3" />
+                                        </Button>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -237,7 +245,9 @@ export function AttachmentsView({
                     <div className="flex flex-col items-center justify-center h-20 text-muted-foreground">
                         <Paperclip className="h-8 w-8 mb-2" />
                         <p className="text-sm">No attachments yet</p>
-                        <p className="text-xs">Click "Upload Files" to add attachments</p>
+                        {!readonly && (
+                            <p className="text-xs">Click "Upload Files" to add attachments</p>
+                        )}
                     </div>
                 )}
             </div>

@@ -1,0 +1,191 @@
+{
+  "django_urls_analysis": {
+    "total_endpoints": 85,
+    "apps": {
+      "accounts": {
+        "description": "Authentication and user profile management",
+        "endpoints": [
+          "POST /api/v1/auth/firebase/",
+          "POST /api/v1/auth/logout/",
+          "GET/PUT /api/v1/profile/",
+          "GET/PUT /api/v1/profile/notification-settings/",
+          "POST /api/v1/profile/control/"
+        ]
+      },
+      "job_portal": {
+        "description": "Main business logic with 9 sub-apps",
+        "sub_apps": {
+          "core": {
+            "description": "Reference data and system settings",
+            "endpoints": [
+              "GET /api/v1/core/languages/",
+              "GET/POST /api/v1/core/service-categories/",
+              "GET/PUT/DELETE /api/v1/core/service-categories/{id}/",
+              "GET/POST /api/v1/core/service-subcategories/",
+              "GET/PUT/DELETE /api/v1/core/service-subcategories/{id}/",
+              "GET/POST /api/v1/core/service-areas/",
+              "GET/PUT/DELETE /api/v1/core/service-areas/{id}/",
+              "GET/POST /api/v1/core/system-settings/",
+              "GET/PUT/DELETE /api/v1/core/system-settings/{id}/",
+              "GET/POST /api/v1/core/support/faq/",
+              "GET/PUT/DELETE /api/v1/core/support/faq/{id}/"
+            ]
+          },
+          "jobs": {
+            "description": "Job management and assignments",
+            "endpoints": [
+              "GET/POST /api/v1/jobs/",
+              "GET/PUT/DELETE /api/v1/jobs/{id}/",
+              "POST /api/v1/jobs/{id}/apply/",
+              "POST /api/v1/jobs/{id}/bookmark/",
+              "GET/POST /api/v1/applications/",
+              "GET/PUT/DELETE /api/v1/applications/{id}/",
+              "POST /api/v1/applications/{id}/accept/",
+              "POST /api/v1/applications/{id}/reject/",
+              "POST /api/v1/applications/{id}/withdraw/",
+              "GET/POST /api/v1/assignments/",
+              "GET/PUT/DELETE /api/v1/assignments/{id}/",
+              "POST /api/v1/assignments/{id}/start/",
+              "POST /api/v1/assignments/{id}/complete/",
+              "GET/POST /api/v1/jobs/{job_id}/attachments/",
+              "GET/PUT/DELETE /api/v1/jobs/{job_id}/attachments/{id}/",
+              "GET/POST /api/v1/assignments/{assignment_id}/attachments/",
+              "GET/PUT/DELETE /api/v1/assignments/{assignment_id}/attachments/{id}/"
+            ]
+          },
+          "users": {
+            "description": "User profiles and skills management",
+            "endpoints": [
+              "POST /api/v1/users/my/employer/create/",
+              "POST /api/v1/users/my/master/create",
+              "GET/PUT /api/v1/users/my/employer/",
+              "GET/PUT /api/v1/users/my/master/",
+              "POST /api/v1/users/my/status",
+              "GET/POST /api/v1/users/my/skills/",
+              "GET/PUT/DELETE /api/v1/users/my/skills/{id}/",
+              "GET/POST /api/v1/users/my/portfolio/",
+              "GET/PUT/DELETE /api/v1/users/my/portfolio/{id}/",
+              "GET/POST /api/v1/users/my/portfolio/{portfolio_id}/attachments/",
+              "GET/PUT/DELETE /api/v1/users/my/portfolio/{portfolio_id}/attachments/{id}/",
+              "GET/POST /api/v1/users/my/certificates/",
+              "GET/PUT/DELETE /api/v1/users/my/certificates/{id}/",
+              "GET /api/v1/users/professions/",
+              "GET /api/v1/users/masters/",
+              "GET /api/v1/users/masters/{id}/",
+              "GET /api/v1/users/skills/"
+            ]
+          },
+          "resumes": {
+            "description": "Master resume management",
+            "endpoints": [
+              "GET/POST /api/v1/resumes/",
+              "GET/PUT/DELETE /api/v1/resumes/{id}/"
+            ]
+          },
+          "chats": {
+            "description": "Real-time messaging system",
+            "endpoints": [
+              "GET/POST /api/v1/chats/rooms/",
+              "GET/PUT/DELETE /api/v1/chats/rooms/{id}/",
+              "POST /api/v1/chats/rooms/{id}/leave/",
+              "GET /api/v1/chats/rooms/for_master/",
+              "POST /api/v1/chats/rooms/init_chat/",
+              "GET/POST /api/v1/chats/rooms/{chat_room_id}/messages/",
+              "GET/PUT/DELETE /api/v1/chats/rooms/{chat_room_id}/messages/{id}/"
+            ]
+          },
+          "notifications": {
+            "description": "User notifications",
+            "endpoints": [
+              "GET /api/v1/notifications/",
+              "GET /api/v1/notifications/{id}/",
+              "POST /api/v1/notifications/{id}/mark_read/",
+              "POST /api/v1/notifications/mark_all_read/"
+            ]
+          },
+          "locations": {
+            "description": "Geographic data",
+            "endpoints": [
+              "GET/POST /api/v1/locations/countries/",
+              "GET/PUT/DELETE /api/v1/locations/countries/{id}/",
+              "GET/POST /api/v1/locations/cities/",
+              "GET/PUT/DELETE /api/v1/locations/cities/{id}/"
+            ]
+          },
+          "search": {
+            "description": "Search and recommendations",
+            "endpoints": [
+              "GET /api/v1/search/masters/",
+              "GET /api/v1/search/jobs/",
+              "GET /api/v1/home/client",
+              "GET /api/v1/home/master/new-jobs/"
+            ]
+          },
+          "contacts": {
+            "description": "Contact management",
+            "endpoints": [
+              "GET/POST /api/v1/contacts/",
+              "GET/PUT/DELETE /api/v1/contacts/{id}/"
+            ]
+          },
+          "reviews": {
+            "description": "Review and rating system",
+            "endpoints": [
+              "GET /api/v1/reviews/",
+              "GET /api/v1/reviews/{id}/",
+              "GET /api/v1/reviews/master/{master_id}/",
+              "GET /api/v1/reviews/job/{job_id}/",
+              "GET /api/v1/reviews/analytics/",
+              "GET /api/v1/reviews/assignments/"
+            ]
+          }
+        }
+      }
+    },
+    "admin_endpoints": {
+      "description": "Django admin and documentation",
+      "endpoints": [
+        "GET /admin/",
+        "GET /api/schema/",
+        "GET /api/schema/swagger-ui/",
+        "GET /api/schema/redoc/",
+        "GET /silk/"
+      ]
+    },
+    "missing_in_postman": [
+      "GET /api/v1/core/languages/",
+      "GET /api/v1/core/service-areas/",
+      "GET /api/v1/core/system-settings/",
+      "GET /api/v1/core/support/faq/",
+      "POST /api/v1/users/my/employer/create/",
+      "POST /api/v1/users/my/master/create",
+      "GET /api/v1/users/my/employer/",
+      "GET /api/v1/users/my/master/",
+      "GET /api/v1/users/my/skills/",
+      "POST /api/v1/users/my/skills/",
+      "GET /api/v1/users/my/portfolio/",
+      "POST /api/v1/users/my/portfolio/",
+      "GET /api/v1/users/my/certificates/",
+      "POST /api/v1/users/my/certificates/",
+      "GET /api/v1/users/professions/",
+      "GET /api/v1/users/masters/",
+      "GET /api/v1/resumes/",
+      "POST /api/v1/resumes/",
+      "GET /api/v1/chats/rooms/for_master/",
+      "GET /api/v1/notifications/",
+      "POST /api/v1/notifications/{id}/mark_read/",
+      "POST /api/v1/notifications/mark_all_read/",
+      "GET /api/v1/locations/countries/",
+      "POST /api/v1/locations/countries/",
+      "GET /api/v1/locations/cities/",
+      "POST /api/v1/locations/cities/",
+      "GET /api/v1/contacts/",
+      "POST /api/v1/contacts/",
+      "GET /api/v1/reviews/",
+      "GET /api/v1/reviews/master/{master_id}/",
+      "GET /api/v1/reviews/job/{job_id}/",
+      "GET /api/v1/reviews/analytics/",
+      "GET /api/v1/reviews/assignments/"
+    ]
+  }
+}

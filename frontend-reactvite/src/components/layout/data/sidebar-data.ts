@@ -16,7 +16,8 @@ import {
   User,
   UserCog,
   Award,
-  FolderOpen
+  FolderOpen,
+  ClipboardList
 } from "lucide-react";
 import { type SidebarData } from "../types";
 
@@ -96,8 +97,13 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: "Subscribers",
+      title: "Master Profile",
       items: [
+        {
+          title: "My Applications",
+          url: "/subscribers/applications",
+          icon: ClipboardList,
+        },
         {
           title: "Resume",
           url: "/subscribers/resumes",
@@ -112,6 +118,16 @@ export const sidebarData: SidebarData = {
           title: "Portfolio",
           url: "/subscribers/portfolio",
           icon: FolderOpen,
+        },
+      ],
+    },
+    {
+      title: "Employer Profile",
+      items: [
+        {
+          title: "Job Applications",
+          url: "/employer/applications",
+          icon: ClipboardList,
         },
       ],
     },

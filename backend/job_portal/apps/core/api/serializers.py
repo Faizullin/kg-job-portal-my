@@ -34,6 +34,7 @@ class ServiceSubcategorySerializer(AbstractTimestampedModelSerializer):
         model = ServiceSubcategory
         fields = [
             "id",
+            "category",
             "name",
             "description",
             "icon",

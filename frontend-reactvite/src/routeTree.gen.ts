@@ -30,6 +30,7 @@ import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedSubscribersSkillsRouteImport } from './routes/_authenticated/subscribers/skills'
 import { Route as AuthenticatedSubscribersResumesRouteImport } from './routes/_authenticated/subscribers/resumes'
 import { Route as AuthenticatedSubscribersPortfolioRouteImport } from './routes/_authenticated/subscribers/portfolio'
+import { Route as AuthenticatedSubscribersApplicationsRouteImport } from './routes/_authenticated/subscribers/applications'
 import { Route as AuthenticatedSettingsProfileRouteImport } from './routes/_authenticated/settings/profile'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsMasterRouteImport } from './routes/_authenticated/settings/master'
@@ -39,6 +40,7 @@ import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_a
 import { Route as AuthenticatedPaymentsInvoicesRouteImport } from './routes/_authenticated/payments/invoices'
 import { Route as AuthenticatedJobsJobIdRouteImport } from './routes/_authenticated/jobs/$jobId'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedEmployerApplicationsRouteImport } from './routes/_authenticated/employer/applications'
 import { Route as AuthenticatedCoreSystemSettingsRouteImport } from './routes/_authenticated/core/system-settings'
 import { Route as AuthenticatedCoreSupportFaqRouteImport } from './routes/_authenticated/core/support-faq'
 import { Route as AuthenticatedCoreServiceSubcategoriesRouteImport } from './routes/_authenticated/core/service-subcategories'
@@ -46,8 +48,8 @@ import { Route as AuthenticatedCoreServiceCategoriesRouteImport } from './routes
 import { Route as AuthenticatedCoreServiceAreasRouteImport } from './routes/_authenticated/core/service-areas'
 import { Route as AuthenticatedAppMasterRouteImport } from './routes/_authenticated/app/master'
 import { Route as AuthenticatedAppClientRouteImport } from './routes/_authenticated/app/client'
-import { Route as AuthenticatedAppSearchIndexRouteImport } from './routes/_authenticated/app/search/index'
 import { Route as AuthenticatedAppMastersIndexRouteImport } from './routes/_authenticated/app/masters/index'
+import { Route as AuthenticatedJobsAssginmentsAssignmentIdRouteImport } from './routes/_authenticated/jobs/assginments/$assignmentId'
 import { Route as AuthenticatedAppMastersMasterIdRouteImport } from './routes/_authenticated/app/masters/$masterId'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -161,6 +163,12 @@ const AuthenticatedSubscribersPortfolioRoute =
     path: '/subscribers/portfolio',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedSubscribersApplicationsRoute =
+  AuthenticatedSubscribersApplicationsRouteImport.update({
+    id: '/subscribers/applications',
+    path: '/subscribers/applications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSettingsProfileRoute =
   AuthenticatedSettingsProfileRouteImport.update({
     id: '/profile',
@@ -214,6 +222,12 @@ const AuthenticatedErrorsErrorRoute =
     path: '/errors/$error',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedEmployerApplicationsRoute =
+  AuthenticatedEmployerApplicationsRouteImport.update({
+    id: '/employer/applications',
+    path: '/employer/applications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCoreSystemSettingsRoute =
   AuthenticatedCoreSystemSettingsRouteImport.update({
     id: '/core/system-settings',
@@ -254,16 +268,16 @@ const AuthenticatedAppClientRoute = AuthenticatedAppClientRouteImport.update({
   path: '/app/client',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAppSearchIndexRoute =
-  AuthenticatedAppSearchIndexRouteImport.update({
-    id: '/app/search/',
-    path: '/app/search/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedAppMastersIndexRoute =
   AuthenticatedAppMastersIndexRouteImport.update({
     id: '/app/masters/',
     path: '/app/masters/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedJobsAssginmentsAssignmentIdRoute =
+  AuthenticatedJobsAssginmentsAssignmentIdRouteImport.update({
+    id: '/jobs/assginments/$assignmentId',
+    path: '/jobs/assginments/$assignmentId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppMastersMasterIdRoute =
@@ -292,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/core/service-subcategories': typeof AuthenticatedCoreServiceSubcategoriesRoute
   '/core/support-faq': typeof AuthenticatedCoreSupportFaqRoute
   '/core/system-settings': typeof AuthenticatedCoreSystemSettingsRoute
+  '/employer/applications': typeof AuthenticatedEmployerApplicationsRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
   '/payments/invoices': typeof AuthenticatedPaymentsInvoicesRoute
@@ -301,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/settings/master': typeof AuthenticatedSettingsMasterRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
+  '/subscribers/applications': typeof AuthenticatedSubscribersApplicationsRoute
   '/subscribers/portfolio': typeof AuthenticatedSubscribersPortfolioRoute
   '/subscribers/resumes': typeof AuthenticatedSubscribersResumesRoute
   '/subscribers/skills': typeof AuthenticatedSubscribersSkillsRoute
@@ -311,8 +327,8 @@ export interface FileRoutesByFullPath {
   '/payments': typeof AuthenticatedPaymentsIndexRoute
   '/reviews': typeof AuthenticatedReviewsIndexRoute
   '/app/masters/$masterId': typeof AuthenticatedAppMastersMasterIdRoute
+  '/jobs/assginments/$assignmentId': typeof AuthenticatedJobsAssginmentsAssignmentIdRoute
   '/app/masters': typeof AuthenticatedAppMastersIndexRoute
-  '/app/search': typeof AuthenticatedAppSearchIndexRoute
 }
 export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
@@ -333,6 +349,7 @@ export interface FileRoutesByTo {
   '/core/service-subcategories': typeof AuthenticatedCoreServiceSubcategoriesRoute
   '/core/support-faq': typeof AuthenticatedCoreSupportFaqRoute
   '/core/system-settings': typeof AuthenticatedCoreSystemSettingsRoute
+  '/employer/applications': typeof AuthenticatedEmployerApplicationsRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
   '/payments/invoices': typeof AuthenticatedPaymentsInvoicesRoute
@@ -342,6 +359,7 @@ export interface FileRoutesByTo {
   '/settings/master': typeof AuthenticatedSettingsMasterRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
+  '/subscribers/applications': typeof AuthenticatedSubscribersApplicationsRoute
   '/subscribers/portfolio': typeof AuthenticatedSubscribersPortfolioRoute
   '/subscribers/resumes': typeof AuthenticatedSubscribersResumesRoute
   '/subscribers/skills': typeof AuthenticatedSubscribersSkillsRoute
@@ -352,8 +370,8 @@ export interface FileRoutesByTo {
   '/payments': typeof AuthenticatedPaymentsIndexRoute
   '/reviews': typeof AuthenticatedReviewsIndexRoute
   '/app/masters/$masterId': typeof AuthenticatedAppMastersMasterIdRoute
+  '/jobs/assginments/$assignmentId': typeof AuthenticatedJobsAssginmentsAssignmentIdRoute
   '/app/masters': typeof AuthenticatedAppMastersIndexRoute
-  '/app/search': typeof AuthenticatedAppSearchIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -376,6 +394,7 @@ export interface FileRoutesById {
   '/_authenticated/core/service-subcategories': typeof AuthenticatedCoreServiceSubcategoriesRoute
   '/_authenticated/core/support-faq': typeof AuthenticatedCoreSupportFaqRoute
   '/_authenticated/core/system-settings': typeof AuthenticatedCoreSystemSettingsRoute
+  '/_authenticated/employer/applications': typeof AuthenticatedEmployerApplicationsRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
   '/_authenticated/payments/invoices': typeof AuthenticatedPaymentsInvoicesRoute
@@ -385,6 +404,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/master': typeof AuthenticatedSettingsMasterRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/profile': typeof AuthenticatedSettingsProfileRoute
+  '/_authenticated/subscribers/applications': typeof AuthenticatedSubscribersApplicationsRoute
   '/_authenticated/subscribers/portfolio': typeof AuthenticatedSubscribersPortfolioRoute
   '/_authenticated/subscribers/resumes': typeof AuthenticatedSubscribersResumesRoute
   '/_authenticated/subscribers/skills': typeof AuthenticatedSubscribersSkillsRoute
@@ -395,8 +415,8 @@ export interface FileRoutesById {
   '/_authenticated/payments/': typeof AuthenticatedPaymentsIndexRoute
   '/_authenticated/reviews/': typeof AuthenticatedReviewsIndexRoute
   '/_authenticated/app/masters/$masterId': typeof AuthenticatedAppMastersMasterIdRoute
+  '/_authenticated/jobs/assginments/$assignmentId': typeof AuthenticatedJobsAssginmentsAssignmentIdRoute
   '/_authenticated/app/masters/': typeof AuthenticatedAppMastersIndexRoute
-  '/_authenticated/app/search/': typeof AuthenticatedAppSearchIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -419,6 +439,7 @@ export interface FileRouteTypes {
     | '/core/service-subcategories'
     | '/core/support-faq'
     | '/core/system-settings'
+    | '/employer/applications'
     | '/errors/$error'
     | '/jobs/$jobId'
     | '/payments/invoices'
@@ -428,6 +449,7 @@ export interface FileRouteTypes {
     | '/settings/master'
     | '/settings/notifications'
     | '/settings/profile'
+    | '/subscribers/applications'
     | '/subscribers/portfolio'
     | '/subscribers/resumes'
     | '/subscribers/skills'
@@ -438,8 +460,8 @@ export interface FileRouteTypes {
     | '/payments'
     | '/reviews'
     | '/app/masters/$masterId'
+    | '/jobs/assginments/$assignmentId'
     | '/app/masters'
-    | '/app/search'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/settings'
@@ -460,6 +482,7 @@ export interface FileRouteTypes {
     | '/core/service-subcategories'
     | '/core/support-faq'
     | '/core/system-settings'
+    | '/employer/applications'
     | '/errors/$error'
     | '/jobs/$jobId'
     | '/payments/invoices'
@@ -469,6 +492,7 @@ export interface FileRouteTypes {
     | '/settings/master'
     | '/settings/notifications'
     | '/settings/profile'
+    | '/subscribers/applications'
     | '/subscribers/portfolio'
     | '/subscribers/resumes'
     | '/subscribers/skills'
@@ -479,8 +503,8 @@ export interface FileRouteTypes {
     | '/payments'
     | '/reviews'
     | '/app/masters/$masterId'
+    | '/jobs/assginments/$assignmentId'
     | '/app/masters'
-    | '/app/search'
   id:
     | '__root__'
     | '/_authenticated'
@@ -502,6 +526,7 @@ export interface FileRouteTypes {
     | '/_authenticated/core/service-subcategories'
     | '/_authenticated/core/support-faq'
     | '/_authenticated/core/system-settings'
+    | '/_authenticated/employer/applications'
     | '/_authenticated/errors/$error'
     | '/_authenticated/jobs/$jobId'
     | '/_authenticated/payments/invoices'
@@ -511,6 +536,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/master'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/profile'
+    | '/_authenticated/subscribers/applications'
     | '/_authenticated/subscribers/portfolio'
     | '/_authenticated/subscribers/resumes'
     | '/_authenticated/subscribers/skills'
@@ -521,8 +547,8 @@ export interface FileRouteTypes {
     | '/_authenticated/payments/'
     | '/_authenticated/reviews/'
     | '/_authenticated/app/masters/$masterId'
+    | '/_authenticated/jobs/assginments/$assignmentId'
     | '/_authenticated/app/masters/'
-    | '/_authenticated/app/search/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -687,6 +713,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSubscribersPortfolioRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/subscribers/applications': {
+      id: '/_authenticated/subscribers/applications'
+      path: '/subscribers/applications'
+      fullPath: '/subscribers/applications'
+      preLoaderRoute: typeof AuthenticatedSubscribersApplicationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings/profile': {
       id: '/_authenticated/settings/profile'
       path: '/profile'
@@ -750,6 +783,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/employer/applications': {
+      id: '/_authenticated/employer/applications'
+      path: '/employer/applications'
+      fullPath: '/employer/applications'
+      preLoaderRoute: typeof AuthenticatedEmployerApplicationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/core/system-settings': {
       id: '/_authenticated/core/system-settings'
       path: '/core/system-settings'
@@ -799,18 +839,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppClientRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/app/search/': {
-      id: '/_authenticated/app/search/'
-      path: '/app/search'
-      fullPath: '/app/search'
-      preLoaderRoute: typeof AuthenticatedAppSearchIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/app/masters/': {
       id: '/_authenticated/app/masters/'
       path: '/app/masters'
       fullPath: '/app/masters'
       preLoaderRoute: typeof AuthenticatedAppMastersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/jobs/assginments/$assignmentId': {
+      id: '/_authenticated/jobs/assginments/$assignmentId'
+      path: '/jobs/assginments/$assignmentId'
+      fullPath: '/jobs/assginments/$assignmentId'
+      preLoaderRoute: typeof AuthenticatedJobsAssginmentsAssignmentIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/masters/$masterId': {
@@ -859,9 +899,11 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCoreServiceSubcategoriesRoute: typeof AuthenticatedCoreServiceSubcategoriesRoute
   AuthenticatedCoreSupportFaqRoute: typeof AuthenticatedCoreSupportFaqRoute
   AuthenticatedCoreSystemSettingsRoute: typeof AuthenticatedCoreSystemSettingsRoute
+  AuthenticatedEmployerApplicationsRoute: typeof AuthenticatedEmployerApplicationsRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedJobsJobIdRoute: typeof AuthenticatedJobsJobIdRoute
   AuthenticatedPaymentsInvoicesRoute: typeof AuthenticatedPaymentsInvoicesRoute
+  AuthenticatedSubscribersApplicationsRoute: typeof AuthenticatedSubscribersApplicationsRoute
   AuthenticatedSubscribersPortfolioRoute: typeof AuthenticatedSubscribersPortfolioRoute
   AuthenticatedSubscribersResumesRoute: typeof AuthenticatedSubscribersResumesRoute
   AuthenticatedSubscribersSkillsRoute: typeof AuthenticatedSubscribersSkillsRoute
@@ -872,8 +914,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPaymentsIndexRoute: typeof AuthenticatedPaymentsIndexRoute
   AuthenticatedReviewsIndexRoute: typeof AuthenticatedReviewsIndexRoute
   AuthenticatedAppMastersMasterIdRoute: typeof AuthenticatedAppMastersMasterIdRoute
+  AuthenticatedJobsAssginmentsAssignmentIdRoute: typeof AuthenticatedJobsAssginmentsAssignmentIdRoute
   AuthenticatedAppMastersIndexRoute: typeof AuthenticatedAppMastersIndexRoute
-  AuthenticatedAppSearchIndexRoute: typeof AuthenticatedAppSearchIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -888,9 +930,13 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedCoreServiceSubcategoriesRoute,
   AuthenticatedCoreSupportFaqRoute: AuthenticatedCoreSupportFaqRoute,
   AuthenticatedCoreSystemSettingsRoute: AuthenticatedCoreSystemSettingsRoute,
+  AuthenticatedEmployerApplicationsRoute:
+    AuthenticatedEmployerApplicationsRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedJobsJobIdRoute: AuthenticatedJobsJobIdRoute,
   AuthenticatedPaymentsInvoicesRoute: AuthenticatedPaymentsInvoicesRoute,
+  AuthenticatedSubscribersApplicationsRoute:
+    AuthenticatedSubscribersApplicationsRoute,
   AuthenticatedSubscribersPortfolioRoute:
     AuthenticatedSubscribersPortfolioRoute,
   AuthenticatedSubscribersResumesRoute: AuthenticatedSubscribersResumesRoute,
@@ -902,8 +948,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPaymentsIndexRoute: AuthenticatedPaymentsIndexRoute,
   AuthenticatedReviewsIndexRoute: AuthenticatedReviewsIndexRoute,
   AuthenticatedAppMastersMasterIdRoute: AuthenticatedAppMastersMasterIdRoute,
+  AuthenticatedJobsAssginmentsAssignmentIdRoute:
+    AuthenticatedJobsAssginmentsAssignmentIdRoute,
   AuthenticatedAppMastersIndexRoute: AuthenticatedAppMastersIndexRoute,
-  AuthenticatedAppSearchIndexRoute: AuthenticatedAppSearchIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

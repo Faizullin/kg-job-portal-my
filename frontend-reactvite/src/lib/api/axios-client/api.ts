@@ -1003,6 +1003,12 @@ export interface EmployerBasic {
      * @memberof EmployerBasic
      */
     'cancelled_orders'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof EmployerBasic
+     */
+    'contact_phone'?: string;
 }
 /**
  * Basic employer information for job serialization.
@@ -1028,6 +1034,12 @@ export interface EmployerBasicRequest {
      * @memberof EmployerBasicRequest
      */
     'cancelled_orders'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof EmployerBasicRequest
+     */
+    'contact_phone'?: string;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -1219,6 +1231,86 @@ export interface HomePageData {
     'total_jobs_count': number;
 }
 /**
+ * Serializer for init_chat action request.
+ * @export
+ * @interface InitChatRequestRequest
+ */
+export interface InitChatRequestRequest {
+    /**
+     * User ID to create or find chat with
+     * @type {number}
+     * @memberof InitChatRequestRequest
+     */
+    'user_id': number;
+    /**
+     * Optional chat title
+     * @type {string}
+     * @memberof InitChatRequestRequest
+     */
+    'title'?: string;
+}
+/**
+ * Serializer for init_chat action response.
+ * @export
+ * @interface InitChatResponse
+ */
+export interface InitChatResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof InitChatResponse
+     */
+    'id': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof InitChatResponse
+     */
+    'job'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof InitChatResponse
+     */
+    'title': string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof InitChatResponse
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof InitChatResponse
+     */
+    'last_message_at'?: string | null;
+    /**
+     * 
+     * @type {ChatTypeEnum}
+     * @memberof InitChatResponse
+     */
+    'chat_type'?: ChatTypeEnum;
+    /**
+     * 
+     * @type {Array<ChatParticipant>}
+     * @memberof InitChatResponse
+     */
+    'participants': Array<ChatParticipant>;
+    /**
+     * 
+     * @type {string}
+     * @memberof InitChatResponse
+     */
+    'created_at': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof InitChatResponse
+     */
+    'updated_at': string;
+}
+/**
  * Serializer for models with timestamp fields.
  * @export
  * @interface Job
@@ -1238,10 +1330,10 @@ export interface Job {
     'employer': JobEmployer;
     /**
      * 
-     * @type {number}
+     * @type {JobServiceSubcategory}
      * @memberof Job
      */
-    'service_subcategory'?: number | null;
+    'service_subcategory': JobServiceSubcategory;
     /**
      * 
      * @type {string}
@@ -1268,10 +1360,10 @@ export interface Job {
     'location': string;
     /**
      * 
-     * @type {number}
+     * @type {JobCity}
      * @memberof Job
      */
-    'city'?: number | null;
+    'city': JobCity;
     /**
      * 
      * @type {string}
@@ -1471,10 +1563,10 @@ export interface JobApplicationJob {
     'employer': JobEmployer;
     /**
      * 
-     * @type {number}
+     * @type {JobServiceSubcategory}
      * @memberof JobApplicationJob
      */
-    'service_subcategory'?: number | null;
+    'service_subcategory': JobServiceSubcategory;
     /**
      * 
      * @type {string}
@@ -1501,10 +1593,10 @@ export interface JobApplicationJob {
     'location': string;
     /**
      * 
-     * @type {number}
+     * @type {JobCity}
      * @memberof JobApplicationJob
      */
-    'city'?: number | null;
+    'city': JobCity;
     /**
      * 
      * @type {string}
@@ -1605,12 +1697,6 @@ export enum JobApplicationStatusEnum {
  * @interface JobApplyRequest
  */
 export interface JobApplyRequest {
-    /**
-     * ID of the job to apply for
-     * @type {number}
-     * @memberof JobApplyRequest
-     */
-    'job_id': number;
     /**
      * 
      * @type {string}
@@ -1979,6 +2065,55 @@ export enum JobAssignmentStatusEnum {
 /**
  * 
  * @export
+ * @interface JobCity
+ */
+export interface JobCity {
+    /**
+     * 
+     * @type {number}
+     * @memberof JobCity
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobCity
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobCity
+     */
+    'code': string;
+    /**
+     * 
+     * @type {CityCountry}
+     * @memberof JobCity
+     */
+    'country': CityCountry;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobCity
+     */
+    'country_name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobCity
+     */
+    'created_at': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobCity
+     */
+    'updated_at': string;
+}
+/**
+ * 
+ * @export
  * @interface JobEmployer
  */
 export interface JobEmployer {
@@ -2012,6 +2147,12 @@ export interface JobEmployer {
      * @memberof JobEmployer
      */
     'cancelled_orders'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof JobEmployer
+     */
+    'contact_phone'?: string;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -2019,12 +2160,6 @@ export interface JobEmployer {
  * @interface JobRequest
  */
 export interface JobRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof JobRequest
-     */
-    'service_subcategory'?: number | null;
     /**
      * 
      * @type {string}
@@ -2050,11 +2185,11 @@ export interface JobRequest {
      */
     'location': string;
     /**
-     * 
+     * ID of the city
      * @type {number}
      * @memberof JobRequest
      */
-    'city'?: number | null;
+    'city_id': number;
     /**
      * 
      * @type {string}
@@ -2130,10 +2265,10 @@ export interface JobSearch {
     'status'?: Status30eEnum;
     /**
      * 
-     * @type {JobSearchServiceSubcategory}
+     * @type {JobServiceSubcategory}
      * @memberof JobSearch
      */
-    'service_subcategory': JobSearchServiceSubcategory;
+    'service_subcategory': JobServiceSubcategory;
     /**
      * 
      * @type {string}
@@ -2198,67 +2333,73 @@ export interface JobSearch {
 /**
  * 
  * @export
- * @interface JobSearchServiceSubcategory
+ * @interface JobServiceSubcategory
  */
-export interface JobSearchServiceSubcategory {
+export interface JobServiceSubcategory {
     /**
      * 
      * @type {number}
-     * @memberof JobSearchServiceSubcategory
+     * @memberof JobServiceSubcategory
      */
     'id': number;
     /**
      * 
+     * @type {number}
+     * @memberof JobServiceSubcategory
+     */
+    'category': number;
+    /**
+     * 
      * @type {string}
-     * @memberof JobSearchServiceSubcategory
+     * @memberof JobServiceSubcategory
      */
     'name': string;
     /**
      * 
      * @type {string}
-     * @memberof JobSearchServiceSubcategory
+     * @memberof JobServiceSubcategory
      */
     'description': string;
     /**
      * 
      * @type {string}
-     * @memberof JobSearchServiceSubcategory
+     * @memberof JobServiceSubcategory
      */
     'icon'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof JobSearchServiceSubcategory
+     * @memberof JobServiceSubcategory
      */
     'is_active'?: boolean;
     /**
      * 
      * @type {number}
-     * @memberof JobSearchServiceSubcategory
+     * @memberof JobServiceSubcategory
      */
     'sort_order'?: number;
     /**
      * 
      * @type {string}
-     * @memberof JobSearchServiceSubcategory
+     * @memberof JobServiceSubcategory
      */
     'image'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof JobSearchServiceSubcategory
+     * @memberof JobServiceSubcategory
      */
     'featured'?: boolean;
     /**
      * 
      * @type {string}
-     * @memberof JobSearchServiceSubcategory
+     * @memberof JobServiceSubcategory
      */
     'base_price'?: string | null;
     /**
      * 
      * @type {ComplexityLevelEnum}
-     * @memberof JobSearchServiceSubcategory
+     * @memberof JobServiceSubcategory
      */
     'complexity_level'?: ComplexityLevelEnum;
 }
@@ -3269,31 +3410,6 @@ export enum MessageCreateMessageTypeEnum {
 
 
 /**
- * 
- * @export
- * @interface MessageCreateRequest
- */
-export interface MessageCreateRequest {
-    /**
-     * 
-     * @type {MessageCreateMessageTypeEnum}
-     * @memberof MessageCreateRequest
-     */
-    'message_type': MessageCreateMessageTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof MessageCreateRequest
-     */
-    'content': string;
-    /**
-     * 
-     * @type {Array<any>}
-     * @memberof MessageCreateRequest
-     */
-    'attachments_files'?: Array<any>;
-}
-/**
  * * `text` - Текст * `image` - Изображение * `file` - Файл * `system` - System Message * `order_update` - Order Update
  * @export
  * @enum {string}
@@ -3344,19 +3460,6 @@ export interface MessageUpdate {
      * @memberof MessageUpdate
      */
     'updated_at': string;
-}
-/**
- * 
- * @export
- * @interface MessageUpdateRequest
- */
-export interface MessageUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof MessageUpdateRequest
-     */
-    'content': string;
 }
 /**
  * Serializer for Notification model.
@@ -4606,12 +4709,6 @@ export interface PatchedJobAssignmentRequest {
 export interface PatchedJobRequest {
     /**
      * 
-     * @type {number}
-     * @memberof PatchedJobRequest
-     */
-    'service_subcategory'?: number | null;
-    /**
-     * 
      * @type {string}
      * @memberof PatchedJobRequest
      */
@@ -4635,11 +4732,11 @@ export interface PatchedJobRequest {
      */
     'location'?: string;
     /**
-     * 
+     * ID of the city
      * @type {number}
      * @memberof PatchedJobRequest
      */
-    'city'?: number | null;
+    'city_id'?: number;
     /**
      * 
      * @type {string}
@@ -4841,37 +4938,6 @@ export interface PatchedMasterSkillRequest {
      * @memberof PatchedMasterSkillRequest
      */
     'years_of_experience'?: number;
-}
-/**
- * Serializer for chat messages.
- * @export
- * @interface PatchedMessageRequest
- */
-export interface PatchedMessageRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedMessageRequest
-     */
-    'chat_room'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedMessageRequest
-     */
-    'content'?: string;
-    /**
-     * 
-     * @type {MessageMessageTypeEnum}
-     * @memberof PatchedMessageRequest
-     */
-    'message_type'?: MessageMessageTypeEnum;
-    /**
-     * 
-     * @type {number}
-     * @memberof PatchedMessageRequest
-     */
-    'reply_to'?: number | null;
 }
 /**
  * Serializer for updating notification read status.
@@ -5484,23 +5550,11 @@ export interface PatchedUserNotificationSettingsRequest {
     'quiet_hours_end'?: string | null;
 }
 /**
- * Serializer for updating user profile - enhanced version of api_users EditUserSettingsView
+ * Serializer for updating user profile information.
  * @export
  * @interface PatchedUserUpdateRequest
  */
 export interface PatchedUserUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedUserUpdateRequest
-     */
-    'description'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedUserUpdateRequest
-     */
-    'photo_url'?: string | null;
     /**
      * 
      * @type {string}
@@ -5513,6 +5567,12 @@ export interface PatchedUserUpdateRequest {
      * @memberof PatchedUserUpdateRequest
      */
     'last_name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedUserUpdateRequest
+     */
+    'description'?: string | null;
 }
 /**
  * Serializer for models with timestamp fields.
@@ -6708,6 +6768,12 @@ export interface ServiceSubcategory {
     'id': number;
     /**
      * 
+     * @type {number}
+     * @memberof ServiceSubcategory
+     */
+    'category': number;
+    /**
+     * 
      * @type {string}
      * @memberof ServiceSubcategory
      */
@@ -6997,6 +7063,73 @@ export interface ServiceSubcategoryCreateUpdateRequest {
      * @memberof ServiceSubcategoryCreateUpdateRequest
      */
     'meta_description'?: string;
+}
+/**
+ * Serializer for models with timestamp fields.
+ * @export
+ * @interface ServiceSubcategoryRequest
+ */
+export interface ServiceSubcategoryRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceSubcategoryRequest
+     */
+    'category': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryRequest
+     */
+    'description': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryRequest
+     */
+    'icon'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceSubcategoryRequest
+     */
+    'is_active'?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceSubcategoryRequest
+     */
+    'sort_order'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryRequest
+     */
+    'image'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ServiceSubcategoryRequest
+     */
+    'featured'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceSubcategoryRequest
+     */
+    'base_price'?: string | null;
+    /**
+     * 
+     * @type {ComplexityLevelEnum}
+     * @memberof ServiceSubcategoryRequest
+     */
+    'complexity_level'?: ComplexityLevelEnum;
 }
 /**
  * * `string` - String * `integer` - Целое * `boolean` - Boolean * `json` - JSON * `file` - Файл
@@ -7582,7 +7715,7 @@ export enum UrgencyEnum {
 
 
 /**
- * Serializer for user profile information - enhanced version of api_users
+ * Serializer for user profile information with groups and permissions.
  * @export
  * @interface UserDetail
  */
@@ -7649,16 +7782,16 @@ export interface UserDetail {
     'is_superuser': boolean;
     /**
      * 
-     * @type {string}
+     * @type {Array<string>}
      * @memberof UserDetail
      */
-    'groups': string;
+    'groups': Array<string>;
     /**
      * 
-     * @type {string}
+     * @type {Array<string>}
      * @memberof UserDetail
      */
-    'permissions': string;
+    'permissions': Array<string>;
     /**
      * 
      * @type {string}
@@ -7996,29 +8129,17 @@ export interface UserProfile {
     'groups': string;
 }
 /**
- * Serializer for updating user profile - enhanced version of api_users EditUserSettingsView
+ * Serializer for updating user profile information.
  * @export
  * @interface UserUpdate
  */
 export interface UserUpdate {
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof UserUpdate
      */
-    'email': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserUpdate
-     */
-    'description'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserUpdate
-     */
-    'photo_url'?: string | null;
+    'id': number;
     /**
      * 
      * @type {string}
@@ -8031,9 +8152,15 @@ export interface UserUpdate {
      * @memberof UserUpdate
      */
     'last_name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserUpdate
+     */
+    'description'?: string | null;
 }
 /**
- * Serializer for updating user profile - enhanced version of api_users EditUserSettingsView
+ * Serializer for updating user profile information.
  * @export
  * @interface UserUpdateRequest
  */
@@ -8043,18 +8170,6 @@ export interface UserUpdateRequest {
      * @type {string}
      * @memberof UserUpdateRequest
      */
-    'description'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserUpdateRequest
-     */
-    'photo_url'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserUpdateRequest
-     */
     'first_name'?: string;
     /**
      * 
@@ -8062,6 +8177,12 @@ export interface UserUpdateRequest {
      * @memberof UserUpdateRequest
      */
     'last_name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserUpdateRequest
+     */
+    'description'?: string | null;
 }
 /**
  * 
@@ -8985,11 +9106,10 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsList: async (ordering?: string, page?: number, pageSize?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1AssignmentsList: async (ordering?: string, page?: number, pageSize?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/assignments/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9017,10 +9137,6 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
 
             if (pageSize !== undefined) {
                 localVarQueryParameter['page_size'] = pageSize;
-            }
-
-            if (search !== undefined) {
-                localVarQueryParameter['search'] = search;
             }
 
 
@@ -9434,6 +9550,46 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             };
         },
         /**
+         * Initialize chat with another user - find existing or create new
+         * @param {InitChatRequestRequest} initChatRequestRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsInitChat: async (initChatRequestRequest: InitChatRequestRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'initChatRequestRequest' is not null or undefined
+            assertParamExists('v1ChatsRoomsInitChat', 'initChatRequestRequest', initChatRequestRequest)
+            const localVarPath = `/api/v1/chats/rooms/init_chat/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(initChatRequestRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Leave a chat room
          * @param {string} id 
          * @param {ChatRoomRequest} chatRoomRequest 
@@ -9534,15 +9690,19 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         /**
          * 
          * @param {string} chatRoomId 
-         * @param {MessageCreateRequest} messageCreateRequest 
+         * @param {MessageCreateMessageTypeEnum} messageType 
+         * @param {string} content 
+         * @param {Array<any>} [attachmentsFiles] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesCreate: async (chatRoomId: string, messageCreateRequest: MessageCreateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsMessagesCreate: async (chatRoomId: string, messageType: MessageCreateMessageTypeEnum, content: string, attachmentsFiles?: Array<any>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'chatRoomId' is not null or undefined
             assertParamExists('v1ChatsRoomsMessagesCreate', 'chatRoomId', chatRoomId)
-            // verify required parameter 'messageCreateRequest' is not null or undefined
-            assertParamExists('v1ChatsRoomsMessagesCreate', 'messageCreateRequest', messageCreateRequest)
+            // verify required parameter 'messageType' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesCreate', 'messageType', messageType)
+            // verify required parameter 'content' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesCreate', 'content', content)
             const localVarPath = `/api/v1/chats/rooms/{chat_room_id}/messages/`
                 .replace(`{${"chat_room_id"}}`, encodeURIComponent(String(chatRoomId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -9555,6 +9715,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
             // authentication cookieAuth required
 
@@ -9562,13 +9723,27 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
+            if (messageType !== undefined) { 
+                localVarFormParams.append('message_type', new Blob([JSON.stringify(messageType)], { type: "application/json", }));
+            }
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
+            if (content !== undefined) { 
+                localVarFormParams.append('content', content as any);
+            }
+                if (attachmentsFiles) {
+                attachmentsFiles.forEach((element) => {
+                    localVarFormParams.append('attachments_files', element as any);
+                })
+            }
 
+    
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(messageCreateRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = localVarFormParams;
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9679,11 +9854,14 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {PatchedMessageRequest} [patchedMessageRequest] 
+         * @param {number} [chatRoom] 
+         * @param {string} [content] 
+         * @param {MessageMessageTypeEnum} [messageType] 
+         * @param {number} [replyTo] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesPartialUpdate: async (chatRoomId: string, id: string, patchedMessageRequest?: PatchedMessageRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsMessagesPartialUpdate: async (chatRoomId: string, id: string, chatRoom?: number, content?: string, messageType?: MessageMessageTypeEnum, replyTo?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'chatRoomId' is not null or undefined
             assertParamExists('v1ChatsRoomsMessagesPartialUpdate', 'chatRoomId', chatRoomId)
             // verify required parameter 'id' is not null or undefined
@@ -9701,6 +9879,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
             // authentication cookieAuth required
 
@@ -9708,13 +9887,29 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
+            if (chatRoom !== undefined) { 
+                localVarFormParams.append('chat_room', chatRoom as any);
+            }
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
+            if (content !== undefined) { 
+                localVarFormParams.append('content', content as any);
+            }
+    
+            if (messageType !== undefined) { 
+                localVarFormParams.append('message_type', new Blob([JSON.stringify(messageType)], { type: "application/json", }));
+            }
+    
+            if (replyTo !== undefined) { 
+                localVarFormParams.append('reply_to', replyTo as any);
+            }
+    
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedMessageRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = localVarFormParams;
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9767,17 +9962,17 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {MessageUpdateRequest} messageUpdateRequest 
+         * @param {string} content 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesUpdate: async (chatRoomId: string, id: string, messageUpdateRequest: MessageUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        v1ChatsRoomsMessagesUpdate: async (chatRoomId: string, id: string, content: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'chatRoomId' is not null or undefined
             assertParamExists('v1ChatsRoomsMessagesUpdate', 'chatRoomId', chatRoomId)
             // verify required parameter 'id' is not null or undefined
             assertParamExists('v1ChatsRoomsMessagesUpdate', 'id', id)
-            // verify required parameter 'messageUpdateRequest' is not null or undefined
-            assertParamExists('v1ChatsRoomsMessagesUpdate', 'messageUpdateRequest', messageUpdateRequest)
+            // verify required parameter 'content' is not null or undefined
+            assertParamExists('v1ChatsRoomsMessagesUpdate', 'content', content)
             const localVarPath = `/api/v1/chats/rooms/{chat_room_id}/messages/{id}/`
                 .replace(`{${"chat_room_id"}}`, encodeURIComponent(String(chatRoomId)))
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
@@ -9791,6 +9986,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
             // authentication cookieAuth required
 
@@ -9798,13 +9994,17 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
+            if (content !== undefined) { 
+                localVarFormParams.append('content', content as any);
+            }
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(messageUpdateRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = localVarFormParams;
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12470,6 +12670,104 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
          */
         v1JobsMasterInProgress: async (city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/jobs/master_in_progress/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+            // authentication tokenAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (city !== undefined) {
+                localVarQueryParameter['city'] = city;
+            }
+
+            if (maxPrice !== undefined) {
+                localVarQueryParameter['max_price'] = maxPrice;
+            }
+
+            if (minPrice !== undefined) {
+                localVarQueryParameter['min_price'] = minPrice;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['page_size'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            if (serviceCategory !== undefined) {
+                localVarQueryParameter['service_category'] = serviceCategory;
+            }
+
+            if (serviceDateFrom !== undefined) {
+                localVarQueryParameter['service_date_from'] = (serviceDateFrom as any instanceof Date) ?
+                    (serviceDateFrom as any).toISOString().substr(0,10) :
+                    serviceDateFrom;
+            }
+
+            if (serviceDateTo !== undefined) {
+                localVarQueryParameter['service_date_to'] = (serviceDateTo as any instanceof Date) ?
+                    (serviceDateTo as any).toISOString().substr(0,10) :
+                    serviceDateTo;
+            }
+
+            if (serviceSubcategory !== undefined) {
+                localVarQueryParameter['service_subcategory'] = serviceSubcategory;
+            }
+
+            if (urgency !== undefined) {
+                localVarQueryParameter['urgency'] = urgency;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get my jobs (all jobs created by current employer)
+         * @param {string} [city] 
+         * @param {number} [maxPrice] 
+         * @param {number} [minPrice] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceCategory] 
+         * @param {string} [serviceDateFrom] 
+         * @param {string} [serviceDateTo] 
+         * @param {number} [serviceSubcategory] 
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobsMyJobs: async (city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/jobs/my_jobs/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -16651,12 +16949,11 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1AssignmentsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedJobAssignmentList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsList(ordering, page, pageSize, search, options);
+        async v1AssignmentsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedJobAssignmentList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1AssignmentsList(ordering, page, pageSize, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -16763,6 +17060,16 @@ export const V1ApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Initialize chat with another user - find existing or create new
+         * @param {InitChatRequestRequest} initChatRequestRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1ChatsRoomsInitChat(initChatRequestRequest: InitChatRequestRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<InitChatResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsInitChat(initChatRequestRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Leave a chat room
          * @param {string} id 
          * @param {ChatRoomRequest} chatRoomRequest 
@@ -16789,12 +17096,14 @@ export const V1ApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} chatRoomId 
-         * @param {MessageCreateRequest} messageCreateRequest 
+         * @param {MessageCreateMessageTypeEnum} messageType 
+         * @param {string} content 
+         * @param {Array<any>} [attachmentsFiles] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreateRequest: MessageCreateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageCreate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesCreate(chatRoomId, messageCreateRequest, options);
+        async v1ChatsRoomsMessagesCreate(chatRoomId: string, messageType: MessageCreateMessageTypeEnum, content: string, attachmentsFiles?: Array<any>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageCreate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesCreate(chatRoomId, messageType, content, attachmentsFiles, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -16826,12 +17135,15 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {PatchedMessageRequest} [patchedMessageRequest] 
+         * @param {number} [chatRoom] 
+         * @param {string} [content] 
+         * @param {MessageMessageTypeEnum} [messageType] 
+         * @param {number} [replyTo] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessageRequest?: PatchedMessageRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Message>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, patchedMessageRequest, options);
+        async v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, chatRoom?: number, content?: string, messageType?: MessageMessageTypeEnum, replyTo?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Message>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, chatRoom, content, messageType, replyTo, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -16849,12 +17161,12 @@ export const V1ApiFp = function(configuration?: Configuration) {
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {MessageUpdateRequest} messageUpdateRequest 
+         * @param {string} content 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdateRequest: MessageUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageUpdate>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesUpdate(chatRoomId, id, messageUpdateRequest, options);
+        async v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, content: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MessageUpdate>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1ChatsRoomsMessagesUpdate(chatRoomId, id, content, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -17533,6 +17845,27 @@ export const V1ApiFp = function(configuration?: Configuration) {
          */
         async v1JobsMasterInProgress(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedJobList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsMasterInProgress(city, maxPrice, minPrice, ordering, page, pageSize, search, serviceCategory, serviceDateFrom, serviceDateTo, serviceSubcategory, urgency, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get my jobs (all jobs created by current employer)
+         * @param {string} [city] 
+         * @param {number} [maxPrice] 
+         * @param {number} [minPrice] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceCategory] 
+         * @param {string} [serviceDateFrom] 
+         * @param {string} [serviceDateTo] 
+         * @param {number} [serviceSubcategory] 
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async v1JobsMyJobs(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedJobList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v1JobsMyJobs(city, maxPrice, minPrice, ordering, page, pageSize, search, serviceCategory, serviceDateFrom, serviceDateTo, serviceSubcategory, urgency, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -18683,12 +19016,11 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {number} [page] A page number within the paginated result set.
          * @param {number} [pageSize] Number of results to return per page.
-         * @param {string} [search] A search term.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1AssignmentsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: any): AxiosPromise<PaginatedJobAssignmentList> {
-            return localVarFp.v1AssignmentsList(ordering, page, pageSize, search, options).then((request) => request(axios, basePath));
+        v1AssignmentsList(ordering?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<PaginatedJobAssignmentList> {
+            return localVarFp.v1AssignmentsList(ordering, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -18784,6 +19116,15 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
             return localVarFp.v1ChatsRoomsForMaster(masterId, options).then((request) => request(axios, basePath));
         },
         /**
+         * Initialize chat with another user - find existing or create new
+         * @param {InitChatRequestRequest} initChatRequestRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1ChatsRoomsInitChat(initChatRequestRequest: InitChatRequestRequest, options?: any): AxiosPromise<InitChatResponse> {
+            return localVarFp.v1ChatsRoomsInitChat(initChatRequestRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Leave a chat room
          * @param {string} id 
          * @param {ChatRoomRequest} chatRoomRequest 
@@ -18808,12 +19149,14 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
         /**
          * 
          * @param {string} chatRoomId 
-         * @param {MessageCreateRequest} messageCreateRequest 
+         * @param {MessageCreateMessageTypeEnum} messageType 
+         * @param {string} content 
+         * @param {Array<any>} [attachmentsFiles] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreateRequest: MessageCreateRequest, options?: any): AxiosPromise<MessageCreate> {
-            return localVarFp.v1ChatsRoomsMessagesCreate(chatRoomId, messageCreateRequest, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsMessagesCreate(chatRoomId: string, messageType: MessageCreateMessageTypeEnum, content: string, attachmentsFiles?: Array<any>, options?: any): AxiosPromise<MessageCreate> {
+            return localVarFp.v1ChatsRoomsMessagesCreate(chatRoomId, messageType, content, attachmentsFiles, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -18842,12 +19185,15 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {PatchedMessageRequest} [patchedMessageRequest] 
+         * @param {number} [chatRoom] 
+         * @param {string} [content] 
+         * @param {MessageMessageTypeEnum} [messageType] 
+         * @param {number} [replyTo] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessageRequest?: PatchedMessageRequest, options?: any): AxiosPromise<Message> {
-            return localVarFp.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, patchedMessageRequest, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, chatRoom?: number, content?: string, messageType?: MessageMessageTypeEnum, replyTo?: number, options?: any): AxiosPromise<Message> {
+            return localVarFp.v1ChatsRoomsMessagesPartialUpdate(chatRoomId, id, chatRoom, content, messageType, replyTo, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -18863,12 +19209,12 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          * 
          * @param {string} chatRoomId 
          * @param {string} id 
-         * @param {MessageUpdateRequest} messageUpdateRequest 
+         * @param {string} content 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdateRequest: MessageUpdateRequest, options?: any): AxiosPromise<MessageUpdate> {
-            return localVarFp.v1ChatsRoomsMessagesUpdate(chatRoomId, id, messageUpdateRequest, options).then((request) => request(axios, basePath));
+        v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, content: string, options?: any): AxiosPromise<MessageUpdate> {
+            return localVarFp.v1ChatsRoomsMessagesUpdate(chatRoomId, id, content, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing chat rooms
@@ -19489,6 +19835,26 @@ export const V1ApiFactory = function (configuration?: Configuration, basePath?: 
          */
         v1JobsMasterInProgress(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: any): AxiosPromise<PaginatedJobList> {
             return localVarFp.v1JobsMasterInProgress(city, maxPrice, minPrice, ordering, page, pageSize, search, serviceCategory, serviceDateFrom, serviceDateTo, serviceSubcategory, urgency, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get my jobs (all jobs created by current employer)
+         * @param {string} [city] 
+         * @param {number} [maxPrice] 
+         * @param {number} [minPrice] 
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {number} [pageSize] Number of results to return per page.
+         * @param {string} [search] A search term.
+         * @param {number} [serviceCategory] 
+         * @param {string} [serviceDateFrom] 
+         * @param {string} [serviceDateTo] 
+         * @param {number} [serviceSubcategory] 
+         * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v1JobsMyJobs(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: any): AxiosPromise<PaginatedJobList> {
+            return localVarFp.v1JobsMyJobs(city, maxPrice, minPrice, ordering, page, pageSize, search, serviceCategory, serviceDateFrom, serviceDateTo, serviceSubcategory, urgency, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for managing jobs.
@@ -20550,12 +20916,11 @@ export interface V1ApiInterface {
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {number} [page] A page number within the paginated result set.
      * @param {number} [pageSize] Number of results to return per page.
-     * @param {string} [search] A search term.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1AssignmentsList(ordering?: string, page?: number, pageSize?: number, search?: string, options?: AxiosRequestConfig): AxiosPromise<PaginatedJobAssignmentList>;
+    v1AssignmentsList(ordering?: string, page?: number, pageSize?: number, options?: AxiosRequestConfig): AxiosPromise<PaginatedJobAssignmentList>;
 
     /**
      * 
@@ -20651,6 +21016,15 @@ export interface V1ApiInterface {
     v1ChatsRoomsForMaster(masterId: number, options?: AxiosRequestConfig): AxiosPromise<Array<ChatRoomForSearchResponse>>;
 
     /**
+     * Initialize chat with another user - find existing or create new
+     * @param {InitChatRequestRequest} initChatRequestRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1ChatsRoomsInitChat(initChatRequestRequest: InitChatRequestRequest, options?: AxiosRequestConfig): AxiosPromise<InitChatResponse>;
+
+    /**
      * Leave a chat room
      * @param {string} id 
      * @param {ChatRoomRequest} chatRoomRequest 
@@ -20675,12 +21049,14 @@ export interface V1ApiInterface {
     /**
      * 
      * @param {string} chatRoomId 
-     * @param {MessageCreateRequest} messageCreateRequest 
+     * @param {MessageCreateMessageTypeEnum} messageType 
+     * @param {string} content 
+     * @param {Array<any>} [attachmentsFiles] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsMessagesCreate(chatRoomId: string, messageCreateRequest: MessageCreateRequest, options?: AxiosRequestConfig): AxiosPromise<MessageCreate>;
+    v1ChatsRoomsMessagesCreate(chatRoomId: string, messageType: MessageCreateMessageTypeEnum, content: string, attachmentsFiles?: Array<any>, options?: AxiosRequestConfig): AxiosPromise<MessageCreate>;
 
     /**
      * 
@@ -20709,12 +21085,15 @@ export interface V1ApiInterface {
      * 
      * @param {string} chatRoomId 
      * @param {string} id 
-     * @param {PatchedMessageRequest} [patchedMessageRequest] 
+     * @param {number} [chatRoom] 
+     * @param {string} [content] 
+     * @param {MessageMessageTypeEnum} [messageType] 
+     * @param {number} [replyTo] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, patchedMessageRequest?: PatchedMessageRequest, options?: AxiosRequestConfig): AxiosPromise<Message>;
+    v1ChatsRoomsMessagesPartialUpdate(chatRoomId: string, id: string, chatRoom?: number, content?: string, messageType?: MessageMessageTypeEnum, replyTo?: number, options?: AxiosRequestConfig): AxiosPromise<Message>;
 
     /**
      * 
@@ -20730,12 +21109,12 @@ export interface V1ApiInterface {
      * 
      * @param {string} chatRoomId 
      * @param {string} id 
-     * @param {MessageUpdateRequest} messageUpdateRequest 
+     * @param {string} content 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof V1ApiInterface
      */
-    v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, messageUpdateRequest: MessageUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<MessageUpdate>;
+    v1ChatsRoomsMessagesUpdate(chatRoomId: string, id: string, content: string, options?: AxiosRequestConfig): AxiosPromise<MessageUpdate>;
 
     /**
      * ViewSet for managing chat rooms
@@ -21356,6 +21735,26 @@ export interface V1ApiInterface {
      * @memberof V1ApiInterface
      */
     v1JobsMasterInProgress(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): AxiosPromise<PaginatedJobList>;
+
+    /**
+     * Get my jobs (all jobs created by current employer)
+     * @param {string} [city] 
+     * @param {number} [maxPrice] 
+     * @param {number} [minPrice] 
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {number} [pageSize] Number of results to return per page.
+     * @param {string} [search] A search term.
+     * @param {number} [serviceCategory] 
+     * @param {string} [serviceDateFrom] 
+     * @param {string} [serviceDateTo] 
+     * @param {number} [serviceSubcategory] 
+     * @param {'high' | 'low' | 'medium' | 'urgent'} [urgency] * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1ApiInterface
+     */
+    v1JobsMyJobs(city?: string, maxPrice?: number, minPrice?: number, ordering?: string, page?: number, pageSize?: number, search?: string, serviceCategory?: number, serviceDateFrom?: string, serviceDateTo?: string, serviceSubcategory?: number, urgency?: 'high' | 'low' | 'medium' | 'urgent', options?: AxiosRequestConfig): AxiosPromise<PaginatedJobList>;
 
     /**
      * ViewSet for managing jobs.
@@ -22633,13 +23032,6 @@ export interface V1ApiV1AssignmentsListRequest {
      * @memberof V1ApiV1AssignmentsList
      */
     readonly pageSize?: number
-
-    /**
-     * A search term.
-     * @type {string}
-     * @memberof V1ApiV1AssignmentsList
-     */
-    readonly search?: string
 }
 
 /**
@@ -22797,6 +23189,20 @@ export interface V1ApiV1ChatsRoomsForMasterRequest {
 }
 
 /**
+ * Request parameters for v1ChatsRoomsInitChat operation in V1Api.
+ * @export
+ * @interface V1ApiV1ChatsRoomsInitChatRequest
+ */
+export interface V1ApiV1ChatsRoomsInitChatRequest {
+    /**
+     * 
+     * @type {InitChatRequestRequest}
+     * @memberof V1ApiV1ChatsRoomsInitChat
+     */
+    readonly initChatRequestRequest: InitChatRequestRequest
+}
+
+/**
  * Request parameters for v1ChatsRoomsLeave operation in V1Api.
  * @export
  * @interface V1ApiV1ChatsRoomsLeaveRequest
@@ -22867,10 +23273,24 @@ export interface V1ApiV1ChatsRoomsMessagesCreateRequest {
 
     /**
      * 
-     * @type {MessageCreateRequest}
+     * @type {MessageCreateMessageTypeEnum}
      * @memberof V1ApiV1ChatsRoomsMessagesCreate
      */
-    readonly messageCreateRequest: MessageCreateRequest
+    readonly messageType: MessageCreateMessageTypeEnum
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesCreate
+     */
+    readonly content: string
+
+    /**
+     * 
+     * @type {Array<any>}
+     * @memberof V1ApiV1ChatsRoomsMessagesCreate
+     */
+    readonly attachmentsFiles?: Array<any>
 }
 
 /**
@@ -22958,10 +23378,31 @@ export interface V1ApiV1ChatsRoomsMessagesPartialUpdateRequest {
 
     /**
      * 
-     * @type {PatchedMessageRequest}
+     * @type {number}
      * @memberof V1ApiV1ChatsRoomsMessagesPartialUpdate
      */
-    readonly patchedMessageRequest?: PatchedMessageRequest
+    readonly chatRoom?: number
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1ChatsRoomsMessagesPartialUpdate
+     */
+    readonly content?: string
+
+    /**
+     * 
+     * @type {MessageMessageTypeEnum}
+     * @memberof V1ApiV1ChatsRoomsMessagesPartialUpdate
+     */
+    readonly messageType?: MessageMessageTypeEnum
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1ChatsRoomsMessagesPartialUpdate
+     */
+    readonly replyTo?: number
 }
 
 /**
@@ -23007,10 +23448,10 @@ export interface V1ApiV1ChatsRoomsMessagesUpdateRequest {
 
     /**
      * 
-     * @type {MessageUpdateRequest}
+     * @type {string}
      * @memberof V1ApiV1ChatsRoomsMessagesUpdate
      */
-    readonly messageUpdateRequest: MessageUpdateRequest
+    readonly content: string
 }
 
 /**
@@ -24486,6 +24927,97 @@ export interface V1ApiV1JobsMasterInProgressRequest {
      * * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
      * @type {'high' | 'low' | 'medium' | 'urgent'}
      * @memberof V1ApiV1JobsMasterInProgress
+     */
+    readonly urgency?: 'high' | 'low' | 'medium' | 'urgent'
+}
+
+/**
+ * Request parameters for v1JobsMyJobs operation in V1Api.
+ * @export
+ * @interface V1ApiV1JobsMyJobsRequest
+ */
+export interface V1ApiV1JobsMyJobsRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsMyJobs
+     */
+    readonly city?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsMyJobs
+     */
+    readonly maxPrice?: number
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsMyJobs
+     */
+    readonly minPrice?: number
+
+    /**
+     * Which field to use when ordering the results.
+     * @type {string}
+     * @memberof V1ApiV1JobsMyJobs
+     */
+    readonly ordering?: string
+
+    /**
+     * A page number within the paginated result set.
+     * @type {number}
+     * @memberof V1ApiV1JobsMyJobs
+     */
+    readonly page?: number
+
+    /**
+     * Number of results to return per page.
+     * @type {number}
+     * @memberof V1ApiV1JobsMyJobs
+     */
+    readonly pageSize?: number
+
+    /**
+     * A search term.
+     * @type {string}
+     * @memberof V1ApiV1JobsMyJobs
+     */
+    readonly search?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsMyJobs
+     */
+    readonly serviceCategory?: number
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsMyJobs
+     */
+    readonly serviceDateFrom?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof V1ApiV1JobsMyJobs
+     */
+    readonly serviceDateTo?: string
+
+    /**
+     * 
+     * @type {number}
+     * @memberof V1ApiV1JobsMyJobs
+     */
+    readonly serviceSubcategory?: number
+
+    /**
+     * * &#x60;low&#x60; - Low * &#x60;medium&#x60; - Medium * &#x60;high&#x60; - High * &#x60;urgent&#x60; - Urgent
+     * @type {'high' | 'low' | 'medium' | 'urgent'}
+     * @memberof V1ApiV1JobsMyJobs
      */
     readonly urgency?: 'high' | 'low' | 'medium' | 'urgent'
 }
@@ -26633,7 +27165,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1AssignmentsList(requestParameters: V1ApiV1AssignmentsListRequest = {}, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1AssignmentsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1AssignmentsList(requestParameters.ordering, requestParameters.page, requestParameters.pageSize, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -26746,6 +27278,17 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
     }
 
     /**
+     * Initialize chat with another user - find existing or create new
+     * @param {V1ApiV1ChatsRoomsInitChatRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1ChatsRoomsInitChat(requestParameters: V1ApiV1ChatsRoomsInitChatRequest, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1ChatsRoomsInitChat(requestParameters.initChatRequestRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Leave a chat room
      * @param {V1ApiV1ChatsRoomsLeaveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -26775,7 +27318,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsMessagesCreate(requestParameters: V1ApiV1ChatsRoomsMessagesCreateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesCreate(requestParameters.chatRoomId, requestParameters.messageCreateRequest, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesCreate(requestParameters.chatRoomId, requestParameters.messageType, requestParameters.content, requestParameters.attachmentsFiles, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -26808,7 +27351,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsMessagesPartialUpdate(requestParameters: V1ApiV1ChatsRoomsMessagesPartialUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesPartialUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.patchedMessageRequest, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesPartialUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.chatRoom, requestParameters.content, requestParameters.messageType, requestParameters.replyTo, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -26830,7 +27373,7 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      * @memberof V1Api
      */
     public v1ChatsRoomsMessagesUpdate(requestParameters: V1ApiV1ChatsRoomsMessagesUpdateRequest, options?: AxiosRequestConfig) {
-        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.messageUpdateRequest, options).then((request) => request(this.axios, this.basePath));
+        return V1ApiFp(this.configuration).v1ChatsRoomsMessagesUpdate(requestParameters.chatRoomId, requestParameters.id, requestParameters.content, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -27468,6 +28011,17 @@ export class V1Api extends BaseAPI implements V1ApiInterface {
      */
     public v1JobsMasterInProgress(requestParameters: V1ApiV1JobsMasterInProgressRequest = {}, options?: AxiosRequestConfig) {
         return V1ApiFp(this.configuration).v1JobsMasterInProgress(requestParameters.city, requestParameters.maxPrice, requestParameters.minPrice, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, requestParameters.serviceCategory, requestParameters.serviceDateFrom, requestParameters.serviceDateTo, requestParameters.serviceSubcategory, requestParameters.urgency, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get my jobs (all jobs created by current employer)
+     * @param {V1ApiV1JobsMyJobsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof V1Api
+     */
+    public v1JobsMyJobs(requestParameters: V1ApiV1JobsMyJobsRequest = {}, options?: AxiosRequestConfig) {
+        return V1ApiFp(this.configuration).v1JobsMyJobs(requestParameters.city, requestParameters.maxPrice, requestParameters.minPrice, requestParameters.ordering, requestParameters.page, requestParameters.pageSize, requestParameters.search, requestParameters.serviceCategory, requestParameters.serviceDateFrom, requestParameters.serviceDateTo, requestParameters.serviceSubcategory, requestParameters.urgency, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

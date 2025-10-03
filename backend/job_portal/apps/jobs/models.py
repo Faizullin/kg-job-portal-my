@@ -89,7 +89,7 @@ class JobApplicationStatus(models.TextChoices):
     WITHDRAWN = 'withdrawn', _('Withdrawn')
 
 
-class JobApplication(AbstractSoftDeleteModel, AbstractTimestampedModel):
+class JobApplication(AbstractTimestampedModel):
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applications')
     applicant = models.ForeignKey(Master, on_delete=models.CASCADE, related_name='applications',
                                   null=True, blank=True)

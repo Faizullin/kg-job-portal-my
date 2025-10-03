@@ -4,6 +4,7 @@ import { Main } from "@/components/layout/main";
 import { TopNav } from "@/components/layout/top-nav";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { NotificationsDropdown } from "@/components/notifications/notifications-dropdown";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,7 +16,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
-  Bell,
   Clock,
   Heart,
   Home,
@@ -151,12 +151,7 @@ export function ClientDashboard() {
       <Header>
         <TopNav links={clientTopNav} />
         <div className="ms-auto flex items-center space-x-4">
-          <Button variant="ghost" size="sm" className="relative">
-            <Bell className="h-5 w-5" />
-            <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 text-xs text-white flex items-center justify-center">
-              3
-            </div>
-          </Button>
+          <NotificationsDropdown />
           <ThemeSwitch />
           <ConfigDrawer />
           <ProfileDropdown />

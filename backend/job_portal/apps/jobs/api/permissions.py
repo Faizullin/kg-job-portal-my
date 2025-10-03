@@ -12,7 +12,7 @@ class JobAccessPermission(permissions.BasePermission):
         if request.user.is_staff:
             return True  # Admins have full access
 
-        if hasattr(obj, 'employer_profile') and obj.employer == request.user:
-            return True  # Employers can manage their own jobs
+        if hasattr(request.user, 'employer_profile') and obj.employer == request.user.employer_profile:
+            return True
 
-        return False  # Deny access by default"""
+        return False

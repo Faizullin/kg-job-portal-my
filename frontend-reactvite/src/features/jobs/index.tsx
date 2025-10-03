@@ -11,6 +11,7 @@ import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,13 +19,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useDialogControl } from "@/hooks/use-dialog-control";
 import type { Job } from "@/lib/api/axios-client";
 import { UrgencyEnum } from "@/lib/api/axios-client";
 import myApi from "@/lib/api/my-api";
+import { useAuthStore } from "@/stores/auth-store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { type ColumnDef } from "@tanstack/react-table";
 import {
   Calendar,
@@ -39,6 +41,9 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { JobCreateEditDialog, type JobFormData } from "./components/job-create-edit-dialog";
+
+// Type-safe job filter type
+type JobFilterType = 'my_jobs' | 'my_assignments' | 'all';
 
 
 export function Jobs() {
@@ -69,20 +74,41 @@ const JobsTable = () => {
   const [parsedPagination, setParsedPagination] = useState({
     pageCount: 1,
   });
+  const [jobFilter, setJobFilter] = useState<JobFilterType>('all');
 
   const jobDialog = useDialogControl<JobFormData>();
+  const { user } = useAuthStore();
 
   const queryClient = useQueryClient();
 
+  // Determine user role from groups
+  const userGroups = useMemo(() => {
+    if (!user?.groups) return [];
+    return user.groups;
+  }, [user?.groups]);
+
+  const isClient = useMemo(() => userGroups.includes('client'), [userGroups]);
+  const isMaster = useMemo(() => userGroups.includes('master'), [userGroups]);
+
   const loadJobsQuery = useQuery({
-    queryKey: [loadJobsQueryKey, debouncedSearchQuery],
+    queryKey: [loadJobsQueryKey, debouncedSearchQuery, jobFilter],
     queryFn: async () => {
-      const response = await myApi.v1JobsList({
+      const params = {
         search: debouncedSearchQuery || undefined,
         page: 1,
         pageSize: 10,
-      });
-      return response.data;
+      };
+
+      // Use specific API methods based on filter type
+      switch (jobFilter) {
+        case 'my_jobs':
+          return isClient ? (await myApi.v1JobsMyJobs(params)).data : (await myApi.v1JobsList(params)).data;
+        case 'my_assignments':
+          return isMaster ? (await myApi.v1JobsMasterInProgress(params)).data : (await myApi.v1JobsList(params)).data;
+        case 'all':
+        default:
+          return (await myApi.v1JobsList(params)).data;
+      }
     },
     staleTime: 0,
   });
@@ -266,34 +292,35 @@ const JobsTable = () => {
       cell: ({ row }) => {
         const job = row.original;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <MoreHorizontal className="h-4 w-4" />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <Link to="/jobs/$jobId" params={{ jobId: job.id.toString() }} className="flex items-center gap-2">
-                  <Eye className="h-4 w-4" />
-                  View Details
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => handleEditJob(job)}>
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={() => {
+              window.open(`/jobs/${job.id}`, '_blank');
+            }}>
+              <Eye className="h-4 w-4" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MoreHorizontal className="h-4 w-4" />
+                  <span className="sr-only">Open menu</span>
                 </Button>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Button variant="ghost" size="sm" className="w-full justify-start text-red-600" onClick={() => handleDeleteJob(job)}>
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </Button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => handleEditJob(job)}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-red-600" onClick={() => handleDeleteJob(job)}>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         );
       },
     },
@@ -345,7 +372,7 @@ const JobsTable = () => {
           </Button>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <div className="relative flex-1 max-w-sm">
               <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -356,6 +383,35 @@ const JobsTable = () => {
                 className="pl-8 h-8"
               />
             </div>
+          </div>
+
+          {/* Job Filters */}
+          <div className="flex items-center gap-4">
+            {isClient && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="my-jobs"
+                  checked={jobFilter === 'my_jobs'}
+                  onCheckedChange={(checked) => setJobFilter(checked ? 'my_jobs' : 'all')}
+                />
+                <Label htmlFor="my-jobs" className="text-sm font-medium">
+                  My Jobs
+                </Label>
+              </div>
+            )}
+
+            {isMaster && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="my-assignments"
+                  checked={jobFilter === 'my_assignments'}
+                  onCheckedChange={(checked) => setJobFilter(checked ? 'my_assignments' : 'all')}
+                />
+                <Label htmlFor="my-assignments" className="text-sm font-medium">
+                  My Assignments
+                </Label>
+              </div>
+            )}
           </div>
         </div>
         <DataTable table={table}>
