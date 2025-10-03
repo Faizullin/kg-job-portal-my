@@ -1,7 +1,7 @@
-import { SearchIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
 import { Link } from "@tanstack/react-router";
+import { SearchIcon } from "lucide-react";
+import { Button } from "./ui/button";
 
 type SearchProps = {
   className?: string;
@@ -22,7 +22,7 @@ export function Search({
         className,
       )}
     >
-      <Link to="/search">
+      <Link to="/app/search">
         <SearchIcon
           aria-hidden="true"
           className="absolute start-1.5 top-1/2 -translate-y-1/2"

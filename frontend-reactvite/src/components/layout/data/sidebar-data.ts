@@ -54,7 +54,7 @@ export const sidebarData: SidebarData = {
         },
         {
           title: "Search Jobs",
-          url: "/search",
+          url: "/app/search",
           icon: Search,
         },
         {

@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { ChatTypeEnum, type ChatRoomCreate } from "@/lib/api/axios-client/api";
 import myApi from "@/lib/api/my-api";
-import type { ChatRoomCreate, ChatParticipant } from "@/lib/api/axios-client/api";
-import { useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/auth-store";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useNavigate } from "@tanstack/react-router";
 
 interface CreateChatDialogProps {
   isOpen: boolean;
@@ -24,7 +24,9 @@ export function CreateChatDialog({ isOpen, onClose, masterId, masterName }: Crea
 
   const createChatMutation = useMutation({
     mutationFn: async (chatData: ChatRoomCreate) => {
-      const response = await myApi.v1ChatsRoomsCreate(chatData);
+      const response = await myApi.v1ChatsRoomsCreate({
+        chatRoomCreateRequest: chatData
+      });
       return response.data;
     },
     onSuccess: (chatRoom) => {
@@ -32,7 +34,7 @@ export function CreateChatDialog({ isOpen, onClose, masterId, masterName }: Crea
       onClose();
       setMessage("");
       // Navigate to the chat room using search params
-      navigate({ to: '/chats', search: { chatId: chatRoom.id?.toString() } });
+      navigate({ to: '/chats', search: { chat_room_id: chatRoom.id, } });
     },
     onError: (error: any) => {
       toast.error("Ошибка при создании чата");
@@ -51,39 +53,13 @@ export function CreateChatDialog({ isOpen, onClose, masterId, masterName }: Crea
       return;
     }
 
-    const participants: ChatParticipant[] = [
-      {
-        user: user.id,
-        role: "client",
-        is_active: true,
-        joined_at: new Date().toISOString(),
-        last_read_at: new Date().toISOString(),
-        notifications_enabled: true,
-        is_typing: false,
-        is_online: true
-      },
-      {
-        user: masterId,
-        role: "master",
-        is_active: true,
-        joined_at: new Date().toISOString(),
-        last_read_at: new Date().toISOString(),
-        notifications_enabled: true,
-        is_typing: false,
-        is_online: false
-      }
-    ];
-
-    const chatData: ChatRoomCreate = {
-      name: `Чат с ${masterName}`,
-      description: `Личный чат с мастером ${masterName}`,
-      participants: participants,
-      chat_type: "job_chat",
-      is_active: true,
-      created_at: new Date().toISOString()
+    const chatData = {
+      title: `Чат с ${masterName}`,
+      chat_type: ChatTypeEnum.job_chat,
+      participants_users_ids: [user.id, masterId],
     };
 
-    createChatMutation.mutate(chatData);
+    createChatMutation.mutate(chatData as any);
   };
 
   return (
@@ -95,7 +71,7 @@ export function CreateChatDialog({ isOpen, onClose, masterId, masterName }: Crea
             Напишите сообщение мастеру {masterName} для начала общения
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="message">Ваше сообщение</Label>
@@ -113,7 +89,7 @@ export function CreateChatDialog({ isOpen, onClose, masterId, masterName }: Crea
           <Button variant="outline" onClick={onClose}>
             Отмена
           </Button>
-          <Button 
+          <Button
             onClick={handleCreateChat}
             disabled={createChatMutation.isPending || !message.trim()}
           >

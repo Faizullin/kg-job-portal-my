@@ -2,8 +2,10 @@ import { ConfigDrawer } from "@/components/config-drawer";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/components/data-table/use-data-table";
+import { DeleteConfirmNiceDialog } from "@/components/dialogs/delete-confirm-dialog";
 import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
+import NiceModal from "@/components/nice-modal/modal-context";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -15,37 +17,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useDialogControl } from "@/hooks/use-dialog-control";
+import {
+  ProficiencyLevelEnum,
+  type MasterSkill,
+} from "@/lib/api/axios-client/api";
 import myApi from "@/lib/api/my-api";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type ColumnDef } from "@tanstack/react-table";
 import {
-  Award,
   Calendar,
   Edit,
-  Loader2,
   MoreHorizontal,
   Plus,
-  Star,
+  SearchIcon,
   Trash2,
 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-
-// Define skill interface based on API structure
-interface MasterSkill {
-  id: number;
-  skill: {
-    id: number;
-    name: string;
-    category?: string;
-  };
-  proficiency_level: number; // 1-5 scale
-  years_of_experience: number;
-  is_certified: boolean;
-  certification_name?: string;
-  created_at: string;
-  updated_at: string;
-}
+import { SkillsCreateEditDialog, type SkillsFormData } from "./components/skills-create-edit-dialog";
 
 export function SkillsPage() {
   return (
@@ -60,179 +52,131 @@ export function SkillsPage() {
       </Header>
 
       <Main>
-        <SkillsTable />
+        <RenderTable />
       </Main>
     </>
   );
 }
 
-const SKILLS_PAGE_QUERY_KEY = 'skills-page';
+const loadSkillsQueryKey = 'skills';
 
-const SkillsTable = () => {
+const RenderTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [editingSkill, setEditingSkill] = useState<MasterSkill | null>(null);
-  
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [parsedData, setParsedData] = useState<Array<MasterSkill>>([]);
+  const [parsedPagination, setParsedPagination] = useState({
+    pageCount: 1,
+  });
+
+  const skillsDialog = useDialogControl<SkillsFormData>();
   const queryClient = useQueryClient();
 
-  const loadSkillsListQuery = useQuery({
-    queryKey: [SKILLS_PAGE_QUERY_KEY, searchQuery],
+  const loadSkillsQuery = useQuery({
+    queryKey: [loadSkillsQueryKey, debouncedSearchQuery],
     queryFn: async () => {
-      // Using the actual API method found in the OpenAPI client
       const response = await myApi.v1UsersMySkillsList({
-        search: searchQuery || undefined,
+        search: debouncedSearchQuery || undefined,
         page: 1,
-        pageSize: 50,
+        pageSize: 10,
       });
       return response.data;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
   });
 
-  const skills = useMemo(() => {
-    // Mock data for now - replace with actual API response when available
-    return [
-      {
-        id: 1,
-        skill: {
-          id: 1,
-          name: "React.js",
-          category: "Frontend Development"
-        },
-        proficiency_level: 4,
-        years_of_experience: 3,
-        is_certified: true,
-        certification_name: "React Developer Certification",
-        created_at: "2024-01-15T10:00:00Z",
-        updated_at: "2024-01-20T14:30:00Z",
-      },
-      {
-        id: 2,
-        skill: {
-          id: 2,
-          name: "Node.js",
-          category: "Backend Development"
-        },
-        proficiency_level: 5,
-        years_of_experience: 4,
-        is_certified: false,
-        created_at: "2024-01-10T09:00:00Z",
-        updated_at: "2024-01-18T16:45:00Z",
-      },
-      {
-        id: 3,
-        skill: {
-          id: 3,
-          name: "Python",
-          category: "Programming Languages"
-        },
-        proficiency_level: 3,
-        years_of_experience: 2,
-        is_certified: true,
-        certification_name: "Python Institute PCAP",
-        created_at: "2024-01-05T08:00:00Z",
-        updated_at: "2024-01-15T12:00:00Z",
-      }
-    ] as MasterSkill[];
-  }, []);
+  useEffect(() => {
+    if (!loadSkillsQuery.data) return;
+    const parsed = loadSkillsQuery.data.results || [];
+    setParsedData(parsed);
+    setParsedPagination({
+      pageCount: Math.ceil(
+        (loadSkillsQuery.data.count || 0) / 10,
+      ),
+    });
+  }, [loadSkillsQuery.data]);
 
-  const createSkillMutation = useMutation({
-    mutationFn: async (skillData: Partial<MasterSkill>) => {
-      // Using the actual API method
-      const response = await myApi.v1UsersMySkillsCreate({
-        masterSkill: skillData as any,
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [SKILLS_PAGE_QUERY_KEY] });
-      toast.success("Skill added successfully!");
-      setShowCreateDialog(false);
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to add skill");
-    },
-  });
-
-  const updateSkillMutation = useMutation({
-    mutationFn: async ({ id, ...skillData }: Partial<MasterSkill> & { id: number }) => {
-      // Using the actual API method
-      const response = await myApi.v1UsersMySkillsUpdate({
-        id: id.toString(),
-        masterSkill: skillData as any,
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [SKILLS_PAGE_QUERY_KEY] });
-      toast.success("Skill updated successfully!");
-      setEditingSkill(null);
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to update skill");
-    },
-  });
-
-  const deleteSkillMutation = useMutation({
-    mutationFn: async (id: number) => {
-      // Using the actual API method
-      await myApi.v1UsersMySkillsDestroy({ id: id.toString() });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [SKILLS_PAGE_QUERY_KEY] });
-      toast.success("Skill deleted successfully!");
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to delete skill");
-    },
-  });
+  const totalCount = parsedData.length;
 
   const handleCreateSkill = useCallback(() => {
-    setEditingSkill(null);
-    setShowCreateDialog(true);
-  }, []);
+    skillsDialog.show(undefined);
+  }, [skillsDialog]);
 
   const handleEditSkill = useCallback((skill: MasterSkill) => {
-    setEditingSkill(skill);
-    setShowCreateDialog(true);
-  }, []);
+    skillsDialog.show({
+      id: skill.id,
+      skill: skill.skill,
+      is_primary_skill: skill.is_primary_skill || false,
+      proficiency_level: skill.proficiency_level || ProficiencyLevelEnum.beginner,
+      years_of_experience: skill.years_of_experience || 0,
+    });
+  }, [skillsDialog]);
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => myApi.v1UsersMySkillsDestroy({ id: id.toString() }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [loadSkillsQueryKey] });
+      toast.success("Skill deleted successfully!");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to delete skill");
+    },
+  });
+  const deleteMutationMutateAsync = deleteMutation.mutateAsync;
   const handleDeleteSkill = useCallback((skill: MasterSkill) => {
-    if (window.confirm(`Are you sure you want to delete "${skill.skill.name}"?`)) {
-      deleteSkillMutation.mutate(skill.id);
+    NiceModal.show(DeleteConfirmNiceDialog, {
+      args: {
+        title: "Delete Skill",
+        desc: `Are you sure you want to delete "${skill.skill.name}"? This action cannot be undone.`,
+      }
+    }).then((response) => {
+      if (response.reason === "confirm") {
+        deleteMutationMutateAsync(skill.id);
+      }
+    })
+  }, [deleteMutationMutateAsync]);
+
+  const getProficiencyColor = useCallback((level: ProficiencyLevelEnum) => {
+    switch (level) {
+      case ProficiencyLevelEnum.expert:
+        return 'bg-purple-100 text-purple-800';
+      case ProficiencyLevelEnum.advanced:
+        return 'bg-blue-100 text-blue-800';
+      case ProficiencyLevelEnum.intermediate:
+        return 'bg-green-100 text-green-800';
+      case ProficiencyLevelEnum.beginner:
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
-  }, [deleteSkillMutation]);
-
-  const getProficiencyColor = useCallback((level: number) => {
-    if (level >= 4) return 'bg-green-100 text-green-800';
-    if (level >= 3) return 'bg-blue-100 text-blue-800';
-    if (level >= 2) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-gray-100 text-gray-800';
   }, []);
 
-  const renderProficiencyStars = useCallback((level: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`h-3 w-3 ${
-          i < level ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-        }`}
-      />
-    ));
-  }, []);
-
-  const totalCount = useMemo(() => skills.length, [skills]);
-
-  const columns = useMemo<ColumnDef<MasterSkill>[]>(() => [
+  const columns = useMemo<ColumnDef<MasterSkill, any>[]>(() => [
+    {
+      accessorKey: "id",
+      header: "ID",
+      cell: ({ row }) => (
+        <a className="font-mono text-sm" href="#" onClick={(e) => {
+          e.preventDefault();
+          handleEditSkill(row.original);
+        }}>
+          #{row.getValue("id")}
+        </a>
+      ),
+      meta: {
+        variant: "number",
+        label: "ID",
+        className: ""
+      }
+    },
     {
       accessorKey: "skill.name",
       header: "Skill",
       cell: ({ row }) => (
-        <div className="max-w-[200px]">
+        <div className="max-w-[300px]">
           <div className="font-medium truncate">{row.original.skill.name}</div>
-          {row.original.skill.category && (
+          {row.original.skill.description && (
             <div className="text-sm text-muted-foreground truncate">
-              {row.original.skill.category}
+              {row.original.skill.description.substring(0, 100)}...
             </div>
           )}
         </div>
@@ -248,27 +192,21 @@ const SkillsTable = () => {
       accessorKey: "proficiency_level",
       header: "Proficiency",
       cell: ({ row }) => {
-        const level = row.getValue("proficiency_level") as number;
+        const level = row.getValue("proficiency_level") as ProficiencyLevelEnum;
         return (
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              {renderProficiencyStars(level)}
-            </div>
-            <Badge className={getProficiencyColor(level)}>
-              {level}/5
-            </Badge>
-          </div>
+          <Badge className={getProficiencyColor(level)}>
+            {level?.charAt(0).toUpperCase() + level?.slice(1)}
+          </Badge>
         );
       },
       meta: {
         variant: "select",
         label: "Proficiency",
         options: [
-          { label: "Beginner (1)", value: "1" },
-          { label: "Basic (2)", value: "2" },
-          { label: "Intermediate (3)", value: "3" },
-          { label: "Advanced (4)", value: "4" },
-          { label: "Expert (5)", value: "5" },
+          { label: "Beginner", value: ProficiencyLevelEnum.beginner },
+          { label: "Intermediate", value: ProficiencyLevelEnum.intermediate },
+          { label: "Advanced", value: ProficiencyLevelEnum.advanced },
+          { label: "Expert", value: ProficiencyLevelEnum.expert },
         ],
         className: ""
       }
@@ -279,49 +217,34 @@ const SkillsTable = () => {
       cell: ({ row }) => {
         const years = row.getValue("years_of_experience") as number;
         return (
-          <div className="flex items-center gap-1">
-            <Calendar className="h-3 w-3 text-muted-foreground" />
-            <span className="text-sm">{years} years</span>
+          <div className="text-sm">
+            {years || 0} year{years !== 1 ? 's' : ''}
           </div>
         );
       },
       meta: {
         variant: "number",
-        label: "Experience",
-        unit: "years",
+        label: "Years of Experience",
         className: ""
       }
     },
     {
-      accessorKey: "is_certified",
-      header: "Certified",
+      accessorKey: "is_primary_skill",
+      header: "Primary",
       cell: ({ row }) => {
-        const isCertified = row.getValue("is_certified") as boolean;
-        const certificationName = row.original.certification_name;
+        const isPrimary = row.getValue("is_primary_skill") as boolean;
         return (
-          <div className="flex items-center gap-2">
-            {isCertified ? (
-              <>
-                <Award className="h-4 w-4 text-green-600" />
-                <span className="text-sm text-green-600">Yes</span>
-                {certificationName && (
-                  <div className="text-xs text-muted-foreground truncate max-w-[100px]" title={certificationName}>
-                    {certificationName}
-                  </div>
-                )}
-              </>
-            ) : (
-              <span className="text-sm text-gray-500">No</span>
-            )}
-          </div>
+          <Badge variant={isPrimary ? "default" : "secondary"}>
+            {isPrimary ? "Primary" : "Secondary"}
+          </Badge>
         );
       },
       meta: {
         variant: "select",
-        label: "Certified",
+        label: "Primary Skill",
         options: [
-          { label: "Yes", value: "true" },
-          { label: "No", value: "false" },
+          { label: "Primary", value: "true" },
+          { label: "Secondary", value: "false" },
         ],
         className: ""
       }
@@ -344,91 +267,103 @@ const SkillsTable = () => {
     {
       id: "actions",
       header: "Actions",
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => handleEditSkill(row.original)}>
-              <Edit className="mr-2 h-4 w-4" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDeleteSkill(row.original)}>
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
+      cell: ({ row }) => {
+        const skill = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => handleEditSkill(skill)}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start text-red-600" onClick={() => handleDeleteSkill(skill)}>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
     },
-  ], [getProficiencyColor, renderProficiencyStars, handleEditSkill, handleDeleteSkill]);
+  ], [getProficiencyColor, handleEditSkill, handleDeleteSkill]);
 
   const { table } = useDataTable({
-    data: skills,
+    data: parsedData,
     columns,
-    pageCount: Math.ceil(totalCount / 10),
+    pageCount: parsedPagination.pageCount,
+    enableGlobalFilter: true,
+    initialState: {
+      sorting: [{ id: "id", desc: true }],
+    },
   });
 
-  if (loadSkillsListQuery.isLoading) {
+  if (loadSkillsQuery.isLoading) {
     return (
-      <div className="flex items-center justify-center h-32">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
-  if (loadSkillsListQuery.error) {
+  if (loadSkillsQuery.error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-500">Error loading skills: {loadSkillsListQuery.error.message}</p>
+        <p className="text-red-600">Error loading skills</p>
+        <Button onClick={() => loadSkillsQuery.refetch()} className="mt-2">
+          Try Again
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Skills Management</h2>
-          <p className="text-muted-foreground">
-            Manage your professional skills and certifications.
-          </p>
-        </div>
-        <Button onClick={handleCreateSkill}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Skill
-        </Button>
-      </div>
-
-      <DataTable table={table}>
-        <DataTableToolbar table={table} />
-      </DataTable>
-
-      {/* TODO: Add SkillCreateEditDialog component */}
-      {showCreateDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold mb-4">
-              {editingSkill ? 'Edit Skill' : 'Add Skill'}
-            </h3>
-            <p className="text-muted-foreground">
-              Skill creation/edit dialog will be implemented here.
+    <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-lg font-semibold">Skills</h3>
+            <p className="text-sm text-muted-foreground">
+              {totalCount} skill{totalCount !== 1 ? 's' : ''} found
             </p>
-            <div className="flex justify-end space-x-2 mt-4">
-              <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
-                Cancel
-              </Button>
-              <Button>
-                {editingSkill ? 'Update' : 'Add'}
-              </Button>
+          </div>
+          <Button onClick={handleCreateSkill} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Add Skill
+          </Button>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1 max-w-sm">
+              <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search skills..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className="pl-8 h-8"
+              />
             </div>
           </div>
         </div>
-      )}
+        <DataTable table={table}>
+          <DataTableToolbar table={table} />
+        </DataTable>
+      </div>
+
+      {/* Dialog */}
+      <SkillsCreateEditDialog
+        control={skillsDialog}
+      />
     </div>
   );
 };

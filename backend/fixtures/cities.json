@@ -1,0 +1,314 @@
+[
+  {
+    "model": "locations.city",
+    "pk": 1,
+    "fields": {
+      "name": "Bishkek",
+      "code": "BISH",
+      "country": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 2,
+    "fields": {
+      "name": "Osh",
+      "code": "OSH",
+      "country": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 3,
+    "fields": {
+      "name": "Jalal-Abad",
+      "code": "JAL",
+      "country": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 4,
+    "fields": {
+      "name": "Karakol",
+      "code": "KAR",
+      "country": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 5,
+    "fields": {
+      "name": "Talas",
+      "code": "TAL",
+      "country": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 6,
+    "fields": {
+      "name": "Naryn",
+      "code": "NAR",
+      "country": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 7,
+    "fields": {
+      "name": "Batken",
+      "code": "BAT",
+      "country": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 8,
+    "fields": {
+      "name": "Almaty",
+      "code": "ALA",
+      "country": 2,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 9,
+    "fields": {
+      "name": "Nur-Sultan",
+      "code": "NUR",
+      "country": 2,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 10,
+    "fields": {
+      "name": "Shymkent",
+      "code": "SHY",
+      "country": 2,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 11,
+    "fields": {
+      "name": "Tashkent",
+      "code": "TAS",
+      "country": 3,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 12,
+    "fields": {
+      "name": "Samarkand",
+      "code": "SAM",
+      "country": 3,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 13,
+    "fields": {
+      "name": "Bukhara",
+      "code": "BUK",
+      "country": 3,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 14,
+    "fields": {
+      "name": "Dushanbe",
+      "code": "DUS",
+      "country": 4,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 15,
+    "fields": {
+      "name": "Khujand",
+      "code": "KHU",
+      "country": 4,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 16,
+    "fields": {
+      "name": "Ashgabat",
+      "code": "ASH",
+      "country": 5,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 17,
+    "fields": {
+      "name": "Turkmenabat",
+      "code": "TUR",
+      "country": 5,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 18,
+    "fields": {
+      "name": "Moscow",
+      "code": "MOS",
+      "country": 6,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 19,
+    "fields": {
+      "name": "Saint Petersburg",
+      "code": "SPB",
+      "country": 6,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 20,
+    "fields": {
+      "name": "Beijing",
+      "code": "BEI",
+      "country": 7,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 21,
+    "fields": {
+      "name": "Shanghai",
+      "code": "SHA",
+      "country": 7,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 22,
+    "fields": {
+      "name": "Istanbul",
+      "code": "IST",
+      "country": 8,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 23,
+    "fields": {
+      "name": "Ankara",
+      "code": "ANK",
+      "country": 8,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 24,
+    "fields": {
+      "name": "Kabul",
+      "code": "KAB",
+      "country": 9,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 25,
+    "fields": {
+      "name": "Tehran",
+      "code": "TEH",
+      "country": 10,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 26,
+    "fields": {
+      "name": "Mashhad",
+      "code": "MAS",
+      "country": 10,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "is_deleted": false
+    }
+  }
+]

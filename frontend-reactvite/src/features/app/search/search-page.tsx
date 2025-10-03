@@ -3,13 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useDialogControl } from "@/hooks/use-dialog-control";
-import type { Order } from "@/lib/api/axios-client/api";
 import myApi from "@/lib/api/my-api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { Calendar, DollarSign, MapPin, Search as SearchIcon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { BidCreateEditDialog, type BidFormData } from "@/features/orders/components/bid-create-edit-dialog";
 
 export function SearchPage() {
   const [q, setQ] = useState("");

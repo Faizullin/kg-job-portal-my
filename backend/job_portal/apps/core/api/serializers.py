@@ -155,6 +155,7 @@ class ServiceSubcategoryCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceSubcategory
         fields = [
+            "id",
             "category",
             "name",
             "description",
@@ -173,6 +174,7 @@ class ServiceSubcategoryCreateUpdateSerializer(serializers.ModelSerializer):
             "meta_title",
             "meta_description",
         ]
+        read_only_fields = ["id"]
         extra_kwargs = {
             "slug": {"required": False},  # Auto-generated if not provided
         }

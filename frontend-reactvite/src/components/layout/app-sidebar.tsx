@@ -49,11 +49,7 @@ export function AppSidebar() {
         return isProvider;
       }
 
-      if (isProvider) {
-        if (url === "/jobs" || url === "/tasks") return false;
-        return true;
-      }
-      if (url === "/search" || url === "/bids") return false;
+      if (url === "/search") return false;
       return true;
     };
 

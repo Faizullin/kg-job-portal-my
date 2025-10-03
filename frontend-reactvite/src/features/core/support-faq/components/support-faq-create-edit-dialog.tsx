@@ -1,17 +1,17 @@
 import { FormDialog } from "@/components/dialogs/form-dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useDialogControl } from "@/hooks/use-dialog-control";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
 
 const supportFAQFormSchema = z.object({
   id: z.number().optional(),
@@ -62,8 +62,8 @@ export function SupportFAQCreateEditDialog({
 
   // Create mutation
   const createMutation = useMutation({
-    mutationFn: (data: SupportFAQFormData) => 
-      myApi.v1CoreSupportFaqCreate({ supportFAQCreateUpdate: data }),
+    mutationFn: (data: SupportFAQFormData) =>
+      myApi.v1CoreSupportFaqCreate({ supportFAQCreateUpdateRequest: data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['support-faq'] });
       toast.success("Support FAQ created successfully!");
@@ -76,8 +76,8 @@ export function SupportFAQCreateEditDialog({
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: SupportFAQFormData) => 
-      myApi.v1CoreSupportFaqUpdate({ id: control.data!.id!, supportFAQCreateUpdate: data }),
+    mutationFn: (data: SupportFAQFormData) =>
+      myApi.v1CoreSupportFaqUpdate({ id: control.data!.id!, supportFAQCreateUpdateRequest: data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['support-faq'] });
       queryClient.invalidateQueries({ queryKey: [loadFAQDetailQueryKey, control.data?.id] });

@@ -112,7 +112,8 @@ class MasterSkillAPIViewSet(ModelViewSet):
 
     def get_queryset(self):
         provider_profile = self.request.user.master_profile
-        return provider_profile.master_skills
+        qs = provider_profile.master_skills.prefetch_related("skill")
+        return qs
 
 
 class MasterPortfolioAPIViewSet(ModelViewSet):
@@ -124,6 +125,10 @@ class MasterPortfolioAPIViewSet(ModelViewSet):
     def get_queryset(self):
         provider_profile = self.request.user.master_profile
         return provider_profile.portfolio_items.select_related("skill_used").prefetch_related("attachments")
+
+    def perform_destroy(self, instance: PortfolioItem):
+        instance.attachments.all().delete()
+        instance.delete()
 
 
 class MasterPortfolioAttachmentAPIViewSet(

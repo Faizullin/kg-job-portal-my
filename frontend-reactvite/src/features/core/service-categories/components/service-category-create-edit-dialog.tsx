@@ -1,16 +1,16 @@
 import { FormDialog } from "@/components/dialogs/form-dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useDialogControl } from "@/hooks/use-dialog-control";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
 
 const serviceCategoryFormSchema = z.object({
   id: z.number().optional(),
@@ -57,8 +57,8 @@ export function ServiceCategoryCreateEditDialog({
 
   // Create mutation
   const createMutation = useMutation({
-    mutationFn: (data: ServiceCategoryFormData) => 
-      myApi.v1CoreServiceCategoriesCreate({ serviceCategoryCreateUpdate: data }),
+    mutationFn: (data: ServiceCategoryFormData) =>
+      myApi.v1CoreServiceCategoriesCreate({ serviceCategoryCreateUpdateRequest: data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['service-categories'] });
       toast.success("Service category created successfully!");
@@ -71,8 +71,8 @@ export function ServiceCategoryCreateEditDialog({
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: ServiceCategoryFormData) => 
-      myApi.v1CoreServiceCategoriesUpdate({ id: control.data!.id!, serviceCategoryCreateUpdate: data }),
+    mutationFn: (data: ServiceCategoryFormData) =>
+      myApi.v1CoreServiceCategoriesUpdate({ id: control.data!.id!, serviceCategoryCreateUpdateRequest: data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['service-categories'] });
       queryClient.invalidateQueries({ queryKey: [loadCategoryDetailQueryKey, control.data?.id] });

@@ -3291,7 +3291,7 @@ export interface MessageCreateRequest {
      * @type {Array<any>}
      * @memberof MessageCreateRequest
      */
-    'attachments_files': Array<any>;
+    'attachments_files'?: Array<any>;
 }
 /**
  * * `text` - Текст * `image` - Изображение * `file` - Файл * `system` - System Message * `order_update` - Order Update
@@ -6786,6 +6786,12 @@ export interface ServiceSubcategoryBasic {
  * @interface ServiceSubcategoryCreateUpdate
  */
 export interface ServiceSubcategoryCreateUpdate {
+    /**
+     * 
+     * @type {number}
+     * @memberof ServiceSubcategoryCreateUpdate
+     */
+    'id': number;
     /**
      * 
      * @type {number}

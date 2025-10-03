@@ -5,6 +5,7 @@ from django.db import models
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
+from rest_framework import parsers
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -180,6 +181,7 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
     filterset_fields = ["message_type", "is_read"]
     ordering_fields = ["created_at"]
     ordering = ["-created_at"]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 
     def _get_chat_context(self):
         """
@@ -227,7 +229,7 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
         user = self.request.user
         message_content = serializer.validated_data.get("content", "")
         message_type = serializer.validated_data.get("message_type")
-        attachments_files = serializer.validated_data.pop("attachments_files", None)
+        attachments_files = serializer.validated_data["attachments_files"]
         if (
                 not message_content
                 and len(attachments_files) > 0
@@ -243,7 +245,7 @@ class ChatRoomMessageAPIViewSet(ModelViewSet):
             content=message_content,
             message_type=message_type,
         )
-
+        print("performe.create", attachments_files)
         if attachments_files is not None:
             created_attachments = create_attachments(attachments_files, user, chat_message)
             chat_message.attachments.add(*created_attachments)

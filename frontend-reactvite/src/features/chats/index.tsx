@@ -288,7 +288,7 @@ export function Chats() {
         const formData = new FormData();
         formData.append('content', content);
         formData.append('message_type', message_type);
-        formData.append('attachment_file', attachment);
+        formData.append('attachments_files[]', attachment);
 
         const response = await myApi.axios.post(
           `/api/v1/chats/rooms/${selectedRoom.id}/messages/`,
@@ -299,30 +299,22 @@ export function Chats() {
             },
           }
         );
-        return { data: response.data };
+        return response;
       }
 
       // For text messages without attachments, use the regular API
       return myApi.v1ChatsRoomsMessagesCreate({
         chatRoomId: String(selectedRoom.id),
-        messageCreate: {
-          id: 0,
-          chat_room: selectedRoom.id,
-          sender: auth.user?.id || 0,
+        messageCreateRequest: {
           content: content,
           message_type: message_type,
-          is_read: false,
-          read_at: null,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          attachment_file: null as any,
         }
       });
     },
     onSuccess: () => {
       setMessageInput('');
       messageInputRef.current?.focus();
-      queryClient.invalidateQueries({ queryKey: [CHAT_MESSAGES_QUERY_KEY, selectedRoom?.id] });
+      // Don't invalidate queries - let WebSocket handle real-time updates
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
@@ -360,9 +352,6 @@ export function Chats() {
         chatRoomId: String(selectedRoom.id),
         id: messageId
       });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [CHAT_MESSAGES_QUERY_KEY, selectedRoom?.id] });
     },
     onError: (error: any) => {
       console.error('Failed to delete message:', error);

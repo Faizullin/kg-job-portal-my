@@ -1,17 +1,17 @@
 import { FormDialog } from "@/components/dialogs/form-dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useDialogControl } from "@/hooks/use-dialog-control";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
 
 const serviceSubcategoryFormSchema = z.object({
   id: z.number().optional(),
@@ -23,13 +23,17 @@ const serviceSubcategoryFormSchema = z.object({
   sort_order: z.number().min(1, "Sort order must be at least 1"),
 });
 
+const serviceSubcategoryControlSchema = z.object({
+  id: z.number().optional(),
+});
+
 export type ServiceSubcategoryFormData = z.infer<typeof serviceSubcategoryFormSchema>;
+export type ServiceSubcategoryControlData = z.infer<typeof serviceSubcategoryControlSchema>;
 
 const loadSubcategoryDetailQueryKey = 'service-subcategory-detail';
-const loadServiceCategoriesQueryKey = 'service-categories';
 
 interface ServiceSubcategoryCreateEditDialogProps {
-  control: ReturnType<typeof useDialogControl<ServiceSubcategoryFormData>>;
+  control: ReturnType<typeof useDialogControl<ServiceSubcategoryControlData>>;
   onSave?: (data: ServiceSubcategoryFormData) => void;
   onCancel?: () => void;
 }
@@ -63,15 +67,16 @@ export function ServiceSubcategoryCreateEditDialog({
 
   // Load service categories for dropdown
   const loadServiceCategoriesQuery = useQuery({
-    queryKey: [loadServiceCategoriesQueryKey],
+    queryKey: ['service-categories'],
     queryFn: () => myApi.v1CoreServiceCategoriesList({ pageSize: 100 }).then(r => r.data),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
+
   // Create mutation
   const createMutation = useMutation({
-    mutationFn: (data: ServiceSubcategoryFormData) => 
-      myApi.v1CoreServiceSubcategoriesCreate({ serviceSubcategoryCreateUpdate: data }),
+    mutationFn: (data: ServiceSubcategoryFormData) =>
+      myApi.v1CoreServiceSubcategoriesCreate({ serviceSubcategoryCreateUpdateRequest: data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['service-subcategories'] });
       toast.success("Service subcategory created successfully!");
@@ -84,8 +89,8 @@ export function ServiceSubcategoryCreateEditDialog({
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: ServiceSubcategoryFormData) => 
-      myApi.v1CoreServiceSubcategoriesUpdate({ id: control.data!.id!, serviceSubcategoryCreateUpdate: data }),
+    mutationFn: (data: ServiceSubcategoryFormData) =>
+      myApi.v1CoreServiceSubcategoriesUpdate({ id: control.data!.id!, serviceSubcategoryCreateUpdateRequest: data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['service-subcategories'] });
       queryClient.invalidateQueries({ queryKey: [loadSubcategoryDetailQueryKey, control.data?.id] });
@@ -101,21 +106,19 @@ export function ServiceSubcategoryCreateEditDialog({
   // Reset form when dialog opens or data changes
   useEffect(() => {
     if (control.isVisible) {
-      if (isEditMode) {
-        const dataToUse = loadSubcategoryDetailQuery.data || control.data;
-        if (dataToUse) {
-          form.reset({
-            id: dataToUse.id,
-            name: dataToUse.name,
-            description: dataToUse.description || "",
-            category: dataToUse.category,
-            is_active: dataToUse.is_active ?? true,
-            featured: dataToUse.featured ?? false,
-            sort_order: dataToUse.sort_order || 1,
-          });
-        }
-      } else {
-        // Create mode - always reset to empty values
+      if (isEditMode && loadSubcategoryDetailQuery.data) {
+        // Edit mode - use query data
+        form.reset({
+          id: loadSubcategoryDetailQuery.data.id,
+          name: loadSubcategoryDetailQuery.data.name,
+          description: loadSubcategoryDetailQuery.data.description || "",
+          category: 1, // Default category since it's not in the response
+          is_active: loadSubcategoryDetailQuery.data.is_active ?? true,
+          featured: loadSubcategoryDetailQuery.data.featured ?? false,
+          sort_order: loadSubcategoryDetailQuery.data.sort_order || 1,
+        });
+      } else if (!isEditMode) {
+        // Create mode - reset to empty values
         form.reset({
           name: "",
           description: "",
@@ -126,22 +129,7 @@ export function ServiceSubcategoryCreateEditDialog({
         });
       }
     }
-  }, [control.isVisible, isEditMode, loadSubcategoryDetailQuery.data, control.data, form]);
-
-  // Additional effect to ensure form is reset when dialog opens in create mode
-  useEffect(() => {
-    if (control.isVisible && !isEditMode) {
-      // Force reset form for create mode
-      form.reset({
-        name: "",
-        description: "",
-        category: 1,
-        is_active: true,
-        featured: false,
-        sort_order: 1,
-      });
-    }
-  }, [control.isVisible, isEditMode, form]);
+  }, [control.isVisible, isEditMode, loadSubcategoryDetailQuery.data, form]);
 
   const onSubmit = (data: ServiceSubcategoryFormData) => {
     if (isEditMode) {

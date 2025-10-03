@@ -45,7 +45,7 @@ export function NewChatDialog({ onOpenChange, open, control, onCreated, job }: N
       if (selectedUsers.length === 0) throw new Error('No users selected');
 
       const response = await myApi.v1ChatsRoomsCreate({
-        chatRoomCreate: {
+        chatRoomCreateRequest: {
           title: selectedUsers.map((u) => u.user.username).join(", ") || (job ? 'Order Chat' : 'New Chat'),
           chat_type: job ? ChatTypeEnum.job_chat : ChatTypeEnum.general_chat,
           participants_users_ids: selectedUsers.map(u => u.user.id),

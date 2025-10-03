@@ -20,6 +20,19 @@ from utils.permissions import (
     HasSpecificPermission,
 )
 from utils.views import BaseAction, BaseActionAPIViewMixin
+
+from ...attachments.api.permissions import IsAttachmentOwner
+from ...attachments.serializers import AttachmentSerializer
+from ..models import (
+    BookmarkJob,
+    FavoriteJob,
+    Job,
+    JobApplication,
+    JobApplicationStatus,
+    JobAssignment,
+    JobAssignmentStatus,
+    JobStatus,
+)
 from .filters import JobApplicationFilter, JobFilter
 from .permissions import JobAccessPermission
 from .serializers import (
@@ -34,18 +47,6 @@ from .serializers import (
     ProgressUpdateSerializer,
     RatingSerializer,
 )
-from ..models import (
-    BookmarkJob,
-    FavoriteJob,
-    Job,
-    JobApplication,
-    JobApplicationStatus,
-    JobAssignment,
-    JobAssignmentStatus,
-    JobStatus,
-)
-from ...attachments.api.permissions import IsAttachmentOwner
-from ...attachments.serializers import AttachmentSerializer
 
 
 class _JobApiActionSerializer(CResponseSerializer):
@@ -55,7 +56,7 @@ class _JobApiActionSerializer(CResponseSerializer):
 class JobAPIViewSet(viewsets.ModelViewSet):
     """ViewSet for managing jobs."""
 
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     serializer_class = JobSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = JobFilter
@@ -356,7 +357,7 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
         responses={
             200: _JobApplicationApiActionSerializer,
         },
-        operation_id="v1_applications_accept"
+        operation_id="v1_applications_accept",
     )
     @action(
         detail=True,
@@ -437,7 +438,7 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
         responses={
             200: _JobApplicationApiActionSerializer,
         },
-        operation_id="v1_applications_accept_reject"
+        operation_id="v1_applications_accept_reject",
     )
     @action(
         detail=True,
@@ -483,7 +484,7 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
     @extend_schema(
         description="Withdraw a job by master",
         responses={200: _JobApplicationApiActionSerializer},
-        operation_id="v1_applications_withdraw"
+        operation_id="v1_applications_withdraw",
     )
     @action(
         detail=True,
@@ -669,7 +670,7 @@ class JobAttachmentAPIViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.DestroyModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     permission_classes = [IsAuthenticated, IsAttachmentOwner, HasEmployerProfile]
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
@@ -697,7 +698,6 @@ class JobAttachmentAPIViewSet(
     def perform_create(self, serializer):
         job = self._get_job_obj()
         files = serializer.validated_data["files"]
-        print("files", files)
         if not files:
             raise ValidationError("No files provided")
         attachments = create_attachments(files, self.request.user, job)
@@ -710,7 +710,7 @@ class AssignmentAttachmentAPIViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.DestroyModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     permission_classes = [IsAuthenticated, IsAttachmentOwner, HasMasterProfile]
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]

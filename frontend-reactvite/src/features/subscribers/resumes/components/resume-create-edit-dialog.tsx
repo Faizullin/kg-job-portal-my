@@ -1,9 +1,10 @@
 import { FormDialog } from "@/components/dialogs/form-dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useDialogControl } from "@/hooks/use-dialog-control";
+import { MasterResumeStatusEnum } from "@/lib/api/axios-client";
 import myApi from "@/lib/api/my-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -16,7 +17,7 @@ const resumeFormSchema = z.object({
   id: z.number().optional(),
   title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
   content: z.string().min(1, "Content is required").max(5000, "Content must be less than 5000 characters"),
-  status: z.enum(['draft', 'published', 'archived']).default('draft'),
+  status: z.enum(MasterResumeStatusEnum),
 });
 
 export type ResumeFormData = z.infer<typeof resumeFormSchema>;
@@ -42,7 +43,7 @@ export function ResumeCreateEditDialog({
     defaultValues: {
       title: "",
       content: "",
-      status: "draft",
+      status: MasterResumeStatusEnum.draft,
     },
   });
 
@@ -71,9 +72,9 @@ export function ResumeCreateEditDialog({
 
   const updateMutation = useMutation({
     mutationFn: (data: ResumeFormData) => {
-      return myApi.v1ResumesPartialUpdate({ 
-        id: control.data!.id!, 
-        patchedMasterResumeRequest: data 
+      return myApi.v1ResumesPartialUpdate({
+        id: control.data!.id!,
+        patchedMasterResumeRequest: data
       });
     },
     onSuccess: () => {
@@ -88,41 +89,27 @@ export function ResumeCreateEditDialog({
     },
   });
 
-  // Reset form when dialog opens or data changes
+  // Reset form when dialog opens or query data changes
   useEffect(() => {
     if (control.isVisible) {
-      if (isEditMode) {
-        const dataToUse = loadResumeDetailQuery.data || control.data;
-        if (dataToUse) {
-          form.reset({
-            id: dataToUse.id,
-            title: dataToUse.title,
-            content: dataToUse.content,
-            status: dataToUse.status || 'draft',
-          });
-        }
-      } else {
-        // Create mode - always reset to empty values
+      if (isEditMode && loadResumeDetailQuery.data) {
+        // Edit mode - use query data
+        form.reset({
+          id: loadResumeDetailQuery.data.id,
+          title: loadResumeDetailQuery.data.title,
+          content: loadResumeDetailQuery.data.content,
+          status: loadResumeDetailQuery.data.status || MasterResumeStatusEnum.draft,
+        });
+      } else if (!isEditMode) {
+        // Create mode - reset to empty values
         form.reset({
           title: "",
           content: "",
-          status: "draft",
+          status: MasterResumeStatusEnum.draft,
         });
       }
     }
-  }, [control.isVisible, isEditMode, loadResumeDetailQuery.data, control.data, form]);
-
-  // Additional effect to ensure form is reset when dialog opens in create mode
-  useEffect(() => {
-    if (control.isVisible && !isEditMode) {
-      // Force reset form for create mode
-      form.reset({
-        title: "",
-        content: "",
-        status: "draft",
-      });
-    }
-  }, [control.isVisible, isEditMode, form]);
+  }, [control.isVisible, isEditMode, loadResumeDetailQuery.data, form]);
 
   const onSubmit = (data: ResumeFormData) => {
     if (isEditMode) {
@@ -136,7 +123,7 @@ export function ResumeCreateEditDialog({
     form.reset({
       title: "",
       content: "",
-      status: "draft",
+      status: MasterResumeStatusEnum.draft,
     });
     control.hide();
     onCancel?.();
@@ -152,7 +139,7 @@ export function ResumeCreateEditDialog({
           form.reset({
             title: "",
             content: "",
-            status: "draft",
+            status: MasterResumeStatusEnum.draft,
           });
           control.hide();
         }
@@ -197,9 +184,9 @@ export function ResumeCreateEditDialog({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
+                    <SelectItem value={MasterResumeStatusEnum.draft}>Draft</SelectItem>
+                    <SelectItem value={MasterResumeStatusEnum.published}>Published</SelectItem>
+                    <SelectItem value={MasterResumeStatusEnum.archived}>Archived</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

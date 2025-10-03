@@ -2,8 +2,10 @@ import { ConfigDrawer } from "@/components/config-drawer";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/components/data-table/use-data-table";
+import { DeleteConfirmNiceDialog } from "@/components/dialogs/delete-confirm-dialog";
 import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
+import NiceModal from "@/components/nice-modal/modal-context";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -15,30 +17,26 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Input } from "@/components/ui/input";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useDialogControl } from "@/hooks/use-dialog-control";
+import {
+  MasterResumeStatusEnum,
+  type MasterResume
+} from "@/lib/api/axios-client/api";
+import myApi from "@/lib/api/my-api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type ColumnDef } from "@tanstack/react-table";
 import {
   Calendar,
   Edit,
   MoreHorizontal,
   Plus,
-  Trash2,
-  Eye,
-  EyeOff,
   SearchIcon,
+  Trash2,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import myApi from "@/lib/api/my-api";
-import type { 
-  MasterResume, 
-  MasterResumeStatusEnum 
-} from "@/lib/api/axios-client/api";
-import { useDebounce } from "@/hooks/use-debounce";
-import { useDialogControl } from "@/hooks/use-dialog-control";
-import { Input } from "@/components/ui/input";
-import NiceModal from "@/components/nice-modal/modal-context";
-import { DeleteConfirmNiceDialog } from "@/components/dialogs/delete-confirm-dialog";
 import { ResumeCreateEditDialog, type ResumeFormData } from "./components/resume-create-edit-dialog";
 
 export function ResumesPage() {
@@ -106,9 +104,10 @@ const RenderTable = () => {
 
   const handleEditResume = useCallback((resume: MasterResume) => {
     resumeDialog.show({
+      id: resume.id,
       title: resume.title,
       content: resume.content,
-      status: resume.status || 'draft',
+      status: resume.status || MasterResumeStatusEnum.draft,
     });
   }, [resumeDialog]);
 
@@ -138,11 +137,11 @@ const RenderTable = () => {
 
   const getStatusColor = useCallback((status: MasterResumeStatusEnum) => {
     switch (status) {
-      case 'published':
+      case MasterResumeStatusEnum.published:
         return 'bg-green-100 text-green-800';
-      case 'draft':
+      case MasterResumeStatusEnum.draft:
         return 'bg-yellow-100 text-yellow-800';
-      case 'archived':
+      case MasterResumeStatusEnum.archived:
         return 'bg-gray-100 text-gray-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -247,33 +246,11 @@ const RenderTable = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
-                <Button variant="ghost" size="sm" className="w-full justify-start">
-                  <Eye className="h-4 w-4 mr-2" />
-                  View Details
-                </Button>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
                 <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => handleEditResume(resume)}>
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
               </DropdownMenuItem>
-              {resume.status === 'draft' && (
-                <DropdownMenuItem asChild>
-                  <Button variant="ghost" size="sm" className="w-full justify-start">
-                    <Eye className="h-4 w-4 mr-2" />
-                    Publish
-                  </Button>
-                </DropdownMenuItem>
-              )}
-              {resume.status === 'published' && (
-                <DropdownMenuItem asChild>
-                  <Button variant="ghost" size="sm" className="w-full justify-start">
-                    <EyeOff className="h-4 w-4 mr-2" />
-                    Archive
-                  </Button>
-                </DropdownMenuItem>
-              )}
               <DropdownMenuItem asChild>
                 <Button variant="ghost" size="sm" className="w-full justify-start text-red-600" onClick={() => handleDeleteResume(resume)}>
                   <Trash2 className="h-4 w-4 mr-2" />

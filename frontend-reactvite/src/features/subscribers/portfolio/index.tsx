@@ -2,8 +2,10 @@ import { ConfigDrawer } from "@/components/config-drawer";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/components/data-table/use-data-table";
+import { DeleteConfirmNiceDialog } from "@/components/dialogs/delete-confirm-dialog";
 import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
+import NiceModal from "@/components/nice-modal/modal-context";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -15,37 +17,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Input } from "@/components/ui/input";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useDialogControl } from "@/hooks/use-dialog-control";
+import {
+  type MasterSkillSkill,
+  type PortfolioItem,
+} from "@/lib/api/axios-client/api";
+import myApi from "@/lib/api/my-api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type ColumnDef } from "@tanstack/react-table";
 import {
   Calendar,
   Edit,
-  Eye,
-  ExternalLink,
-  Image,
-  Loader2,
   MoreHorizontal,
   Plus,
+  SearchIcon,
   Trash2,
 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-
-// Define portfolio interface based on API structure
-interface PortfolioItem {
-  id: number;
-  title: string;
-  description: string;
-  image_url?: string;
-  project_url?: string;
-  technologies: string[];
-  category: string;
-  client_name?: string;
-  completion_date: string;
-  is_featured: boolean;
-  created_at: string;
-  updated_at: string;
-}
+import { PortfolioCreateEditDialog, type PortfolioFormData } from "./components/portfolio-create-edit-dialog";
 
 export function PortfolioPage() {
   return (
@@ -60,180 +52,95 @@ export function PortfolioPage() {
       </Header>
 
       <Main>
-        <PortfolioTable />
+        <RenderTable />
       </Main>
     </>
   );
 }
 
-const PORTFOLIO_PAGE_QUERY_KEY = 'portfolio-page';
+const loadPortfolioQueryKey = 'portfolio';
 
-const PortfolioTable = () => {
+const RenderTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [editingPortfolio, setEditingPortfolio] = useState<PortfolioItem | null>(null);
-  
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [parsedData, setParsedData] = useState<Array<PortfolioItem>>([]);
+  const [parsedPagination, setParsedPagination] = useState({
+    pageCount: 1,
+  });
+
+  const portfolioDialog = useDialogControl<PortfolioFormData>();
+
   const queryClient = useQueryClient();
 
-  const loadPortfolioListQuery = useQuery({
-    queryKey: [PORTFOLIO_PAGE_QUERY_KEY, searchQuery],
+  const loadPortfolioQuery = useQuery({
+    queryKey: [loadPortfolioQueryKey, debouncedSearchQuery],
     queryFn: async () => {
-      // Using a mock API call since the actual API endpoint needs to be determined
-      // This will be replaced with the actual API call once the endpoint is identified
-      const response = await fetch('/api/v1/users/my-portfolio/', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`,
-        },
+      const response = await myApi.v1UsersMyPortfolioList({
+        search: debouncedSearchQuery || undefined,
+        page: 1,
+        pageSize: 10,
       });
-      if (!response.ok) {
-        throw new Error('Failed to fetch portfolio items');
-      }
-      return await response.json();
+      return response.data;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
   });
 
-  const portfolioItems = useMemo(() => {
-    // Mock data for now - replace with actual API response
-    return [
-      {
-        id: 1,
-        title: "E-commerce Website",
-        description: "Full-stack e-commerce platform with React frontend and Node.js backend",
-        image_url: "https://via.placeholder.com/300x200",
-        project_url: "https://example-ecommerce.com",
-        technologies: ["React", "Node.js", "MongoDB", "Stripe"],
-        category: "Web Development",
-        client_name: "TechCorp Inc.",
-        completion_date: "2024-01-15",
-        is_featured: true,
-        created_at: "2024-01-10T10:00:00Z",
-        updated_at: "2024-01-15T14:30:00Z",
-      },
-      {
-        id: 2,
-        title: "Mobile Banking App",
-        description: "Cross-platform mobile banking application with secure authentication",
-        image_url: "https://via.placeholder.com/300x200",
-        project_url: "https://apps.apple.com/banking-app",
-        technologies: ["React Native", "Firebase", "Redux", "JWT"],
-        category: "Mobile Development",
-        client_name: "FinanceBank",
-        completion_date: "2023-12-20",
-        is_featured: false,
-        created_at: "2023-11-15T09:00:00Z",
-        updated_at: "2023-12-20T16:45:00Z",
-      },
-      {
-        id: 3,
-        title: "AI Chatbot Integration",
-        description: "Intelligent customer service chatbot with natural language processing",
-        image_url: "https://via.placeholder.com/300x200",
-        project_url: "https://chatbot-demo.com",
-        technologies: ["Python", "OpenAI API", "FastAPI", "PostgreSQL"],
-        category: "AI/ML",
-        client_name: "CustomerService Co.",
-        completion_date: "2024-02-01",
-        is_featured: true,
-        created_at: "2024-01-05T08:00:00Z",
-        updated_at: "2024-02-01T12:00:00Z",
-      }
-    ] as PortfolioItem[];
-  }, []);
+  useEffect(() => {
+    if (!loadPortfolioQuery.data) return;
+    const parsed = loadPortfolioQuery.data.results || [];
+    setParsedData(parsed);
+    setParsedPagination({
+      pageCount: Math.ceil(
+        (loadPortfolioQuery.data.count || 0) / 10,
+      ),
+    });
+  }, [loadPortfolioQuery.data]);
 
-  const createPortfolioMutation = useMutation({
-    mutationFn: async (portfolioData: Partial<PortfolioItem>) => {
-      // Mock API call - replace with actual API call
-      const response = await fetch('/api/v1/users/my-portfolio/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(portfolioData),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to create portfolio item');
-      }
-      return await response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [PORTFOLIO_PAGE_QUERY_KEY] });
-      toast.success("Portfolio item created successfully!");
-      setShowCreateDialog(false);
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to create portfolio item");
-    },
-  });
+  const totalCount = parsedData.length;
 
-  const updatePortfolioMutation = useMutation({
-    mutationFn: async ({ id, ...portfolioData }: Partial<PortfolioItem> & { id: number }) => {
-      // Mock API call - replace with actual API call
-      const response = await fetch(`/api/v1/users/my-portfolio/${id}/`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(portfolioData),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update portfolio item');
-      }
-      return await response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [PORTFOLIO_PAGE_QUERY_KEY] });
-      toast.success("Portfolio item updated successfully!");
-      setEditingPortfolio(null);
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to update portfolio item");
-    },
-  });
-
-  const deletePortfolioMutation = useMutation({
-    mutationFn: async (id: number) => {
-      // Mock API call - replace with actual API call
-      const response = await fetch(`/api/v1/users/my-portfolio/${id}/`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete portfolio item');
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [PORTFOLIO_PAGE_QUERY_KEY] });
-      toast.success("Portfolio item deleted successfully!");
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to delete portfolio item");
-    },
-  });
-
+  // Dialog handlers
   const handleCreatePortfolio = useCallback(() => {
-    setEditingPortfolio(null);
-    setShowCreateDialog(true);
-  }, []);
+    portfolioDialog.show(undefined);
+  }, [portfolioDialog]);
 
   const handleEditPortfolio = useCallback((portfolio: PortfolioItem) => {
-    setEditingPortfolio(portfolio);
-    setShowCreateDialog(true);
-  }, []);
+    portfolioDialog.show({
+      id: portfolio.id,
+      title: portfolio.title,
+      description: portfolio.description,
+      skill_used: portfolio.skill_used,
+      is_featured: portfolio.is_featured || false,
+    });
+  }, [portfolioDialog]);
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => myApi.v1UsersMyPortfolioDestroy({ id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [loadPortfolioQueryKey] });
+      toast.success("Portfolio item deleted successfully!");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Failed to delete portfolio item");
+    },
+  });
+  const deleteMutationMutateAsync = deleteMutation.mutateAsync;
   const handleDeletePortfolio = useCallback((portfolio: PortfolioItem) => {
-    if (window.confirm(`Are you sure you want to delete "${portfolio.title}"?`)) {
-      deletePortfolioMutation.mutate(portfolio.id);
-    }
-  }, [deletePortfolioMutation]);
+    NiceModal.show(DeleteConfirmNiceDialog, {
+      args: {
+        title: "Delete Portfolio Item",
+        desc: `Are you sure you want to delete "${portfolio.title}"? This action cannot be undone.`,
+      }
+    }).then((response) => {
+      if (response.reason === "confirm") {
+        deleteMutationMutateAsync(portfolio.id.toString());
+      }
+    })
+  }, [deleteMutationMutateAsync]);
 
-  const getCategoryColor = useCallback((category: string) => {
-    switch (category.toLowerCase()) {
+
+
+  const getSkillColor = useCallback((skill: MasterSkillSkill) => {
+    switch (skill.name?.toLowerCase()) {
       case 'web development': return 'bg-blue-100 text-blue-800';
       case 'mobile development': return 'bg-green-100 text-green-800';
       case 'ai/ml': return 'bg-purple-100 text-purple-800';
@@ -242,9 +149,25 @@ const PortfolioTable = () => {
     }
   }, []);
 
-  const totalCount = useMemo(() => portfolioItems.length, [portfolioItems]);
 
-  const columns = useMemo<ColumnDef<PortfolioItem>[]>(() => [
+  const columns = useMemo<ColumnDef<PortfolioItem, any>[]>(() => [
+    {
+      accessorKey: "id",
+      header: "ID",
+      cell: ({ row }) => (
+        <a className="font-mono text-sm" href="#" onClick={(e) => {
+          e.preventDefault();
+          handleEditPortfolio(row.original);
+        }}>
+          #{row.getValue("id")}
+        </a>
+      ),
+      meta: {
+        variant: "number",
+        label: "ID",
+        className: ""
+      }
+    },
     {
       accessorKey: "title",
       header: "Project",
@@ -252,11 +175,11 @@ const PortfolioTable = () => {
         <div className="max-w-[300px]">
           <div className="font-medium truncate">{row.getValue("title")}</div>
           <div className="text-sm text-muted-foreground truncate">
-            {row.original.description}
+            {row.original.description?.substring(0, 100)}...
           </div>
-          {row.original.client_name && (
+          {row.original.skill_used?.name && (
             <div className="text-xs text-blue-600 truncate">
-              Client: {row.original.client_name}
+              Skill: {row.original.skill_used.name}
             </div>
           )}
         </div>
@@ -269,81 +192,38 @@ const PortfolioTable = () => {
       }
     },
     {
-      accessorKey: "image_url",
-      header: "Preview",
+      accessorKey: "skill_used",
+      header: "Skill",
       cell: ({ row }) => {
-        const imageUrl = row.getValue("image_url") as string;
+        const skill = row.getValue("skill_used") as MasterSkillSkill;
         return (
-          <div className="w-16 h-12 rounded-md overflow-hidden bg-gray-100">
-            {imageUrl ? (
-              <img 
-                src={imageUrl} 
-                alt={row.original.title}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                }}
-              />
-            ) : null}
-            <div className={`w-full h-full flex items-center justify-center ${imageUrl ? 'hidden' : ''}`}>
-              <Image className="h-6 w-6 text-gray-400" />
-            </div>
-          </div>
-        );
-      },
-      meta: {
-        variant: "text",
-        label: "Image",
-        className: ""
-      }
-    },
-    {
-      accessorKey: "category",
-      header: "Category",
-      cell: ({ row }) => {
-        const category = row.getValue("category") as string;
-        return (
-          <Badge className={getCategoryColor(category)}>
-            {category}
+          <Badge className={getSkillColor(skill)}>
+            {skill?.name || 'Unknown'}
           </Badge>
         );
       },
       meta: {
         variant: "select",
-        label: "Category",
-        options: [
-          { label: "Web Development", value: "Web Development" },
-          { label: "Mobile Development", value: "Mobile Development" },
-          { label: "AI/ML", value: "AI/ML" },
-          { label: "Design", value: "Design" },
-        ],
+        label: "Skill",
         className: ""
       }
     },
     {
-      accessorKey: "technologies",
-      header: "Technologies",
+      accessorKey: "attachments",
+      header: "Attachments",
       cell: ({ row }) => {
-        const technologies = row.getValue("technologies") as string[];
+        const attachments = row.getValue("attachments") as Array<any>;
         return (
-          <div className="flex flex-wrap gap-1 max-w-[200px]">
-            {technologies.slice(0, 3).map((tech, index) => (
-              <Badge key={index} variant="outline" className="text-xs">
-                {tech}
-              </Badge>
-            ))}
-            {technologies.length > 3 && (
-              <Badge variant="outline" className="text-xs">
-                +{technologies.length - 3}
-              </Badge>
-            )}
+          <div className="flex items-center gap-1">
+            <Badge variant="outline" className="text-xs">
+              {attachments?.length || 0} files
+            </Badge>
           </div>
         );
       },
       meta: {
         variant: "text",
-        label: "Technologies",
+        label: "Attachments",
         className: ""
       }
     },
@@ -369,141 +249,120 @@ const PortfolioTable = () => {
       }
     },
     {
-      accessorKey: "completion_date",
-      header: "Completed",
+      accessorKey: "created_at",
+      header: "Created",
       cell: ({ row }) => (
         <div className="flex items-center gap-1 text-sm text-muted-foreground">
           <Calendar className="h-3 w-3" />
-          <span>{new Date(row.getValue("completion_date")).toLocaleDateString()}</span>
+          <span>{new Date(row.getValue("created_at")).toLocaleDateString()}</span>
         </div>
       ),
       meta: {
         variant: "date",
-        label: "Completion Date",
-        className: ""
-      }
-    },
-    {
-      accessorKey: "project_url",
-      header: "Links",
-      cell: ({ row }) => {
-        const projectUrl = row.getValue("project_url") as string;
-        return (
-          <div className="flex items-center gap-2">
-            {projectUrl && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => window.open(projectUrl, '_blank')}
-                className="h-8 w-8 p-0"
-              >
-                <ExternalLink className="h-3 w-3" />
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0"
-            >
-              <Eye className="h-3 w-3" />
-            </Button>
-          </div>
-        );
-      },
-      meta: {
-        variant: "text",
-        label: "Actions",
+        label: "Created Date",
         className: ""
       }
     },
     {
       id: "actions",
       header: "Actions",
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => handleEditPortfolio(row.original)}>
-              <Edit className="mr-2 h-4 w-4" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDeletePortfolio(row.original)}>
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
+      cell: ({ row }) => {
+        const portfolio = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => handleEditPortfolio(portfolio)}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start text-red-600" onClick={() => handleDeletePortfolio(portfolio)}>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
     },
-  ], [getCategoryColor, handleEditPortfolio, handleDeletePortfolio]);
+  ], [getSkillColor, handleEditPortfolio, handleDeletePortfolio]);
 
   const { table } = useDataTable({
-    data: portfolioItems,
+    data: parsedData,
     columns,
-    pageCount: Math.ceil(totalCount / 10),
+    pageCount: parsedPagination.pageCount,
+    enableGlobalFilter: true,
+    initialState: {
+      sorting: [{ id: "id", desc: true }],
+    },
   });
 
-  if (loadPortfolioListQuery.isLoading) {
+  if (loadPortfolioQuery.isLoading) {
     return (
-      <div className="flex items-center justify-center h-32">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
-  if (loadPortfolioListQuery.error) {
+  if (loadPortfolioQuery.error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-500">Error loading portfolio: {loadPortfolioListQuery.error.message}</p>
+        <p className="text-red-600">Error loading portfolio</p>
+        <Button onClick={() => loadPortfolioQuery.refetch()} className="mt-2">
+          Try Again
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Portfolio Management</h2>
-          <p className="text-muted-foreground">
-            Showcase your work portfolio and completed projects.
-          </p>
-        </div>
-        <Button onClick={handleCreatePortfolio}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Project
-        </Button>
-      </div>
-
-      <DataTable table={table}>
-        <DataTableToolbar table={table} />
-      </DataTable>
-
-      {/* TODO: Add PortfolioCreateEditDialog component */}
-      {showCreateDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold mb-4">
-              {editingPortfolio ? 'Edit Project' : 'Add Project'}
-            </h3>
-            <p className="text-muted-foreground">
-              Portfolio creation/edit dialog will be implemented here.
+    <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-lg font-semibold">Portfolio</h3>
+            <p className="text-sm text-muted-foreground">
+              {totalCount} project{totalCount !== 1 ? 's' : ''} found
             </p>
-            <div className="flex justify-end space-x-2 mt-4">
-              <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
-                Cancel
-              </Button>
-              <Button>
-                {editingPortfolio ? 'Update' : 'Add'}
-              </Button>
+          </div>
+          <Button onClick={handleCreatePortfolio} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Add Project
+          </Button>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1 max-w-sm">
+              <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search projects..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className="pl-8 h-8"
+              />
             </div>
           </div>
         </div>
-      )}
+        <DataTable table={table}>
+          <DataTableToolbar table={table} />
+        </DataTable>
+      </div>
+
+      <PortfolioCreateEditDialog
+        control={portfolioDialog}
+      />
     </div>
   );
 };
+

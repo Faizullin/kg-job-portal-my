@@ -21,6 +21,7 @@ from django.core.management import call_command
 from django.db import transaction
 from job_portal.apps.core.models import Language, ServiceCategory, ServiceSubcategory, ServiceArea
 from job_portal.apps.users.models import Master, Employer, Profession, Skill, Company
+from job_portal.apps.locations.models import Country, City
 
 User = get_user_model()
 
@@ -163,6 +164,10 @@ def verify_seeding():
     subcategories_count = ServiceSubcategory.objects.count()
     areas_count = ServiceArea.objects.count()
 
+    # Check location models
+    countries_count = Country.objects.count()
+    cities_count = City.objects.count()
+
     # Check user models
     professions_count = Profession.objects.count()
     skills_count = Skill.objects.count()
@@ -173,6 +178,8 @@ def verify_seeding():
 
     print(f"📊 Seeding verification results:")
     print(f"   Languages: {languages_count}")
+    print(f"   Countries: {countries_count}")
+    print(f"   Cities: {cities_count}")
     print(f"   Service Categories: {categories_count}")
     print(f"   Service Subcategories: {subcategories_count}")
     print(f"   Service Areas: {areas_count}")
@@ -182,7 +189,8 @@ def verify_seeding():
     print(f"   Users: {users_count}")
 
     # Check if we have the minimum expected data
-    if languages_count >= 3 and categories_count >= 3 and professions_count >= 3:
+    if (languages_count >= 3 and countries_count >= 3 and cities_count >= 3 and 
+        categories_count >= 3 and professions_count >= 3):
         print("✅ Seeding verification passed!")
         return True
     else:
@@ -197,6 +205,8 @@ def load_fixtures():
     # Define fixtures in dependency order
     fixture_files = [
         'languages.json',
+        'countries.json',
+        'cities.json',
         'service_categories.json',
         'service_subcategories.json',
         'service_areas.json',

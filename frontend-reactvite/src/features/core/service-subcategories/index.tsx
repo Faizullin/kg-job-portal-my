@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { ServiceSubcategoryCreateEditDialog, type ServiceSubcategoryFormData } from "./components/service-subcategory-create-edit-dialog";
+import { ServiceSubcategoryCreateEditDialog } from "./components/service-subcategory-create-edit-dialog";
 
 export function ServiceSubcategoriesManagement() {
   return (
@@ -66,7 +66,7 @@ const RenderTable = () => {
     pageCount: 1,
   });
 
-  const subcategoryDialog = useDialogControl<ServiceSubcategoryFormData>();
+  const subcategoryDialog = useDialogControl<{ id?: number }>();
   const queryClient = useQueryClient();
 
   const loadServiceSubcategoriesQuery = useQuery({
@@ -85,7 +85,7 @@ const RenderTable = () => {
     setParsedData(parsed);
     setParsedPagination({
       pageCount: Math.ceil(
-        loadServiceSubcategoriesQuery.data.count / 10,
+        (loadServiceSubcategoriesQuery.data?.count || 0) / 10,
       ),
     });
   }, [loadServiceSubcategoriesQuery.data]);
@@ -100,20 +100,20 @@ const RenderTable = () => {
   const handleEdit = useCallback((subcategory: ServiceSubcategory) => {
     subcategoryDialog.show({
       id: subcategory.id,
-      name: subcategory.name,
-      description: subcategory.description || "",
-      category: subcategory.category,
-      is_active: subcategory.is_active ?? true,
-      featured: subcategory.featured ?? false,
-      sort_order: subcategory.sort_order || 1,
     });
   }, [subcategoryDialog]);
 
   const handleDelete = useCallback((subcategory: ServiceSubcategory) => {
     NiceModal.show(DeleteConfirmNiceDialog, {
-      title: "Delete Service Subcategory",
-      description: `Are you sure you want to delete "${subcategory.name}"? This action cannot be undone.`,
-      onConfirm: () => deleteMutation.mutate(subcategory.id),
+      args: {
+        title: "Delete Service Subcategory",
+        desc: `Are you sure you want to delete "${subcategory.name}"? This action cannot be undone.`,
+        confirmText: "Delete",
+      }
+    }).then((response) => {
+      if (response.reason === "confirm") {
+        deleteMutation.mutate(subcategory.id);
+      }
     });
   }, []);
 

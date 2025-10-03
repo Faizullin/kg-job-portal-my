@@ -29,12 +29,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Check if user is authenticated
         if not self.user.is_authenticated:
-            await self.close(code=4001)  # Unauthorized
+            await self.close(code=4001)
             return
 
         # Check if user has access to this chat room
         if not await self.can_access_room():
-            await self.close(code=4003)  # Forbidden
+            await self.close(code=4003)
             return
 
         # Join room group
@@ -54,7 +54,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         """Handle WebSocket disconnection."""
-        # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def receive(self, text_data):
@@ -151,6 +150,46 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
         )
 
+    async def message_edited(self, event):
+        """Send message edit notification to WebSocket."""
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "message_edited",
+                    "message_id": event["message_id"],
+                    "content": event["content"],
+                    "created_at": event["created_at"],
+                    "updated_at": event["updated_at"],
+                }
+            )
+        )
+
+    async def message_deleted(self, event):
+        """Send message deletion notification to WebSocket."""
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "message_deleted",
+                    "message_id": event["message_id"],
+                    "deleted_by": event["deleted_by"],
+                    "created_at": event["created_at"],
+                    "updated_at": event["updated_at"],
+                }
+            )
+        )
+
+    async def user_left(self, event):
+        """Send user left notification to WebSocket."""
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "user_left",
+                    "user_id": event["user_id"],
+                    "username": event["username"],
+                }
+            )
+        )
+
     async def send_error(self, message: str) -> None:
         """Send error message to WebSocket."""
         await self.send(text_data=json.dumps({"type": "error", "message": message}))
@@ -181,7 +220,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             ).exists()
         except ChatRoom.DoesNotExist:
             return False
-
     @database_sync_to_async
     def save_message(self, content: str) -> Optional[ChatMessage]:
         """Save message to database."""
@@ -205,3 +243,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             logger.error(f"Error saving message: {e}")
             return None
+

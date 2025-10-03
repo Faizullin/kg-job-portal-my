@@ -11,13 +11,12 @@ from rest_framework.viewsets import ModelViewSet
 
 from utils.pagination import CustomPagination
 from utils.permissions import HasSpecificPermission
-
-from ..models import Notification
 from .serializers import (
     NotificationCreateSerializer,
     NotificationSerializer,
     NotificationUpdateSerializer,
 )
+from ..models import Notification
 
 
 class NotificationAPIViewSet(ModelViewSet):
@@ -37,7 +36,7 @@ class NotificationAPIViewSet(ModelViewSet):
         """Return notifications for the current user."""
         return Notification.objects.filter(
             recipient=self.request.user,
-        ).select_related("recipient", "actor", "target")
+        ).select_related("recipient", "actor_content_type", "target_content_type")
 
     def get_serializer_class(self):
         """Return appropriate serializer based on action."""
@@ -55,12 +54,10 @@ class NotificationAPIViewSet(ModelViewSet):
             serializer.save()
 
     def get_permissions(self):
-        """Set permissions based on action."""
+        perms = super().get_permissions()
         if self.action == "create":
-            permission_classes = [HasSpecificPermission(["notifications.add_notification"])()]
-        else:
-            permission_classes = [IsAuthenticated]
-        return permission_classes
+            perms += [HasSpecificPermission(["notifications.add_notification"])()]
+        return perms
 
     @extend_schema(
         description="Get unread notifications for current user",
@@ -91,7 +88,7 @@ class NotificationAPIViewSet(ModelViewSet):
         """Get recent notifications."""
         days = int(request.query_params.get('days', 7))
         cutoff_date = timezone.now() - timedelta(days=days)
-        
+
         queryset = self.get_queryset().filter(created_at__gte=cutoff_date)
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -126,10 +123,10 @@ class NotificationAPIViewSet(ModelViewSet):
     def count(self, request):
         """Get notification counts for current user."""
         queryset = self.get_queryset()
-        
+
         total = queryset.count()
         unread = queryset.filter(is_read=False).count()
-        
+
         return Response({
             "total": total,
             "unread": unread
@@ -144,12 +141,12 @@ class NotificationAPIViewSet(ModelViewSet):
     def mark_read(self, request, pk=None):
         """Mark specific notification as read."""
         notification = self.get_object()
-        
+
         if not notification.is_read:
             notification.is_read = True
             notification.read_at = timezone.now()
             notification.save()
-        
+
         serializer = self.get_serializer(notification)
         return Response(serializer.data)
 
@@ -162,11 +159,11 @@ class NotificationAPIViewSet(ModelViewSet):
     def mark_unread(self, request, pk=None):
         """Mark specific notification as unread."""
         notification = self.get_object()
-        
+
         if notification.is_read:
             notification.is_read = False
             notification.read_at = None
             notification.save()
-        
+
         serializer = self.get_serializer(notification)
         return Response(serializer.data)

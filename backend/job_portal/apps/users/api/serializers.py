@@ -1,4 +1,7 @@
-from django.core.validators import FileExtensionValidator, get_available_image_extensions
+from django.core.validators import (
+    FileExtensionValidator,
+    get_available_image_extensions,
+)
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -6,10 +9,14 @@ from accounts.models import UserModel
 from job_portal.apps.attachments.serializers import AttachmentSerializer
 from utils.serializers import AbstractTimestampedModelSerializer
 from ..models import (
+    Certificate,
     Employer,
-    Skill,
+    Master,
+    MasterSkill,
+    MasterStatistics,
     PortfolioItem,
-    Master, MasterSkill, Certificate, Profession, MasterStatistics,
+    Profession,
+    Skill,
 )
 
 
@@ -31,12 +38,19 @@ class UserRetrieveUpdateSerializer(serializers.ModelSerializer):
 class EmployerProfileCreateUpdateSerializer(AbstractTimestampedModelSerializer):
     class Meta:
         model = Employer
-        fields = ("id", "contact_phone", "preferred_services", "favorite_masters",)
+        fields = (
+            "id",
+            "contact_phone",
+            "preferred_services",
+            "favorite_masters",
+        )
         read_only_fields = ("id",)
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        employer_profile, created = Employer.objects.get_or_create(user=user, defaults=validated_data)
+        user = self.context["request"].user
+        employer_profile, created = Employer.objects.get_or_create(
+            user=user, defaults=validated_data
+        )
         if not created:
             raise ValidationError("Employer profile already exists for this user.")
         preferred_services = validated_data.pop("preferred_services", None)
@@ -86,8 +100,10 @@ class MasterProfileCreateUpdateSerializer(AbstractTimestampedModelSerializer):
         read_only_fields = ("id", "is_verified_provider", "is_top_master")
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        master_profile, created = Master.objects.get_or_create(user=user, defaults=validated_data)
+        user = self.context["request"].user
+        master_profile, created = Master.objects.get_or_create(
+            user=user, defaults=validated_data
+        )
         if not created:
             raise ValidationError("Master profile already exists for this user.")
         service_areas = validated_data.pop("service_areas", None)
@@ -121,8 +137,7 @@ class SkillDetailSerializer(AbstractTimestampedModelSerializer):
 class MasterSkillSerializer(AbstractTimestampedModelSerializer):
     skill = SkillDetailSerializer(read_only=True)
     skill_id = serializers.PrimaryKeyRelatedField(
-        source='skill', queryset=Skill.objects.filter(is_active=True),
-        write_only=True
+        source="skill", queryset=Skill.objects.filter(is_active=True), write_only=True
     )
 
     class Meta:
@@ -136,23 +151,39 @@ class MasterSkillSerializer(AbstractTimestampedModelSerializer):
             "years_of_experience",
             "created_at",
         )
-        read_only_fields = ("id", "created_at",)
+        read_only_fields = (
+            "id",
+            "created_at",
+        )
 
-    def create(self, validated_data):
+    def validate(self, attrs):
         user = self.context['request'].user
         master_profile = user.master_profile
-        return MasterSkill.objects.create(
-            **validated_data,
-            master=master_profile
-        )
+        skill = attrs.get("skill")
+        qs = MasterSkill.objects.filter(master=master_profile, skill=skill)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
+            raise serializers.ValidationError(
+                {"skill_id": "This skill is already assigned to this master."}
+            )
+        return attrs
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        master_profile = user.master_profile
+        return MasterSkill.objects.create(**validated_data, master=master_profile)
 
 
 class PortfolioItemSerializer(AbstractTimestampedModelSerializer):
     skill_used = SkillDetailSerializer(read_only=True)
     skill_used_id = serializers.PrimaryKeyRelatedField(
-        source='skill_used', queryset=Skill.objects.filter(is_active=True),
-        write_only=True, required=False,
-        allow_null=True
+        source="skill_used",
+        queryset=Skill.objects.filter(is_active=True),
+        write_only=True,
+        required=False,
+        allow_null=True,
     )
     attachments = AttachmentSerializer(many=True, read_only=True)
 
@@ -171,12 +202,9 @@ class PortfolioItemSerializer(AbstractTimestampedModelSerializer):
         read_only_fields = ("id", "created_at")
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
         master_profile = user.master_profile
-        return PortfolioItem.objects.create(
-            **validated_data,
-            master=master_profile
-        )
+        return PortfolioItem.objects.create(**validated_data, master=master_profile)
 
 
 def validate_file_size(file_obj):
@@ -201,13 +229,15 @@ class PortfolioItemAttachmentUploadSerializer(serializers.Serializer):
     files = serializers.ListField(
         child=serializers.FileField(
             validators=[
-                FileExtensionValidator(allowed_extensions=get_available_image_extensions()),
+                FileExtensionValidator(
+                    allowed_extensions=get_available_image_extensions()
+                ),
                 validate_file_size,
             ],
         ),
         allow_empty=False,
         write_only=True,
-        validators=[validate_total_size]
+        validators=[validate_total_size],
     )
 
 
@@ -223,15 +253,15 @@ class CertificateSerializer(AbstractTimestampedModelSerializer):
             "certificate_number",
             "is_verified",
         )
-        read_only_fields = ("id", "is_verified",)
+        read_only_fields = (
+            "id",
+            "is_verified",
+        )
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
         master_profile = user.master_profile
-        return Certificate.objects.create(
-            **validated_data,
-            master=master_profile
-        )
+        return Certificate.objects.create(**validated_data, master=master_profile)
 
 
 class ProfessionSerializer(AbstractTimestampedModelSerializer):
@@ -323,7 +353,6 @@ class PublicMasterProfileDetailSerializer(serializers.ModelSerializer):
             "last_seen",
             "is_verified_provider",
             "is_top_master",
-
             "profession",
             "skills",
             "portfolio_items",
@@ -335,7 +364,9 @@ class PublicMasterProfileDetailSerializer(serializers.ModelSerializer):
 class MasterOnlineStatusRequestSerializer(serializers.Serializer):
     """Serializer for master online status update request."""
 
-    is_online = serializers.BooleanField(help_text="Online status to set", default=False)
+    is_online = serializers.BooleanField(
+        help_text="Online status to set", default=False
+    )
 
 
 class MasterOnlineStatusResponseSerializer(serializers.Serializer):

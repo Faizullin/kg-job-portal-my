@@ -66,6 +66,7 @@ const mutation = useMutation({
 - **Hooks**: Use custom hooks for complex logic
 - **Loading States**: Implement consistent loading UI patterns
 - **Form Sections**: Organize forms into logical sections with separators
+- **Index Files**: Never create `index.ts` files for components - import directly from component files to avoid unnecessary abstraction
 
 ### UI Patterns
 - **Form Fields**: Use consistent FormField structure with labels, descriptions, and error messages

@@ -201,6 +201,8 @@ class MessageCreateSerializer(serializers.ModelSerializer):
         allow_empty=False,
         write_only=True,
         validators=[validate_total_size],
+        required=False,
+        allow_null=True,
     )
 
     class Meta:
@@ -227,6 +229,28 @@ class MessageCreateSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+    # def validate(self, data):
+    #     """Validate that attachments_files is required for image/file messages."""
+    #     message_type = data.get('message_type')
+    #     attachments_files = data.get('attachments_files', [])
+        
+    #     # Handle both list and None cases
+    #     if attachments_files is None:
+    #         attachments_files = []
+        
+    #     if message_type in [MessageType.IMAGE, MessageType.FILE]:
+    #         if not attachments_files:
+    #             raise serializers.ValidationError({
+    #                 'attachments_files': 'This field is required for image and file messages.'
+    #             })
+    #     elif message_type == MessageType.TEXT:
+    #         if attachments_files:
+    #             raise serializers.ValidationError({
+    #                 'attachments_files': 'This field is not allowed for text messages.'
+    #             })
+        
+    #     return data
 
 
 class MessageUpdateSerializer(serializers.ModelSerializer):

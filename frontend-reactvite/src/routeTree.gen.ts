@@ -21,7 +21,6 @@ import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
-import { Route as AuthenticatedSearchIndexRouteImport } from './routes/_authenticated/search/index'
 import { Route as AuthenticatedReviewsIndexRouteImport } from './routes/_authenticated/reviews/index'
 import { Route as AuthenticatedPaymentsIndexRouteImport } from './routes/_authenticated/payments/index'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
@@ -47,6 +46,7 @@ import { Route as AuthenticatedCoreServiceCategoriesRouteImport } from './routes
 import { Route as AuthenticatedCoreServiceAreasRouteImport } from './routes/_authenticated/core/service-areas'
 import { Route as AuthenticatedAppMasterRouteImport } from './routes/_authenticated/app/master'
 import { Route as AuthenticatedAppClientRouteImport } from './routes/_authenticated/app/client'
+import { Route as AuthenticatedAppSearchIndexRouteImport } from './routes/_authenticated/app/search/index'
 import { Route as AuthenticatedAppMastersIndexRouteImport } from './routes/_authenticated/app/masters/index'
 import { Route as AuthenticatedAppMastersMasterIdRouteImport } from './routes/_authenticated/app/masters/$masterId'
 
@@ -108,12 +108,6 @@ const AuthenticatedSettingsRouteRoute =
   AuthenticatedSettingsRouteRouteImport.update({
     id: '/settings',
     path: '/settings',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedSearchIndexRoute =
-  AuthenticatedSearchIndexRouteImport.update({
-    id: '/search/',
-    path: '/search/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedReviewsIndexRoute =
@@ -260,6 +254,12 @@ const AuthenticatedAppClientRoute = AuthenticatedAppClientRouteImport.update({
   path: '/app/client',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppSearchIndexRoute =
+  AuthenticatedAppSearchIndexRouteImport.update({
+    id: '/app/search/',
+    path: '/app/search/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppMastersIndexRoute =
   AuthenticatedAppMastersIndexRouteImport.update({
     id: '/app/masters/',
@@ -310,9 +310,9 @@ export interface FileRoutesByFullPath {
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/payments': typeof AuthenticatedPaymentsIndexRoute
   '/reviews': typeof AuthenticatedReviewsIndexRoute
-  '/search': typeof AuthenticatedSearchIndexRoute
   '/app/masters/$masterId': typeof AuthenticatedAppMastersMasterIdRoute
   '/app/masters': typeof AuthenticatedAppMastersIndexRoute
+  '/app/search': typeof AuthenticatedAppSearchIndexRoute
 }
 export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
@@ -351,9 +351,9 @@ export interface FileRoutesByTo {
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/payments': typeof AuthenticatedPaymentsIndexRoute
   '/reviews': typeof AuthenticatedReviewsIndexRoute
-  '/search': typeof AuthenticatedSearchIndexRoute
   '/app/masters/$masterId': typeof AuthenticatedAppMastersMasterIdRoute
   '/app/masters': typeof AuthenticatedAppMastersIndexRoute
+  '/app/search': typeof AuthenticatedAppSearchIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -394,9 +394,9 @@ export interface FileRoutesById {
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_authenticated/payments/': typeof AuthenticatedPaymentsIndexRoute
   '/_authenticated/reviews/': typeof AuthenticatedReviewsIndexRoute
-  '/_authenticated/search/': typeof AuthenticatedSearchIndexRoute
   '/_authenticated/app/masters/$masterId': typeof AuthenticatedAppMastersMasterIdRoute
   '/_authenticated/app/masters/': typeof AuthenticatedAppMastersIndexRoute
+  '/_authenticated/app/search/': typeof AuthenticatedAppSearchIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -437,9 +437,9 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/payments'
     | '/reviews'
-    | '/search'
     | '/app/masters/$masterId'
     | '/app/masters'
+    | '/app/search'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/settings'
@@ -478,9 +478,9 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/payments'
     | '/reviews'
-    | '/search'
     | '/app/masters/$masterId'
     | '/app/masters'
+    | '/app/search'
   id:
     | '__root__'
     | '/_authenticated'
@@ -520,9 +520,9 @@ export interface FileRouteTypes {
     | '/_authenticated/jobs/'
     | '/_authenticated/payments/'
     | '/_authenticated/reviews/'
-    | '/_authenticated/search/'
     | '/_authenticated/app/masters/$masterId'
     | '/_authenticated/app/masters/'
+    | '/_authenticated/app/search/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -622,13 +622,6 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsRouteRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/search/': {
-      id: '/_authenticated/search/'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: typeof AuthenticatedSearchIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/reviews/': {
@@ -806,6 +799,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppClientRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/search/': {
+      id: '/_authenticated/app/search/'
+      path: '/app/search'
+      fullPath: '/app/search'
+      preLoaderRoute: typeof AuthenticatedAppSearchIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/masters/': {
       id: '/_authenticated/app/masters/'
       path: '/app/masters'
@@ -871,9 +871,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedJobsIndexRoute: typeof AuthenticatedJobsIndexRoute
   AuthenticatedPaymentsIndexRoute: typeof AuthenticatedPaymentsIndexRoute
   AuthenticatedReviewsIndexRoute: typeof AuthenticatedReviewsIndexRoute
-  AuthenticatedSearchIndexRoute: typeof AuthenticatedSearchIndexRoute
   AuthenticatedAppMastersMasterIdRoute: typeof AuthenticatedAppMastersMasterIdRoute
   AuthenticatedAppMastersIndexRoute: typeof AuthenticatedAppMastersIndexRoute
+  AuthenticatedAppSearchIndexRoute: typeof AuthenticatedAppSearchIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -901,9 +901,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedJobsIndexRoute: AuthenticatedJobsIndexRoute,
   AuthenticatedPaymentsIndexRoute: AuthenticatedPaymentsIndexRoute,
   AuthenticatedReviewsIndexRoute: AuthenticatedReviewsIndexRoute,
-  AuthenticatedSearchIndexRoute: AuthenticatedSearchIndexRoute,
   AuthenticatedAppMastersMasterIdRoute: AuthenticatedAppMastersMasterIdRoute,
   AuthenticatedAppMastersIndexRoute: AuthenticatedAppMastersIndexRoute,
+  AuthenticatedAppSearchIndexRoute: AuthenticatedAppSearchIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
