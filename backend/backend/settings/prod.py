@@ -11,11 +11,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
 ]
 # Add drf_spectacular if not already present
-if "drf_spectacular" not in INSTALLED_APPS:
-    INSTALLED_APPS += [
-        "drf_spectacular",
-        "drf_spectacular_sidecar",
-    ]
+INSTALLED_APPS += [
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
+]
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Master KG Job Portal API",
@@ -28,5 +27,7 @@ SPECTACULAR_SETTINGS = {
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
+
+    'COMPONENT_SPLIT_REQUEST': True,  # for file upload
 }
 REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
