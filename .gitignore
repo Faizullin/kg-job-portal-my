@@ -27,5 +27,5 @@ config/firebase/
 /backend/mediafiles/defaults/*.svg
 
 # Django migrations - ignore all except __init__.py
-**/migrations/*.py
-!**/migrations/__init__.py
+# **/migrations/*.py
+# !**/migrations/__init__.py
