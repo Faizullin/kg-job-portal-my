@@ -1,13 +1,17 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 
-from .api.views import ReviewAPIViewSet
-
-router = DefaultRouter()
-router.register(r'api/v1/reviews', ReviewAPIViewSet, basename='reviews')
+from .api.views import (
+    AddReviewForJobDoneAPIView,
+    DeleteReviewForJobDoneAPIView,
+    EditReviewForJobDoneAPIView,
+    MyReviewsListAPIView,
+)
 
 app_name = "reviews"
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("api/v1/jobs/<int:job_id>/reviews/", AddReviewForJobDoneAPIView.as_view(), name="review-create"),
+    path("api/v1/reviews/my/", MyReviewsListAPIView.as_view(), name="my-reviews"),
+    path("api/v1/reviews/<int:pk>/", EditReviewForJobDoneAPIView.as_view(), name="review-update"),
+    path("api/v1/reviews/<int:pk>/delete/", DeleteReviewForJobDoneAPIView.as_view(), name="review-delete"),
 ]

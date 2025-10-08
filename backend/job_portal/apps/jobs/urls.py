@@ -1,6 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
+from job_portal.apps.reviews.api.views import ReviewListForJobAPIView
 from .api.views import (
     AssignmentAttachmentAPIViewSet,
     JobAPIViewSet,
@@ -30,4 +31,9 @@ app_name = "jobs"
 
 urlpatterns = [
     path("", include(router.urls)),
+    path(
+        "api/v1/jobs/<int:job_id>/reviews/",
+        ReviewListForJobAPIView.as_view(),
+        name="job-reviews-list",
+    ),
 ]

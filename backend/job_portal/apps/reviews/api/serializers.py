@@ -1,18 +1,20 @@
+from job_portal.apps.jobs.api.serializers import JobSerializer
+from job_portal.apps.users.api.serializers import UserDetailChildSerializer
+from job_portal.apps.users.models import Master
 from rest_framework import serializers
 from utils.serializers import AbstractTimestampedModelSerializer
-from job_portal.apps.users.api.serializers import UserDetailChildSerializer
-from job_portal.apps.jobs.api.serializers import JobSerializer
-from job_portal.apps.users.models import Master
-from ..models import Review, AppFeedback
+
+from ..models import AppFeedback, Review
 
 
 class MasterBasicSerializer(serializers.ModelSerializer):
     """Basic master serializer for review data."""
+
     user = UserDetailChildSerializer(read_only=True)
-    
+
     class Meta:
         model = Master
-        fields = ['id', 'user']
+        fields = ["id", "user"]
 
 
 class ReviewSerializer(AbstractTimestampedModelSerializer):
@@ -42,9 +44,13 @@ class ReviewSerializer(AbstractTimestampedModelSerializer):
 class ReviewCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating new reviews with OpenAPI documentation."""
 
+    assignment = serializers.IntegerField(
+        write_only=True, help_text="Job assignment ID"
+    )
+
     class Meta:
         model = Review
-        fields = ["job", "master", "rating", "title", "comment"]
+        fields = ["assignment", "rating", "title", "comment"]
         extra_kwargs = {
             "rating": {
                 "help_text": "Rating from 1 to 5 stars",
@@ -60,28 +66,6 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         if not (1 <= value <= 5):
             raise serializers.ValidationError("Rating must be between 1 and 5.")
         return value
-
-    def validate(self, attrs):
-        """Validate that the job belongs to the master and user can review it."""
-        job = attrs.get("job")
-        master = attrs.get("master")
-
-        if job and master:
-            # Check if the job is completed
-            if job.status != "completed":
-                raise serializers.ValidationError(
-                    "You can only review completed jobs."
-                )
-
-            # Check if review already exists for this job
-            if Review.objects.filter(
-                job=job, reviewer=self.context["request"].user
-            ).exists():
-                raise serializers.ValidationError(
-                    "You have already reviewed this job."
-                )
-
-        return attrs
 
 
 class ReviewUpdateSerializer(serializers.ModelSerializer):
