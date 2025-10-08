@@ -1,3 +1,4 @@
+from utils.permissions import HasSpecificPermission
 from django.db import models
 from django.db.models import Avg, Count
 from django_filters.rest_framework import DjangoFilterBackend
@@ -7,6 +8,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.decorators import action
+from job_portal.apps.users.models import Master
+from rest_framework.generics import get_object_or_404
+from job_portal.apps.jobs.models import Job
 
 from utils.pagination import CustomPagination
 from .serializers import (
@@ -34,6 +38,10 @@ class ReviewAPIViewSet(ReadOnlyModelViewSet):
             'master__user',
             'job'
         )
+    
+    def get_permissions(self):
+        perms = super().get_permissions()
+        return perms
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -53,7 +61,8 @@ class ReviewAPIViewSet(ReadOnlyModelViewSet):
     @action(detail=False, methods=['get'], url_path='master/(?P<master_id>[^/.]+)')
     def master_reviews(self, request, master_id=None):
         """Get reviews for a specific master."""
-        reviews = self.get_queryset().filter(master_id=master_id)
+        master = get_object_or_404(Master, id=master_id)
+        reviews = self.get_queryset().filter(master=master)
         
         # Apply filtering and pagination
         reviews = self.filter_queryset(reviews)
@@ -73,7 +82,8 @@ class ReviewAPIViewSet(ReadOnlyModelViewSet):
     @action(detail=False, methods=['get'], url_path='job/(?P<job_id>[^/.]+)')
     def job_reviews(self, request, job_id=None):
         """Get reviews for a specific job."""
-        reviews = self.get_queryset().filter(job_id=job_id)
+        job = get_object_or_404(Job, id=job_id)
+        reviews = self.get_queryset().filter(job=job)
         
         # Apply filtering and pagination
         reviews = self.filter_queryset(reviews)
@@ -93,7 +103,8 @@ class ReviewAPIViewSet(ReadOnlyModelViewSet):
     @action(detail=False, methods=['get'], url_path='analytics/(?P<master_id>[^/.]+)')
     def analytics(self, request, master_id=None):
         """Get review analytics for a specific master."""
-        reviews = Review.objects.filter(master_id=master_id)
+        master = get_object_or_404(Master, id=master_id)
+        reviews = Review.objects.filter(master=master)
         
         total_reviews = reviews.count()
         avg_rating = reviews.aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0

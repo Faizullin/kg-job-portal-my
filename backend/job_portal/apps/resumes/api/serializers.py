@@ -7,8 +7,11 @@ class MasterResumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = MasterResume
         fields = [
-            "id", "master",
-            "title", "content", "status",
+            "id",
+            "title",
+            "content",
+            "status",
+            "master",
             "created_at", "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]

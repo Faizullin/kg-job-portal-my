@@ -175,7 +175,7 @@ class AbstractSoftDeleteModel(models.Model):
     is_deleted = models.BooleanField(_("Is deleted"), default=False)
 
     # Use the custom manager by default
-    objects = SoftDeleteManager()
+    # objects = SoftDeleteManager()
 
     class Meta:
         abstract = True

@@ -47,15 +47,20 @@ class SoftDeleteFilter(SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
-        value = {
-            'true': False,
-            'false': True,
-            'all': 'ALL',
-        }[self.value() or 'false']
-        if value == 'ALL':
+        value = self.value()
+        if value == 'all':
+            # Return all objects including deleted ones
+            if hasattr(queryset.model.objects, 'all_with_deleted'):
+                return queryset.model.objects.all_with_deleted()
             return queryset
-
-        return queryset.filter(deleted_at__isnull=value)
+        elif value == 'true':
+            # Return only deleted objects
+            if hasattr(queryset.model.objects, 'deleted_only'):
+                return queryset.model.objects.deleted_only()
+            return queryset.filter(is_deleted=True)
+        else:
+            # Default: return only non-deleted objects
+            return queryset.filter(is_deleted=False)
 
 
 class AbstractBaseAdmin(admin.ModelAdmin):
@@ -77,7 +82,7 @@ class AbstractBaseAdmin(admin.ModelAdmin):
         if self.has_default_timestamps:
             self.readonly_fields += ("created_at", "updated_at",)
         if self.has_soft_delete:
-            self.readonly_fields += ("deleted_at", "restored_at",)
+            self.readonly_fields += ("is_deleted", "deleted_at", "restored_at",)
 
     def get_ordering(self, request):
         if self.has_default_timestamps and self.ordering is None:
@@ -96,7 +101,7 @@ class AbstractBaseAdmin(admin.ModelAdmin):
 
     def check_has_soft_delete(self):
         field_name_list = [field.name for field in self.model._meta.get_fields()]
-        return 'deleted_at' in field_name_list and 'restored_at' in field_name_list
+        return 'is_deleted' in field_name_list and 'deleted_at' in field_name_list and 'restored_at' in field_name_list
 
     def check_has_html_meta(self):
         return issubclass(self.model, AbstractMetaModel)
@@ -127,7 +132,7 @@ class AbstractBaseAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request, show_all=False):
         if show_all and self.has_soft_delete:
-            qs = self.model.global_objects.all()
+            qs = self.model.objects.all_with_deleted()
         else:
             qs = self.model.objects.all()
         ordering = self.get_ordering(request)
@@ -161,12 +166,12 @@ class AbstractBaseAdmin(admin.ModelAdmin):
     def get_fieldsets_dict(self, request, obj=None):
         default_fieldsets = super().get_fieldsets(request, obj)
         new_fieldsets_dict = dict()
-        if not self.lookup_general_key in new_fieldsets_dict:
+        if self.lookup_general_key not in new_fieldsets_dict:
             new_fieldsets_dict[self.lookup_general_key] = {
                 "label": default_fieldsets[0][0],
                 "value": default_fieldsets[0][1],
             }
-        if not self.lookup_important_dated_key in new_fieldsets_dict:
+        if self.lookup_important_dated_key not in new_fieldsets_dict:
             new_fieldsets_dict[self.lookup_important_dated_key] = {
                 "label": _("Important dates"),
                 "value": {
@@ -189,10 +194,13 @@ class AbstractBaseAdmin(admin.ModelAdmin):
             new_fieldsets_dict[self.lookup_important_dated_key]["value"]["fields"].append('created_at')
             new_fieldsets_dict[self.lookup_important_dated_key]["value"]["fields"].append('updated_at')
         if self.has_soft_delete:
+            if 'is_deleted' in new_fieldsets_dict[self.lookup_general_key]["value"]["fields"]:
+                new_fieldsets_dict[self.lookup_general_key]["value"]["fields"].remove('is_deleted')
             if 'deleted_at' in new_fieldsets_dict[self.lookup_general_key]["value"]["fields"]:
                 new_fieldsets_dict[self.lookup_general_key]["value"]["fields"].remove('deleted_at')
             if 'restored_at' in new_fieldsets_dict[self.lookup_general_key]["value"]["fields"]:
                 new_fieldsets_dict[self.lookup_general_key]["value"]["fields"].remove('restored_at')
+            new_fieldsets_dict[self.lookup_important_dated_key]["value"]["fields"].append('is_deleted')
             new_fieldsets_dict[self.lookup_important_dated_key]["value"]["fields"].append('deleted_at')
             new_fieldsets_dict[self.lookup_important_dated_key]["value"]["fields"].append('restored_at')
 

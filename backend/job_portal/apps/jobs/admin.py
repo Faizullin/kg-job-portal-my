@@ -4,6 +4,8 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 from .models import Job, JobApplication, JobDispute, BookmarkJob, FavoriteJob, JobAssignment
 from job_portal.apps.attachments.models import Attachment
 
+from utils.admin import AbstractBaseAdmin
+
 
 class AttachmentInline(GenericTabularInline):
     """Generic inline for attachments."""
@@ -60,11 +62,6 @@ class JobAdmin(admin.ModelAdmin):
         return "Not specified"
 
     budget_display.short_description = 'Budget Range'
-
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related(
-            'employer__user', 'company', 'service_subcategory', 'city'
-        )
 
 
 @admin.register(JobAssignment)

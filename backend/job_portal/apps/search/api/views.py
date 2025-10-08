@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Q
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
@@ -105,8 +105,12 @@ class JobSearchAPIView(generics.ListAPIView):
                 "employer__user",
                 "service_subcategory",
                 "service_subcategory__category",
+                "city",
             )
-            .prefetch_related("photos", "bids__provider__user")
+            .prefetch_related(
+                "attachments",
+                "skills",
+            )
         )
 
 
@@ -222,20 +226,19 @@ class MasterRecommendedJobsAPIView(generics.ListAPIView):
         
         # Base queryset: published jobs
         qs = Job.objects.filter(status=JobStatus.PUBLISHED).select_related(
-            'employer__user', 'service_subcategory', 'city'
+            'employer__user', 'service_subcategory__category', 'city'
         )
         
-        # Filter by master's service areas
+        # Filter by master's service areas OR skills (OR condition)
+        q_filters = Q()
         if master.services_offered.exists():
-            qs = qs.filter(service_subcategory__in=master.services_offered.all())
+            q_filters |= Q(service_subcategory__in=master.services_offered.all())
         
-        # Filter by master's skills
         if master.skills.exists():
-            qs = qs.filter(skills__in=master.skills.all())
+            q_filters |= Q(skills__in=master.skills.all())
         
-        # Filter by location if master has current location
-        if master.current_location:
-            qs = qs.filter(city__name__icontains=master.current_location.split(',')[0])
+        if q_filters:
+            qs = qs.filter(q_filters)
         
         # Exclude jobs already applied to
         applied_job_ids = master.applications.values_list('job_id', flat=True)

@@ -200,7 +200,7 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         operation_id="v1_jobs_bookmark",
     )
     @action(detail=True, methods=["post"])
-    def bookmark(self, request):
+    def bookmark(self, request, *args, **kwargs):
         job = self.get_object()
         bookmark, created = BookmarkJob.objects.get_or_create(
             user=request.user, job=job
@@ -232,7 +232,7 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         operation_id="v1_jobs_favorite",
     )
     @action(detail=True, methods=["post"])
-    def favorite(self, request):
+    def favorite(self, request, *args, **kwargs):
         job = self.get_object()
         favorite, created = FavoriteJob.objects.get_or_create(
             user=request.user, job=job
@@ -267,7 +267,7 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         methods=["get"],
         permission_classes=[IsAuthenticated, HasMasterProfile],
     )
-    def master_in_progress(self, request):
+    def master_in_progress(self, request, *args, **kwargs):
         """Get jobs currently in progress for master."""
         queryset = self.filter_queryset(self.get_queryset())
         queryset = queryset.filter(
@@ -296,7 +296,7 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         methods=["get"],
         permission_classes=[IsAuthenticated, HasMasterProfile],
     )
-    def master_history(self, request):
+    def master_history(self, request, *args, **kwargs):
         """Get completed job history for master."""
         queryset = self.filter_queryset(self.get_queryset())
         queryset = queryset.filter(
@@ -322,7 +322,7 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         methods=["get"],
         permission_classes=[IsAuthenticated, HasEmployerProfile],
     )
-    def my_jobs(self, request):
+    def my_jobs(self, request, *args, **kwargs):
         """Get all jobs created by the current employer (including drafts)."""
         queryset = self.filter_queryset(self.get_queryset())
         queryset = queryset.filter(employer=request.user.employer_profile)
@@ -394,7 +394,7 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=["post"],
     )
-    def accept(self, request, pk=None):
+    def accept(self, request, pk=None, *args, **kwargs):
         try:
             application = JobApplication.objects.get(
                 pk=pk,
@@ -470,7 +470,7 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=["post"],
     )
-    def reject(self, request, pk=None):
+    def reject(self, request, pk=None, *args, **kwargs):
         try:
             application = JobApplication.objects.get(
                 pk=pk,
@@ -511,7 +511,7 @@ class JobApplicationAPIViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=["post"],
     )
-    def withdraw(self, request, pk=None):
+    def withdraw(self, request, pk=None, *args, **kwargs):
         try:
             application = JobApplication.objects.get(
                 pk=pk, applicant=request.user.master_profile
@@ -569,7 +569,7 @@ class JobAssignmentViewSet(viewsets.ModelViewSet):
         operation_id="v1_job_assignments_start",
     )
     @action(detail=True, methods=["post"])
-    def start(self, request):
+    def start(self, request, *args, **kwargs):
         assignment = self.get_object()
         if assignment.status != JobAssignmentStatus.ASSIGNED:
             raise ValidationError("Assignment must be in ASSIGNED state to start.")
@@ -599,7 +599,7 @@ class JobAssignmentViewSet(viewsets.ModelViewSet):
         operation_id="v1_job_assignments_complete",
     )
     @action(detail=True, methods=["post"])
-    def complete(self, request):
+    def complete(self, request, *args, **kwargs):
         assignment = self.get_object()
         if assignment.status != JobAssignmentStatus.IN_PROGRESS:
             raise ValidationError("Assignment must be in progress to complete.")
@@ -652,7 +652,7 @@ class JobAssignmentViewSet(viewsets.ModelViewSet):
         methods=["patch"],
         permission_classes=[IsAuthenticated, HasMasterProfile],
     )
-    def update_progress(self, request):
+    def update_progress(self, request, *args, **kwargs):
         assignment = self.get_object()
         serializer = ProgressUpdateSerializer(
             assignment, data=request.data, partial=True

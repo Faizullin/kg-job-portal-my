@@ -2,30 +2,43 @@ from django.contrib.auth.models import Group, Permission
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import generics, status, mixins, viewsets, parsers
+from job_portal.apps.attachments.api.permissions import IsAttachmentOwner
+from job_portal.apps.attachments.models import create_attachments
+from job_portal.apps.attachments.serializers import AttachmentSerializer
+from rest_framework import generics, mixins, parsers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.serializers import ValidationError
-from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from .permissions import HasMasterProfile, HasEmployerProfile
-from .serializers import (
-    EmployerProfileCreateUpdateSerializer,
-    MasterProfileCreateUpdateSerializer, MasterSkillSerializer, PortfolioItemSerializer, SkillDetailSerializer,
-    CertificateSerializer, ProfessionSerializer, PublicMasterProfileDetailSerializer, PublicMasterProfileSerializer,
-    MasterOnlineStatusRequestSerializer, MasterOnlineStatusResponseSerializer, PortfolioItemAttachmentUploadSerializer,
-)
 from ..models import (
-    Employer, MasterStatistics, Skill, Profession, Master, PortfolioItem,
+    Employer,
+    Master,
+    MasterStatistics,
+    PortfolioItem,
+    Profession,
+    Skill,
 )
-from ...attachments.api.permissions import IsAttachmentOwner
-from ...attachments.models import create_attachments
-from ...attachments.serializers import AttachmentSerializer
+from .permissions import HasEmployerProfile, HasMasterProfile
+from .serializers import (
+    CertificateSerializer,
+    EmployerProfileCreateUpdateSerializer,
+    MasterOnlineStatusRequestSerializer,
+    MasterOnlineStatusResponseSerializer,
+    MasterProfileCreateUpdateSerializer,
+    MasterSkillSerializer,
+    PortfolioItemAttachmentUploadSerializer,
+    PortfolioItemSerializer,
+    ProfessionSerializer,
+    PublicMasterProfileDetailSerializer,
+    PublicMasterProfileSerializer,
+    SkillDetailSerializer,
+)
 
 
 def assign_client_permissions(user):
@@ -71,9 +84,7 @@ class EmployerProfileCreateAPIView(generics.CreateAPIView):
         return response
 
 
-class EmployerProfileRetrieveUpdateAPIView(
-    generics.RetrieveUpdateAPIView
-):
+class EmployerProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = EmployerProfileCreateUpdateSerializer
     permission_classes = [IsAuthenticated, HasEmployerProfile]
 
@@ -81,9 +92,7 @@ class EmployerProfileRetrieveUpdateAPIView(
         return self.request.user.employer_profile
 
 
-class MasterProfileCreateAPIView(
-    generics.CreateAPIView
-):
+class MasterProfileCreateAPIView(generics.CreateAPIView):
     serializer_class = MasterProfileCreateUpdateSerializer
     permission_classes = [IsAuthenticated]
 
@@ -95,9 +104,7 @@ class MasterProfileCreateAPIView(
         return response
 
 
-class MasterProfileRetrieveUpdateAPIView(
-    generics.RetrieveUpdateAPIView
-):
+class MasterProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = MasterProfileCreateUpdateSerializer
     permission_classes = [IsAuthenticated, HasMasterProfile]
 
@@ -125,7 +132,9 @@ class MasterPortfolioAPIViewSet(ModelViewSet):
 
     def get_queryset(self):
         provider_profile = self.request.user.master_profile
-        return provider_profile.portfolio_items.select_related("skill_used").prefetch_related("attachments")
+        return provider_profile.portfolio_items.select_related(
+            "skill_used"
+        ).prefetch_related("attachments")
 
     def perform_destroy(self, instance: PortfolioItem):
         instance.attachments.all().delete()
@@ -136,7 +145,7 @@ class MasterPortfolioAttachmentAPIViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.DestroyModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     permission_classes = [IsAuthenticated, IsAttachmentOwner, HasMasterProfile]
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
@@ -224,22 +233,22 @@ class PublicMasterProfileAPIViewSet(ReadOnlyModelViewSet):
     }
 
     def get_queryset(self):
-        return Master.objects.select_related(
-            'user',
-            'profession',
-            'statistics'
-        ).prefetch_related(
-            'skills',
-            'portfolio_items',
-            'certificates',
-        ).filter(user__is_active=True)
+        return (
+            Master.objects.select_related("user", "profession", "statistics")
+            .prefetch_related(
+                "skills",
+                "portfolio_items",
+                "certificates",
+            )
+            .filter(user__is_active=True, is_available=True)
+        )
 
     @extend_schema(
         description="Master Profile Details",
         responses={200: PublicMasterProfileDetailSerializer},
-        operation_id="v1_users_masters_details"
+        operation_id="v1_users_masters_details",
     )
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=["get"])
     def details(self, request, pk=None):
         obj = self.get_object()
         return Response(PublicMasterProfileDetailSerializer(instance=obj).data)
@@ -256,7 +265,7 @@ class MasterUpdateOnlineStatusAPIView(APIView):
         responses={
             200: MasterOnlineStatusResponseSerializer,
         },
-        operation_id="v1_users_masters_update_online_status"
+        operation_id="v1_users_masters_update_online_status",
     )
     def post(self, request):
         """Update online status for master."""
@@ -266,16 +275,19 @@ class MasterUpdateOnlineStatusAPIView(APIView):
         serializer.is_valid(raise_exception=True)
 
         # Extract validated data
-        is_online = serializer.validated_data['is_online']
+        is_online = serializer.validated_data["is_online"]
 
         # Update master profile
         provider_profile: Master = request.user.master_profile
         provider_profile.is_online = is_online
         provider_profile.last_seen = timezone.now()
-        provider_profile.save(update_fields=['is_online', 'last_seen'])
+        provider_profile.save(update_fields=["is_online", "last_seen"])
 
-        return Response({
-            'message': 'Online status updated successfully',
-            'is_online': is_online,
-            'last_seen': provider_profile.last_seen
-        }, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "message": "Online status updated successfully",
+                "is_online": is_online,
+                "last_seen": provider_profile.last_seen,
+            },
+            status=status.HTTP_200_OK,
+        )

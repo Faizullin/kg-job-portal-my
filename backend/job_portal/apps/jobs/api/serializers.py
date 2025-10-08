@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from job_portal.apps.attachments.serializers import AttachmentSerializer
 from job_portal.apps.core.api.serializers import ServiceSubcategorySerializer
+from job_portal.apps.core.models import ServiceSubcategory
 from job_portal.apps.jobs.models import Job, JobApplication, JobAssignment, JobStatus
 from job_portal.apps.locations.api.serializers import CitySerializer
 from job_portal.apps.locations.models import City
@@ -32,6 +33,12 @@ class JobSerializer(AbstractTimestampedModelSerializer):
         help_text="ID of the city",
     )
     service_subcategory = ServiceSubcategorySerializer(read_only=True)
+    service_subcategory_id = serializers.PrimaryKeyRelatedField(
+        queryset=ServiceSubcategory.objects.all(),
+        source="service_subcategory",
+        write_only=True,
+        help_text="ID of the service subcategory",
+    )
 
     class Meta:
         model = Job
@@ -39,6 +46,7 @@ class JobSerializer(AbstractTimestampedModelSerializer):
             "id",
             "employer",
             "service_subcategory",
+            "service_subcategory_id",
             "title",
             "description",
             "status",

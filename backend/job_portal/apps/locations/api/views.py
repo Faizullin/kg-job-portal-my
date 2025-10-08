@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 from utils.permissions import HasSpecificPermission
 from utils.pagination import CustomPagination
 from ..models import Country, City
-from .serializers import CountrySerializer, CitySerializer, CityListSerializer
+from .serializers import CountrySerializer, CitySerializer
 
 
 class CountryAPIViewSet(viewsets.ModelViewSet):
@@ -45,10 +45,7 @@ class CityAPIViewSet(viewsets.ModelViewSet):
     ordering = ["country__name", "name"]
 
     def get_serializer_class(self):
-        if self.action in ["list", "retrieve"]:
-            return CityListSerializer
-        else:
-            return CitySerializer
+        return CitySerializer
 
     def get_permissions(self):
         if self.action in ["list", "retrieve"]:
