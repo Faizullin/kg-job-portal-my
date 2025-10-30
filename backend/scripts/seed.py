@@ -7,21 +7,27 @@ Creates superuser, loads fixtures, and sets up initial data
 import os
 import sys
 
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings.dev')#
+# Ensure Django settings are configured for script execution
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 
 import django
+
 django.setup()
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.core.management import call_command
 from django.db import transaction
-from job_portal.apps.core.models import Language, ServiceCategory, ServiceSubcategory, ServiceArea
-from job_portal.apps.users.models import Master, Employer, Profession, Skill, Company
-from job_portal.apps.locations.models import Country, City
+from job_portal.apps.core.models import (
+    Language,
+    ServiceArea,
+    ServiceCategory,
+    ServiceSubcategory,
+)
+from job_portal.apps.locations.models import City, Country
+from job_portal.apps.users.models import Company, Employer, Master, Profession, Skill
 
 User = get_user_model()
 
@@ -38,7 +44,7 @@ def create_superuser():
             email=superuser_email,
             password=superuser_password,
             first_name="Admin",
-            last_name="Master KG"
+            last_name="Master KG",
         )
 
 
@@ -46,42 +52,42 @@ def create_demo_users():
     """Create demo users for testing."""
     demo_users = [
         {
-            'username': 'maria_gonzalez',
-            'email': 'maria@example.com',
-            'password': 'demo123',
-            'first_name': 'Maria',
-            'last_name': 'Gonzalez',
-            'is_active': True
+            "username": "maria_gonzalez",
+            "email": "maria@example.com",
+            "password": "demo123",
+            "first_name": "Maria",
+            "last_name": "Gonzalez",
+            "is_active": True,
         },
         {
-            'username': 'arman_yussupov',
-            'email': 'arman@example.com',
-            'password': 'demo123',
-            'first_name': 'Арман',
-            'last_name': 'Юссупов',
-            'is_active': True
+            "username": "arman_yussupov",
+            "email": "arman@example.com",
+            "password": "demo123",
+            "first_name": "Арман",
+            "last_name": "Юссупов",
+            "is_active": True,
         },
         {
-            'username': 'zhandos_amanbaev',
-            'email': 'zhandos@example.com',
-            'password': 'demo123',
-            'first_name': 'Жандос',
-            'last_name': 'Аманбаев',
-            'is_active': True
+            "username": "zhandos_amanbaev",
+            "email": "zhandos@example.com",
+            "password": "demo123",
+            "first_name": "Жандос",
+            "last_name": "Аманбаев",
+            "is_active": True,
         },
         {
-            'username': 'master_support',
-            'email': 'support@masterkg.kg',
-            'password': 'support123',
-            'first_name': 'Master KG',
-            'last_name': 'Support',
-            'is_active': True,
-            'is_staff': True
-        }
+            "username": "master_support",
+            "email": "support@masterkg.kg",
+            "password": "support123",
+            "first_name": "Master KG",
+            "last_name": "Support",
+            "is_active": True,
+            "is_staff": True,
+        },
     ]
 
     for user_data in demo_users:
-        if not User.objects.filter(email=user_data['email']).exists():
+        if not User.objects.filter(email=user_data["email"]).exists():
             User.objects.create_user(**user_data)
 
 
@@ -91,20 +97,20 @@ def assign_users_to_groups():
     print("👥 Assigning users to groups...")
 
     try:
-        master_group = Group.objects.get(name='Master')
-        employer_group = Group.objects.get(name='Employer')
+        master_group = Group.objects.get(name="Master")
+        employer_group = Group.objects.get(name="Employer")
 
         # Assign masters to Master group
-        masters = Master.objects.select_related('user').all()
+        masters = Master.objects.select_related("user").all()
         for master in masters:
-            if not master.user.groups.filter(name='Master').exists():
+            if not master.user.groups.filter(name="Master").exists():
                 master.user.groups.add(master_group)
                 print(f"   ✅ Assigned {master.user.username} to Master group")
 
         # Assign employers to Employer group
-        employers = Employer.objects.select_related('user').all()
+        employers = Employer.objects.select_related("user").all()
         for employer in employers:
-            if not employer.user.groups.filter(name='Employer').exists():
+            if not employer.user.groups.filter(name="Employer").exists():
                 employer.user.groups.add(employer_group)
                 print(f"   ✅ Assigned {employer.user.username} to Employer group")
 
@@ -117,8 +123,8 @@ def assign_users_to_groups():
 def create_demo_profiles():
     """Create demo master and employer profiles."""
 
-    maria_user = User.objects.filter(username='maria_gonzalez').first()
-    if maria_user and not hasattr(maria_user, 'master_profile'):
+    maria_user = User.objects.filter(username="maria_gonzalez").first()
+    if maria_user and not hasattr(maria_user, "master_profile"):
         # Get first profession and skill
         profession = Profession.objects.first()
         skill = Skill.objects.first()
@@ -130,26 +136,23 @@ def create_demo_profiles():
             is_available=True,
             works_remotely=False,
             travels_to_clients=True,
-            about_description="Experienced cleaner with 5+ years of experience"
+            about_description="Experienced cleaner with 5+ years of experience",
         )
 
         # Add skill to master
         if skill:
             master.master_skills.create(
                 skill=skill,
-                proficiency_level='advanced',
+                proficiency_level="advanced",
                 years_of_experience=5,
-                is_primary_skill=True
+                is_primary_skill=True,
             )
 
     # Create demo employer profile
-    arman_user = User.objects.filter(username='arman_yussupov').first()
-    if arman_user and not hasattr(arman_user, 'employer_profile'):
+    arman_user = User.objects.filter(username="arman_yussupov").first()
+    if arman_user and not hasattr(arman_user, "employer_profile"):
         Employer.objects.create(
-            user=arman_user,
-            total_orders=3,
-            completed_orders=2,
-            cancelled_orders=1
+            user=arman_user, total_orders=3, completed_orders=2, cancelled_orders=1
         )
 
 
@@ -176,7 +179,7 @@ def verify_seeding():
     # Check users
     users_count = User.objects.count()
 
-    print(f"📊 Seeding verification results:")
+    print("📊 Seeding verification results:")
     print(f"   Languages: {languages_count}")
     print(f"   Countries: {countries_count}")
     print(f"   Cities: {cities_count}")
@@ -189,8 +192,13 @@ def verify_seeding():
     print(f"   Users: {users_count}")
 
     # Check if we have the minimum expected data
-    if (languages_count >= 3 and countries_count >= 3 and cities_count >= 3 and 
-        categories_count >= 3 and professions_count >= 3):
+    if (
+        languages_count >= 3
+        and countries_count >= 3
+        and cities_count >= 3
+        and categories_count >= 3
+        and professions_count >= 3
+    ):
         print("✅ Seeding verification passed!")
         return True
     else:
@@ -200,21 +208,21 @@ def verify_seeding():
 
 def load_fixtures():
     """Load fixture files in the correct order."""
-    fixtures_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'fixtures')
+    fixtures_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "fixtures")
 
     # Define fixtures in dependency order
     fixture_files = [
-        'languages.json',
-        'countries.json',
-        'cities.json',
-        'service_categories.json',
-        'service_subcategories.json',
-        'service_areas.json',
-        'professions.json',
-        'skills.json',
-        'companies.json',
-        'system_settings.json',
-        'support_faq.json'
+        "languages.json",
+        "countries.json",
+        "cities.json",
+        "service_categories.json",
+        "service_subcategories.json",
+        "service_areas.json",
+        "professions.json",
+        "skills.json",
+        "companies.json",
+        "system_settings.json",
+        "support_faq.json",
     ]
 
     for fixture_file in fixture_files:
@@ -223,7 +231,7 @@ def load_fixtures():
             print(f"⚠️  Warning: Fixture file not found: {fixture_file}")
             continue
         print(f"📦 Loading {fixture_file}...")
-        call_command('loaddata', fixture_path, verbosity=0)
+        call_command("loaddata", fixture_path, verbosity=0)
 
 
 def setup_groups():
@@ -234,47 +242,72 @@ def setup_groups():
     # Create groups
     groups_data = [
         {
-            'name': 'Master',
-            'description': 'masters who offer services',
-            'permissions': [
-                'add_jobapplication', 'change_jobapplication', 'view_jobapplication',
-                'add_master', 'change_master', 'view_master',
-                'add_portfolioitem', 'change_portfolioitem', 'view_portfolioitem',
-                'add_certificate', 'change_certificate', 'view_certificate',
-            ]
+            "name": "Master",
+            "description": "masters who offer services",
+            "permissions": [
+                "add_jobapplication",
+                "change_jobapplication",
+                "view_jobapplication",
+                "add_master",
+                "change_master",
+                "view_master",
+                "add_portfolioitem",
+                "change_portfolioitem",
+                "view_portfolioitem",
+                "add_certificate",
+                "change_certificate",
+                "view_certificate",
+            ],
         },
         {
-            'name': 'Employer',
-            'description': 'Users who post jobs and hire masters',
-            'permissions': [
-                'add_job', 'change_job', 'view_job',
-                'add_employer', 'change_employer', 'view_employer',
-                'add_bookmarkjob', 'change_bookmarkjob', 'view_bookmarkjob',
-                'add_favoritejob', 'change_favoritejob', 'view_favoritejob',
-            ]
+            "name": "Employer",
+            "description": "Users who post jobs and hire masters",
+            "permissions": [
+                "add_job",
+                "change_job",
+                "view_job",
+                "add_employer",
+                "change_employer",
+                "view_employer",
+                "add_bookmarkjob",
+                "change_bookmarkjob",
+                "view_bookmarkjob",
+                "add_favoritejob",
+                "change_favoritejob",
+                "view_favoritejob",
+            ],
         },
         {
-            'name': 'Moderator',
-            'description': 'Users who moderate content and disputes',
-            'permissions': [
-                'change_job', 'view_job', 'delete_job',
-                'change_jobapplication', 'view_jobapplication', 'delete_jobapplication',
-                'change_jobdispute', 'view_jobdispute', 'delete_jobdispute',
-                'change_review', 'view_review', 'delete_review',
-                'view_master', 'view_employer',
-            ]
-        }
+            "name": "Moderator",
+            "description": "Users who moderate content and disputes",
+            "permissions": [
+                "change_job",
+                "view_job",
+                "delete_job",
+                "change_jobapplication",
+                "view_jobapplication",
+                "delete_jobapplication",
+                "change_jobdispute",
+                "view_jobdispute",
+                "delete_jobdispute",
+                "change_review",
+                "view_review",
+                "delete_review",
+                "view_master",
+                "view_employer",
+            ],
+        },
     ]
 
     for group_data in groups_data:
-        group, created = Group.objects.get_or_create(name=group_data['name'])
+        group, created = Group.objects.get_or_create(name=group_data["name"])
         if created:
             print(f"   ✅ Created group: {group_data['name']}")
         else:
             print(f"   ℹ️  Group already exists: {group_data['name']}")
 
         # Add permissions to group
-        for perm_codename in group_data['permissions']:
+        for perm_codename in group_data["permissions"]:
             try:
                 permission = Permission.objects.get(codename=perm_codename)
                 group.permissions.add(permission)
@@ -286,8 +319,8 @@ def setup_groups():
 
 def run_migrations():
     """Run database migrations."""
-    call_command('makemigrations', verbosity=0)
-    call_command('migrate', verbosity=0)
+    call_command("makemigrations", verbosity=0)
+    call_command("migrate", verbosity=0)
 
 
 @transaction.atomic

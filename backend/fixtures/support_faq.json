@@ -19,7 +19,7 @@
     "fields": {
       "question": "Как создать заказ?",
       "answer": "Зарегистрируйтесь на платформе, выберите категорию услуги, заполните описание заказа, укажите бюджет и сроки выполнения. После создания заказа мастера смогут подавать свои предложения.",
-      "category": "orders",
+      "category": "account",
       "is_active": true,
       "sort_order": 2,
       "language": 2,
@@ -33,7 +33,7 @@
     "fields": {
       "question": "Как стать мастером?",
       "answer": "Зарегистрируйтесь как мастер, заполните профиль, добавьте портфолио работ, укажите свои навыки и сертификаты. После модерации профиля вы сможете получать заказы.",
-      "category": "master",
+      "category": "specialist",
       "is_active": true,
       "sort_order": 3,
       "language": 2,
@@ -47,7 +47,7 @@
     "fields": {
       "question": "Как происходит оплата?",
       "answer": "Оплата происходит через безопасную платежную систему. Средства замораживаются на время выполнения заказа и переводятся мастеру после успешного завершения работы.",
-      "category": "payment",
+      "category": "account",
       "is_active": true,
       "sort_order": 4,
       "language": 2,
@@ -61,7 +61,7 @@
     "fields": {
       "question": "Как отменить заказ?",
       "answer": "Заказ можно отменить до начала выполнения. Если мастер уже начал работу, отмена возможна только по согласованию с мастером или через службу поддержки.",
-      "category": "orders",
+      "category": "account",
       "is_active": true,
       "sort_order": 5,
       "language": 2,
@@ -103,7 +103,7 @@
     "fields": {
       "question": "How to create an order?",
       "answer": "Register on the platform, select a service category, fill in the order description, specify budget and deadlines. After creating the order, masters can submit their proposals.",
-      "category": "orders",
+      "category": "account",
       "is_active": true,
       "sort_order": 3,
       "language": 1,
@@ -117,7 +117,7 @@
     "fields": {
       "question": "How to become a master?",
       "answer": "Register as a master, fill in your profile, add portfolio items, specify your skills and certificates. After profile moderation, you will be able to receive orders.",
-      "category": "master",
+      "category": "specialist",
       "is_active": true,
       "sort_order": 4,
       "language": 1,
@@ -131,7 +131,7 @@
     "fields": {
       "question": "How does payment work?",
       "answer": "Payment is processed through a secure payment system. Funds are frozen during order execution and transferred to the master after successful completion of work.",
-      "category": "payment",
+      "category": "account",
       "is_active": true,
       "sort_order": 5,
       "language": 1,
