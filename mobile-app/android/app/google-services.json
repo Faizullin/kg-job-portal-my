@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1026990413187",
+    "project_id": "master-kg-a9ffe",
+    "storage_bucket": "master-kg-a9ffe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026990413187:android:e5ce728bfd5315fe8412b6",
+        "android_client_info": {
+          "package_name": "com.masterkg.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026990413187-9etjpnbv3g89upetdfbrm542nptq9549.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.masterkg.app",
+            "certificate_hash": "bc7c30bfc156b59e22b2d41c9bd7a28ef450e996"
+          }
+        },
+        {
+          "client_id": "1026990413187-6r35bibk6v2u1k3i610ga3n9jncna2qb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIm_I46Ll2VPYO0f4tEt3kl9NCfCo6TJM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026990413187-6r35bibk6v2u1k3i610ga3n9jncna2qb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1026990413187-an7t5lg07i78p0k274o0m5jhd7tm0fhi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.masterkg.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
